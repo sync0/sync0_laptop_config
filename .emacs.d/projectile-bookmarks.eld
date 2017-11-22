@@ -1,1 +1,1 @@
-("~/Dropbox/projects/paris_1/M1_1/")
+("~/" "~/Dropbox/projects/paris_1/M1_1/")
