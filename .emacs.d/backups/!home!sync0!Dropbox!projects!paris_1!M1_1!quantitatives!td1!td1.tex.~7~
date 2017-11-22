@@ -1,0 +1,107 @@
+% Created 2017-10-11 Wed 03:05
+% Intended LaTeX compiler: pdflatex
+\documentclass[paper=A4,portrait,twoside=false,twocolumn=false,headinclude=false,footinclude=false,fontsize=11,BCOR=0mm,DIV=7,pagesize=auto,abstract=false,mpinclude=false,headings=big]{scrartcl}
+\usepackage{fontspec}
+\usepackage{xunicode}
+\usepackage{url}
+\usepackage[svgnames]{xcolor}
+\usepackage{soul}
+\usepackage[xetex, colorlinks=true, urlcolor=FireBrick, plainpages=false, pdfpagelabels, bookmarksnumbered]{hyperref}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{polyglossia}
+\setmainlanguage{french}
+\usepackage[french=guillemets]{csquotes}
+\usepackage{xunicode}
+\usepackage{balance}
+\usepackage[french]{fmtcount}
+\fmtcountsetoptions{french=france}
+\usepackage[singlespacing]{setspace}
+\usepackage[super]{nth}
+\usepackage{xcolor}
+\usepackage{microtype}
+\microtypecontext{kerning=french}
+\usepackage{ragged2e}
+\usepackage{lipsum}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\hypersetup{colorlinks,urlcolor=blue,linkcolor=red,citecolor=red,filecolor=black}
+\usepackage{adforn}
+\usepackage{enumitem}
+\usepackage{fontspec}
+\setmainfont[SmallCapsFeatures={LetterSpace=4}]{Linux Libertine}
+\AfterTOCHead{\singlespacing}
+\setkomafont{disposition}{\normalfont\normalcolor}
+\addtokomafont{section}{\scshape\LARGE\lowercase}
+\addtokomafont{subsection}{\sffamily\bfseries\normalsize}
+\addtokomafont{subsubsection}{\itshape\large}
+\newenvironment{summary}{\begin{addmargin}{3em}\itshape}{\end{addmargin}}
+\newcommand{\annotation}[1]{\marginpar{\small\itshape #1}}
+\renewcommand*\labelitemi{\adforn{14}}
+\renewcommand*\labelitemii{\adforn{14}}
+\renewcommand*\labelitemiii{\adforn{2}}
+\renewcommand*\labelitemiv{\adforn{43}}
+\definecolor{bibleblue}{HTML}{00339a}
+\setcounter{secnumdepth}{\partnumdepth}
+\setlist[1]{itemsep=\parskip}
+\recalctypearea
+\date{\today}
+\title{}
+\hypersetup{
+ pdfauthor={},
+ pdftitle={},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 25.3.1 (Org mode 9.1)}, 
+ pdflang={Frenchb}}
+\begin{document}
+
+\subject{Techniques Quantitatives} 
+\title{Travail dirigé I}
+
+\author{Carlos Alberto Rivera Carreño} 
+
+\maketitle
+\section{Exercise IV}
+\label{sec:org9de1506}
+\subsection{1}
+\label{sec:org7d27dbf}
+Donnees:
+
+Personnes de plus de 15 ans qui ont terminé leurs formations initiales et ui travailent a tenps complet dans le secteur prive ou dans des entrepreiss publiques en France en 2010.
+
+La variable salaire est le salaire net mensuel, primes comprises en point de SMIC.
+
+Elle est nommée sal\(_{\text{smic}}\)
+\begin{itemize}
+\item Moyenne: 1.941
+\begin{itemize}
+\item La moyenne est la somme ponderée de tous les valeurs d'une variable.
+\item \textbf{Interpretation}: Les personnes de plus de quinze ans qui ont
+terminé leur formations et qui travail à temps complet dans le secteur privé ou publique gagnent 1.941 fois le SMIC en moyenne.
+\end{itemize}
+\item Variance: 1.071\(^{\text{2}}\)
+\item Écart-type: 1.071
+\begin{itemize}
+\item 
+\end{itemize}
+\item Médiane: 1.647
+\item Quartiles: 
+\begin{itemize}
+\item 25$\backslash$%: 1.262
+\item 50$\backslash$%: 1.647
+\item 75\%: 2.246
+\end{itemize}
+\end{itemize}
+\subsection{2}
+\label{sec:orgaeb5baa}
+La distribution des salaires n'est pas symétrique parce qu'elle est
+étalée à droite. Ce resultat n'est pas étonnnat parce que dans la
+pluspart de sociétés capitalistes modernes il n'y a qu'une petite
+minorité qui a beacoup d'argent. La masse des pauvres et classe
+moyenne pousse la moyenne vers le bas, et donc moyenne et médian sont
+differentes. 
+\end{document}

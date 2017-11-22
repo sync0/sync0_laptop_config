@@ -1,0 +1,80 @@
+% Created 2017-09-16 Sat 02:42
+% Intended LaTeX compiler: pdflatex
+\documentclass[paper=A4,portrait,twoside=false,twocolumn=false,headinclude=false,footinclude=false,fontsize=11,BCOR=3mm,DIV=9,pagesize=auto,titlepage=firstiscover,mpinclude=false,headings=big,chapterprefix=false,open=right]{scrbook}
+\usepackage{fontspec}
+\usepackage{xunicode}
+\usepackage{url}
+\usepackage[svgnames]{xcolor}
+\usepackage{soul}
+\usepackage[xetex, colorlinks=true, urlcolor=FireBrick, plainpages=false, pdfpagelabels, bookmarksnumbered]{hyperref}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{polyglossia}
+\setmainlanguage{french}
+\setotherlanguage{german}
+\usepackage[autostyle]{csquotes}
+\usepackage{xunicode}
+\usepackage{balance}
+\usepackage[french]{fmtcount}
+\usepackage[singlespacing]{setspace}
+\usepackage[super]{nth}
+\usepackage{xcolor}
+\usepackage{microtype}
+\usepackage{ragged2e}
+\usepackage{lipsum}
+\usepackage{adforn}
+\usepackage{hyperref}
+\hypersetup{colorlinks,urlcolor=blue,linkcolor=red,citecolor=red,filecolor=black}
+\usepackage{fontspec}
+\setmainfont[Numbers={Proportional},SmallCapsFeatures={LetterSpace=4}]{Minion Pro}
+\renewcommand*{\partpagestyle}{empty}
+\AfterTOCHead{\singlespacing}
+\setkomafont{disposition}{\normalfont\normalcolor}
+\addtokomafont{author}{\scshape\lowercase}
+\addtokomafont{dedication}{\itshape}
+\renewcommand*{\partformat}{\adforn{21}~\thepart~\adforn{49}}
+\addtokomafont{part}{\scshape\Huge\lowercase}
+\renewcommand{\raggedchapter}{\centering}
+\addtokomafont{chapter}{\scshape\Huge\lowercase}
+\addtokomafont{section}{\scshape\large\lowercase}
+\addtokomafont{subsection}{\itshape\large}
+\newenvironment{summary}{\begin{addmargin}{3em}\itshape}{\end{addmargin}}
+\definecolor{bibleblue}{HTML}{00339a}
+\setcounter{secnumdepth}{\partnumdepth}
+\recalctypearea
+\date{\today}
+\title{}
+\hypersetup{
+ pdfauthor={},
+ pdftitle={},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 25.2.1 (Org mode 9.1)}, 
+ pdflang={Frenchb}}
+\begin{document}
+
+\subject{Université Paris I\\Panthéon Sorbonne} 
+\title{Cahier d'études} 
+\subtitle{I} 
+\author{sync0} 
+\date{\today} 
+\dedication{Die Philosophen haben die Welt nur verschieden interpretiert; \\ es kömmt drauf an, sie zu verändern.} 
+\maketitle
+\part{Techniques quantitatives}
+\label{sec:org1d4f5d0}
+\part{Allemand}
+\label{sec:org73bc671}
+\part{Sociologie des comportements sociaux}
+\label{sec:orga620672}
+\part{Philosophie et épistemologie économique}
+\label{sec:orgfdb4a22}
+\part{Sociologie économique}
+\label{sec:org3e8552f}
+\part{Questions économiques contemporaines}
+\label{sec:orgcf6b203}
+\part{Italien}
+\label{sec:org8d1775a}
+\part{Sociologie du travail}
+\label{sec:org41d944d}
+\end{document}

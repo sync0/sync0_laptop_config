@@ -1,0 +1,93 @@
+% Created 2017-11-02 Thu 19:30
+% Intended LaTeX compiler: pdflatex
+\documentclass[paper=A4,landscape,twoside=true,twocolumn=true,headinclude=false,footinclude=false,fontsize=11,BCOR=10mm,DIV=9,pagesize=auto,titlepage=firstiscover,abstract=false,mpinclude=false,headings=big,headings=twolinechapter,open=any]{scrartcl}
+\usepackage{fontspec}
+\usepackage{xunicode}
+\usepackage{url}
+\usepackage[svgnames]{xcolor}
+\usepackage{soul}
+\usepackage[xetex, colorlinks=true, urlcolor=FireBrick, plainpages=false, pdfpagelabels, bookmarksnumbered]{hyperref}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{polyglossia}
+\setmainlanguage{french}
+\setotherlanguages{german,english}
+\usepackage{xeCJK}
+\usepackage[french=guillemets]{csquotes}
+\usepackage{xunicode}
+\usepackage{balance}
+\usepackage[french]{fmtcount}
+\fmtcountsetoptions{french=france}
+\usepackage[singlespacing]{setspace}
+\usepackage[super]{nth}
+\usepackage{xcolor}
+\usepackage{microtype}
+\usepackage{minted}
+\microtypecontext{kerning=french}
+\usepackage{ragged2e}
+\usepackage{lipsum}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\hypersetup{colorlinks,urlcolor=blue,linkcolor=bibleblue,citecolor=red,filecolor=black}
+\usepackage{enumitem}
+\usepackage{adforn}
+\usepackage{fontspec}
+\setmainfont[Numbers={OldStyle},SmallCapsFeatures={LetterSpace=4,Ligatures={NoCommon, NoDiscretionary, NoHistoric, NoRequired, NoContextual}}]{Linux Libertine}
+\renewcommand*{\chapterpagestyle}{plain}
+\renewcommand*{\partpagestyle}{empty}
+\usepackage{scrlayer-scrpage}
+\pagestyle{scrheadings}
+\clearscrheadfoot
+\automark[chapter]{part}
+\ifoot*{\thepage}
+\setkomafont{disposition}{\normalfont\normalcolor}
+\addtokomafont{author}{\scshape\lowercase}
+\addtokomafont{dedication}{\itshape}
+\addtokomafont{partentry}{\scshape\lowercase}
+\addtokomafont{chapterentry}{\bfseries}
+\renewcommand*{\partformat}{\adforn{21}~\thepart~\adforn{49}}
+\addtokomafont{part}{\scshape\Huge\lowercase}
+\renewcommand{\raggedchapter}{\centering}
+\addtokomafont{chapter}{\scshape\Huge\lowercase}
+\addtokomafont{section}{\scshape\LARGE\lowercase}
+\addtokomafont{subsection}{\sffamily\bfseries\normalsize}
+\addtokomafont{subsubsection}{\itshape\large}
+\usemintedstyle{borland}
+\renewcommand*\labelitemi{\adforn{14}}
+\renewcommand*\labelitemii{\adforn{71}}
+\renewcommand*\labelitemiii{\adforn{2}}
+\renewcommand*\labelitemiv{\adforn{43}}
+\definecolor{bibleblue}{HTML}{00339a}
+\setcounter{secnumdepth}{\partnumdepth}
+\setcounter{tocdepth}{1}
+\recalctypearea
+\setlist[1]{itemsep=\parskip}
+\setlength{\marginparwidth}{3\marginparwidth}
+\date{\today}
+\title{}
+\hypersetup{
+ pdfauthor={},
+ pdftitle={},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 25.3.1 (Org mode 9.1)}, 
+ pdflang={Germanb}}
+\begin{document}
+
+\tableofcontents
+
+\vspace{-2.5cm}
+\section{Bücher}
+\label{sec:orgb789671}
+\subsection{Empfehlungen}
+\label{sec:org8c0831b}
+\subsubsection{Frédéric Lebaron}
+\label{sec:org2ee3241}
+\subsubsection{Dezalay \& Garth}
+\label{sec:orgcdd8b30}
+\paragraph{La mondialisation des guerres de palais : la restructuration du pouvoir d’État en Amérique latine, entre notables du droit et « Chicago boys »}
+\label{sec:org028b3eb}
+\end{document}

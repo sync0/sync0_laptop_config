@@ -1,0 +1,120 @@
+% Created 2017-09-12 Tue 08:59
+% Intended LaTeX compiler: pdflatex
+\documentclass[paper=A4,portrait,twoside=true,twocolumn=false,headinclude=false,footinclude=false,fontsize=11,BCOR=3mm,DIV=9,pagesize=auto,titlepage=firstiscover,abstract=false,mpinclude=true,headings=normal,open=left]{scrreprt}
+\usepackage{fontspec}
+\usepackage{xunicode}
+\usepackage{url}
+\usepackage[svgnames]{xcolor}
+\usepackage{soul}
+\usepackage[xetex, colorlinks=true, urlcolor=FireBrick, plainpages=false, pdfpagelabels, bookmarksnumbered]{hyperref}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{polyglossia}
+\setmainlanguage{french}
+\usepackage[autostyle]{csquotes}
+\usepackage{xunicode}
+\usepackage{balance}
+\usepackage[french]{fmtcount}
+\usepackage[singlespacing]{setspace}
+\usepackage[super]{nth}
+\usepackage{xcolor}
+\usepackage{microtype}
+\usepackage{ragged2e}
+\usepackage{lipsum}
+\usepackage{hyperref}
+\hypersetup{colorlinks,urlcolor=blue,linkcolor=red,citecolor=red,filecolor=black}
+\usepackage{fontspec}
+\setmainfont[Numbers={Proportional},SmallCapsFeatures={LetterSpace=4}]{Minion Pro}
+\usepackage{scrlayer-scrpage}
+\pagestyle{scrheadings}
+\renewcommand*{\chapterpagestyle}{plain}
+\clearscrheadfoot
+\automark{chapter}
+\chead{\headmark}
+\ifoot*{\thepage}
+\AfterTOCHead{\singlespacing}
+\setkomafont{disposition}{\normalfont\normalcolor}
+\addtokomafont{subjetc}{\scshape\lowercase}
+\addtokomafont{author}{\scshape\lowercase}
+\renewcommand{\raggedchapter}{\centering}
+\addtokomafont{chapter}{\scshape\Huge\lowercase}
+\addtokomafont{section}{\scshape\large\lowercase}
+\addtokomafont{subsection}{\itshape\large}
+\newenvironment{summary}{\begin{addmargin}{3em}\itshape}{\end{addmargin}}
+\definecolor{bibleblue}{HTML}{00339a}
+\setcounter{secnumdepth}{\partnumdepth}
+\recalctypearea
+\date{\today}
+\title{}
+\hypersetup{
+ pdfauthor={},
+ pdftitle={},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 25.2.1 (Org mode 9.1)}, 
+ pdflang={Frenchb}}
+\begin{document}
+
+\subject{Université Paris I\\Panthéon Sorbonne} 
+\title{Histoire de la pensée économique} 
+\subtitle{Prise de notes} 
+\author{sync0} 
+\date{\today} 
+\publishers{Prof. John Eccentric Doe} 
+\maketitle
+\chapter{Leçon du 18 septembre}
+\label{sec:org37a30d7}
+\begin{addmargin}{3em}
+\textit{\lipsum[1]}
+\end{addmargin}
+\section{L'économie n'est pas une science}
+\label{sec:org93ce092}
+\subsection{Si on la deteste}
+\label{sec:org4bfe3a1}
+\lipsum[1]
+\section{L'économie n'est pas une science}
+\label{sec:orgfe0b7c9}
+\lipsum[1]
+\section{L'économie n'est pas une science}
+\label{sec:org12fc45d}
+\subsection{Quand on le reve}
+\label{sec:orge90c369}
+\lipsum[1]
+\section{L'économie n'est pas une science}
+\label{sec:org8f71388}
+\lipsum[1]
+\section{L'économie n'est pas une science}
+\label{sec:org240ee5b}
+\lipsum[1]
+\section{L'économie n'est pas une science}
+\label{sec:org84df8e1}
+\lipsum[1]
+\chapter{Leçon du 18 septembre}
+\label{sec:org33de46d}
+\begin{summary}
+\lipsum[1]
+\end{summary}
+\section{L'économie n'est pas une science}
+\label{sec:orgc3aef86}
+\subsection{Si on la deteste}
+\label{sec:org21ec46f}
+\lipsum[1]
+\section{L'économie n'est pas une science}
+\label{sec:orgbc88a18}
+\lipsum[1]
+\section{L'économie n'est pas une science}
+\label{sec:org2fd7141}
+\subsection{Quand on le reve}
+\label{sec:org64d4063}
+\lipsum[1]
+\section{L'économie n'est pas une science}
+\label{sec:org9e5abd6}
+\lipsum[1]
+\section{L'économie n'est pas une science}
+\label{sec:org09e8275}
+\lipsum[1]
+\section{L'économie n'est pas une science}
+\label{sec:org8170ec1}
+\lipsum[1]
+\end{document}

@@ -1,0 +1,188 @@
+% Created 2017-11-20 Mon 10:31
+% Intended LaTeX compiler: pdflatex
+\documentclass[paper=16cm:12cm,portrait,twoside=false,twocolumn=false,headinclude=false,footinclude=false,fontsize=13,BCOR=0mm,DIV=18,titlepage=firstiscover,pagesize=auto,abstract=false,mpinclude=false,headings=small]{scrartcl}
+\usepackage{fontspec}
+\usepackage{xunicode}
+\usepackage{url}
+\usepackage[svgnames]{xcolor}
+\usepackage{soul}
+\usepackage[xetex, colorlinks=true, urlcolor=FireBrick, plainpages=false, pdfpagelabels, bookmarksnumbered]{hyperref}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{polyglossia}
+\setmainlanguage{french}
+\setotherlanguages{german,english}
+\usepackage[french=guillemets]{csquotes}
+\usepackage{xunicode}
+\usepackage{balance}
+\usepackage[french]{fmtcount}
+\fmtcountsetoptions{french=france}
+\usepackage[singlespacing]{setspace}
+\usepackage[super]{nth}
+\usepackage{xcolor}
+\usepackage{microtype}
+\usepackage{ragged2e}
+\usepackage{lipsum}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\hypersetup{colorlinks,urlcolor=blue,linkcolor=blue,citecolor=red,filecolor=black}
+\usepackage{adforn}
+\usepackage{enumitem}
+\usepackage{fontspec}
+\setmainfont[Numbers={OldStyle},SmallCapsFeatures={LetterSpace=4,Ligatures={NoCommon, NoDiscretionary, NoHistoric, NoRequired, NoContextual}}]{Linux Libertine}
+\AfterTOCHead{\singlespacing}
+\setkomafont{disposition}{\normalfont\normalcolor}
+\addtokomafont{author}{\scshape\lowercase}
+\addtokomafont{partentry}{\scshape\lowercase}
+\addtokomafont{section}{\scshape\large\lowercase}
+\addtokomafont{subsection}{\sffamily\bfseries\itshape\normalsize}
+\addtokomafont{subsubsection}{\itshape\normalsize}
+\newenvironment{summary}{\begin{addmargin}{3em}\itshape}{\end{addmargin}}
+\newcommand{\annotation}[1]{\marginpar{\small\itshape #1}}
+\renewcommand*\labelitemi{\adforn{14}}
+\renewcommand*\labelitemii{\adforn{71}}
+\renewcommand*\labelitemiii{\adforn{2}}
+\renewcommand*\labelitemiv{\adforn{43}}
+\definecolor{bibleblue}{HTML}{00339a}
+\setcounter{secnumdepth}{\partnumdepth}
+\setcounter{tocdepth}{2}
+\recalctypearea
+\setlist[1]{itemsep=\parskip}
+\date{\today}
+\title{}
+\hypersetup{
+ pdfauthor={},
+ pdftitle={},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 25.3.1 (Org mode 9.1)}, 
+ pdflang={Frenchb}}
+\begin{document}
+
+\tableofcontents
+
+\subject{Sociologie des comportements sociaux} 
+\title{Max Weber}
+\subtitle{Économie et Société} 
+\author{Carlos Alberto Rivera Carreño} 
+\date{\today} 
+
+\maketitle
+\section{Qui est Max Weber?}
+\label{sec:orgc856a07}
+\begin{itemize}
+\item Sociologue et économiste allemand.
+\item Né à Erfurt en 1864, et mort en 1920 à Munich.
+\item Weber était un nationaliste allemand, et un liberal.
+\item Parmi les fondateurs du \textit{Partie democratique allemand} en 1918.
+\item Liberal? Une époque très conservatrice politiquement.
+\item Trois guerres  importante dans l'histoire allemande: 
+\begin{itemize}
+\item Guerre des Duchés: Danemark-Autriche-Prusse 1864.
+\item Guerre austro-prussienne de 1866.
+\item Guerre franco-prussienne de 1870.
+\end{itemize}
+\item L'unification de l'Allemagne, sous la forme d'un État-nation, en
+1871 dans le château de Versailles.
+\item Otto von Bismarck.
+\item D'un point de vue intellectuelle:
+\item Inspiré par l'école historique allemand, premier travaux en histoire économique.
+\item Conditions qui empechait le developpement du capitalisme dans
+la partie est de l'allemagne.
+\item Admirateur du capitalisme.
+\end{itemize}
+\section{Économie et Société}
+\label{sec:org05bc386}
+\begin{itemize}
+\item Titre original est \textit{Wirtschaft und Gesellschaft. Grundriß der verstehenden Soziologie}.
+\begin{itemize}
+\item Méthode d'étude: comprendre la signification que les individus
+donnent a leurs propres actions.
+\end{itemize}
+\item Livre publié inachevé et à titre posthume entre 1921 et 1922 par
+Marianne.
+\item Deux tomes:
+\begin{itemize}
+\item \textit{Les Catégories de la sociologie} (partie rédigée entre 1918 et 1920).
+\item \textit{L'organisation et les puissances de la société dans leur rapport avec l'économie} (partie rédigée entre 1911 et 1913).
+\end{itemize}
+\item Collection desorganisée des notes.
+\item D'une portée extrêmement large, le livre traite nombreux thèmes:
+\begin{itemize}
+\item la religion.
+\item l'économie.
+\item la politique.
+\item l'administration publique.
+\item la sociologie.
+\end{itemize}
+\end{itemize}
+\section{Les relations communautaires ethniques}
+\label{sec:org3a61979}
+\begin{itemize}
+\item Chapitre IV du tome deux.
+\item La question de fond: comment se forme une \textit{Gemeinschaft}.
+\item Pouquoi les individus s'identifie entre eux dans un groupe?
+\item Y a-t-il des formations sociales avec une origine naturelle?
+\item Dans ce partie, Weber explore la possibilité que la communauté
+ethnique et la nation fassent partie d'une liste de formation que
+l'on trouve dans differentes sociétés:
+\begin{itemize}
+\item Hausgemeinschaft.
+\item Nachbarschaftsgemeinschaft.
+\item Communauté ethnique?
+\item Nation?
+\item politische Gemeinschaft.
+\end{itemize}
+\item Weber réflechissait si les differences entre ces groupes avait une
+basse naturelle?
+\item Weber visite les États-Unis en 1904. 
+\begin{itemize}
+\item Situation des Germano-Américains: un groupe ethnique, et non pas
+une nation.
+\end{itemize}
+\item Y a-t-il une correspondance entre un sentiment d'appartenance et un
+groupe social?
+\end{itemize}
+\begin{quote}
+«Nous appellerons groupes ''ethniques'', quand ils ne représentent pas des groupes de ''parentage'', ces groupes humains qui nourissent une croyance sujective à une communauté d'origine fondée sur des similitudes de l'habitus extérieur ou des mœurs, ou des deux, ou sur des souvenirs de la colonisation ou de la migration, de sorte que cette croyance devient importante pour la propagation de la communalisation --- peu importe qu'une communauté de sang existe ou non objectivement.»
+\end{quote}
+\begin{quote}
+«La vie en commun ''ethnique'' se distingue de la ''communauté de parentage'' en ce que, précisément, elle n'est en soi qu'une vie ''en commmun'' (à laquelle on croit) et non une ''communaute'' comme le parentage, à l'essence duquel appartient une activité communauteaire réelle.»
+\end{quote}
+
+
+\section{Théorie de l'évolution}
+\label{sec:orgc31a837}
+\begin{itemize}
+\item Darwinisme social.
+\item Ludwik Gumplowicz, \textit{Der Rassenkampf}, 1883.
+\item Georges Vacher de Lapouge, \textit{Les Selections Sociales}, 1896
+\item James Bryce, \textit{The Relations of the Advanced and Backward Races of Mankind}, 1902.
+\end{itemize}
+\section{Examples}
+\label{sec:orgfc47d9e}
+\subsection{La situation raciale aux États-Unis}
+\label{sec:org8e2f97f}
+\begin{itemize}
+\item Weber visite les États-Unis en 1904.
+\item Subordination politque et non simplement de couleur de peu.
+\item États-Unis caraïbe.
+\item 
+
+\item Ralph Nader, Steve Jobs, d'origine syrienne.
+\item Traverser l'atlantique et voilà!
+\item «The Asiatic Black Man».
+\item Georgia.
+\end{itemize}
+\subsection{La creation de l'identité nationale en corée}
+\label{sec:org5313878}
+\begin{itemize}
+\item Periode de la colonisation Japonaise.
+\item 
+
+\item Les
+\end{itemize}
+\end{document}

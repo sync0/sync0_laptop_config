@@ -1,0 +1,236 @@
+* Universität 
+** Techniques quantitatives
+** Sociologie des comportements sociaux
+*** 不 Émile Durkheim
+*** 不 Norbert Élias
+*** 不 Marcel Mauss
+*** 不 Pierre Bourdieu
+*** 不 Agnes Van Zanteen
+*** 不 Max Weber
+** Épistemologie économique
+*** Milton Friedman
+**** Essays in Positive Economics
+** Sociologie économique
+*** 不 Max Weber
+** Questions économiques contemporaines
+*** 不 Karl Marx
+** Deutsch
+* Bücher
+** Empfehlungen
+*** Frédéric Lebaron
+*** Dezalay & Garth 
+**** La mondialisation des guerres de palais : la restructuration du pouvoir d’État en Amérique latine, entre notables du droit et « Chicago boys »
+** Neoliberalismus
+*** Serge Audier
+**** Le Colloque Lippmann [/]
+** 完 burgin, the great persuasion [8/8]
+- [X] Introduction: The End of Laissez-Faire
+- [X] Market Advocacy in a Time of Crisis
+- [X] Entrepreneurial Ideas
+- [X] Planning against Planning
+- [X] New Conservatism
+- [X] The Invention of Milton Friedman
+- [X] Moral Capital
+- [X] Conclusion: The Spirit of an Age
+** 取 Velleman, how to prove it [2/7]
+- [X] Ch. 1
+- [X] Ch. 2
+- [ ] Ch. 3
+- [ ] Ch. 4
+- [ ] Ch. 5 
+- [ ] Ch. 6
+- [ ] Ch. 7
+** 取 Stewart, calculus [2/7]
+- [X] Ch. 1
+- [X] Ch. 2
+- [ ] Ch. 3
+- [ ] Ch. 4
+- [ ] Ch. 5 
+- [ ] Ch. 6
+- [ ] Ch. 7
+** 取 Hacking, introduction to probability [/]
+** 取 Blitzstein, introduction to probability [2/7]
+- [X] Ch. 1
+- [X] Ch. 2
+- [ ] Ch. 3
+- [ ] Ch. 4
+- [ ] Ch. 5 
+- [ ] Ch. 6
+- [ ] Ch. 7
+** 取 Blaug, economic theory in retrospect
+** 取 Lawson, economics & reality 
+** 取 Spivak, calculus
+** 取 Differential forms
+** 取 Simmons, calculus with analytic geometry [0/21]
+:PROPERTIES:
+:ID:       1cb52b06-0cfc-46ed-af32-9a48dc57647e
+:END:
+- [ ] Ch. 1
+- [ ] Ch. 2
+- [ ] Ch. 3
+- [ ] Ch. 4
+- [ ] Ch. 5 
+- [ ] Ch. 6
+- [ ] Ch. 7
+- [ ] Ch. 8
+- [ ] Ch. 9
+- [ ] Ch. 10
+- [ ] Ch. 11 
+- [ ] Ch. 12
+- [ ] Ch. 13  
+- [ ] Ch. 14
+- [ ] Ch. 15
+- [ ] Ch. 16
+- [ ] Ch. 17 
+- [ ] Ch. 18 
+- [ ] Ch. 19 
+- [ ] Ch. 20 
+- [ ] Ch. 21 
+** 取 Hull, ICT's and the knowledge economy [/]
+:PROPERTIES:
+:ID:       126b43f8-31d6-46c6-a88c-fe49c9a00e89
+:END:
+** 取 Plehwe, Neoliberal Hegemony [/]
+:PROPERTIES:
+:ID:       a712c10a-9586-47d8-b952-a3ab79239f3e
+:END:
+** 取 Aglietta, La violence de la monnai
+:PROPERTIES:
+:ID:       933dc495-12ef-4531-82bb-f44bae14424a
+:END:
+** 取 MacKenzie et al., Do Economists Make Markets?
+:PROPERTIES:
+:ID:       9a4c540e-5cdf-4f64-b37b-0d51902aa016
+:END:
+** 取 Bilger, La pensée économique en Allemagne
+:PROPERTIES:
+:ID:       d0747950-1ece-4e3b-a177-46fc709dfc3b
+:END:
+** 取 Pirou, Neo-libéralisme
+:PROPERTIES:
+:ID:       c9e6f1d1-2c98-44b5-8fb3-66bd094cb38c
+:END:
+** Author, Title [0/21]                                          :noexport:
+- [ ] Ch. 1
+- [ ] Ch. 2
+- [ ] Ch. 3
+- [ ] Ch. 4
+- [ ] Ch. 5 
+- [ ] Ch. 6
+- [ ] Ch. 7
+- [ ] Ch. 8
+- [ ] Ch. 9
+- [ ] Ch. 10
+- [ ] Ch. 11 
+- [ ] Ch. 12
+- [ ] Ch. 13  
+- [ ] Ch. 14
+- [ ] Ch. 15
+- [ ] Ch. 16
+- [ ] Ch. 17 
+- [ ] Ch. 18 
+- [ ] Ch. 19 
+- [ ] Ch. 20 
+- [ ] Ch. 21
+* Emacs                                                           :noexport:
+** Elisp
+*** 取 Chassel, Intro to Elisp [/]
+- [ ] List Processing 
+- [ ] Practicing Evaluation 
+- [ ] How To Write Function Definitions 
+- [ ] A Few Buffer–Related Functions 
+- [ ] A Few More Complex Functions 
+- [ ] Narrowing and Widening 
+- [ ] car, cdr, cons: Fundamental Functions
+- [ ] Cutting and Storing Text 
+- [ ] How Lists are Implemented 
+- [ ] Yanking Text Back 
+- [ ] Loops and Recursion
+- [ ] Regular Expression Searches
+- [ ] Counting via Repetition and Regexps
+- [ ] Counting Words in a defun
+- [ ] Readying a Graph
+- [ ] Your .emacs File
+- [ ] Debugging
+- [ ] Conclusion
+* Einstellungen :noexport:ARCHIVE:
+** Einführung
+#+LANGUAGE: de
+#+OPTIONS: \n:nil ::t |:t ^:t f:t *:nil ':t pro:nil H:5 timestamp:nil toc:nil
+#+OPTIONS: LaTeX:t TeX:t d:nil pri:t p:t tags:nil inline:t todo:t
+#+LATEX_CLASS: scrartcl
+#+LATEX_CLASS_OPTIONS: [paper=A4,landscape,twoside=false,twocolumn=true,headinclude=false,footinclude=false,fontsize=10,BCOR=0mm,DIV=15,pagesize=auto,titlepage=false,abstract=false,mpinclude=false,headings=normal]
+#+LATEX_CMD: xelatex
+#+TAGS: vocabulary(v) noexport export
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+STARTUP: indent hidestars overview logdrawer
+** Paketverladung
+#+LATEX_HEADER: \usepackage{polyglossia} 
+#+LATEX_HEADER: \setmainlanguage{french} 
+#+LATEX_HEADER: \setotherlanguages{german,english} 
+#+LATEX_HEADER: \usepackage{xeCJK}
+#+LATEX_HEADER: \setCJKmainfont{Baekmuk Batang}
+#+LATEX_HEADER: \usepackage[french=guillemets]{csquotes}
+#+LATEX_HEADER: \usepackage{xunicode}
+#+LATEX_HEADER: \usepackage{balance}
+#+LATEX_HEADER: \usepackage[french]{fmtcount} 
+#+LATEX_HEADER: \fmtcountsetoptions{french=france}
+#+LATEX_HEADER: \usepackage[singlespacing]{setspace}
+#+LATEX_HEADER: \usepackage[super]{nth}
+#+LATEX_HEADER: \usepackage{xcolor}
+#+LATEX_HEADER: \usepackage{microtype}
+#+LATEX_HEADER: \usepackage{minted}
+#+LATEX_HEADER: \microtypecontext{kerning=french}
+#+LATEX_HEADER: \usepackage{ragged2e}
+#+LATEX_HEADER: \usepackage{lipsum}
+#+LATEX_HEADER: \usepackage{amsmath}
+#+LATEX_HEADER: \usepackage{amsthm}
+#+LATEX_HEADER: \usepackage{amssymb}
+#+LATEX_HEADER: \usepackage{hyperref}
+#+LATEX_HEADER: \hypersetup{colorlinks,urlcolor=blue,linkcolor=bibleblue,citecolor=red,filecolor=black}
+#+LATEX_HEADER: \usepackage{enumitem}
+#+LATEX_HEADER: \usepackage{adforn}
+** Schriftart
+#+LATEX_HEADER: \usepackage{fontspec}
+#+LATEX_HEADER:\setmainfont[Numbers={OldStyle},SmallCapsFeatures={LetterSpace=4,Ligatures={NoCommon, NoDiscretionary, NoHistoric, NoRequired, NoContextual}}]{Linux Libertine}
+** Seitenstil
+##+LATEX_HEADER:\renewcommand*{\chapterpagestyle}{plain}
+##+LATEX_HEADER:\renewcommand*{\partpagestyle}{empty}
+##+LATEX_HEADER:\usepackage{scrlayer-scrpage}
+##+LATEX_HEADER:\pagestyle{scrheadings}
+##+LATEX_HEADER:\clearscrheadfoot
+##+LATEX_HEADER:\automark[chapter]{part}
+##+LATEX_HEADER:\cehead{\headmark} 
+##+LATEX_HEADER:\cohead{\headmark} 
+##+LATEX_HEADER:\ifoot*{\thepage} 
+** Absätze
+#+LATEX_HEADER: \setkomafont{disposition}{\normalfont\normalcolor}
+*** Titelblatt
+##+LATEX_HEADER: \addtokomafont{author}{\scshape\lowercase}
+##+LATEX_HEADER: \addtokomafont{dedication}{\itshape}
+*** Part
+##+LATEX_HEADER: \renewcommand*{\partformat}{\adforn{21}~\thepart~\adforn{49}}
+##+LATEX_HEADER: \addtokomafont{part}{\scshape\Huge\lowercase}
+*** Section
+#+LATEX_HEADER: \addtokomafont{section}{\scshape\LARGE\lowercase}
+*** Subsection
+##+LATEX_HEADER: \addtokomafont{subsection}{\sffamily\bfseries\normalsize}
+#+LATEX_HEADER: \addtokomafont{subsection}{\scshape\large\lowercase}
+*** Subsubsection
+#+LATEX_HEADER: \addtokomafont{subsubsection}{\itshape\large}
+*** Code blocks
+#+LATEX_HEADER:\usemintedstyle{borland}
+** User-defined elements
+#+LATEX_HEADER:\renewcommand*\labelitemi{\adforn{14}}
+#+LATEX_HEADER:\renewcommand*\labelitemii{\adforn{71}}
+#+LATEX_HEADER:\renewcommand*\labelitemiii{\adforn{2}}
+#+LATEX_HEADER:\renewcommand*\labelitemiv{\adforn{43}}
+** Andere
+#+LATEX_HEADER: \definecolor{bibleblue}{HTML}{00339a}
+#+LATEX_HEADER: \setcounter{secnumdepth}{\partnumdepth}
+#+LATEX_HEADER: \recalctypearea
+#+LATEX_HEADER: \setlist[1]{itemsep=\parskip}
+##+LATEX_HEADER: \setlength{\marginparwidth}{3\marginparwidth}
+
+

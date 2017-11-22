@@ -1,0 +1,5 @@
+
+Data <- read.table("/Users/XIBALBA/Dropbox/korea_university/2015_2/regres
+sion_analysis/project/datasets/movie_master.txt",
+                                                header = TRUE,
+                                                )

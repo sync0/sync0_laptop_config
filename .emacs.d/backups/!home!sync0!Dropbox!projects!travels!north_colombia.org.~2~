@@ -1,0 +1,102 @@
+\vspace{-2cm}
+\begin{multicols}{2}
+* itinerary 
+** july 19 - wednesday
+*** Flight to Santa Marta
+** july 20 - thursday (día de la independencia)
+*** Trip to Palomino
+**** Bus 
+SCHEDULED: <2017-07-20 Thu 09:00>
+Calle 11, Carrera 11
+2 hours 
+COP 8,000 PP
+*** Hotel Palomino
+**** Dreamer Hostel
+*** Dinner at Finca Escondida
+** july 21 - friday
+*** Trip to Uribia
+**** Bus to Riohacha
+SCHEDULED: <2017-07-21 Fri 06:30>
+Drop off at Cuatro Vias
+2 hours
+COP 10,000 PP
+**** Car to Uribia
+30 mins
+COP 8,000 PP 
+*** Shopping in Uribia
+** july 22 - saturday
+** july 23 - Sunday
+** july 24 - monday
+** july 25 - tuesday
+** july 26 - wednesday 
+** july 27 - thursday 
+** july 28 - friday 
+** july 29 - saturday 
+** july 30 - Sunday 
+** july 31 - monday
+** july 31 - monday
+\end{multicols}
+* Einstellungen                                           :noexport:ARCHIVE:
+** Einführung
+#+TITLE: North Colombia Trip
+#+DATE: \today 
+#+LANGUAGE: en
+#+OPTIONS: num:nil toc:nil \n:nil @:t ::t |:t ^:t f:t *:t timestamp:nil ':t email:nil author:nil
+#+OPTIONS: TeX:t LaTeX:t d:nil pri:nil tags:not-in-toc
+#+LATEX_CLASS: article
+#+LATEX_CLASS_OPTIONS: [11pt]
+#+LATEX_CMD: xelatex
+#+TAGS: vocabulary(v) noexport
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+STARTUP: indent hidestars content
+** Paketverladung
+#+LATEX_HEADER: \usepackage[a4paper, left=1cm, right=1cm, top=1cm, bottom=2.5cm]{geometry}
+#+LATEX_HEADER: \usepackage[english]{babel} 
+#+LATEX_HEADER: \usepackage{csquotes}
+#+LATEX_HEADER: \usepackage{xunicode}
+#+LATEX_HEADER: \usepackage{balance}
+#+LATEX_HEADER: \usepackage[english]{fmtcount} 
+#+LATEX_HEADER: \usepackage[onehalfspacing]{setspace}
+#+LATEX_HEADER: \usepackage[super]{nth}
+#+LATEX_HEADER: \usepackage{xcolor}
+#+LATEX_HEADER: \usepackage{microtype}
+#+LATEX_HEADER: \usepackage{ragged2e}
+#+LATEX_HEADER: \usepackage{amssymb}
+** Schriftart
+#+LATEX_HEADER: \usepackage{fontspec}
+#+LATEX_HEADER: \setmainfont{Linux Libertine}[SmallCapsFont={Linux Libertine Capitals}, SmallCapsFeatures={Letters=SmallCaps, LetterSpace=8.0}, Scale=1.2]
+#+LATEX_HEADER: \defaultfontfeatures[Linux Libertine]{Ligatures=TeX}
+#+LATEX_HEADER: \usepackage[all]{nowidow}
+** Absätze
+#+LATEX_HEADER: \usepackage{titlesec}
+#+LATEX_HEADER: \usepackage[extramarks]{titleps}
+*** Section 
+#+LATEX_HEADER: \newfontfamily\sectionheadfont{Linux Libertine Capitals}[Color=red, WordSpace=3, SmallCapsFeatures={LetterSpace=6.0}]
+#+LATEX_HEADER: \newcommand{\sectionheadstyle}{\setstretch{0.8}\flushleft\sectionheadfont\LARGE\textsc}
+#+LATEX_HEADER: \titleformat{\section}[display]{\vspace{1em}}{}{0pt}{\sectionheadstyle}[\vspace{0ex}\titlerule] 
+#+LATEX_HEADER: \titlespacing{\section}{0pt}{*1}{*2} 
+*** Subsection
+#+LATEX_HEADER: \newfontfamily\subsectionheadfont{Linux Libertine Capitals}[WordSpace=2, SmallCapsFeatures={LetterSpace=6.0}]
+#+LATEX_HEADER: \newcommand{\subsectionheadstyle}{\flushleft\subsectionheadfont\Large\textsc}
+#+LATEX_HEADER: \titleformat{\subsection}[block]{\vspace{-3ex}}{}{0pt}{\setstretch{0.8}\subsectionheadstyle}[\vspace{-1ex}] 
+#+LATEX_HEADER: \titlespacing{\subsection}{0pt}{*1}{*2} 
+*** Subsubsection
+#+LATEX_HEADER: \newfontfamily\subsubsectionheadfont{Linux Libertine}[Color=00339a, SmallCapsFeatures={LetterSpace=6.0}]
+#+LATEX_HEADER: \newcommand{\subsubsectionheadstyle}{\setstretch{0.5}\flushright\subsubsectionheadfont\large\textit}
+#+LATEX_HEADER: \titleformat{\subsubsection}[display]{}{}{0pt}{\subsubsectionheadstyle}[\vspace{-1ex}] 
+#+LATEX_HEADER: \titlespacing{\subsubsection}{0pt}{*1}{*1.5} 
+** Koreanish 
+#+LATEX_HEADER: \newfontfamily\koreanfont{Baekmuk Batang}
+#+LATEX_HEADER: \newfontfamily\koreansubsubsection{Baekmuk Batang}[Color=00339a]
+#+LATEX_HEADER: \newcommand\koreantext[1]{{\koreanfont #1}}
+#+LATEX_HEADER: \newcommand\koreanemp[1]{{\normalsize\koreansubsubsection #1}}
+** Multicol
+#+LATEX_HEADER: \usepackage{multicol}
+#+LATEX_HEADER: \setlength{\columnsep}{1.5cm}
+#+LATEX_HEADER: \raggedleft
+#+LATEX_HEADER: \definecolor{bibleblue}{HTML}{00339a}
+** Flyspell - LocalWords
+#  LocalWords:  Carreño et al Asymptotes Extrema Hôpital McLaurin
+#  LocalWords:  Cournot Solow Scholes Multinomial
+

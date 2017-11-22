@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: latex_xcolor
+# key: color
+# --
+\textcolor{${1:red}}{${2:write_here}}$0

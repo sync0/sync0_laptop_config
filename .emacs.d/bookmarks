@@ -1,0 +1,30 @@
+;;;; Emacs Bookmark Format Version 1 ;;;;
+;;; This format is meant to be slightly human-readable;
+;;; nevertheless, you probably don't want to edit it.
+;;; -*- End Of Bookmark File Format Version Stamp -*-
+(("evil"
+ (filename . "~/.emacs.d/emacs_settings.org")
+ (front-context-string . "\n*** initializin")
+ (rear-context-string . "RC\n** EVIL mode ")
+ (position . 9195))
+("org-ref"
+ (filename . "~/.emacs.d/emacs_settings.org")
+ (front-context-string . "\n#+BEGIN_SRC ema")
+ (rear-context-string . "RC \n*** Org-ref ")
+ (position . 36679))
+("french_key_setup"
+ (filename . "~/.emacs.d/emacs_settings.org")
+ (front-context-string . "\n\n  ;; french-po")
+ (rear-context-string . "\")))\n\n;; French ")
+ (position . 10435))
+("german_key_setup"
+ (filename . "~/.emacs.d/emacs_settings.org")
+ (front-context-string . "\n\n  ;; german-po")
+ (rear-context-string . "\")))\n\n;; German ")
+ (position . 10727))
+("here"
+ (filename . "~/Dropbox/projects/paris_1/M1_1/max_notes.org")
+ (front-context-string . "\n**** Quelle int")
+ (rear-context-string . "nciennété donée.")
+ (position . 11836))
+)

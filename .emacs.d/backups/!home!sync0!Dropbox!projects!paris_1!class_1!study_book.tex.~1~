@@ -1,0 +1,70 @@
+% Created 2017-09-16 Sat 02:00
+% Intended LaTeX compiler: pdflatex
+\documentclass[paper=A4,portrait,twoside=true,twocolumn=false,headinclude=false,footinclude=false,fontsize=11,BCOR=3mm,DIV=9,pagesize=auto,titlepage=firstiscover,mpinclude=true,headings=normal,open=left]{scrbook}
+\usepackage{fontspec}
+\usepackage{xunicode}
+\usepackage{url}
+\usepackage[svgnames]{xcolor}
+\usepackage{soul}
+\usepackage[xetex, colorlinks=true, urlcolor=FireBrick, plainpages=false, pdfpagelabels, bookmarksnumbered]{hyperref}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{polyglossia}
+\setmainlanguage{french}
+\usepackage[autostyle]{csquotes}
+\usepackage{xunicode}
+\usepackage{balance}
+\usepackage[french]{fmtcount}
+\usepackage[singlespacing]{setspace}
+\usepackage[super]{nth}
+\usepackage{xcolor}
+\usepackage{microtype}
+\usepackage{ragged2e}
+\usepackage{lipsum}
+\usepackage{hyperref}
+\hypersetup{colorlinks,urlcolor=blue,linkcolor=red,citecolor=red,filecolor=black}
+\usepackage{fontspec}
+\setmainfont[Numbers={Proportional},SmallCapsFeatures={LetterSpace=4}]{Minion Pro}
+\AfterTOCHead{\singlespacing}
+\setkomafont{disposition}{\normalfont\normalcolor}
+\addtokomafont{author}{\scshape\lowercase}
+\renewcommand{\raggedchapter}{\centering}
+\addtokomafont{chapter}{\scshape\Huge\lowercase}
+\addtokomafont{section}{\scshape\large\lowercase}
+\addtokomafont{subsection}{\itshape\large}
+\newenvironment{summary}{\begin{addmargin}{3em}\itshape}{\end{addmargin}}
+\definecolor{bibleblue}{HTML}{00339a}
+\setcounter{secnumdepth}{\partnumdepth}
+\recalctypearea
+\date{\today}
+\title{}
+\hypersetup{
+ pdfauthor={},
+ pdftitle={},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 25.2.1 (Org mode 9.1)}, 
+ pdflang={Frenchb}}
+\begin{document}
+
+\subject{Université Paris I\\Panthéon Sorbonne} 
+\title{Histoire de la pensée économique} 
+\subtitle{Prise de notes} 
+\author{sync0} 
+\date{\today} 
+\publishers{Prof. John Eccentric Doe} 
+\maketitle
+\part{Techniques quantitatives}
+\label{sec:org1e6a842}
+\part{Allemand}
+\label{sec:orga7da774}
+\part{Sociologie des domportements sociaux}
+\label{sec:orge744f18}
+\part{Philosophie et épistemologie économique}
+\label{sec:orga3ac16e}
+\part{Questions économiques contemporaines}
+\label{sec:orgbe7750a}
+\part{Italien}
+\label{sec:orgdc380b6}
+\end{document}

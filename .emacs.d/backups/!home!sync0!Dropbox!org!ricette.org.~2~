@@ -1,0 +1,182 @@
+# \subject{Ricette} 
+\title{Ricette} 
+# \subtitle{I} 
+\author{sync0} 
+\date{\today} 
+# \dedication{Die Philosophen haben die Welt nur verschieden interpretiert; \\ es kömmt drauf an, sie zu verändern.} 
+\maketitle
+* Italiana
+** Salse
+*** Besciamella
+**** Ingredienti
+\begin{ingredienti} 
+100 g di burro\\ 
+100 g di farina\\ 
+1 l di latte fresco\\
+un nonnulla di noce moscata\\
+sale e pepe di mulinello\\
+parmigiano reggiano grattugiato al momento
+\end{ingredienti}
+**** Preparazione
+Fondete il burro, unitevi la farina mescolando, lasciate tostare per
+qualche minuto e versatevi il latte (se freddo, tutto in una volta;
+se caldo, poco per volta).
+
+Proseguite la cottura mescolando, fino ad ottenere una crema
+vellutata, che rassodate con il parmigiano reggiano e profumate con
+raspatura di noce moscata, dopo aver regolato di sale e pepe.
+** Paste
+*** Penne all'arrabbiata
+**** Ingredienti 
+Per sei persone.
+\begin{ingredienti} 
+500 g di penne\\
+350 g di pomodori maturi (privati della pelle, dei semi e dell'acqua di vegetazione)\\
+2 peperoncini rossi piccanti\\
+2 spicchi di aglio\\
+6 foglie di basilico\\
+sale
+\end{ingredienti}
+**** Preparazione
+Dopo aver nettato i pomodori, tagliate la polpa a listarelle e
+mettela a soffreiggere in una padella grande, insieme all'olio,
+all'aglio, al basilico e ai peperoncini.
+
+Nel frattempo, lessate in abbondante acqua salata le penne; scolatele
+cotte al dente, passatele in padella e saltatele con il condimento
+per pochi minuti; servitele calde e fumati. 
+**** Vino consigliato
+Vignanello Greco
+*** Penne alla caprese
+**** Ingredienti
+\begin{ingredienti} 
+500 g di penne\\
+500 g di pomodori pelati\\
+250 g di mozzarella tritata grossolanamente\\
+1 dl di olio di oliva\\
+uno spicchio di aglio tritato\\
+origano, a piacera\\
+sale e pepe di mulinello\\
+burro, per ungere la teglia\\
+parmigiano reggiano, grattugiato
+\end{ingredienti}
+**** Preparazione
+Dopo aver lessato le penne in abbondante acqua salata, scolatele cotte
+al dente.
+
+In una padella, soffriggete nell'olio il trito di algio, unite la
+polpa dei pomodori, regolate di sale e pepe, profumate con l'origano
+e lasciate sobbollire e insaporire. 
+
+Nel frattempo, imburrate la teglia, calate la pasta, ricopritela con
+la mozzarella, poi la salsa di pomodoro, per ultimo il formaggio;
+passate in forno (caldo a 180$^\circ$) e lasciate rosalare per 10
+minuti circa, quindi servite.
+**** Vino consigliato
+Fiano di Avellino
+
+*** Penne alla fiesolana
+**** Ingredienti
+\begin{ingredienti} 
+500 g di penne\\
+80 g di prosciutto crudo tagliato a dadini\\
+2 cucchiai di farina tipo 00\\
+20 g di burro\\
+un quarto di litro di latte\\
+60 g di parmigiano reggiano grattugiato\\
+un cucchiaio di prezzemolo tritato\\
+olio extra vergine di oliva\\
+sale e pepe di mulinello
+\end{ingredienti}
+**** Preparazione
+Innanzitutto preparate la besciamella liquida, con burro, farina,
+latte, sale e pepe, incorporando con cura tutti gli ingredienti, poi
+aggiungete il parmigiano reggiano grattugiato
+
+* Einstellungen :noexport:ARCHIVE:
+** Einführung
+#+LANGUAGE: it
+#+OPTIONS: toc:t \n:nil ::t |:t ^:t f:t *:t ':t pro:nil H:4 timestamp:nil
+#+OPTIONS: LaTeX:t TeX:t d:nil pri:t p:t tags:nil inline:t todo:nil
+#+LATEX_CLASS: scrbook
+#+LATEX_CLASS_OPTIONS: [paper=A4,portrait,twoside=true,twocolumn=true,headinclude=false,footinclude=false,fontsize=11,BCOR=10mm,DIV=14,pagesize=auto,titlepage=firstiscover,abstract=false,mpinclude=false,headings=big,open=any,toc=flat,partpreface=false]
+#+LATEX_CMD: xelatex
+#+TAGS: vocabulary(v) noexport export
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+STARTUP: indent hidestars overview logdrawer
+** Paketverladung
+#+LATEX_HEADER: \usepackage{polyglossia} 
+#+LATEX_HEADER: \setmainlanguage{italian} 
+#+LATEX_HEADER: \setotherlanguages{german,french,english} 
+#+LATEX_HEADER: \usepackage[french=guillemets]{csquotes}
+#+LATEX_HEADER: \usepackage{xunicode}
+#+LATEX_HEADER: \usepackage{balance}
+#+LATEX_HEADER: \usepackage[italian]{fmtcount} 
+##+LATEX_HEADER: \fmtcountsetoptions{french=france}
+#+LATEX_HEADER: \usepackage[singlespacing]{setspace}
+#+LATEX_HEADER: \usepackage[super]{nth}
+#+LATEX_HEADER: \usepackage{xcolor}
+#+LATEX_HEADER: \usepackage{microtype}
+#+LATEX_HEADER: \usepackage{ragged2e}
+#+LATEX_HEADER: \usepackage{lipsum}
+#+LATEX_HEADER: \usepackage{amsmath}
+#+LATEX_HEADER: \usepackage{amsthm}
+#+LATEX_HEADER: \usepackage{amssymb}
+#+LATEX_HEADER: \usepackage{hyperref}
+#+LATEX_HEADER: \hypersetup{colorlinks,urlcolor=blue,linkcolor=bibleblue,citecolor=red,filecolor=black}
+#+LATEX_HEADER: \usepackage{adforn}
+** Schriftart
+#+LATEX_HEADER: \usepackage{fontspec}
+#+LATEX_HEADER:\setmainfont[Numbers={Proportional},SmallCapsFeatures={LetterSpace=4}]{Minion Pro}
+##+LATEX_HEADER:\setmathsfont(Digits,Latin,Greek)[Numbers={Lining,Proportional}]{Minion Pro}
+** Seitenstil
+##+LATEX_HEADER:\renewcommand*{\chapterpagestyle}{plain}
+##+LATEX_HEADER:\renewcommand*{\partpagestyle}{empty}
+##+LATEX_HEADER:\usepackage{scrlayer-scrpage}
+##+LATEX_HEADER:\pagestyle{scrheadings}
+##+LATEX_HEADER:\clearscrheadfoot
+##+LATEX_HEADER:\automark[chapter]{part}
+##+LATEX_HEADER:\cehead{\headmark} 
+##+LATEX_HEADER:\cohead{\headmark} 
+##+LATEX_HEADER:\ifoot*{\thepage} 
+** Absätze
+#+LATEX_HEADER: \AfterTOCHead{\singlespacing}
+#+LATEX_HEADER: \setkomafont{disposition}{\normalfont\normalcolor}
+*** Titelblatt
+#+LATEX_HEADER: \addtokomafont{subject}{\scshape\lowercase}
+#+LATEX_HEADER: \addtokomafont{author}{\scshape\lowercase}
+##+LATEX_HEADER: \addtokomafont{dedication}{\itshape}
+*** Table of Contents
+#+LATEX_HEADER: \addtokomafont{partentry}{\scshape\lowercase}
+#+LATEX_HEADER: \addtokomafont{chapterentry}{\bfseries}
+##+LATEX_HEADER: \addtokomafont{sectionentry}{\itshape}
+*** Part
+#+LATEX_HEADER: \renewcommand*{\partformat}{\adforn{21}~\thepart~\adforn{49}}
+#+LATEX_HEADER: \addtokomafont{part}{\scshape\Huge\lowercase}
+*** Chapter 
+##+LATEX_HEADER: \renewcommand*{\chapterformat}{\adforn{21}~\thechapter~\adforn{49}}
+#+LATEX_HEADER:\renewcommand{\raggedchapter}{\centering}
+#+LATEX_HEADER: \addtokomafont{chapter}{\scshape\Huge\lowercase}
+*** Section
+#+LATEX_HEADER: \addtokomafont{section}{\scshape\LARGE\lowercase}
+*** Subsection
+#+LATEX_HEADER: \addtokomafont{subsection}{\scshape\Large\lowercase}
+*** Subsubsection
+##+LATEX_HEADER: \addtokomafont{subsubsection}{\itshape\large}
+** User-defined elements
+#+LATEX_HEADER:\newenvironment{summary}{\begin{addmargin}{3em}\itshape}{\end{addmargin}} 
+#+LATEX_HEADER:\newenvironment{ingredienti}{\begin{flushleft}\itshape}{\end{flushleft}} 
+#+LATEX_HEADER:\newcommand{\annotation}[1]{\marginpar{\small\itshape #1}}
+*** Dictum
+#+LATEX_HEADER: \renewcommand*{\dictumwidth}{.8\textwidth}
+#+LATEX_HEADER: \renewcommand*{\raggeddictum}{\centering}
+#+LATEX_HEADER: \renewcommand*{\raggeddictumtext}{\centering}
+#+LATEX_HEADER: \addtokomafont{dictum}{\large\rmfamily}
+
+** Andere
+#+LATEX_HEADER: \definecolor{bibleblue}{HTML}{00339a}
+#+LATEX_HEADER: \setcounter{secnumdepth}{\partnumdepth}
+#+LATEX_HEADER: \setcounter{tocdepth}{1}
+#+LATEX_HEADER: \recalctypearea
+##+LATEX_HEADER: \setlength{\marginparwidth}{3\marginparwidth}

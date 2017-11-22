@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: ricetta
+# key: ricetta
+# --
+*** ${1:Ricetta}
+**** Ingredienti
+\begin{ingredienti} 
+$0 \\
+\end{ingredienti}
+**** Preparazione

@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: bold function 
+# key: bd
+# --
+*${1:bold_text}* $0 

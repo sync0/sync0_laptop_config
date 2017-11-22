@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: nth
+# key: th
+# --
+\nth{$1}$0

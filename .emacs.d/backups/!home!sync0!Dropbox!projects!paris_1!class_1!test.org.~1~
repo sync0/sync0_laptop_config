@@ -1,0 +1,52 @@
+* asdfda
+** asdfadsf
+** asdfadf
+** asdfadf
+adsfadsf 
+
+* Einstellungen :noexport:ARCHIVE:
+** Einführung
+#+TITLE: \huge Aufgabenliste
+#+SUBTITLE: 
+#+DATE: \today 
+#+LANGUAGE: fr
+#+OPTIONS: num:nil toc:t \n:nil @:t ::t |:t ^:t f:t *:t ':t email:nil author:nil pro:nil date:nil
+#+OPTIONS: LaTeX:t TeX:t d:nil pri:t p:t tags:nil inline:t todo:nil
+#+LATEX_CLASS: scrartcl
+#+LATEX_CLASS_OPTIONS: [10pt]
+#+LATEX_CMD: xelatex
+#+TAGS: vocabulary(v) noexport export
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+STARTUP: indent hidestars content logdrawer
+** Paketverladung
+#+LATEX_HEADER: \usepackage[francais]{babel} 
+#+LATEX_HEADER: \usepackage[autostyle]{csquotes}
+#+LATEX_HEADER: \usepackage{xunicode}
+#+LATEX_HEADER: \usepackage{balance}
+#+LATEX_HEADER: \usepackage[francais]{fmtcount} 
+#+LATEX_HEADER: \usepackage[singlespacing]{setspace}
+#+LATEX_HEADER: \usepackage[super]{nth}
+#+LATEX_HEADER: \usepackage{xcolor}
+#+LATEX_HEADER: \usepackage{microtype}
+#+LATEX_HEADER: \usepackage{ragged2e}
+#+LATEX_HEADER: \usepackage{amssymb}
+#+LATEX_HEADER: \usepackage{hyperref}
+#+LATEX_HEADER: \hypersetup{colorlinks,urlcolor=blue,linkcolor=red,citecolor=red,filecolor=black}
+** Schriftart
+#+LATEX_HEADER: \usepackage{fontspec}
+#+LATEX_HEADER: \setmainfont{Linux Libertine}[SmallCapsFont={Linux Libertine Capitals}, SmallCapsFeatures={Letters=SmallCaps, LetterSpace=8.0}, Scale=1.2]
+#+LATEX_HEADER: \defaultfontfeatures[Linux Libertine]{Ligatures=TeX}
+** Absätze
+*** Section 
+#+LATEX_HEADER: \newfontfamily\sectionheadfont{Linux Libertine Capitals}[Color=red, WordSpace=3, SmallCapsFeatures={LetterSpace=6.0}]
+#+LATEX_HEADER: \newcommand{\sectionheadstyle}{\setstretch{0.8}\flushleft\sectionheadfont\LARGE\textsc}
+*** Subsection
+#+LATEX_HEADER: \newfontfamily\subsectionheadfont{Linux Libertine Capitals}[WordSpace=2, SmallCapsFeatures={LetterSpace=6.0}]
+#+LATEX_HEADER: \newcommand{\subsectionheadstyle}{\setstretch{0.8}\subsectionheadfont\Large\textsc}
+*** Subsubsection
+#+LATEX_HEADER: \newfontfamily\subsubsectionheadfont{Linux Libertine}[Color=00339a, SmallCapsFeatures={LetterSpace=6.0}]
+#+LATEX_HEADER: \newcommand{\subsubsectionheadstyle}{\setstretch{0.5}\subsubsectionheadfont\large\textit}
+** Andere
+#+LATEX_HEADER: \definecolor{bibleblue}{HTML}{00339a}
+#+LATEX_HEADER: \setlength\parindent{0pt}

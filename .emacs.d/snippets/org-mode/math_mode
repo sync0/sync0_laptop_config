@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: math_text
+# key: math
+# --
+\$${1:}\$$0

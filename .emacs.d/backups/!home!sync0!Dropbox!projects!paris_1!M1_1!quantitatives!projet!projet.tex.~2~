@@ -1,0 +1,168 @@
+% Created 2017-11-01 Wed 17:28
+% Intended LaTeX compiler: pdflatex
+\documentclass[paper=A4,portrait,twoside=false,twocolumn=false,headinclude=false,footinclude=false,fontsize=11,BCOR=10mm,DIV=9,pagesize=auto,titlepage=firstiscover,abstract=false,mpinclude=true,headings=big]{scrartcl}
+\usepackage{fontspec}
+\usepackage{xunicode}
+\usepackage{url}
+\usepackage[svgnames]{xcolor}
+\usepackage{soul}
+\usepackage[xetex, colorlinks=true, urlcolor=FireBrick, plainpages=false, pdfpagelabels, bookmarksnumbered]{hyperref}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{polyglossia}
+\setmainlanguage{french}
+\setotherlanguages{english}
+\usepackage[french=guillemets]{csquotes}
+\usepackage{xunicode}
+\usepackage{balance}
+\usepackage[french]{fmtcount}
+\fmtcountsetoptions{french=france}
+\usepackage[singlespacing]{setspace}
+\usepackage[super]{nth}
+\usepackage{xcolor}
+\usepackage{microtype}
+\usepackage{ragged2e}
+\usepackage{lipsum}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\hypersetup{colorlinks,urlcolor=blue,linkcolor=red,citecolor=red,filecolor=black}
+\usepackage{adforn}
+\usepackage{fontspec}
+\setmainfont[Numbers={Proportional},SmallCapsFeatures={LetterSpace=4}]{Minion Pro}
+\AfterTOCHead{\singlespacing}
+\setkomafont{disposition}{\normalfont\normalcolor}
+\addtokomafont{section}{\scshape\LARGE\lowercase}
+\addtokomafont{subsection}{\sffamily\bfseries\normalsize}
+\addtokomafont{subsubsection}{\itshape\large}
+\newenvironment{summary}{\begin{addmargin}{3em}\itshape}{\end{addmargin}}
+\newcommand{\annotation}[1]{\marginpar{\small\itshape #1}}
+\definecolor{bibleblue}{HTML}{00339a}
+\setcounter{secnumdepth}{\partnumdepth}
+\recalctypearea
+\date{\today}
+\title{}
+\hypersetup{
+ pdfauthor={},
+ pdftitle={},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 25.3.1 (Org mode 9.1)}, 
+ pdflang={Frenchb}}
+\begin{document}
+
+\subject{Techniques Quantitatives} 
+\title{Titre du report} 
+\subtitle{Sous-titre du report} 
+\author{Bassitan Toure \\ Jorge Fernandez \\ Carlos Rivera} 
+\date{\today} 
+\publishers{Prof. Corine Perraudin} 
+
+\maketitle
+\section{Objet de l'étude}
+\label{sec:org2fa7bca}
+\subsection{Présenter le sujet}
+\label{sec:org5e440cb}
+Quels sont les facteurs déterminants du type de contrat.
+\subsubsection{Quelle est la problematique precise?}
+\label{sec:orgf0215a3}
+On est interesse aux facteurs determinants du type de contrat pour la
+population active francaise. On veut savoir si la magnitude de
+QPRC (ou DIPII) est differente pour ceux qui ont la nationalité française
+et ceux qui ne l'ont pas.
+
+Quel est l'effet de l'âge dans la determination du type de contrat
+selon qu'on soit de nationalité française ou pas. 
+
+\subsection{Les variables choisies}
+\label{sec:org439d5f1}
+Pour repondre notre question on utilise la variable expliquée:
+\begin{itemize}
+\item \textsc{cont}: Une varible construite à partir de la variable
+\textsc{statutr} et la regroupant en deux catégories (?1 et ?2).
+\begin{itemize}
+\item ?1: \textsc{cdi} et apprentissage.
+\item ?2: \textsc{cdd} et intérimaire.
+\end{itemize}
+\end{itemize}
+Et, on garde les varibles explicatives:
+\begin{itemize}
+\item \textsc{sexe}: On reprends la variable telle qu'elle apparaît dans
+l'enquête emploi. Elle prends deux valeurs:
+\begin{itemize}
+\item 1: Masculin.
+\item 2: Féminin.
+\end{itemize}
+\item \textsc{age3}: Âge au dernier jour de la semaine de référence
+(repris telle qu'elle apparaît dans l'enquête emploi). Elle prends
+trois valeurs:
+\begin{itemize}
+\item 15: De 15 à 29 ans.
+\item 30: De 30 à 49 ans.
+\item 50: 50 ans et plus.
+\end{itemize}
+\item \textsc{dip11}: Diplôme le plus élevé obtenu. Elle prends onze posts:
+\begin{itemize}
+\item 10: Licence (L3), Maitrise (M1), Master (recherche ou professionnel), DEA, DESS, Doctorat.
+\item 11: Ecoles niveau licence et au-delà.
+\item 30: \textsc{deug}.
+\item 31: BTS, DUT ou équivalent.
+\item 33: Paramédical et social (niveau bac+2).
+\item 41: Baccalauréat général.
+\item 42: Baccalauréat technologique, bac professionnel ou équivalents.
+\item 50: CAP, BEP ou équivalents.
+\item 60: Brevet des collèges.
+\item 70: Certificat d'Etudes Primaires.
+\item 71: Sans diplôme.
+\end{itemize}
+\item \textsc{nfr}: Variable dichotomique pour indiquer la nationalité
+française, construite à partir de \textsc{nfr3}.
+\begin{itemize}
+\item 1: Ceux qui ont la nationalité française. Ce correspond aux
+catégories 1 et 2 de \textsc{nfr3}.
+\item 0: Ceux qui n'ont pas la nationalité française. Ce correspond à la
+catégorie 3 de \textsc{nfr3}.
+\end{itemize}
+\end{itemize}
+\subsection{Le champ}
+\label{sec:org3b82bb8}
+On departage l'échantillon de l'enquête emploi en utilisant la
+variable \textsc{nfr3}. 
+
+\subsubsection{Nombre d'observation presentés}
+\label{sec:org65c36e7}
+???
+\subsubsection{Source mobilisé}
+\label{sec:orgb3d436b}
+
+\section{Présentation des variables}
+\label{sec:org7de9617}
+\section{Statistiques descriptives des variables}
+\label{sec:org7669486}
+\subsection{Variables:}
+\label{sec:orgc68e748}
+\subsubsection{Expliquée}
+\label{sec:org28668e8}
+\begin{enumerate}
+\item STATUTR : Statut regroupé en 4 postes pour les salariés
+\label{sec:org706dcea}
+\end{enumerate}
+\subsubsection{Explicative}
+\label{sec:org57f7ea6}
+\begin{enumerate}
+\item NFR3 : Nationalité regroupée en 3 postes
+\label{sec:orgb253dc4}
+\item SEXE : Sexe
+\label{sec:orge114981}
+\item IMMI2 : Origine en 3 postes (non immigré, immigré dans l'UE ou hors UE)
+\label{sec:org21dd3fe}
+\item AGE3 : Âge regroupé en 3 postes (au dernier jour de la semaine de référence
+\label{sec:orga2e1466}
+\item DDIPL : Diplôme le plus élevé obtenu agrégé
+\label{sec:org9b58aad}
+\item NAFG005UN : Activité économique de l'établissement de l'emploi principal actuel (NA en 5 postes)
+\label{sec:orgb0d50b8}
+\end{enumerate}
+\end{document}

@@ -1,0 +1,127 @@
+\subject{Sociologie des comportements sociaux} 
+\title{Pierre Bourdieu, La Distinction}
+# \subtitle{} 
+\author{Carlos Alberto Rivera Carreño} 
+# \date{\today} 
+# \publishers{Prof. Corine Perraudin} 
+# \dedication{Die Philosophen haben die Welt nur verschieden interpretiert; \\ es kömmt drauf an, sie zu verändern.} 
+\maketitle
+
+Pierre Bourdieu est un des sociologues les plus importants de la
+seconde moitié du \ordinalnum{20}[m] siècle. Né en France à Denguin,
+il commence sa formation en philosophie à l'\textsc{ens} d'Ulm, mais
+il se tourne vers la sociologie après s'être intéréssé aux études
+ethnologiques et après avoir servi une partie du service militaire en
+Algerie. Son oeuvre, très diverse, se caracterise pour un intêrét aux
+facteurs culturels et symboliques dans la reproduction des hiérarchies
+sociales.
+
+ Dans cet extrait de son ouvrage de 1979 /La Distinction/, le
+ sociologue esssai de montrer les differentes preferences alimentaires
+ et vestimentaires des classes sociales et leurs subdivisions. Il
+ soutien que ces differences correspondent aux differences de
+ l'habitus de chaque classe social, ce qu'il argumente en analysant
+ les reponses d'une enquête française de 1967. L'extrait est divisé en
+ trois parties:
+* Trois manières de se distinguer
+Dans al première partie, Bourdieu rassemble des differentes types de
+consomations (vêtements, chaussure, livres, sport, fruits frais,
+etc.) en trois categories: alimentation, présentation, et
+culture. 
+
+Bourdieu trouve que les preferences des ouvriers et des agriculteurs
+valorisent le pratique et la convivialité familiale. Pour eux, la
+socialisation est toujours en termes de famille, et donc la
+socialisation professionel est inconnue. Les plats comme les soupes,
+qui sont faciles à «etendre» si besoin, abbondent. Aussi, il y a une
+difference marquée entre les sexes: la virilité, la force masculine
+requiert de la viande bon marché (beaucoup manger et beaucoup boire),
+tandis que la feminité requiert de l'abstention de manger ce
+nourriture «d'homme».
+
+Par contre, chez les classes plus aisées, il existe plutot une
+valorisation de la forme que de la substance de la nourriture. Les
+grands commerçants et les proffession libérales, par exemple, depense
+les plus en alcohol 
+
+\begin{quote}
+«Ainsi se dessine un espace des corps de classe qui, aux hasards biologiques près, tend à reproduire dans sa logique spécificque la structure de l'espace social. Et ce n'est donc pas par hasard que les propriétés corporelles sont appréhendées à travers des systèmes de classement sociaux qui ne sont pas indépendants de la distribution entre les classes sociales des différentes propriétés.»
+\end{quote}
+
+* Sans façons ou sans gêne?
+* Le visible et l'invisible
+* Conclusion
+* Einstellungen :noexport:ARCHIVE:
+** Einführung
+#+LANGUAGE: fr
+#+OPTIONS: toc:nil \n:nil ::t |:t ^:t f:t *:t ':t pro:nil 
+#+OPTIONS: LaTeX:t TeX:t d:nil pri:t p:t tags:nil inline:t todo:nil
+#+LATEX_CLASS: scrartcl
+#+LATEX_CLASS_OPTIONS: [paper=A4,portrait,twoside=false,twocolumn=false,headinclude=false,footinclude=false,fontsize=11,BCOR=0mm,DIV=7,pagesize=auto,abstract=false,mpinclude=false,headings=big]
+#+LATEX_CMD: xelatex
+#+TAGS: vocabulary(v) noexport export
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+STARTUP: indent hidestars content logdrawer
+** Paketverladung
+#+LATEX_HEADER: \usepackage{polyglossia} 
+#+LATEX_HEADER: \setmainlanguage{french} 
+#+LATEX_HEADER: \usepackage[french=guillemets]{csquotes}
+#+LATEX_HEADER: \usepackage{xunicode}
+#+LATEX_HEADER: \usepackage{balance}
+#+LATEX_HEADER: \usepackage[french]{fmtcount} 
+#+LATEX_HEADER: \fmtcountsetoptions{french=france}
+#+LATEX_HEADER: \usepackage[singlespacing]{setspace}
+#+LATEX_HEADER: \usepackage[super]{nth}
+#+LATEX_HEADER: \usepackage{xcolor}
+#+LATEX_HEADER: \usepackage{microtype}
+#+LATEX_HEADER: \microtypecontext{kerning=french}
+#+LATEX_HEADER: \usepackage{ragged2e}
+#+LATEX_HEADER: \usepackage{lipsum}
+#+LATEX_HEADER: \usepackage{amsmath}
+#+LATEX_HEADER: \usepackage{amsthm}
+#+LATEX_HEADER: \usepackage{amssymb}
+#+LATEX_HEADER: \usepackage{hyperref}
+#+LATEX_HEADER: \hypersetup{colorlinks,urlcolor=blue,linkcolor=red,citecolor=red,filecolor=black}
+#+LATEX_HEADER: \usepackage{adforn}
+** Schriftart
+#+LATEX_HEADER: \usepackage{fontspec}
+##+LATEX_HEADER:\usepackage[MnSymbol]{mathspec}
+#+LATEX_HEADER:\setmainfont[SmallCapsFeatures={LetterSpace=4}]{Linux Libertine}
+##+LATEX_HEADER:\setmainfont[SmallCapsFeatures={LetterSpace=4}]{Minion Pro}
+##+LATEX_HEADER:\setmathsfont(Digits,Latin,Greek)[Numbers={Lining,Proportional}]{Minion Pro}
+** Seitenstil
+##+LATEX_HEADER:\usepackage{scrlayer-scrpage}
+##+LATEX_HEADER:\pagestyle{scrheadings}
+##+LATEX_HEADER:\renewcommand*{\chapterpagestyle}{plain}
+##+LATEX_HEADER:\clearscrheadfoot
+##+LATEX_HEADER:\automark{chapter}
+##+LATEX_HEADER:\chead{\headmark} 
+##+LATEX_HEADER:\ifoot*{\thepage} 
+** Absätze
+#+LATEX_HEADER: \AfterTOCHead{\singlespacing}
+#+LATEX_HEADER: \setkomafont{disposition}{\normalfont\normalcolor}
+*** Titelblatt
+##+LATEX_HEADER: \addtokomafont{subject}{\scshape\lowercase}
+##+LATEX_HEADER: \addtokomafont{author}{\scshape\lowercase}
+##+LATEX_HEADER: \addtokomafont{dedication}{\itshape}
+*** Part
+##+LATEX_HEADER: \renewcommand*{\partformat}{\adforn{21}~\thepart~\adforn{49}}
+##+LATEX_HEADER: \addtokomafont{part}{\scshape\Huge\lowercase}
+*** Chapter 
+##+LATEX_HEADER:\renewcommand{\raggedchapter}{\centering}
+##+LATEX_HEADER: \addtokomafont{chapter}{\scshape\Huge\lowercase}
+*** Section
+#+LATEX_HEADER: \addtokomafont{section}{\scshape\LARGE\lowercase}
+*** Subsection
+#+LATEX_HEADER: \addtokomafont{subsection}{\sffamily\bfseries\normalsize}
+*** Subsubsection
+#+LATEX_HEADER: \addtokomafont{subsubsection}{\itshape\large}
+
+** User-defined elements
+#+LATEX_HEADER:\newenvironment{summary}{\begin{addmargin}{3em}\itshape}{\end{addmargin}} 
+#+LATEX_HEADER:\newcommand{\annotation}[1]{\marginpar{\small\itshape #1}}
+** Andere
+#+LATEX_HEADER: \definecolor{bibleblue}{HTML}{00339a}
+#+LATEX_HEADER: \setcounter{secnumdepth}{\partnumdepth}
+#+LATEX_HEADER: \recalctypearea

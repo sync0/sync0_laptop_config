@@ -1,0 +1,153 @@
+\subject{Techniques Quantitatives} 
+\title{Titre du report} 
+\subtitle{Sous-titre du report} 
+\author{Bassitan Toure \\ Jorge Fernandez \\ Carlos Rivera} 
+\date{\today} 
+\publishers{Prof. Corine Perraudin} 
+# \dedication{Die Philosophen haben die Welt nur verschieden interpretiert; \\ es kömmt drauf an, sie zu verändern.} 
+\maketitle
+* Objet de l'étude
+** Présenter le sujet
+Quels sont les facteurs déterminants du type de contrat.
+*** Quelle est la problematique precise?
+On est interesse aux facteurs determinants du type de contrat pour la
+population active francaise. On veut savoir si la magnitude de
+QPRC (ou DIPII) est differente pour ceux qui ont la nationalité française
+et ceux qui ne l'ont pas.
+
+Quel est l'effet de l'âge dans la determination du type de contrat
+selon qu'on soit de nationalité française ou pas. 
+
+Est-ce que les jeunes français ou les jeunes étrangers. 
+
+** Les variables choisies
+Pour repondre notre question on utilise la variable expliquée:
+- \textsc{cont}: Une varible construite à partir de la variable
+  \textsc{statutr} et la regroupant en deux catégories (0 et 1).
+  - 0: Ce sont les emplois précaires: \textsc{cdd}, intérimaire,
+    apprentissage, tels que définit dans l'enquête emploi.
+  - 1: Ce sont les emplois à durée indéterminés (\textsc{edi}):
+    \textsc{cdi} et indépendants, tels que définit dans l'enquête emploi.
+Et, on garde les varibles explicatives:
+- \textsc{sexe}: On reprends la variable telle qu'elle apparaît dan
+  l'enquête emploi. Elle prends deux valeurs:
+  - 1: Masculin.
+  - 2: Féminin.
+- \textsc{age3}: Âge au dernier jour de la semaine de référence
+  (repris telle qu'elle apparaît dans l'enquête emploi). Elle prends
+  trois valeurs:
+  - 15: De 15 à 29 ans. 
+  - 30: De 30 à 49 ans.
+  - 50: 50 ans et plus. 
+- \textsc{dip11}: Diplôme le plus élevé obtenu. Elle prends onze posts:
+  - 10: Licence (L3), Maitrise (M1), Master (recherche ou professionnel), DEA, DESS, Doctorat.
+  - 11: Ecoles niveau licence et au-delà.
+  - 30: \textsc{deug}.
+  - 31: BTS, DUT ou équivalent.
+  - 33: Paramédical et social (niveau bac+2).
+  - 41: Baccalauréat général.
+  - 42: Baccalauréat technologique, bac professionnel ou équivalents.
+  - 50: CAP, BEP ou équivalents.
+  - 60: Brevet des collèges.
+  - 70: Certificat d'Etudes Primaires.
+  - 71: Sans diplôme.
+- \textsc{nfr}: Variable dichotomique pour indiquer la nationalité
+  française, construite à partir de \textsc{nfr3}.
+  - 1: Ceux qui ont la nationalité française. Ce correspond aux
+    catégories 1 et 2 de \textsc{nfr3}.
+  - 0: Ceux qui n'ont pas la nationalité française. Ce correspond à la
+    catégorie 3 de \textsc{nfr3}.
+** Le champ
+On étudiera la population active française de l'enquête emploi de l'\textsc{insee} en utilisant la
+variable \textsc{nfr3}. On définit deux tranches: ceux qui ont la
+nationalité française, $n_1=2000$, et ceux qui ne l'ont pas, $n_0=2100$. De cette
+façon on estimerai si les variables expliquatives on le même impact
+dans la determination du type de contrat pour les groupes n_1 et
+n_0. Les données ont été reprises de l'enquête emploi 2016 (citation).
+* Présentation de variable expliquée
+Comme on l'a déjà mentionné, notre variable à expliquer
+- \textsc{cont}: Une varible construite à partir de la variable
+  \textsc{statutr} et la regroupant en deux catégories (0 et 1).
+  - 0: Ce sont les emplois précaires: \textsc{cdd}, intérimaire,
+    apprentissage, tels que définit dans l'enquête emploi.
+  - 1: Ce sont les emplois à durée indéterminés (\textsc{edi}):
+    \textsc{cdi} et indépendants, tels que définit dans l'enquête emploi.
+
+* Statistiques descriptives des variables
+* Choses à faire                                                  :noexport:
+** Lire des choses pour construire l'introduction
+
+
+* Einstellungen :noexport:ARCHIVE:
+** Einführung
+#+LANGUAGE: fr
+#+OPTIONS: toc:nil \n:nil ::t |:t ^:t f:t *:t ':t pro:nil 
+#+OPTIONS: LaTeX:t TeX:t d:nil pri:t p:t tags:nil inline:t todo:nil
+#+LATEX_CLASS: scrartcl
+#+LATEX_CLASS_OPTIONS: [paper=A4,portrait,twoside=false,twocolumn=false,headinclude=false,footinclude=false,fontsize=11,BCOR=10mm,DIV=9,pagesize=auto,titlepage=firstiscover,abstract=false,mpinclude=true,headings=big]
+#+LATEX_CMD: xelatex
+#+TAGS: vocabulary(v) noexport export
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+STARTUP: indent hidestars content logdrawer
+** Paketverladung
+#+LATEX_HEADER: \usepackage{polyglossia} 
+#+LATEX_HEADER: \setmainlanguage{french} 
+#+LATEX_HEADER: \setotherlanguages{english} 
+#+LATEX_HEADER: \usepackage[french=guillemets]{csquotes}
+#+LATEX_HEADER: \usepackage{xunicode}
+#+LATEX_HEADER: \usepackage{balance}
+#+LATEX_HEADER: \usepackage[french]{fmtcount} 
+#+LATEX_HEADER: \fmtcountsetoptions{french=france}
+#+LATEX_HEADER: \usepackage[singlespacing]{setspace}
+#+LATEX_HEADER: \usepackage[super]{nth}
+#+LATEX_HEADER: \usepackage{xcolor}
+#+LATEX_HEADER: \usepackage{microtype}
+#+LATEX_HEADER: \usepackage{ragged2e}
+#+LATEX_HEADER: \usepackage{lipsum}
+#+LATEX_HEADER: \usepackage{amsmath}
+#+LATEX_HEADER: \usepackage{amsthm}
+#+LATEX_HEADER: \usepackage{amssymb}
+#+LATEX_HEADER: \usepackage{hyperref}
+#+LATEX_HEADER: \hypersetup{colorlinks,urlcolor=blue,linkcolor=red,citecolor=red,filecolor=black}
+#+LATEX_HEADER: \usepackage{adforn}
+** Schriftart
+#+LATEX_HEADER: \usepackage{fontspec}
+##+LATEX_HEADER:\usepackage[MnSymbol]{mathspec}
+#+LATEX_HEADER:\setmainfont[Numbers={Proportional},SmallCapsFeatures={LetterSpace=4}]{Minion Pro}
+##+LATEX_HEADER:\setmathsfont(Digits,Latin,Greek)[Numbers={Lining,Proportional}]{Minion Pro}
+** Seitenstil
+##+LATEX_HEADER:\usepackage{scrlayer-scrpage}
+##+LATEX_HEADER:\pagestyle{scrheadings}
+##+LATEX_HEADER:\renewcommand*{\chapterpagestyle}{plain}
+##+LATEX_HEADER:\clearscrheadfoot
+##+LATEX_HEADER:\automark{chapter}
+##+LATEX_HEADER:\chead{\headmark} 
+##+LATEX_HEADER:\ifoot*{\thepage} 
+** Absätze
+#+LATEX_HEADER: \AfterTOCHead{\singlespacing}
+#+LATEX_HEADER: \setkomafont{disposition}{\normalfont\normalcolor}
+*** Titelblatt
+##+LATEX_HEADER: \addtokomafont{subject}{\scshape\lowercase}
+##+LATEX_HEADER: \addtokomafont{author}{\scshape\lowercase}
+##+LATEX_HEADER: \addtokomafont{dedication}{\itshape}
+*** Part
+##+LATEX_HEADER: \renewcommand*{\partformat}{\adforn{21}~\thepart~\adforn{49}}
+##+LATEX_HEADER: \addtokomafont{part}{\scshape\Huge\lowercase}
+*** Chapter 
+##+LATEX_HEADER:\renewcommand{\raggedchapter}{\centering}
+##+LATEX_HEADER: \addtokomafont{chapter}{\scshape\Huge\lowercase}
+*** Section
+#+LATEX_HEADER: \addtokomafont{section}{\scshape\LARGE\lowercase}
+*** Subsection
+#+LATEX_HEADER: \addtokomafont{subsection}{\sffamily\bfseries\normalsize}
+*** Subsubsection
+#+LATEX_HEADER: \addtokomafont{subsubsection}{\itshape\large}
+
+** User-defined elements
+#+LATEX_HEADER:\newenvironment{summary}{\begin{addmargin}{3em}\itshape}{\end{addmargin}} 
+#+LATEX_HEADER:\newcommand{\annotation}[1]{\marginpar{\small\itshape #1}}
+** Andere
+#+LATEX_HEADER: \definecolor{bibleblue}{HTML}{00339a}
+#+LATEX_HEADER: \setcounter{secnumdepth}{\partnumdepth}
+#+LATEX_HEADER: \recalctypearea

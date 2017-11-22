@@ -1,0 +1,2972 @@
+\subject{Université Paris I\\Panthéon Sorbonne} 
+\title{Cahier d'études} 
+\subtitle{I} 
+\author{sync0} 
+\date{\today} 
+# \dedication{Die Philosophen haben die Welt nur verschieden interpretiert; \\ es kömmt drauf an, sie zu verändern.} 
+\maketitle
+* Techniques quantitatives                                        :noexport:
+** Leçon du 18 septembre 
+todo
+** Travail dirigé du 27 septembre
+*** Qui réalise les statistiques publiques en France?
+Les principales données économiques et sociales sont produites par le
+système statistique public organisé autour de l'Institut national de
+la statistique et des études économiques (\textsc{inse}). Ceci est une
+direction d'admisnitration centrale (et pas une agence autonome).  La
+production statistique est également une activité réglementée. Tous
+les citoyens ont des droit et des devoirs face aux statistiques.
+**** Qui fait des statistiques en France
+***** La statistique a-t-elle toujours été sous le giron de l'État?
+- Public
+ - Insee
+ - Services statistiques ministériels
+- Privé 
+ - Banques
+ - Institutions de cononcture
+
+La production des chiffres est aussi ancienne que l'organisation
+politque. 
+
+À la fin du \ordinalnum{19} siecle, les premieres tentatives
+d'intervention sur le marché du travail (suite à la crise des
+années 1880) se sont traduites par la création des bureaux de
+statistiques du trvail et par l'emergence de statistiques de l'emploi.
+
+\annotation{Comptabilité nationale} 
+Dans les années 1930, la vision keynésienne d'un État régulateur,
+amené à intervenir dans l'économie, a présidé à la constitution de la
+compatbilité nationale.
+
+C'est dans le contexte de la réconstruction (après la Seconde Guerre
+mondiale) que l'\textsc{insee} s'est fondé, pour recenser et
+coordonner toutes les ressources humanies et économiques du pays.
+
+\begin{quote}
+Remplacer la France des mots par la France des chiffres
+\end{quote}
+
+***** L'\textsc{insee} et son rôle
+Le role de l'insee est la collecte, lla production, l'analyse, et la
+diffusion d'infromations demographiques, eocnomiques et sociales. 
+****** Domaine économique
+- comptes nationaux
+- l'indice des prix
+- études sur les équilibres économiques et financiers
+- études sur la conjoncutre
+- études sur le système productif, la situation et le comportements des entreprises.
+- études sur la situation et le comportements des entreprises.
+****** Domaine social
+- statistiques démographiques
+- statistiques sur les modes de vie
+- l'emploi
+- les revenus
+- les patrimoines
+- les salaires
+- le logement
+***** L'\textsc{insee} a-t-il le monopole de la statistique publique?
+**** Les statisticiens sont-ils indépendents?
+***** La loi garantit moins qu'ailleurs l'indépendance de la statistique française 
+***** Mais en pratique, l'indépendence est préservée
+**** Peut-on faire des statistiques sur tout?
+***** Les deux dangers que recèle l'activité statistiques
+****** Atteinte aux libértés individuelles
+****** Charge pour les répondants
+***** Quelles sont les limites au pouvoir d'investigation statistique?
+***** Peut-on faire des statistiques sur tous les sujets?
+***** Quels sont les droits et les devoirs des citoyens et des personnes morales face à l'investigation statistique? 
+*** Comment fabrique-t-on les statistiques?
+**** D'où viennent les statistiques?
+**** Comment fait-on une enquête statistique?
+**** Quelle est la précision d'une enquête statistique par sondage?
+*** L'enquête Emploi de 
+*** En 2010, les salaires ralentissent en euros constants
+** Leçon du 01 octobre
+** Travail dirigé du 04 octobre
+*** Données sur l'enquête emploi.
+- Dans les années 50. C'est une des plus anciennes. 
+- C'est une enquete annuelle en mars.
+- À partir de 2013 l'enquete est devenue continue.
+- Personnes de plus de 15 ans.
+- Une personne peut repondre plus d'une fois.
+- L'enqueteur (pour des raisons de coute) ne se deplace pas toujours
+  pour faire les enquetes. C'est souvent la premiere et derniere fois.
+*** Introduction à \textsc{sas}
+- Dossier /work/ est une librairie temporaire. 
+- Garder lenquete emploi dans la librairie.
+- Garder les champs.
+- Commentaire /* */.
+- Le fichier est de type /bas/.  
+- \textsc{libname}
+  - libname TOTO "DE :/Users/etc."
+  
+data (TDTQ.)base1;
+set (TDTQ.)TD1;
+sl_euro=sal_smic*1055;
+run;
+/*Create*/
+*** Dossier de TD 1
+**** Exercise I
+**** Exercise II
+- \textsc{salmet}:
+- \textsc{salmee}:
+- \textsc{salred}: La variable construite par l'\textsc{insee} pour
+  estimer le salaire.
+- \textsc{prim}:
+***** Quel sera le champ retenu
+Les actifs salariés. Il faut avoir un emploi principal, on ne compte
+pas l'auto-emploi. 
+***** Qui exclut-il?
+***** Quelle variable de ponderation faut-il?
+À partir de 2013, il n'y a qu'un coefficient de ponderation.
+***** ???
+On restraint le champ d'enquete aux actifs. 
+- \textsc{acteu}:
+  - actifs.
+  - chômeurs.
+  - inactifs.
+- \textsc{acteu6}:
+**** Exercise III
+***** 8,3 c'est le pourcentage des français qui sont employés en \textsc{cdd}.
+***** Les t'tabliseements français de 20 salariés et plus du secteur marchand non agricole emploient en moyenne 5,48\\% des salariés en \textsc{cdd}.
+***** Les pays européain ont une moyenne de 10,3 des salariés en \textsc{cdd}.
+
+
+
+**** Exercise IV
+**** Exercise V
+
+*** Dossier de TD 2
+**** Exercise I
+**** Exercise II
+**** Exercise III
+**** Exercise IV
+**** Exercise V
+
+* Allemand                                                        :noexport:
+** Leçon du 27 septembre
+*** Prufüngen
+**** Control continu
+- 60\% note
+***** kleine mündlich Prüfung
+***** Hausarbeit - Filmkritik
+- nom
+- prenom
+- num. étudiant
+- TD N3
+- 14:30 à 16:00
+- 5 cm de marge à gauche
+- interligne 1,5 / 2
+- Police: Arial 10 ou Times New Roman 11/12
+- résumé de l'action
+****** Good bye, Lénin!
+****** Das leben den Anderen
+****** Barbara
+****** Fateh Akun
+******* gegen die Waud!
+******* Auf der anderen Seite
+******* Soul Kitchen!
+****** Almanya, Wilkommen in Deutschland!
+****** Tanztra:ume
+******* Dokumentar
+
+**** Partiel - oral 
+- 40\% note
+- fin de semèstre
+- 1h de préparation
+- 1h de passage
+- 14,15,18,19,20 de Décembre
+- Carnet 4 de la salle des Profs centre Panthéon
+- 12:00 à 20:00
+*** Devoir
+de 4 à 8 page 
+- nom
+- prenom
+- num. étudiant
+- TD N3
+- 14:30 à 16:00
+- 5 cm de marge à gauche
+- interligne 1,5 / 2
+- Police: Arial 10 ou Times New Roman 11/12
+*** Place du verbe
+**** indépendente ou principale V2
+***** Si C1 =/ sujet ---> inversion du sujet 
+***** Pas de virgule entre C1 et V2
+sauf s'il y a une subordonnée
+**** Dans les subordonnées ---> à la fin
+***** Als ich ankam, ??? ransie weg.
+***** Virgule obligatoire entre principale et subordonnée. 
+**** Passif
+***** Auxiliaire = werden 
+***** Complément d'agent
+****** von + D
+pour les animés
+****** durch + A  
+pour les non-animés.
+******* animaux
+******* institutions
+**** Possessif
+Dépend du possesseur à la 3epersonne
+***** Si le possesseur est masculine ou neutre
+Sein
+***** Si le possesseur est féminin ou pluriel
+Ihr
+**** En effet
+***** 99\%, explication (car). 
+****** Jamais en tête de phrase.
+****** Soit après le verbe.
+****** Soit après le C1.
+Der Bundeska:nzlerin wird na:mlich nicht direkt von der Bevolkerung
+gewa:hlt, (sondern vom/durch den) Bundestag.
+
+Der BK na:mlich wird nicht (in Unterschied zum BT).
+***** 1\%, commentaire (vraiment, véritablement, effectivement) 
+A: Mein Bruder kommt dieses Jahr zu meinem Geburstag.
+B: Tatsa:chlichi/ In der tat? 
+B: Ja, tatsa:chlichi/ in der tat? 
+*** ??? 
+Der Film ---> er
+Der Film, den ich besprechen will.
+
+Das Dokumentar ---> es
+Das Dokumentar, das ich besprechen will. 
+
+Was ist ein Bund?
+binden, band, gebunden
+- der Band (-e) ---> Goethes Werk in 40 Banden
+- das Band (-er) ---> le rufau rebau le nu bau
+- 
+
+Edward Mo"rike
+
+Frühling la"sst sein blaues Band.
+Wieder flattern duch die lüfte
+ Süsse wohlbekante Düfte
+ Streifen abnungsvoll das Land.
+
+verbinden, verband, verbuden
+
+Der Bundestag
+- das Wahlrecht
+- die Parteien 
+
+der Verband (-"e) ---> l'association  ---> der Arbeitgeberverband =/
+die gewerkschaft (werken)
+** Leçon du 04 octobre
+*** Worüber haben wir vorige Woche gesprochen?
+- vorigen Monat
+- voriges Jahr
+- 
+*** Wo war ich stehen 
+**** Zunächst
+Zunachst haben wir die Arbeiten zusammen gefasst die zur Note führen?
+**** Dann
+Dann haben wir eine Filmliste hergestellt.
+**** Schliesslich
+Schliesslich haben wir mit dem Thema des Kurses angefangen, na"mlich
+«Was ist ein Brend?».
+**** Binden, a, u ---> der Bind = die Fo"deration
+**** Verbinden, a, u ---> der Verbund = die Konfo"deration
+einigen / vereinigen ---> das Vereinigte Königreid = Grossbritannien
+die Vereinigten Staten (von Amerika)  
+- Öffentlichrecht (Droit publique), Privatrecht (Droit privé).
+- Ein Verbund ist das selbe ??? ein Bund. Nur die Mitglieder sind
+  unabha"ngiger als im Bund. ---> es ist nur eine gradationsfrage.
+- der Bundesstaat (in Washington) vs. die 50 Eingelstaaten.
+- die Bundesrepublikdeutschlands vs. die Bundesla"nder. ---> la"nder
+  sind Staaten.
+- Seit der Wiedervereinigung (réunification).
+- Warum haben die Väter des Grundgesetzes das Wort \emph{Land} für
+  die Einzelstaaten gewählt?
+  - Das Wort «Land» hat eine rein geografische Konnotation . Dagegen
+    hat das Wort «Staat» eine politische, rechtliche und
+    völkerrechtliche Konnotation.
+  - Die Va"ter des Grundgesetzes haben mit ihrer Wortwahl zum
+    Audruckgebracht, wie eng der neue deutsche Bund werden sollte.
+  - Wissen die Bunderländer noch, daß sie Staaten sind?
+  - Ja, einige tragen es schon im offiziel Namen?
+    - Freistaat Bayern, Freistaat Sachsen, Freistaat Thüringen.
+  - wegen der historischen Verbindungen zu Bayern
+  - wegen des erstes Ministerpräsidenten von Sachsen, Kurt Bredenkoff (\textsc{cdu}).
+  - Freistaat Sachsen, in denn er ein anderes Modell für die
+    Wiedervereinigung anbot (anbieten, das Angebot). Der sächsiche König.
+  - Freistaat Thüringen: aus Selbstenhaltungstieb.
+  - Das Land Thüringen liegt nämlich zwischen Bayern und Sachsen.
+  - Zwei Stadtstaaten:
+    - Freie und Hansestadt Hamburg.
+    - Freie Hansestadt Bremen.
+  - Was war die Hanse?
+    - Es war seit dem Mittelalter ein Verbund aus freien reichen
+      Handelstädten in Nordeuropa.
+  - das Zeichen für die Freiheit besteht darin, daß keine Stener an
+    einen fremden Herrn gezahlt wird.
+  - weil der Handel die erste Reichtungsfelle (source de richesse) war.
+  - Reich, also gleichzeitig bedeutet es eine Gefahr, aber auch die
+    Möglichkeit, sich aus der Gefahr zu retten.
+  - Denn reiche Städte können sich eine Armee leisten.
+  - Der erste Zwek des Verbunds ist die Verteidigung der Freiheit der
+    Mitglieder, Veihindsmitglieder. 
+  - Ein Verbund is zunächst ein Wehrverbund.
+  - sich verteidigen n= auch durch das Wort.
+  - sich wehren = komkret ---> mit Händen Fußen.
+  - Dann ist die hanse auch ein Wirtschaftsverband.
+  - Der Wohlstand wird durch wird durch vermehiten Handel gefördert.
+  - Jeder Verbund verfolgt also zwei Zwecke.
+    - Die Verteidigung der Freiheit der Mitglieder.
+    - Die Erhöhung ihres Wohlstands durch ---> Handel.
+    - Bei Konflikten zwischen Freiheit und Wohlstand herrscht Freiheit vor.
+  - Gegen werr soll die Freiheit verteidigt werden?
+    - Gegen alle Eingrife von oben also zunächst der Fürsten
+* Sociologie des comportements sociaux                            :noexport:
+** Travail dirigé du 25 septembre
+Olivia Chambard, Olivia.Chambard@univ-paris1.fr
+*** Présentation 
+**** Introduction
+***** Auteur
+***** Intêrét / thèse du texte
+***** Organisation de votre présentation 
+**** Développment 
+***** Méthode
+***** Apport sociologique (théorique)
+***** Critique
+***** Rélation avec d'autres auteurs
+**** Conclusion
+***** Synthèse rapide
+*** Évaluation
+**** N.1
+***** Lecture du texte 
+***** Reponses aux questions
+**** N.2
+***** Dissertation
+**** N.3
+***** Présentation de texte 
+*** 不 Émile Durkheim, Education et sociologie 
+**** Biographie
+1856-1917
+- Fondateur de la sociologie (Frace vs. Allemagne).
+- Division du travail.
+- Fait religieux.
+- Education.
+- Durkeim a un fort engagement politique en faveur de la république. 
+- Durkeim cherche a fonder la sociologie comme discipline
+  indépendente.
+**** Résumé
+***** Les définitions de l'éducation
+L'action que les adultes exercent sur les plus jeunes.
+
+"Nous ne sommes pas tous faits pour réfléchir; il faut des hommes de
+sensation et d'action."
+
+"Une harmonie perfecte ne peut être présentée comme la fin derniere de
+la conduite et de l'éducation."
+
+"L'éducation a infiniment varié selon les temps et selon les pays."
+
+"À quoi peut servir d'imageiner une éducation qui serait mortelle pour
+la société qui la mettrait en pratique"
+
+Quelle doit être l'éducation idéale?
+
+Le sociologue doit étudier la société, essayer à la comprendre.
+Le sociologue doit donner des élements objectifs.
+L'éducation se construit lentement, au fur et à mesure de l'histoire.
+L'éducation s'impose aux individus. 
+La société modèle l'individu. 
+Le sociologue doit se comporter comme un physicien ou un biologue. 
+***** Pointers
+- L'integration
+Sa peur est qu'il n y ait pas de lien social.
+  - Société
+  - Groupe social / milieu
+**** Questions
+***** Montrez que pour Durkheim, l'éduction est un fait social.
+****** Fait social:
+******* Collectif
+******* Extérieur
+******* Contraignant
+***** Montrez que pour Durkheim l'éducation a une fonction d'intégration de l'enfant dans la société et dans le groupe social particulier.
+Les classes sociales, les catégories professioneles. 
+L'éducation permet aux individus de s'integrer dans leur société
+d'appartenence, surtout dans le milieu où ils sont nés. 
+C'est une sociologie très deterministe. 
+****** Étudier l'éducation comme un fait social
+****** Une approche fonctionnaliste de l'éducation
+****** Critique
+*** 不 Marcel Mauss, Notion de tecnique du corps
+*** 不 Norbert Elias, Comment se tenir à table
+*** 不 Pierre Bordieu, La distinction
+*** Richard Hoggart, 33 Newport Street 
+** Leçon du 28 septembre
+*** 不 Levi-Strauss
+vielleicht nicht so 
+**** 不 Objectivism 
+*** Bourdieu 
+**** Habitus
+Un ensemble des dispositions par lesquelles les individus interiorises
+leur role social, les contraintes sociales.
+
+Categories de jugement inculquées par l'éducation qui vont orienter
+les choix. 
+
+Permet de depasser l'impase entre objectivism et  
+**** Les principes de structuration de le space social
+**** La distinction, critique social du jugement (1969) 
+Série d'enquete 
+***** La culture
+Montrer que les choix des modes de vie et les choix des cultures
+cultivée font partie d'un ensemble. La culture cultivee c'est la
+cuilture dune classe sociale, c'est-à-dire la bourgeoisie. 
+
+ya une questionnnaire
+****** Conclusion
+ya des clivages sociaux tres marques. 
+****** Position et origine social
+****** Pas une critere de differentiation sociale
+que ça soit le capital, le revenu, le patrimoine
+****** Capital culturel
+Possession de bien culturel et pas economiques.
+Il a trois etapes:
+******* Cap culturel institutionalisee
+Formation escolaire
+******* Capital culturel objective
+Lart 
+Les livres
+Les objets de grand valeur
+******* Capital culturel incorporé
+La familiarité quon peut avoir avec la culture
+La culture generale
+C'est incorpore parce que ça se voit dans le corsp (la façon de
+parler).
+Tout ce quon n'aprends pas a lecole. 
+Les connaissances qui ne sont pas considere pas comme importante a lecole.
+****** Porquoi le mot capital pour Bourdieu?
+Ya des invesstisements.
+On espere un profit professionele ou dans les cercles sociaux
+Pour Marx le capital c'est un rapport social et un rapport dexplotation
+Pour Bourdieu la culutre est aussi une facteur de domination.
+
+la domination par la culture est percue comme plus violente que la
+domination par l'argent.
+****** capital economique
+****** capital culturel
+****** capital social
+les reseuaux de relation
+lensemble des relations sociales utiles (quon peut mobiliser dans sa
+vie professionele) dans le sens quon appartien ou sert a appartenir a
+la classe dominante
+
+Le capital social est celui qui va multiplier lefficacite des autre capitaux.
+***** champ
+notion fondamentalle pour la théorie de bourdieu
+
+un microcosme social relativement autonome (champ juridique, medical,
+artistique), 
+un groupe de gens qui se reconaissent comme appartenant a une groupe
+different. Ils partagent les memes enjeus.
+
+Les lois qui regissent le champ sont souvent non economiques. Ces ens
+partagent des inererets qui ne sont pas toujours economiques.
+
+Dans le champs iya toujours deux poles. 
+
+\begin{quote}
+Dans le cinema ya un pole commercial. Ya aussi un pole artistique qui cherche la reconaissance par une elite, ya dautres festivales, dautres criteres artistique, et les (cinema dauteurs) deux poles se deteste. Ya une interdependence entre les deux poles. Ils se definissent par rapport lun del autre. Ceux qui ont plus de capital orthodox auront maintenir le status quo. 
+\end{quote}
+**** Max Weber
+***** Style de vie
+*** Habitus et style de vie
+B. s'est appercu de ces concepts en regardant la demarche des gens en algerie 
+
+Ce quon a dans la tete a une rapport avec le structure social.
+
+Lidee que le corps porte aussi la position de lordre social
+
+Les habitsu sont des dispostions durables, 
+c'est inquelques par leducations le contexte social, la trajectoir 
+Lhabitus c'est un scheme general interiorise
+ça assure la presence active des experiences passees.
+
+le gout c'est un marqueur de classe. quand on dit que quelqu'un na pas
+de gout, je veux dire «il  nappartient pas a mon milieu» 
+
+l'habitus est ce qui me fait sentir que jappartiens a mon milieu
+**** Le choix du necessaire
+***** L'habitus populaire
+****** L'habitus est ce qui permet de sadapter aux conditions dexistence.
+****** Lhorreur des depenses innecessaires. 
+****** La pretension, le gaspillage, le snobisme sont detestes par les classes populaires.
+****** une valoritation de la simplicite
+****** Choisir les repas copieux et bon marche.
+****** Conformisme
+****** Une detestation de ce qui veut se distinguer ou seccarter de son milieu.
+****** Une pression du groupe pour que tous restent dedans. 
+****** Un rappel constatn du valeur de la convivialite et la solidarite. 
+****** Une façon de rire qui invite a tous incluir.
+****** Une de protection social
+****** Profiter du present et du bon moment.
+****** On aime le grands famille, bcp damies. 
+****** La valorisation de la force physique comme dimention fondamentale de la virilite.
+****** La viande, la pomme de terre, la nourriture lourde est valorisee
+****** Le sport qui demande la force physique, le box
+****** Les gens font bcp de travaux manuel, et donc le corp et aussi une espece de capital
+****** Ils reconaissent les valeur dominant et leur rapport de classes
+****** Ils se trouvent comme des fans, de spectateurs passif
+***** habitus de la petite bourgeosie
+****** le principe de l'habitus est la bonne volonté culturaire
+****** la petite bourgeiosie est divisee en deux:
+******* en ascension social
+ceux qui ont profite des possibilite descalation social
+******** Un desir de se demarque de l'estile de vie populaire
+ils valorise leur difference par rapport aux classes populaire
+ils valorise lapparence (bien s'habiller)
+******** bonne volonté culturaire
+********* conaissances autodidacte qui tesorise la culture bourgeoise
+********* ceux sont les grands publiques de tous les vulgarisatoins de la culture bourgeois
+********* une respet par rapport a la culture
+********* la realisation quil ne seront jamais nee dans ce culture
+********* ils sont pret a coregir leur langage et ce des autres
+********* un ascetisme, un esprit depargne
+********* un seul enfant, 
+********* une ethique de sacrifice, de privation
+********* une vie social tres pauvre
+ils sont condonne
+ils meprise la vulgarite populaire
+ces rennoncements sont la condition d'ascension social
+******* en declassement social
+******** nee dun bon milieu. les educateur, communicateurs, psychologues
+******** le devoir du plaisir, un refuse de 
+******** ils exalte lindividu, lauthenticite,
+******** un discour qui rejete les determinisme social
+******** fuite du monde social
+******** exaltation de la nature
+******** promouvoir une autre forme de legitimité
+***** les classes dominantes
+****** leur distance a la necessite
+****** une dimension aesthetique, libre dans tous les choix
+****** quand on mange ce qui est important est la forme
+****** le repas est une ceremonie
+****** ils cherche a tous les depensent ostentatoir
+****** depense de temps ostentatoir
+****** ethos corporele 
+******* des grands pas
+******* laccent bourgeois est lent
+******* des grands geste
+******** on est accoutoume aux grands spaces
+****** le gout de lart pour lart 
+******* le gout populaire cherche les belles choses
+******* le gout classe haut classe cherche la beaute des formes
+****** ils ne cherchent pas a se distinguer de
+****** un gout se avant tout un degout
+****** isl ont de rapport damitie avec les classes bas
+****** animosite entre les classes qui sont proche
+****** les ocnflit son entre des factoins de classe squi sont proche
+*****  la fraction dominante de la clase dominante
+****** ceux qui ont largent
+****** ils meprise les nouveux riche
+****** ils valoirse lancienete 
+****** le golf, la chasse, le polo
+****** le capital social qui invite a des grands investisement de temps et daargent 
+****** on se recontre a des club ferme
+****** grands depense pour maintenir et obtenir capital social
+***** la faction dominee de la classe dominante
+****** les prof, les intellectuels
+****** habitus 
+****** devotion au capital culturel
+****** mepris pour les valeur materiels au nom de la culture
+****** choisir la nourriture exotique
+****** des loisir qui coute pas bcp mais qui donne bcp de cap culturel
+\begin{quote}
+savoir par corps
+\end{quote}
+****** les phenomene d'hysteresis de l'habitus
+******* ya un retard, desajustement entre l'habitus et la réalité, 
+******* un individu qui se trouve dans un milieu pour lequel il na pas ete eleve
+******** La misere du monde
+********* La souffrance est plutot sociale que materiel  
+********* Laristocrat arruine
+********* Lactrice au chomage
+********* linstitutrice dans un quartier avec des probleme
+***** Qules sont les habitus de classes?
+****** Lhabitus populaire a bcp change
+****** une vision très homogeneisante des classes populaires
+****** criticisme de Grignon et Passeron
+******* Le savant et le populaire
+******* Miserabilisme et populisme en sociologie et literature
+Ya deux risques
+ya formes de culture plus ou moins autonome
+la proposition est quil faut tenir compte des differences dans les
+classe populaires
+toute la culture populaire ne se definisent pas par rapport aux
+classes dominantes
+******** Le populisme
+********* Les intelectuels qui valorise les gout du peuple
+********* Ya autant de richesse dans le rap et la musique classique
+********* Ce populisme oublie q la culture populaire est une culture dominee.
+********* La connaissance du rap donnent pas les memes conaissances que la musique classique
+******** Miserabilisme
+********* Ceux qui analyse la culture populaire en termes de manque
+ils vont pas a lopera, etc.
+
+***** Hoggart
+etude de reference de richard Hoggart: «la culture du pauvre»
+ouvrage qui porte sur les classes populaire angliases, a sa culture
+propre et bien specifique. 
+ya une culture ouvriere qui a un rapport special avec le space
+dominante
+dans ce quartier ya plus dinvestissement publiques
+le temps de la classes ouvrieres c'est le present
+la difference entre eux et nous 
+
+***** Florence Weber (1989)
+comportement dune ville ouvrier a louest de la france
+****** le travail a cote (agricole)
+l'usine et leur travail
+pour les ouvrier l'usine 
+
+le terme de loisir est un terme de 
+
+les ouvrier ne parlent jamais de leurs loisir
+ils parlent de travail a cote
+jardinage, bricolage, etc
+
+c'est ci qui explique leur preference pour les maisons individules
+
+ils se sent plus differencie par leur travail a cote que par leur
+travail a lusine
+
+le t a cote est une ressource symbolique
+
+ceux qui ont rien a cote sont meprisé 
+
+la solitude est une forme de decheance ouvrier
+
+ils est très important daller au cafe mais ensemble
+
+ils forment des groupe avec une grande demande degalite
+***** O. Schwartz (1990)
+Statut de lespace privee dans le monde ouvrier
+ce sest traduit par la produciton des clivages dans le monde ouvrier
+
+mode de vie fortement privatisee pour ce qui monte dans lechelle
+sociale
+
+les espace intersticielle entre le travail et la famille
+
+tres forte attachment au biens durables
+
+la division forte des identité sexuelles
+les roles de pere et mere sont plus valorise que la vie professionele
+
+une goute pour la lecture des choses pratiques
+
+le grande changement dans le pratiques culturesl est due a lforte
+augmentatoin de lescolaritatoin
+
+ça a cahnge une forte ecarte generationele et une crsie dans la
+trrsmistion de l'habitus ouvrier
+**** Classe moyenne en declassement 
+bcp dinfluence dans les modeles dominantes 
+***** C. Bidou (1984)
+****** Les aventuriers du cotdien 
+******* analyse les calsses moyennes
+******* les professions de la psycologie, les nouvelles professions
+******* très forte 
+******* ces clas moyens sont une carrefour de mobilite social
+******* mil plus eleve
+******* elaboratoin dun nouveau modele culturel
+******* investir des choses oublie
+******** le corps 
+******** la relation entre les sex
+******* autres formes de lutte social
+******** le quartier
+******* un autre mode deducatoin des enfants
+******** antiauthoritaire, etc
+***** Chalvon Demersay
+****** Le traingle du 14e 
+******* une emigration dans le 14 parc ceux de 5
+******* artiste, journaliste, intermitante
+******* a cause de la monte des prix ils ont du 
+******* sur-investissement
+******* rue d'aggers
+******* tres peu deschnges entre ancients et
+******* les anciens sont tres critiquant des nouveux arrivant
+******* les anciens ne vient pas des classes populaires mais sont ceux qui ont deja une ascencion social
+******* phenomene 
+***** A. Collet (2015)
+****** Rester populaire, nouveau chantier 
+Montreiul, Saint Denis, La croix rouge (Lyon)
+******* Sont des quartier qui sont investi par ceux qui ne peuvant pas s loger plus au centre ville
+******* avec leur arriver ils vont faire monter les prix
+******* essais de reconstruire leur quartier au centre ville dans montreuil 
+******* un effort pour patrimoiniser montreuil
+******* un effort dinvestir dedans (la maison, etc)
+******* un investissement
+***** Travaux sur les grands bourgeois Pinçon
+****** la necessite daccumuler tous les types des capitaux
+****** la sociologie de la bourgeoisei
+****** la diversification des pratiques cultures des clas moyens et superier
+******* omnivorité
+******** Peterson USA
+ce qui distingue les calsses dominante c'est quils aiment tous les
+cultures
+ce qui monte la superiorite, la marque, ceux quon peut 
+
+** Travail dirigé du 02 octobre
+*** Présentation
+- 15-20 min
+- Partie critique
+- Partie methodologique
+- Forme, plus organisée (à l'Anglo)
+*** Marcel Mauss, Techniques du corps
+**** Idées
+- Ils ont des incidences sur les individus. 
+- Le corps est façoné sociallement.
+- La forme du corps n'est pas seulement liée à la physiologie.
+- De même, le corps n'est pas que psychologique. 
+- Le corps a aussi une dimension sociale.
+- Les techniques du corps sont des faits sociales totales
+- Fait social total: 
+Chose qui implique la totalité de la société, toutes les dimensions. 
+
+**** Science peu developée
+**** Examples
+****** Manieres de nager
+****** demarche usa / france
+****** fait social
+**** Methode
+***** Comparative
+****** USA vs France
+****** Epoques anterieures vs. present
+***** Sociologue de bureau / bibliothèque 
+***** Experience personnel
+***** Fait social total 
+****** Psychologie
+****** Sociologique
+****** Physiologique
+****** etc.
+*** Norbert Élias, Société des moeurs 
+**** Methode
+***** Historique
+***** Sociologue de bureau / bibliothèque 
+**** Manières de table
+Usage de la forchette.
+**** Degout
+**** Pacification de la société
+**** Phenomène à la court 
+**** L'état devient plus fort
+**** La société entière 
+*** Questions 
+**** Comment s'efffectue la trasmission des habitudes corporelles selon Mauss et Elias?
+***** Imitation
+***** Éducation explicite
+- Doit être fait par des personnes qui aient une influence / pretige.
+- Pour Élias, ce sont les groupes les plus prestigieux qui impose ses habitudes.
+- ergo intériorisation, in\textit{corp}oration
+**** Que cherchent-ils à démontrer à travers ces examples?
+***** Les techniques du corps renvoient à des faits sociaux totals.   
+***** Mauss esssai de définir une technique du corps
+****** Technique 
+Une dimension plûtot humaine.
+******* Efficacité
+Le corps a interiorisé quelques attitudes. 
+******** Ordre méchanique
+******* Culturel (magique, symbolique)
+**** Comment fonctionne la socialisation?
+- Se fait sur un temps long.
+- Dimension contraignante.
+** Leçon du 05 octobre
+*** Instances de socialization et la construction des comportements sociaux
+**** La socialisation familiale
+***** La famille
+- \textbf{Definition}: Ensemble organisée d'individu relié entre eux par la parenté.
+- Experience intime, va de soi, donnée naturelle.
+- La famille c'est une institution social.
+- Bourdieu, «La famille, une catégorie realisée».
+- Elle contribue à construire la réalité qu'elle qualifie.
+***** La famille une construction sociale
+- Lenon, familiarisme occidental.
+- Question d'ordre social et moral. C'est revelatrice de ce qu'est une bonne
+  famille.
+- Construit comme naturelle une ordre specifique de famille.
+- C'est aussi une structure cognitive qui permet de penser l'ordre social.
+- Il y a beaucoup de variabilité dans les constructions de famille.
+***** Levi Strauss
+- L'estructure elementale de la parenté.
+- Grande diversité des familles entre les sociétés.
+- La prohibition ou taboo de l'inceste.
+- Il faut chercher son epoux/epouse dans un autre groupe.
+- La famille une jeux d'échange des femmes, qui va permettre les
+  échanges et le progress de la civilisation.
+***** Françoise Héritier 
+- La reproduction biologique n'est pas le fondement de la famille.
+- La paternité sociale n'est pas toujours la paternité biologique.
+- Par exemple, les Nayar.
+  - Les hommes sont des guerrier et ils ne peuvent pas fonder une famille
+  - Les femmes sont mariée nominalement en fonction de reglès
+    complexes.
+  - Les femmes ne vivent pas
+  - Leur vit sexuelle n'a rien à voir avec leur vit maritale.
+  - C'est une société
+  - Ce sont les enfant du mari.
+  - La gestion des terres, l'éducation des enfants est l'affaire des
+    frères. Donc, l'oncle maternelle est très important.
+  - Le père biologique ne s'occupe pas vraiment des enfants.
+- Par exemple, les Tibetans.
+  - Les marriages sont polyandriques.
+  - Il n'y a pas toujours plus d'un mari dans le foyer.
+  - Le père c'est l'ainé et pas le père biologique.
+- Par exemple, les indiens Tupi du Brésil central.
+  - Un homme doit épouser toutes les soeurs. 
+  - Les enfants sont élévés par l'ensemble des femmes.
+- Par exemple, une société en Burkina Faso.
+  - Famille polygamique. Les enfants sont élévés par l'ensemble des femmes.
+  - La mère est la première épouse et les autres sont les tantes.
+- Par exemple, les riches familles des Nuers du Sudan.
+  - Société matricentré.
+  - Si une femme est estérile, elle devient un homme.
+  - En tant qu'homme elle peut marier une jeune fille.
+  - La femme sterile choisit un homme qui deviendra l'amant de la
+    jeune fille est le serviteur de la la femme époux.
+  - La femme époux est le père, la jeune fille est la mère, et le père
+    biologique n'est qu'un serviteur.
+***** General
+- C'est la légalité du marriage qui compte.
+***** Transformation historique des familles.
+- Retraisisements des familles: la famille nuclaire (les parents, et
+  les enfants).
+***** Norbert Élias
+- Les enfants sont élévés par les parents mais par l'ensemble communauté.
+- Au \ordinalnum{19}[m] siècle la famille acquiert la responsabilité
+  de l'elevage.
+- Different types des familles:
+  - La famille nuclaire. Très frequent chez les pauvres et les
+    familles sans patrimoin.
+  - La famille patriarcale, ou la grande famille
+    hierarchisée. L'accent été mis sur la transmission du
+    patrimoin. L'ancêtre garde l'autorité ultime.
+  - La famille souche. Le père transmet tout son patrimoin à son
+    héritier, souvent l'ainé. L'héritier est . Les autres frères et
+    soeurs devient les serviteurs de l'hériter.
+  - Frédéric le Play, il a inventé les monographies.
+    - Pour rétablir la paix sociale, il faut faire disparaitre le
+      partage egal de l'heriage du Code Napoléon. Pour lutter contre
+      la misère ouvrier il faut le faire.
+***** Pierre Bourdieu
+    - Les Bales des célibataires. Une indivisibilité du patrimoin est
+      très important, \therefore plusieurs restent célibataires pour l'ainé.
+***** Generalité
+- Intervention croissante de l'état dans la famille. 
+- Le système de retraite.
+- Après la \textsc{wwii}, il y a une grande transformation de la famille.
+***** Talcott Parsons
+- Fonctionalisme.
+- Pour comprehendre les tranformation de la famille, il faut partir de
+  ces nouvelles fonctions.
+- Ça thèse c'est que la trsansformaiton de la famille nuclaire est
+  liée aux transformations sociales et economiques et notablement à
+  l'extension du salariat.
+- La famille nuclaire est plus fonctionele dans une société salarial.
+- Dans cette famille, il y a une forte division des roles sexuales.
+- L'homme est instrumental; il travail et mène le groupe, et la femme a une fonction
+  expressive; elle s'ocuppe de gerer l'harmonie à l'intérieur de la
+  famille.
+- Dans ces familles la femme est plutot inactif.
+
+
+
+- Ce modèle a été remis en cause des années soixante.
+- La diversification des formes des familles.
+- Changements morphologiques.
+  - Forte baisse de nuptialité.
+  - Après 1962, une baisse continue du nombre des marriages.
+  - 20\% des marriages inlude un conjoint etrangere, c'est la seule
+    catégorie qui monte.
+  - 1970: 22 - 20.
+  - 2015: 32 - 30.
+  - Augmentations des couples non mariées. 
+  - Augmentations des familles monoparentales.
+- 1975 11\% des mariages terminent en divorce.
+- 2015 47\% des mariages terminent en divorce.
+- La france restent un des pays les plus fecondes.
+- La maternité est de plus 
+- 1975 26 ans, âge d'accoucher.
+- 2015 30 ans, âge d'accoucher.
+***** Changement structureles.
+  - Extension du salariat feminin.
+  - 1968: 40\% étaient actives.
+  - 2015: 80\% travail et 205 reste au menage. Pour les inactives c'est
+    le cas de fin de \textsc{cdd}.
+***** Changement juridique
+- La femme mariée dependée du mari pour tout.
+- 1944 le droit au vote. 
+- 1966 une femme a le droit de travailler sans l'accorde de son mari.
+- 1938 la notion de pusissance maritale disparaitre.
+- 1970 la notion d'autorité paternelle yields to autorité parental.
+- 1984 une loi établi l'egalité des époux.
+- 2002 reforme de nom de famille. 
+- Les relations avec la famille elargi restent encore importantes.
+- La famille elargi restent important surtour pour les milieux
+  populaires.
+**** Socialisation familiale et classes sociales
+- Chaque groupe social trasmetent ses regles.
+  - Le styel eudcatif n'est pas les memes, notamment en ce qui
+    concerne le milieu social.
+- L'éducation consistent à trasmettre
+- La famille trasnmet un sens particulier de sa place dans l'ordre
+  social.
+- Les creches, les nounous, la famille élargit.
+- La brougeoisie choisissent des nourrises ou des domestiques.
+  - Les enfants ont de contat avec des personnes de milieu populaire
+    dès très tôt.
+  - Les enfants de sa prime enfance apprennent leur position
+    dominante. 
+- Les classes moyens recurrent à la creches. 
+- Les classes populaires recurrent a la famille extendu.
+**** Les effets de l'institution scolaire
+***** L'education bourgeoise
+- L'importance de marque la distinction sociale.
+- 1922, Goblot.
+  - Ce qui differencie la bourgeioisie de l'aristocratie, c'est que la
+    bourgeoisie essaie toujours de marquer la difference. C'est
+    l'argent qui fait le bourgeiois.
+  - La bourgeoisie essaiera d'etablir des barrieres pour se constituer
+    comme classe pseudo-aristocratique.
+  - Il y avait un rapport à la mode specifique.
+  - L'éducation des héritiers: le \textsc{bac}.
+***** Le Wita
+  - Ni vu ni connue,
+  - 1989, Ethnologie de la bourgeioisie:
+    - L'attention aux détaillles et aux nuances.
+    - Quasi-ritualisation des pratiques quotidiennes.
+    - Après 45s, les écoles catholiques deviennet importantes pour
+      prolonger l'éducation familiale. Ce sont des écoles ou les
+      parents sont très presentes.
+    - Dans la grande bourgeoisie les parents sont plus metidos dans
+      l'éducation des enfants.
+    - C'est une éducation qui visent à trasmettre des capitaux.
+    - C'est un capital culturel qui est liée à la convivialité.
+    - La dimension collectif de la conception du groupe.
+    - Les rallis.
+***** L'éducation des classes superieurs. 
+- La transmission des capitaux. La reproduction.
+- Differents types des capitaux.
+***** Christine Mennesson, Samuel Julhe.
+- Cadre publique.
+  - Enquête sur la socialisation culturel des enfants des milieux
+    favorisée (cadre superieur, classes moyennes).
+  - Beaucoup d'activités extra-curriculaire.
+  - Investisement en instruments de musique.  
+  - Gout pour les formes les plus aesthetiques.
+  - Pas de television.
+  - Pas de jeu de vidéo.
+  - Les enfants son amenés aux concerts, au théâtre.
+- Cadre privé.
+  - Pratique sportives.
+  - Style de vie qui valorise l'esprit d'entreprise.
+  - Une vie d'entrepreneur.
+  - Valeur proche entre la pratique sportive et la pratique économique
+    et professionelle.
+  - Ce qui les interesse est la mise en activité des enfants plus que
+    l'activité elle-même. 
+- Pour les deux:
+  - Les loisirs doivent être rentable.
+  - Les parents aime pas le temps libre.
+  - Pour les classes basses les loisirs ne sont que ça. 
+***** Classes moyennes (supérieurs)
+  - Individualisme
+  - François de Singly.
+    - L'enfant est de plus en plus sacralisé.
+    - Il est devenu le sens de la famille.
+    - L'enfant est un individu à part entière.
+    - L'enfant doit chercher lui-même.
+    - Psychologisation de l'enfance.
+    - Appelle sans precedence aux profesionelles de la petite enfance.
+    - On demande aux enfants comment savoir réflechir, des competences
+      relatoinelles, sens de responsabilité.
+    - Le modele d'education est fonde sur la negotiation (on discute).
+    - Les parents deviennetn des accompagnants plutot que des guides.
+    - Ni laxiste, ni castrateur.
+    - \textit{Libres ensemble}
+    - L'angoisse escolaire n'a jamais été si eleve.
+    - L'enfant doit aimer l'ecole, être lui-même et reussir au polytechnique.
+***** Les familles populaires
+    - Olivier Schwartz, 1980 \textit{La vie privée des ouvriers}.
+    - Valorisation du modele conjugale traditionel.
+    - Fecondité plus forte.
+    - Valorisation de la fecondité.
+    - Forte division des rolles sexuelles.
+    - La choix d'une famille nombreuses.
+    - La paternité et la maternité sont des idétités très valorisés.
+    - La famille nombreuses est importante.
+    - Valorisation hedoniste de l'enfance.
+    - Les enfants sont gatés. L'enfance est le moment pour
+      s'amuser. Après viendra la souffrance.
+    - «On n'est enfant qu'une fois».
+***** Lepoutre
+    - Le statut du père
+    - Un homme est respecté s'il a des enfants qui le respectent.
+    - Les chatiment corporels sont courantes.
+    - Inculcation de l'habitus agonistique.
+    - Importance de la virilité et l'honneur.
+***** Marie Clemence le Pape
+- Les classes populaires critique l'hipocraitie 
+- Les enfants doivent apprendre à obéir.
+- Il y a un rapport different à l'autoritaire.
+- Mode éducatif plus autoritaire mais plus libre.
+- Autorité stricte mais discontinue.
+- Les enfants sont libre sans leurs parents. 
+- Ce sera important dans la vie professionelle: les enfants vont
+  devoir obéir au chef. 
+***** Annette Lareau
+- Enquête à 12 enfats blancs et affroaméricains.
+- Stratification sociale des modeles éducatifs.
+- Classe moyenne
+  - Dans les classes moyennes il y a beaucoup de discussions.
+  - L'objectif est de chercher les talents des enfants et les developper.
+  - Apprentissage apprendre à argumenter, justifier leurs points de vue.
+- Classe basse
+  - L'enfant est libre s'ils respect l'autorité des parents.
+  - Nette separation entre la sphere des adults et celles des enfants
+    est trés marques.
+  - L'objetif est de laisser l'enfant s'epanouir 
+***** Effets de corps
+- La tenu du corps. 
+- Lexis corporelle.
+***** Bernard Lahire
+- Il y a des influenes diverses.
+- La mère a plus d'influence.
+- Il faut être attentif aux conditions concretes d'éducation. 
+
+**** La diversite' des instances de socialistion primaire
+
+
+* Philosophie et épistemologie économique                         :noexport:
+** Leçon du 28 septembre
+*** Cercle de Vienne
+Trois objectifs
+*** Eliminer la metaphysique
+*** Construir une science unitaire
+*** Établir un savoir certain sur le monde
+Sans le confondre avec la conaissance a priori
+*** Science est langaue
+Deux types des propositions
+*** Analytiques
+Tautologies
+*** Synthetiques
+Enoncés verifiables, reductible a un ensmeble d'enonces sur
+l'observations
+
+Les enonces d'observation resulte de laexperience immediate
+ils considrere que leur verité est indubitable
+
+le critere de verification est une critere de significatoin empirique du langage
+
+trois tyepes deononce (metaphysique, analytique, synthetique)
+
+aucun interet aux enonces metaphysiques car ils veut rien dire
+*** premier cercle de vienne
+**** principe d'empirisme
+seulement la science permet de juger la valeur des theories. 
+
+Si 
+- H1 
+les théories (c'est-à-dire, ensembles d'enonces) sont logiquement
+reductibles a un ensmeble fini d'enonces d'observations
+- H2 
+La réalité des énoncés d'observation se fait acucun doute
+
+alors, les théories sont vérifiées.
+*** Pierre Duhem
+- Repris par Popper
+- Anti-dreyfussard
+- catholique pratiquent
+- Historien de la physique, 10 vol, le systeme du monde: histoire des
+doctrines cosmologiques de Platon à copernique (1959)
+(utiliser par Koyré et Lakatos)
+
+Utiliser l'histoire de la science pour montrer que les deux mondes ne
+parlent pas du meme monde.
+
+**** La théorie physique. Son objet - Sa structure (1904-5)
+***** Définition de l'experience.   
+L'interpretation et l'observation sont indissociables.
+Ils constitue les deux dimensions de l'experience.
+
+Quand on reconte une experience du physique tous les enonces sont
+toujours impregnee d'observation.
+
+Quand on ennonce le resulte d'un experiment, on trouve le meme
+probleme. 
+
+Ce resultat est definit par toutes les theories qui sont necessaire
+pour produire cet experience et interpreter le resultat.
+
+Et la certitude?
+
+La verificatoin experimentale est toujours liées a une ou deux
+théories physiques. 
+
+La verit'e du veredicte experimentale est contestable. 
+(car elle depends des theories)
+
+Duhem nest pas un relativiste.
+
+ya pas une chose quon peut appeler realite qui soit independante de la
+theorie
+
+Pour Duhem seul léxperience de physique permet de juger de la verite
+d'une theorie physique, mais cette verite nest pas undoubitable ou incontestable.
+
+
+***** Qu'est-ce que l'experience du physique.
+Ya pas d'isomorphism entre symbole abstrait et fait concret
+
+L'experience du physique a deux dimensions
+****** L'observations des faits
+L'experience vulgaire, pur
+
+L'experien
+****** L'interpretation de ces observations
+L'experience du physique ne sont pas la meme chose que l'experience vulgaire
+
+physicien
+***** Conclusion
+\begin{quote}
+Un fait est toujour compenetre par la théorie
+\end{quote}
+*** Norwood Russel Hanson
+Repris par Kuhn
+
+Americain
+*** Patterns of Discovery (1968)
+Fortement critiquer le cercle de vienne sur lestatut de lobservation.
+
+Ils parle de lobersvation directe.
+Ils utilise la perception visuelle. 
+Kepler, eleve de Tycho Brahé
+fin du 16e siecle
+Kepler est geocentriste, Kepler est heliocentriste
+
+Voit-il la meme chose a l'aube lorsquil regardent a l'horizon vers l'est?
+
+- Oui, si on considere le mouvoir au sense physiologique.
+(c'est-à-dire les deux regardent la meme chose)
+
+Pour Hanson, une experience visuelle ne peut pas se reduire a ce que
+les yeux regardetn. 
+
+\begin{quote}
+les cameras sont aveugles
+\end{quote}
+
+- Oui, mais ils ne l'interprete pas de la meme façon: (phase optique
+  et phase interpretative). 
+
+Pour Hanson la reponse est *non*. 
+
+Ils sest inspire par la Gestaltheorie, c'est-à-dire quon observatoin
+partage de l'oeiul de chair et loeiul de l'esprit. 
+
+La physique c'est un ensemble des propositions.
+
+Les «faits» .
+
+Kuhn parle de modification de la vision. 
+
+La verité des faits dobservations nest pas undoubitable.
+*** Hume, The Problem of Induction (\ordinalnum{18}[m] )
+A-t-on le droit de passer de la préposition:
+\begin{quote}
+«Je trouve que tel objet a toujours ete accompagne de tel effet»
+\end{quote}
+à 
+\begin{quote}
+«Je prevoit que d'autres objet qu'en apparence sont semblabes
+s'accompagneront de faits semblables.»
+\end{quote}
+Non.
+
+Tous nos arguments sont fondés sur la raison ou l'experience.
+**** Peut-on les fonder sur la raison?
+Non.
+Nous navons quacces aux apparences. On peut penser que deux objets
+sont semblablabes et nest pas letre.
+
+Ya aucune contradiction logique dans lidee que le cours de la nature
+vas changer (lavenir ne vas pas ressembler le passé).
+**** Peut-on la fonder sur l'experience?
+- Non. Circular argument.
+- Les hommes peuvent decouvrir des theories et etc mais cette action
+nest pas justifies. Les hommes font comme ça a cause de leur coutoume
+de sa propre experience. 
+**** Popper, reformulation et generalization
+Est-ce qu'il existe un principe d'induction?
+
+Une enonce a partir duquel nour pourrions faire des inferences
+acceptables?
+
+Non.
+
+Il reformule le probleme d'Hume pour critiquer le Cercle de Vienne.
+***** Peut-on justifier qu'une théorie universelle est vrai par des raison empiriques?
+C'est-à-dire que
+
+énoncé universel: vrai en tout tempt et tous lieux.
+énoncé singulier: vrai en un tempt et un lieux.
+
+vérité des faits d'observation (enoncés singuliers)
+
+peut-on en deduire la verité des faits universels a la verité dun
+ensemble fini des fait singuliers?
+
+Non!
+
+Les enoncés d'observatoin ne peut pas verifier la verité d'un enoncé
+universel.
+
+Si on accepte la théorie du Wienerkreis on considererait pas que la
+physique nest pas scientifique. Et ça va pas.
+
+Les partisans de la théorie de verification ont fait reccours a la
+probabilité.
+
+Pour Popper, Hume a une position irrationaliste.
+
+Comment on distingue la science du mythe?
+
+Popper va repartir du probleme de linduction pour pouvoir sortir de l'irrationalisme.
+*** À quoi ça sert?
+La question de la scientificite est un enjeu politique.
+** Leçon du 05 octobre
+*** Cercle de Vienne 
+- Ennonce verifiable:
+- Ennonces d'observations: undoubitable.
+  - Critique de Duhem (avant du Wienerkreis)
+  - Duhem repond à Claude Bernard, \textit{Introduction à la médecin
+    experimental}.
+  - Pour Bernard, on devrait radicalment separée la theorie de l'experience.
+ \begin{quote}
+«tant que dure l'esxpericne la theorie doit demeurer a la porte
+    severemetn consignée, elle doit garder le silence et laisser le savant face a face avec
+    les faits.»
+\end{quote}
+- Hanson
+  - Les evenements ne sont pas intrinsequement significatifs.
+  - La façon dont on regarde les evenements depends de ce qu'on en
+    connait.
+  - Le Wienerkreis n'a pas repondu au problème de l'induction de Hume.
+*** Popper
+    - Popper reformule le problème de Hume comme ça
+\begin{quote}
+«Il n'est pas possible de reduire un ennoncé universiel a un
+       ensemble fini d'enonces singulieres»
+\end{quote}
+- Popper generalise le problème de Hume.
+- Il remplace \textit{est vrai} par \textit{est vrai ou fausse}.
+
+\begin{quote}
+«le fait d'accepter l'exactitude [la verité] d'énoncés expérimentaux permet-il de dire qu'une théorie universelle est vrai ou qu'elle est fausse?»
+\end{quote}
+
+- L'experience crucial est celle qui permet de departager deux théories.
+- L'epistemologie 
+- La methode deductive de controle est ce qui caracterise les sciences.
+\begin{quote}
+«La conception selon laquelles une hyphotese ne peut être que soumise à des testes empiriques et seulement après avoir été avancées.»
+\end{quote}
+- La methode des sciences empiriques consistes a proposer des
+  hypotheses et les soumettre a des testes empiriques.
+- Les testes d'une théorie a quatre étapes:
+  - Examiner la cohérence logique de la théorie.
+  - Une analyse logique de la théorie pour voir si elle est refutable
+    ou pas.
+  - La comparaison de cette théorie avec les autres theories
+    existentes car la théorie doit signifier un progress vis-à-vis les autres.
+  - Le test empirique: comparaison des prédiction de la théorie
+    avec les resultats de l'experimentation.
+- Si la théorie passe le test elle est corroboré.
+- Si la prediction entre en contradiction avec l'observation, a ce
+  moment-là la théorie est refutée.
+- Definition de la science de Popper
+- Popper va reemplacer la veriafiabilite par la refutabilité.
+- Un ennonce est scientifique s'il est refutable.
+- Une théorie nouvelle constitue un progress si elle interdisse plus de refutateurs potentiels.
+- Le critere de demarcation est une convention. Ce n'est pas impose naturellement ou logiquement.
+- Une vision naturaliste de la science.
+- Critere de demarcation
+- Pour Popper la vertieé des faits d'observation est aussi
+  conventionée, et n'est pas undoubitalbe. Plutot, elle est provisoire.
+- On n'est peut pas verifié de façon definitiv une theorie.
+- On accepte un fait d'observation car on decide de l'accepter.
+- Les enonces d'observation deviennent des faits acceptés.
+- Si le resultat experimental entre en contradiciton avec la théorie,
+  il y a un problème.
+- Comment empecher les scientifiques d'immuniser leurs théories.
+- Quand est-il legitime d'introduire des hyptotheses auxielières?
+  (c'est-à-dire, quand les theorie semble refutée par les resultats).
+- T ---> O
+- T + H ---> O'
+- Selon Popper, ça c'est legitime lorsqu'elles défendent davantage.
+- Troisième problème: Dans les théories physiques, il y a plein
+  d'énoncés irrefutables. Il deux types des théories avec des énonces irrefutables: Les
+  énoncés de probabilité de la physique quantique. Et, les théories
+  avec des ennonces de type \textit{caeteris paribus}.
+- Si on veut refuter des hypotheses qui contiennent la clause
+  \textit{caeteris paribus}, il faut faire l'hyphotese d'un effect
+  perturbateur, tester cette hyphotese, et la corroborer.
+- La définition de la science: c'est un esemble des regles du
+  jeu. C'est une convention.   
+* Sociologie économique                                           
+** Leçon du 22 septembre
+*** Ressources
+**** Domino
+**** JSTOR
+**** Cairn
+**** Persee
+*** Quelques auteurs
+**** Philip Steiner
+**** Raymond Aron
+**** Thorstein Veblen
+*** Émile Durkheim
+**** Analyse des faits économiques
+**** Regles de la methode sociologique
+***** Preface 1
+Definition d'un fait social
+****** Faits sociaux sont rairement traite sociologiquement
+Il faut traiter les faits sociaux comme des choses. C'est a dire quil
+sont difficiles a changer par la seule volonte individuelle. Appel a
+republicanisme laique. 
+****** L'objet de la sociologie est de faire des decouvertes
+Ce qui peut entre en contradiction avec nos idees d'un fait social
+****** Il faut s'en prendre avec nos preconception
+****** Une chose moralmente reprobable peut etre utile.
+Si le crime est normal, la punition l'est aussi
+***** Preface 2
+Reponds au critiques adressé dans la premiere edition.
+****** Les representations font partie aussi de la vie soziale de la meme facon que les faits sociales
+«Tout ce que l'esprit ne peut arriver a comprendre par voi
+d'observation et experimentation en passant du caractere le plus
+exterieru et du plus immediatement accesible au moins visibles et plus
+profondes.» 
+****** 不 change annotation
+\annotation{l'instrospection est insuficcent pour expliquer les faits
+sociaux. Nost institutions nous ont lege par las generations
+anterieures et meme si nous participions a l'elaboration de celles-ci
+nous ne connaissons pas les veritables rasions de nos actions.} 
+****** La societe a une existence propre
+****** Faits social
+******* Comment repere un fait social?
+De maniere des faire ou de penser exercant sous les conscience
+particuliere une influence coercitive. Les manieres colectives d'agir
+et de ont un une realite en dehors des individues qui a chaque moment
+du temps s'y conforment.
+
+Y a til une contraint qui s'impose aux individus?
+«Je ne veux plus d'euro!»
+******* Un fait social peut etre reglementer ou organizer
+******** Suicide
+******** École
+******* Un fait social devrait etre suffisament entedue dans la societe et qu'elle soit relativement independent de la volonte individuelle
+«Est fait social tout maniere de faire exercant une contrainte
+exterieure ou bien encore qui est general dans l'etendue d'une societe
+donne toute en ayant une existence independant de ses manifestation individuelles.»
+****** La sociologie est la science des insitutions
+***** Base de l'approche sociologique
+**** La sociologie du travail
+***** le processu du diferentiation social
+toute societe repose sur un ensemble de liens grace auquelle ses
+membres obtiennet et assurent une cohesion minamal. C'est la
+solidarite.
+***** Solidarite organique
+Les societe modernes, les indi sont , une forte division du travail,
+une societe qui tends a l'individualisme. Cette division du travail,
+ce interdependense et specialisation. L'individualisme, parce que
+c'est partage par tous, n'a rien d'original. C'est un trait culturel
+des societes modernes. 
+***** Solidarite mechanique
+Dans les societe pre-industrielles, le partage, la societe s'impose a l'individu.
+**** Projet Durkemiene
+Development d'un critique de l'economie.
+La sociologie economique doit reemplacer l'economie politique, qui est
+considere comme inadequate. 
+**** El combo
+Ils s'interesse a la relation entre
+***** M. Halbwachs
+***** M. Mauss
+Interesse aux societes archaiques, a la dimention symbolique et
+religieuse.
+
+Les comportements interesse systeme de don contre don.
+
+Soc moderne 
+***** Simiand
+Les economistes inversent la demarche scientifique en prenant comme
+point de depart le comportement rationel de l'homme economicus. Ils
+etudient pas de faits mais des possibles. Sans prendre en compte leur
+environment social, economique, et politique.
+
+La soci. economique visent a montrer lles variations sociales,
+historiques, et culturel des comportements.
+
+La sociologie economique etudie les institutions et les
+representations sociales des agents pour comprendre leurs
+comportements economiques. 
+
+Interesse a la monnai dans les societes modernes.
+** Leçon du 29 septembre
+*** Questions
+**** Qu'est-ce qu'un fait social total? 
+**** Qu'est-ce qu'un comportement axiologiquement fondé?  
+*** Max Weber (1920)
+- Allemand
+- A etudie droit, economie, philosophie
+- Histoire agraire, les anciennes religions
+- Tout sont oeuvre cherche a comprehendre le capitalisme occidental
+**** Oeuvres 
+***** Ethique protestante et l'esprit du capitalisme
+\annotation{Van Campenhoudt} 
+****** Rationalisation du monde
+Processus qui characterise les societes occidental.
+
+On degage deux types ideaux:
+****** Esprit du capitalisme
+\annotation{Benjamin Franklin} 
+******* Volonté d'inculquer des principes de comportement, discipline de vie, ethos (ensemble des normes et de valeurs).
+******* Characteristiques de cet ethos
+******** Faire du profit et toujours gagner de plus (profit comme objetif en soit)
+******** Chaque individu a un devoir a sassocier a une profession
+******** Demarche rationelle et rigoreuse (investissement de l'argent et controle des depenses)
+******** Pas d'ostentation ni juissance de son argent, il ne reste qu'a la reinvestir 
+******** L'argent est uniquement re-investi (capitalisme ascethique)
+****** Ethique protestane
+******* constitue une rupture avec la magie en tant qu'explication
+******* Martin Luther (1503-1546)
+Le salut ne depends pas des oeuvres mais seulement de la foi.
+Le travail (Beruf) est une véritable vocation. 
+L'activité professionel prends une forte signification religieuse.
+Chaqun doit s'accommoder a son Beruf qui a ete donne par Dieux.
+******* John Calvin (1509 - 1564)
+******** Dogme de la predestination
+Ya 
+On doit chercher toute sa vie pour savoir si on est elu ou non.
+Seule le travail acharnee et effectue pour la plus grand gloire de
+Dieu, la vie austere et le succes professionel qui en decoulent,
+peuvent donnent des traces au fideles.
+
+Fin de lantagonisme entre vie espirituelle et vie economique.
+
+La foi et le salut son des affaires personels, l'individualisme peut
+prosperer sans limites car il est conforme a la volonté divine. 
+
+Travail productif sans relache, ascetisme puritan, et individualisme consitute
+les trait du type ideal de lespirt du capitalisme. 
+
+Affinite entre le capitalisme et le 
+
+L'apport du calvinisme est legitimer la quete sans limite du profit
+car celle-ci est une maniere de rendre hommage a dieux. 
+
+Le travail san relache est la confirmation de l'election du croyant.
+
+Un cercle virtueux entre l'ascetisme (discipline de vie rigoureux, les
+comptes, etc.) et le development economique.
+
+Une mentalité qui va donner au capitalisme d'une ethos particuliere,
+une mentalit'e qui va donner une motivatoin accrue au capitalisme. 
+******* Rationalization de l'existence
+Le capitalisme av
+******* Par rapport à Marx
+Weber cherche a expliquer comment un systeme economique peut se
+perpetuer a travers un systeme des valeurs. 
+******* Kalinowski
+Traductrice de Weber en Français
+******** 不 Revue Agone 2005 33
+Une relecture de Max Weber
+
+Capitalisme moderne et capitalisme financier.
+
+Le capitalisme de Weber est un capitalisme irrationel. Il l'oppose a
+un capitalisme financier d'especulateur et d'aventurier. Ce
+capitalisme est «irrationel» car il est fait du cc?? de raping et
+d'une explotation extensive de la main d'oeuvre.
+
+Le capitalisme moderne induit demblee un subordination de 
+production a un objetif financier. par exemple, le capitaliste ne
+consoment pas mais ils re-investit toute son argent.
+ce ne sont pas deux etapes du capitalisme, car elles peuvent
+coexister. 
+
+deux types de capitalisme:
+
+- capitalisme rationalisé, organisé, au but d'une maximization de profit
+- l'autre ne peut pas obtenir de profit que de façon exeptionel, par exemple, a
+  l'occasoin dune guerre.
+
+lopposition se fait du cote de laccumulation du capital (un general,
+lautre ponctuel), mais aussi sur les conditions de possibilite de
+cette accumulation.  
+
+par exemple, la cohesistence 
+
+perenisation? 
+
+Pourqu'il y ait une perenisation du capitalisme il est necessaire qui'il y ait une
+forme de travail formellement libre, c'est-à-dire le salariat. 
+
+la grand invention du capitalisme rationalise se sa fondation sur le
+travail «volontaire» du salariés. c'est-à-dire que les conditions du
+travail sont juridiquement livres. La seule contrainte sont les
+violences economiques.
+
+La violence economique du capitalisme est interiorisee et vise a faire
+de chaque travailleur son propre patron. Chaqu'un doit interioriser
+ces constraintes (cette violence economique).
+******** L'hypothese de la financiarisation de l'economie
+Opposer un capitalisme industriel avec un capitalisme financier tourné
+vers laccumulation de chiffre sans rien produire.
+
+\begin{quote}
+Patron et tous: La finance m'a tue!
+\end{quote}
+
+Les faits de la finance met au arriere plan la critique du
+capitalisme.
+
+La reponse?
+
+Lutter contre les discriminations.
+******** Constitution d'une idéologie individualiste
+L'individualisme serait une forme abouti de l'intereiorisation de la
+contrainte.
+
+Pousse lagent a voir dans lexplotation maximale de lui meme pas
+lexpression de sa domination mais de ça liberté.
+
+Il trouve ça dans qquel sectes de puritanisme. Ce serait un des
+moteurs du capitalisme.
+
+C'est un indivudialism plutot negative. C'est une individualisation
+des devoirs des travailleurs qui doit toujours les soumettre à
+l'approbation du groupe. C'est-à-dire ce qui sindividualise c'est la
+part de la contrainte assumer par chaqu'un. 
+
+Ils soppose a lidee que le capitalisme va creer une societe d'individu
+atomise
+
+\begin{quote}
+Loin être atomise selon la version positif d'un meme scheme porté a un ?? de leur trajectoir les individus des societes modernes sont inseres dans des groupes sociaux dont la cohesion, non seulement nest pas menacee par l'investisement dans le travail mais est directement fonde par ce dernier qu'elle controle et conforte. 
+\end{quote}
+
+Cette forme d'individualisme est inseparable dun modele sociale
+formellement democratique. La relation verticale entre Dieux et les
+homme va primer entre la relation horizontal entre les hommes.
+
+Le capitalisme moderne est portee par une classe de petit bourgeois
+(souvent emigré) qui trouve une morale individualiste de travail
+intensif. 
+
+Weber est utilisé pour ce qui pronent pour la moralisation de l'economie.
+
+Weber ne pronent pas pour une moralisation de la vie économique.
+
+Loi transaction boursiere
+
+Un capitalisme etrage a toute morale.
+La bourse ne peut pas être un club de ethique.
+Le grands capitaux ne sont pas d'institutions de bienveillance que les
+fussil et les cannons.
+
+La croyance moreal est un moteur decissfi de lexpantion dun system
+economique, qui ne se trouvent pas pour autan moraliser mais quei a
+constanment interet à en faire croire.
+
+******** Secte protestante et lesprit du capitalisme
+******** Agone 2005 31/32
+Les fondements économiques du capitalisme
+***** Sociologie de la religion
+***** Le savante et le politique
+***** Essai sur la théorie de la science
+**** Idées
+***** saisir les motives des actions des hommes et la signification qu'ils leur donnent.
+****** rapport au valeur
+Les conflits des acteurs
+***** Sociologie comprehensive
+***** Type idéal (/idealtype/)
+Une répresentation stylise d'une réalite social donnée. 
+On l'obtient en accentuan les traits significatives a un moment
+donnée.
+Reduire la complexité du réel pour avoir une perspective sur un
+phénomene. 
+Ceux-ci sont produites par le material historique.
+
+Ya quatre type idéal fondamentaux:
+****** L'action traditionelle
+La plupart des avec 
+****** L'action affective
+
+****** L'action rationel en valeur
+guide par des criteres rationels et aesthetiques
+****** L'action rationel en finalité
+action instrumental qui implique une adequation entre les fins et les moyens.
+***** L'activité social
+par rapport auquel s'orient son deroulement.
+Comprendre les actions orientées significativement.
+On comprends les motives (les ensembles significatives).
+
+On a pas besoin d'être Cesar pour comprendre Cesar.
+***** Domination et authorité
+Trois types d'authorité
+****** traditionel
+prends ça force la tradition
+****** carismatique
+la qualité exceptionelle d'un individu
+****** rationelle/legal
+celle des societes modernes, se fonde sur un ensemble des regles legal
+
+La domination pour Weber nest jamais un pur rapport des forces. Elle
+signife la chance de trouver des personnes pretes a obeir un ordre
+determiné. 
+***** Bureaucratie
+Efficacité et specialization du travail. Ça concerne l'organisation
+des grands ensembles dans les sociétés industrielles. Ce nest pas
+seulement l'administration publique. Son autorite est de type
+rationel-legal. Ya plusiers characteristiques:
+****** systeme des regles
+****** specification rigoureuse des posts et fonctions
+****** hierarchie
+*** Steiner (2001), Don de sang et don d'organes
+Ce qui est important est le concept d'institution. C'est-à-dire, qu'il
+y a des institutions de mediation dans les marchés.
+
+Comprendre comment la moral s'associe ou pas a une marché. 
+
+ya des enjeu economiques, moraux, politiques, et de santé publique
+
+Les systemes qui existent sont les resultat de rapports de force.
+Le monde medicale jeut un role important, et il nest pas unifie. 
+
+Les pouvoirs publiques
+
+Les donneurs et receveurs
+- Le don contre le marché 
+- Don, marché et industrie
+- La construction social du don
+Le secte prothestante et lesprit du capitalisme. 
+** Leçon du 06 octobre
+*** Boltanski et Chapello et le nouvel esprit du capitalisme
+- Comment le capitalisme a-t-il survecu en s'ecartant de ses racines
+  religieuses (Protestantes)?
+- Comment il perpetue son ideologie?
+- Comment fait-il face aux critiques?
+- Coimment se reproduit-il?
+- A travaillé avec Bourdieu.
+- Il existe de cité des spheres de justification des actoins des individus.
+- Chaque cité fonctionne plus-ou-moins independaments les unes des autres.
+- Comment les differents cités orientent les actions des individus.
+- Cité, types ideaux des modes de justification.
+- Chapello HES, management.
+- Les racines religieuses du capitalisme ça fait long temps
+  justification protestante.
+- Il y a une \textit{ethos} capitaliste, qui se trasmet de generation
+  en generation sans passer par le prisme de la réligion.
+- Comment un tel système d'exploitation se perpetue?
+  - L'individu est formellement libre devant sa force de travail.
+  - Comment obtient-on des employés?
+  - L'individu doit adherer ou accepter sa force de travail.
+  - Generalisation du salariat, il devient plus difficile de vivre
+    sans salaire.
+- Rassamblage des literature adresse aux manageurs dans les années 1960-70.
+- Deux types des critiques:
+*** La critique social (\ordinalnum{19}[m]) 
+- S'agit sur les conditions du travail: horaires, salaires.
+- La reponse: un état-providence dans l'après-guerre.
+- Mis en place des droit socials.
+- Encadrer les classes populaires, c'est-à-dire, en evitant qu'il y
+  ait pas une grande nombre des personnes vivant en la misère.
+- Ça evite les revolts.
+- Ce reponse vise à maintenir le système.
+- Les rapports de force sont plus determinant que les conjonctures
+  economiques pour determiner les mise en ouvres des droits.
+*** La critique artiste (Mai 68)
+- Ce critique porte sur la place de l'individu dans le travail.
+- Le travail est alienant
+  - Le travailleur est deposedé de son travail, de son temps, etc.
+- Bien être au travail.
+- Être responsable de son travail.
+- En re-structurant le mode de travail.
+- Fordisme ---> Toyotisme.
+- On travail par groupes, plus d'autonomie.
+- Individualisation, flexibilité, autonomie, responsabilité.
+- Cité par projects.
+- Forte importances des interconnections.
+- Tous les secteurs de l'economie sont touchés par ça.
+- Les travailleur sont plus responsables.
+- Il y a pas beaucoup d'incopatibilité entre ces valeurs
+  soixante-huitards et l'esprit toyotiste.
+- Pierre Rimbert, livre sur l'histoire du journal \textit{Libération}.
+- Le travail en chaine n'a pas dissparu. (Flu-tendu?)
+- Le control est permanent.
+- Individualisation de la responsabilité.
+- Le capitalisme est un mode de production qui est capable d'absorber
+  ces critiques.
+- La necessité d'un ethos capitaliste pour maintenir le mode de production.
+*** Critiques à cette ouvrage
+- Que ça soit écrite comme ça, ça ne veut pas dire que les manageurs
+  agissent de cette façon.
+- Il faut regarder la réalite des pratiques managerials.
+- Il existe de difference de pouvoir entre les differentes groupes.
+- Negliger les determinants socials de ce discours.
+- Difference entre le discours et les pratiques et la réalité social.
+- On peut pas presuposser que ce qui est écrit dans les livres se
+  passent ainsi dans la vrai vie.
+*** Guilhot,\textit{Financier philantrope}.
+- Marx et Mauss
+- Qu'est-ce que fait la philantropie dans l'economie capitaliste.
+\begin{quote}
+«La philantropie »
+\end{quote}
+- Les riches s'achettent une bonne conscience.
+- L'emergence des premier philantropes vont en paralel avec les
+  premier fortunes industrielles (Rockefeller, Sage, Carnegie, Dupont,
+  Mellon, Sage, Ford).
+- Les fondations des grands industriels.
+- \textbf{Thèse}: La philantropie participe pleinement avec la
+  reproduction du capital (au coeur-même).
+- Ces fondations vont s'autonomiser de leur créateur.
+- Economistes marxistes seront fiancés par Ford.
+  - La \textit{critique} est aussi produite.
+  - Nous sommes la critique.
+  - C'est mieux de les absorber.
+  - Même s'ils font des critiques, ceux qui sont à l'avant-garde sont
+    mieux possés pour prendre en charge la direction du capitalisme.
+- Independance des programmes fiancé vis-à-vis des créateurs.
+- Ces fondations seront des entreprises elles-mêmes.
+- Logique de réproduction de capital.
+- Mauss: don et contre-don.
+  - La valeur du don se joue dans le temps entre le don et le contre-don.
+  - Un don lie la personne. Quelqu'un s'endette (ce qui reçoit).
+  - \textbf{Potlach}: Celui qui a plus de pouvoir doit plus donner.
+  - Plus vous donnez, plus vous avez de pouvoir sur les autres.
+- Le don est au ??? de la réprouction du capital.
+  - \because le donne lie la personne qui reçoit.
+  - \because la transformation d'une vision du monde.
+- Ce sont des investissements lourds. 
+- La philantropie est un don, et un don lie.
+- L'ordre des priorités est donné par des privés, dans le système americain.
+- La philantropie n'est pas simplement una compra de bonne
+  conscience.
+- Ces fondations font aussi des benefices. Ils ne travailent pas à
+  perte.
+*** La nouvelle sociologie économique
+**** Convert et Heilbron, 2005, sociologie économique americaine
+- Après \textsc{wwii}, un déclin de la sociologie économique.
+- Sociologie du travail la remplace en France.
+- Aux États-Unis la sociologie économique renaître.
+\begin{quote}
+«Une discipline est une unité academique relativement stable.»
+\end{quote}
+- Après les 50, la sociologie économique a donné la place aux
+  économistes.
+- Qu'est-ce que la nouvelle sociologie économique?
+- Analyse d'intercitations 1980-2000.
+- Renouvellement des sciences sociales americaines.
+- Crise des sciences sociales americaines.
+  - Fin de fonctionalisme dominant (Merton, Parsons, Lazarsfeln).
+- Nouvel interet en sociologie (New Left, mouvements contestataires).
+- Il y a pas de capital scientifique établi.
+- Sociologie économique des années 1980 vont s'inspire de:
+  - Économie des comportements humains de Gary Becker.
+  - Néo-institutionalisme de Williamson.
+- Perron, Stimchcombe, White.
+  - Sociologie des organisations.
+  - Sociologie des réseaux.
+- Granovetter, Dimaggio, et Schwartz.
+- Harrison White.
+  - Il est au sommet de la hiérarchie academique (à Harvard).
+  - Presque tous sont lié d'une façon ou autre à White.
+  - Physicien de formation.
+  - Ambition de refonder la sociologie par une approche structuraliste
+    fondé sur l'analyse des réseuax.
+  - 1976 seminaire de sociologie du marché.
+  - 1980 \textit{Where do Markets come from?}
+    - Reponse à l'imperialisme économique de Gary Becker. 
+
+* Aufgabe                                                         :noexport:
+** 不 Financier philantropes vocation ethique et reproduction du capital a Wall Street depuis 1968 (2004)
+*** Introduction
+
+  
+
+
+
+
+* Questions économiques contemporaines
+** Leçon du 22 septembre : L'éclatement de la relation de travail
+*** Coordonnées
+- Thevenot, thevenot@univ-paris1.fr
+- CES - MSE - bureau 202 
+- 118/D642
+- Mot de passe = QEC
+*** Parciel
+- 2 sujets entre 4.
+- Exposer une problematique et proposer une reponse estructure. 
+- Qualite de la redaction
+- Durée: trois heures.
+*** Eclatement de la rélation de travail
+rel. de travail vs. rel d'emploi
+facon dont les entreprises mobilisent le travail.
+diff. moyen juridiques de d'emboucher
+- CDI
+- Interim
+- recours aux autres entreprises (pour les utlisatrices)
+- sous-traitance
+**** rel. d'emploi 
+Relation entre employeur et son employee. 
+Juridiquement structure par le contrat de travail.
+**** rel de travail
+Travalleur nest pas necessairement l'employee d'ou il travaille.  Ce
+qui commande le trava nest pas responsable du travailleur
+juridiquement.  Définir, mésurer, expliquer comment les pratiques des
+entreprises ont contribui a leclatement des collectifs de travail.
+**** Statistiques
+***** En france on a des indicateurs de lemploi de lenquete emploi faite par l'INSEC
+***** S'interesse a lemploi ne nous resnseigne pas sur la sous-traitance
+***** la sous-traitance napparait pas dans les statistiques
+il nya pas une demande social
+il faut demander les entreprises
+***** les entreprises sont reticentes a parles de ces donnees. 
+comment y acceder?
+***** Enquete emploi
+lenquete emploi est de la part du main-d'oeuvre
+independant salarie: CDI, CDD, Interim, Apprentis?
+****** Domination du salariat
+******* Ya plus en plus de salaries.
+******* Debut du XXe siecle 50\% de salaries.
+****** CDI
+Ily a une baisse du CDI en general.
+****** 85\% de salaries sont CDI
+bcp de CDI se terminent apres un ans.
+****** 12-13\% de salaries ne sont pas en CDI
+****** CDD
+******* des 2000 les embauche a CDD crecen 
+En periode de crise la part de CDI de lemploi total crece car ils ne
+sont pas touche premierement par la crise.
+**** L'eclatement de la rélation de travail
+
+***** Les indicateurs de l'éclatement de la rélation de travail
+****** Les indicateurs autour du statu d'emploi: les Formes Particulieres d'Emploi
+******* Domination du salariat
+******* Les formes particulieres d'emploi
+****** Les formes de mobilisation du travail
+***** Eclatement de la relation de travail et sous-traitance
+****** La sous-traitance come FMT: approche plurisdisciplinaire
+****** Quels indicateurs de l'extériorisation de la main-d'oeuvre par la sous-traitance
+****** Sous-traiter ou embaucher?
+**** Conclusions
+***** Les donnees statistiques sont insufficentes
+***** Lestatus emploi cree un responsable (lemployeur)
+***** ceux qui peuvent controller et commander de la main-doeuvre sans en etre responsable en droit. 
+***** USA
+****** Construit des categories des travail pour 
+******* Travail-contingent, Polivka
+Relations de travail concues pour ne pas durer.  (Votre emploi va
+durer plus d'un an?)
+
+4\% de travail contingent.
+******* Arrangment de travail alternatif
+Sous-traitance, interinat. 10\%. 
+**** Vocabulaire
+***** Entrerprise utilitsatrice / Donneur d'ordres
+****** Salaries directes (contrat de travail) (gestion differencie)
+***** Entreprise sous-traitante (contrat commmercial) / Preneur d'ordres
+****** Salaries directes (contrat de travail) (travail indirect) (gestion differencie)
+Quelle est la responsibilite en droit de l'entreprise utilisatrice
+vis-a-vis ces 
+**** Atkinson 1984
+***** La firme flexible
+Les moyens que l'entrerpise utislisatrice va utiliser pour se
+flexibiliser. Elle divise sa force de travail entre un coeur et une
+peripherie. 
+****** Les trois objectifs de la firme
+******* Capacite de s'adapter au environnment concurrentiel (
+******* increse productivity
+******* reduce le cout de travail
+****** Conditions favorable au sous-traitance
+******* Chomage Eleve
+******* syndicalisme affaibli
+****** Deux travaillleurs
+******* Coeur
+Il evoluera dans les competences que les travailleurs vons acquerir
+selon les changmenet technologiques. 
+Sont ils proteger de la sous-traitance, ou est-ce quils sont mis sous
+pression par la croissance de la peripherie.
+******** CDI
+******* Peripherie - Interne
+******** CDD
+******** TP
+******** Stage
+******** Apprentissage
+Lentreprise va les embaucher selon ses besoins.
+******* Peripherie - Externe (flexibilite numérique)
+******** Interin
+******** ST
+******** Independants
+***** La taille de lentreprise est important.
+****** CHCT
+Obligation detre cree par les entreprises de plus de 50 travailleurs.
+****** 0,1\% des entreprises ont plus de 500 salaries.  
+le tissu productive est dominee par les independants et les petites entreprises
+****** deconcentration de la taille productiv
+****** concentration de pouvoir financier
+****** Droit de travail
+******* Etablissement
+Les premieres legislation industrielle cetaient sur les etablissement.
+Instance de representation: comite detablissement
+******* Entrerprise
+Instance de representation: comite dentreprise (CCE)
+Cest a cette niveaux quon signe le contrat de travail
+******* Groupe
+*** Sous-traitance
+M. L. Morin
+**** Deconexion  
+**** Niveaux organisation dela production
+***** Etablissement
+Lieu ou les gens travaillent. Ou s'excercent le travail. Premiers
+legislations industriels. Combinaison du capital et le
+travail. Proteger le corps au travail 
+***** Entrerprise
+ La direction, lentreprise fordienne. Elle a le pouvoir de decision
+ economique. Il est marque le lieu de travail. C'est le niveaux de
+ representation des salaries. Au niveux de representation
+ professionel. Ca depend de lactivite exerce par lentreprise.
+***** Groupe
+La firme nest pas vu comme producterur ou. Unite de gouvernance qui
+gere lallocation des resources. Commite de groupe. 
+***** Unite economique et social
+Ici se trouve la sous-traitance. Concerne un regroupement d'entreprise
+sur des decisions de justice ou par convention des entrepreises vont
+creer un comite (d'entreprise).
+**** Hierarchie des niveux
+***** Frontieres de la firme
+***** Sous-traitance
+situation dautonomie controlle. Les entrepreiss sous-traitante sont
+controlle par une dependence eocnomique par les donneurs dordres
+(Entrepreise ulisatrice). Discuter des formes de subordination. 
+****** Definition
+L'opération par laquelle une entreprise confie a une autre le soin
+d'executer pour elle et selon un cahier decharge preetabli une partie
+des actes de production ou de services dont elle conserve la
+responsabilite economique finale.
+** Leçon du 29 septembre : Justice, propriété et inégalités
+*** Questions
+- Que peut Marx nous apporter?
+- Quels sont les enjeux théoriques?
+- Il y a une plasticité de la théorie.
+*** Sujets
+**** Thomas Paine
+**** Charles Fourier
+**** Théorie de l'équilibre général 
+**** Jean Jacques Rousseau
+*** John Maynard Keynes
+**** Néo-Keynesien
+***** John Hicks
+***** Patinkin
+***** Paul Samuelson
+**** Post-Keynesien
+***** Mark Lavoie
+Allience entre néo-Ricardien et Keynes.
+*** Karl Marx
+**** Oeuvres
+***** 不 La Critique du programme Gotha (1875)
+Marx reprends cet eslogan d'un socialiste français, Louis Blanc dans
+/La Critique du programme de Gotha/ (1875).
+
+Le programme de Gotha sont les principes d'une société à construire
+écrits par le parti ouvrier allemand à Gotha. Marx s'y oppose. 
+
+\begin{quote}
+«À chaqu'un selon son travail» 
+\end{quote}
+
+Marx: Ça vient du droit bourgeois!
+
+Chaque producteur individuel reçoit son compton individuel de
+travail. Droit inégal pour un travail inégal. Reconnait comme un
+privilege de nature les talents inegaux des travailleur et pourtant
+l'inégalité de leur capacité productive. 
+
+Marx vise à égaliser les conditions des personnes sans un rapport avec
+leur condition productive.  
+***** Manuscrits de 1844
+Théorie de l'aliénation.
+Le travail est l'essence de l'homme. C'est ça ce qui les definit. 
+Le terme vient du droit et d'Hegel. 
+Il reprend la critique de l'aliénation de Feueurbach.
+
+Dans la société capitaliste les gens sont aliéné de leur travail. 
+
+Les travailleurs sont deposedé des produits de leur travail. 
+Ils sont deposedés de la façon d'organiser leur travail. 
+Le travail n'est plus que le moyen de satisfaire d'autre besoins. 
+Ils sont aliénés d'eux meme et des autres. 
+***** «en matière de conclusion» Livre \textsc{iii} du Capital
+****** Le regne de la necessite
+Lactivite dicte par la satisfactoin des besoins. 
+Le travail fait pour satisfaire des autre besoins.
+****** Le regne de la liberte
+Il commence où cesse le travail dicte par la necessité et les fins
+exterieurs.
+On travail pour travailer (le travail est un fin en soi-meme) pas pour
+ganger sa vie. 
+
+\begin{quote}
+«Tout comme l'homme primitif l'homme civilise est ... reproduire ça vie, cette contrainte existe sur t»
+\end{quote}
+
+La necessité et les besoins s'acroissent. Au meme temps se develope
+les processus productifs pour les satisfaire. 
+La necesité n'est pas le motive de la totalité de la vie des agents. 
+L'energie creative. , lecart entre le necessaire et la satisfaction
+d'un besoin. 
+Il faut reduire la journée de travail.
+*** Philip van Parijs
+****  Le marxisme analytique
+- Philosophie analytique.
+- Ils se reappropient des objetifs du Marxisme.
+- Ils veullent actualiser/mettre à jour la question de la justice.
+- Ils considerent que la theorie de l'explotation dennonce surtout l'injustice:
+- Pourquoi l'organisation capitaliste est injuste?
+- Mais, ils vont rejetter:
+ - Théorie de la valeur-travail des économistes classiques.
+ - Philosophie de l'histoire d'Hégel.
+- Donc, ils vont utiliser les appareil théoriques de la théorie contemporaine, TOUS! 
+**** L'allocation universelle 
+***** John Rawls vs. Marxistes Analytiques
+Il y a des marxistes qui pensent que le non-travail ne doit pas être remuneré.
+
+Pour Van Parijs cette possibilité existe.
+**** Oeuvres
+***** Éthique économique & sociale (2000)
+***** 不 L'Allocation universelle (2005)
+Ch. 3.
+***** 不 Revue Mouvements. Entretien (2013)
+Titre: De chaqu'un selon ces capacités, et a chaqu'un
+inconditionellement selon ses besoins.
+
+L'allocation universelle est une application possible et partiel de
+cet eslogan.
+
+La societe doit compenser les differences dans la capacité productive.
+
+La question de l'aliénation.
+
+Van interprete l'eslogan de Marx comme decrivant une societe de
+l'abondance. 
+
+chaqu'un voit ses besoins satisfaites sans un lien avec leur
+productivité. 
+
+Il faut ue les individus aient le désir de travailler sans quil il y
+ait ???
+
+L'allocation universelle est une réalissation graduelle de l'eslogan. 
+
+Il faut entendre la 2e partie, besoin, par besoins fundamentaux 
+
+Pour Van, l'allocation est versée pour tout le monde, bien qu'il peut
+avoir des difference selon le climat, la condition physique
+(handicapé, etc.). 
+
+Les besoins fundamentaux de chaqu'un.
+
+Trois avantages:
+- Les gens travaillent sans être constraintes par le travail.
+- S'accroit le pouvoir de négociation de plus faibles.
+- Ça permet d'appliquer une idéale de justice conçu comme un inégalité
+  de situation en dépit des différences de productivité et en dépit
+  des différences des besoins.
+
+C'est une façon d'amelliorer le chômage. 
+*** Piero Sraffa  
+**** Refonder la théorie classique 
+Les prix sont determinés par les conditions de production.
+Les prix ne sont pas determinés par la demande.
+Ils cherche une théorie générale de la société.
+Il utilisait l'algèbre linaire.  
+**** Oeuvres
+***** Production de marchandise par les marchandises
+- Soustitre: Prélude à une critique de la théorie économique.
+- Brouloire??? contre les néo-classiques. 
+- Il propose une théorie classique des prix. 
+- Il a travaillé les oeuvres de Ricardo. 
+** Leçon du 06 octobre : L'État providence
+*** Partie I
+**** \ordinalnum{20}[m] siècle (1917 - 1991)
+**** Revolution: L'état social
+- revolution democratique: il convenait de gerer les societes selon la democratie.
+**** Marcel Gauchet, \textit{L'avenement de la démocratie}
+***** Volet libéral
+- Historiquement les liberaux ont mis de barrier à la liberté.
+- L'interet general existe mais c'est reductible aux interets particuliers.
+***** Volet républicain
+- Les citoyens sont mis sur un pie d'égalité.
+- Il y a des representants elus.
+- Les lois fait par les representants sont valables pour tous.
+- Il y a un interet social.
+**** Qu'est-ce qu'un état social?
+- Il y a des imperfections du marché (au sens fort du terme).
+- Il y a pas des théories de l'état social.
+**** L'état social: une veritabel revolution
+- État social, état providence, \textit{welfare state}.
+\begin{quote}
+«Qu'est-ce que cette concurrent de Dieu?»
+\end{quote}
+- La protection sociale.
+  - La santé.
+  - Les retraités (droit au bonheur).
+- Risque maternité
+- Risque vielleise.
+- Protection minimale des risques socials ---> Bien être social.
+- Reduction du champ de l'etat social à la protection social.
+- Trois modeles d'état providence
+  - Libéral:
+    - Pauvres touchent des protections sociales.
+    - Impot payer par les classes moyens pour les pauvres.
+    - Ceux qui ne sont pas pauvres doivent trouver protection privée.
+    - Favorise l'épargne.
+  - Social-democrate ou socialiste
+    - Protection est universel.
+    - Financement guarantie par l'impot.
+    - Prestations des bon niveau.
+    - Critere de citoyennété.
+  - Corporatiste
+    - Protection social est assuré de façon professionelle
+      (entreprises, etc.)
+    - Les prestations sont des bon niveua mais le financeent se fait
+      par cotization.
+- Critiques:
+  - reduction du champs de l'état providence à la protection social.
+  - deux definitions d'état providence:
+    - etroite
+    - pas etroite:
+      - service publique
+      - politiques economiques
+      - droit de travail
+  - Cas français
+    - Tous peuvent beneficier des accords publiques.
+- F. Merrien 2019 ??? et Robert Castel ???
+- Plan Beveridge.
+- Néolibéralisme.
+  - Nos économies sont des économies de marché.
+- Politique économique
+- Sociologie
+  - Jeu d'acteurs aux origines d'une institution.
+**** Section A: État social une véritable revolutions
+- Troisième: Mutuelle, cooperatif.
+- On ne vit pas de ans des économie de marché.
+- On vit pas dans des économies mono-capitalistes.
+- Il y a d'espheres entieres qui echappent au capital.
+**** Section B: L'ampleur de l'état social
+- Indicateur plus large: depenses publiques.
+- France, les depenses publiques (1,250 milliard) sont 56\% de budget.
+- \textsc{pib} 2,200 milliard.
+- $PIB = P - CI$
+- \textsc{sp} (services publiques) 366 milliard, 16\% du \textsc{pib}.
+- 393 milliard
+- VAB APU = 393
+- VAB SNF = 1200
+- vab apu + snf / vab snf= 38\%
+- \textsc{ps}: protection social
+  - TSN? = 131
+  - PSE = 443
+  - 366 consomation des services publiques
+    - SPC 156
+    - SPI 210
+- Interet de dette, 45 milliard. 
+- La moitie de la consomation ?? en France est soutenu par ???. 
+**** Section C: État social dans tous les pays du monde
+- Tous ont la protection sociale, les services publiques, etc.
+- En termes de santé le Royaume-Uni est le plus socialiste,
+  \textsc{nhs} (National Health Service).
+- La moitie des depenses en santé des États-Unis sont privés.
+- États-Unis: la retraite publique offre un niveau de vie
+  plus-ou-moins convenable.
+- L'eau reste publique aux États-Unis.
+- Allocation chômage: Plus haut en France qu'aux États-Unis.
+- Droit du travail:
+  - États-Unis: Droit travail plus faible qu'en France.
+  - Accords collectifs sont plus longues et plus specifiques.
+  - La politique économique: au coeur de contrat social americain = le
+    gouvernement central va garantir le plein emploi.
+  - Crise de 2008: États-Unis fait des plans de relancement monetaires
+    et budgetaires.
+  - Le plan de relancement europain n'était pas si generosos que le budget américain.
+  - La politique économique americain est plus keynesienne.
+*** Partie II: La sous-théorisation de l'état social
+- On n'a que des lineaments de l'état social.
+**** Trois justifications théoriques du marché:
+  - Classique
+  - Néo-classique
+  - Hayekienne
+***** Pourquoi on n'a pas de théories de l'état social?
+  - Les théories dominantes sont libérales.
+  - Les néo-keynesians
+    - Ils sont favorables à l'intervention publique.
+    - Imperfections sur le marché (externalité, manque d'informations,
+      etc.).
+  - L'objectif est de réaliser le modèle de concurrence parfait. 
+**** Théories Marxistes. 
+  
+
+ 
+** Leçon du 13 octobre : Les marchés de permis négociables
+** Leçon du 20 octobre : Dette publique et rapports de classe
+** Leçon du 27 octobre : L'éclatement de la relation de travail
+** Leçon du 10 novembre : Justice, propriété et inégalités
+** Leçon du 17 novembre : Les marchés de permis négociables
+** Leçon du 24 novembre : L'État providence
+** Leçon du 01 décembre : Les indicateurs de richesse
+** Leçon du 08 décembre : Crise de la zone euro
+** Leçon du 15 décembre : Dynamique des «régimes d'emploi»
+* Italien                                                         :noexport:
+** Unità 1
+** Unità 2 
+*** Essere
+| Essere        |       |
+| io            | sono  |
+| tu            | sei   |
+| lui, lei, Lei | è     |
+| noi           | siamo |
+| voi           | siete |
+| loro, Loro    | sono  |
+*** Expression con essere
+- puntuale
+- in anticipo
+- in ritardo
+- essere / non essere d'accordo
+- essere felice
+*** Avere
+|Avere|
+| io            | ho |
+| tu            | hai |
+| lui, lei, Lei | ha   |
+| noi           | abbiamo |
+| voi           | avete |
+| loro, Loro    | hanno |
+
+Quanti anni hai?\\
+Ho diciotto anni.
+*** Expression con avere
+- fàme
+- sete
+- sonno
+- paura
+\emph{peur}
+- fretta
+- caldo / freddo
+- avere da fare
+- avere bisogno di qualcuno / qualcosa
+\emph{avoir besoin de} 
+- avere voglio di qualcuno / qualcosa
+- 
+
+*** Numero
+| cifra | numero      |
+|     1 | uno         |
+|     2 | due         |
+|     3 | tre         |
+|     4 | quattro     |
+|     5 | cinque      |
+|     6 | sei         |
+|     7 | sete        |
+|     8 | otto        |
+|     9 | nove        |
+|    10 | dieci       |
+|    11 | undici      |
+|    12 | dodici      |
+|    13 | tredici     |
+|    14 | quattordici |
+|    15 | quindici    |
+|    16 | sedici      |
+|    17 | diciassette |
+|    18 | diciotto    |
+|    19 | dicinnove   |
+|    20 | venti       |
+
+** Leçon du 03 Octobre
+*** 
+- essere in ritardo / in anticipo
+- essere / non essere d'accordo
+- avere da fare
+- avere bisogno
+- avere voglia
+* Sociologie du travail                                           
+** Leçon du 30 septembre
+\dictum{L'essor du salariat et le travail au coeur de la question social 19 20  siècles}
+*** Coordonnées
+Caroline Bertron, carolinehs.bertron@gmail.com
+*** Manuel Castells  
+**** Evaluation du status salariel
+- Etat minoritaire, statut fortement volorisée, 
+- relation salarial, mode de remuneration revient 
+il y a de transformation symbolique
+- La condition salarial est une constraction social resultant des
+differents acteurs. 
+- Le contrat salarial est devenu 
+- Quel sont les remis en cause de ce mode d'organisation de 
+- Le travail des femmes fait partie de l'essor du salariat
+- Le travail moderne indiscociable de la question social et du salariat
+- Le salariat va emerger d'un ensemble des rapports au travail qui
+existait au 1
+- Les origins du salariat: 
+- Le travail est un affaire des pauvres
+- Le travail est regulee par des groupes, des corporations
+- La relation de travail doit etre regulee par un contrat
+- 1850 - Le salaire est un mode de remuneration est ça n'entraine aucun
+autre responsabilité
+- Ouvrier deracinées de leur vie village/familial
+La naissance de la question sociale se rapport aux concerne des
+patrons eux-memes.
+C'est-à-dire, 
+- Le paternalisme des patrons, la philantropy sociale et les formes des
+charité religieuses heritiés du moyenne âge. 
+- Bonnes pauvres des mauvais pauvres
+- Dickens. Piquick , ancient patron d'industrie qui cherche à prôner sa
+vision sociale. 
+- L'interet public étati defendu par les patrons eux-memes.
+- L.H. Villarmé intervention publique. Question sociale. Essayer de
+susciter un interet
+- Catholicisme social au \ordinalnum{19}[m] siecle. 
+- Movement socialiste.
+- Paternalimse patronal.
+  - Frédéric LePlay
+- Les valeurs familier doit etre promu dans les ouvrier.
+- Le patron va supplemeter les autres instances sociales dont les
+ouvreir ne disponsent pas.
+- Les esntrepresies au \ordinalnum{19}[m] siecle en France vont creer
+leurs propres instances de culture, de logement, qui cherche a
+recreuiter . Ça vise a creer une nouvelle morale de travail.
+par exemple, la forge de lorraine. 
+- 1840-1850
+- 1892 - La premiere institution publique d'études de travail en France.
+- Parmi les themes: la durée du travail, les salires en petites
+entreprises, caisses de retraite. 
+- 1906 - Premier ministère de travail. 
+- État minimal non-interventioniste. Les efforts privée chartiable,
+philantrophique vont moraliser les ouvrier.
+- Tapolb tous ces initiatives privée vont échoué et il faut que l'était
+intervient davantage. 
+- Ce sont les actions du 
+**** Castel (2009) 197
+la responsibilité de l'état est qc d'assez tardive.
+la protection sociale emerge
+
+Apre enquete Villarmé 
+Premier lois de travail, 1841 enfant ne  peut pas etre embauche avant 8 ans ne plus de 8h de travail par jour. 
+1882 - age est modifier a 13. Ce pour essaier d'eliminer l'absentisme scolaire.
+1860-1884 - Terminer 
+1884 - La formation des syndicat ouvrier et patronaux sont permits
+1898 - Loi sur les accidents de travail
+C'est par principe que le lien entre employee et employeur entraine
+une responsabilité
+1906 - ministère de travail et de la prevoyance sociale
+Construction progressive de l'interet public 
+
+L'invention du chomage 
+L'essor de l'estatut du travail comme source estatus social normal
+dans un cycle de vie.
+
+Une nouvelle catégorie, travail et chomage vont s'oppose. 
+
+Le chomage sera l'absence de c
+Le travail s'est ultra valorisé à la fin du \ordinalnum{19}[m]
+siècle.
+
+Le concept de chomage née avec celle du salariat. 
+
+1896 - L'invention du chomage est le résultat des categories des
+études statistiques. 
+
+/La naissance du chômeur/
+En 1850 veut dire celui qui refuse de travailler
+En 1880 veut dire les ouvrier qui désirent travailler (on commence à
+distinguer entre désir et pas de désir de travailler)
+Les /sans-travail/.
+Distinction entre vrais chomeur et /faux chomeur/. 
+
+La distinction au \ordinalnum{19}[m] siècle entre vrais et faux
+pauvres.
+
+Chez Max Weber il y a une conception de la conceptions morale du
+travail. Dans l'asaise chercher par les commerçants, ils cherchent des
+signes de la prédestinaton divine. 
+
+Edward Thompson, histoire desgroupes ouvrier en Grande Bretagne.
+La morale du travail, elle est diffuse dans le capitalisme
+industrielle par une nouvelle rappoert des ouvrier au temps. 
+
+Le temps est construit sociallement, il a une sense donnée a un moment
+donné.
+
+Le temps sont lensemble de dnormes sociales qui sert a construire le
+rapport d'une societe au temps. La correlaction entre 
+
+L'horloge va commencer a penetrer dans plusieurs spheres sociales. 
+L'horloge va permetrre la passement du travail par piece à la journée
+du travail. 
+
+L'universalistaion de l'horloge permets de donner au salaire une
+source de valeur stable au travail.
+
+L'horloge devient un temps abstrait.
+
+Casser l'absenteisme le lundi en Grande Bretagne.
+
+Equivalence entre dur travailler et être un bonne cityonne. 
+**** L'état social
+Vocation universaliste. Qui va s'étendre à tous
+
+Société salarial (term de Robert Castel)
+On peut en parler quand les prerogatives rattaches aux travailleurs
+vont s'étendre a leur famille et à l'ensemble de la population active
+et non-active.
+C'est le modele du salariat qui forunit le modele pour le reste. 
+
+Modele social-démocrate: 
+Societe ou les conflits 
+
+1946 - 1980
+L'effritement d'un modele interieur. 
+La securite social va generaliser
+
+Difference de la sécurité sociale
+régime general 
+
+regime especial
+couvrir les travailleurs qui n'etaient pas couvertes auparavant par
+les entreprises.
+
+Les comité d'entreprise sont cree pour (1946) les entreprises avec
+plus de 50 travailleurs.
+
+1968 - Protection special pour les representants syndicaux. L'association
+
+Avec le declin du syndicalisme les comité d'entreprises deviendront le modele
+
+1950 - Établissement du salaire minimal.
+1958 - Assurance chômage 
+1945 - Droit du travail
+privilegier le CDI et le temps plein 
+l'obligation de justifier le firing des travailleurs 
+la participation de ??? par les comités d'entreprises
+
+
+1970 - effondrement
+
+Discours politiques et patronaux. 
+Faire tout le monde avoir un stake dans l'entreprise.
+
+La convergence entre les milieux patronaux et les milieux politiques.
+Un nouveu discours sur l'emploi qui est accparé.
+
+Le discours participatif est liée a l'efficience productif
+Recentrement sur l'entreprise elle-meme des questions sociales.
+Les questions d'economie politiques se met en arriere-plan. 
+
+1982 
+Baissement de l'age de la retraite 60.
+
+Loi Auru?
+Nouveau visage de l'entreprise
+
+Travailleur responsables
+
+Entre la fin de l'
+L'accion de l'etat a renforce la condition du salariat.
+
+Le travail social sagit d'une chose para-publique.
+Avant 1945 - travail social est encore liée aux conceptions
+charitables, philantropiques, et réligieuses.
+Apres 1945 - travail social est liée aux conception de l'état social.
+
+L'effritement de la condition salarial
+Relation entre travail et garanti social
+c'est relation est toujours mis a mal
+précariat
+nouveux régime fondé sur la précarité
+**** Quels sont les effets sociaux?
+- Désafiliation vs. Exclusion
+1990 - exclusion est utilisée
+
+Désafiliation
+Les enjeux plus large du modele de l'etat social en France.
+Defficit d'affiliation
+Les estructure pre-existant, qui allait proteger l'individu ne jouent
+plus leur role. c'est-à-dire, il vont pas le proteger. 
+**** FPE - forme particulier d'emploi 
+se situe dans le salariat, deroge a la norme de la stabilité et la
+durée d'un contrat de travail. Par exemple, interim, apprentissage. 
+***** Precarité objective
+***** Precarité subjective
+**** Transformation du travail des femmmes
+1960 - retour des femmes dans la visibilité du travail
+->1960 travail des femmes bcp invisibilisé 
+Politique familial contribue a baisse le temps des femmes de traval a
+la maison. 
+Travail des femmes resté 
+Jean Scotts 1990 discours de l'economie politique francaise
+La femme qui travail c'est un 
+Le travail ouvrier est consideree comme un etat non naturel a la femme
+Le travail ouvrier est considere non feminin, c'est-à-dire, pas
+compatible a ce que devrait être une femme
+La femme qui travail signifie trouble et desordre à la maison.
+L'ouvrier en tant qu'ouvrier sera la representation negative de femme
+travailleuse
+L'emploi feminin croise bcp plus vite que le travail masculin.
+Le travail des femme était auparant très intermitante. 
+
+Les differences d'emploi de femme entre les pays de l'OECD depends des
+politiques nationaux. 
+
+1962 - 2007 - 
+
+Principe de à travail egal, salaire égal.
+La reconaissance du travail domestique car non-remuneré.
+
+L'escolarization croissante des filles 
+
+sous emploi
+
+Pas de concurrence avec les hommes pour les postes de travail.
+Segementation du marché de travail a permit la'integration rapide des
+femmes dans le travail salarial
+
+Le secteur d'emploi tercier (service à la persone, paramedical, emploi
+administratif, etc.) 
+
+La ségregation horizontale des métier.
+Elle est fort dans les emplois peu valoriser et peu remunerée. 
+
+L'entrée d'homme dans de metiers de femme
+L'entrée des femmes dans de metiers des hommes.  
+
+La polarisation de l'emploi maintienen les stereotypes de genre. 
+
+À l'interieur des metier il y a aussi des ségration.
+Femme choisissent gynecologie, ophtalmologie, médicine général.
+
+La feminisation d'un travail decoule en la devalorisation symboloique
+et salaraial de ce travail.
+
+L'entree des hommes dans des metier des femmes a decoule en l'inverse
+a la technicization et la valorisation de ces metier. 
+
+Les hommes ont plus de chance davoir des carrier ascendants. Dans les
+entreprises ils vont connaitre plus de possibilités d'ascencion
+internet et de finir leurs vies en tant que cadre. 
+
+Long terme, les emplois precaires (pe ) se sont moins developpé et ils
+sont plutot feminin.
+
+Le temps partiel est se trouve dans toutes les categories professionel
+et il est fortement feminisé partout en Europe.
+
+Sous-emploi: Je travail partiel, mais je veux travailler plus
+Comment on le mesure? C'est difficile. Doit je travailler plus ou être
+une bonne mère. 
+
+Le temps partiel est une mode de gestion du travail qui est prevue,
+est une politique d'emploi qui ne vas pas devenir temps complet.
+
+
+
+***** L'emploi de femme
+****** tercerization
+secteur de service
+****** salarization
+****** escolarization massive
+
+
+
+**** État providence
+Fait pas leccart de la concpetion de la charité, ni les relations
+inegalitaire entre pourvaoyeurs et beneficiaires. 
+** Leçon du 07 octobre
+\dictum{Organiser le trvail, compter le travail, classer les
+travailleur.euse.s: enjeux économiques, politiques et scientifiques}
+*** Compter les travail
+- Classer les travailleur
+  - hierarchie
+  - statut
+  - salaire
+- Objectif
+  - classer
+  - produire des données
+- Pratique administrative
+- Codage
+  - Poste réel
+  - La maniere dont on va la mettre de façon administrative
+- Dès le \ordinalnum{19}[m] siècle ça participe à la rationalisation
+  du travail.
+- Quantité d'information à gerer par les organisations croissent.
+- \textbf{Notre objet}: Les statistiques ont une dimension politique.
+- A partir des avancés mathématiques, qui a-t-il de politique?
+- Pourquoi on compte?
+- Pourquoi on mesure le travail?
+- Statistique = staatistik au 17e designée en Allemagne la science de
+  l'état.
+- La maniere dont on classe c'est la façon de representation du
+  réel. Ça a un impact sur la façon de pensée un problème social.
+- Il s'agit aussi d'amelliorer une organisation économique.
+*** Gouvernement par les nombres
+- La façon dont on gouverne  aujourdhui depeend des nombres.
+- Desrosières, Alain. 1993. La politique des grands nombres: histoire
+  de la raison statistique, Pars, La Découverte.
+- \ordinalnum{18}[m] \ordinalnum{19}[m] siècle, les fonctiont de
+  control des populations s'appueint sur la demographie, le
+  recensemment, et les sciences et des techniques que vont viser a
+  controler et produire des conaissances.
+ \begin{quote}
+«Quantifier: exprimer et faire exister sous une frome numérique ce
+que auparant été exprime que par les nombres.»
+\end{quote}
+- quantifier vs. mesurer
+  - Mesurer:
+    - La distance du sol à la terre.
+  - Quantifier: Construire des instruments de mésure.
+    - Taux de chômage.
+    - S'appui sur une série de conventions, des compromis.
+- Qui compte, qui mesure?
+  - L'état.
+  - Les organisations.
+  - L'administration.
+  - Les scientifiques.
+- PCS: perpetuer de representation de la société et modes des classements.
+- Sociologie appliquée:
+  - Regarder l'efficacité d'un mesure
+  - Les effets politiques desiré se sont-ils realisé?
+  - Les effets sociaux vs. les objectif. 
+- Sociologie non-appliquée:
+*** Les mesures rationnelles du trvail et l'organisation du travail: un enjeu interne aux entreprises.  
+**** Le Taylorisme
+- Taylor c'est un ingeniuer americain de la bourgeoisie.
+- Un des problemes d'un usine c'est que les ouvrier savent des choses
+  dont les ingenieurs et les patrons sont ignorants.
+- Ça favorise la flannairie des ouvriers.
+- Deplore qu'il n'y ait pas une organisation independant du travail.
+- Criteres objectifs qui ne depneds pas de l'individue.
+- Formation des experts qui savent
+- \textbf{Loi de Taylor}: Norme de temps a respecter pour accomplir une tâche.
+- Taylor developa une ingenierie industrielle.
+- Management en tant que science de l'entreprise
+- Ingenierie social
+  - Changements des rapports sociaux.
+  - Relation des ouvrier à la technique est organiser ---> les conflit
+    à l'entreprise.
+- Cinq principes à étudier dans chaque usine:
+  - Chercher des ouvriers habiles dans l'executions d'une tâche.
+  - Un ingenier va decrire precisement l'execution de la tâche.
+  - L'ingenieur va cronometer et comparer les differents façons de
+    produire la piece / accomplir la tâche. 
+  - Eliminer tout les mouvement innecessaire à l'execution.
+  - Reunir en une même sequence tout les mouvement elementaires et
+    reconstruire la sequence.
+- Enleve tout les sens que l'individu va donner a son action.
+- Eliminer le temps morts, les gestes que sert à rien.
+- Scientific Management 
+  - l'organisation du travail repose pas sur un savoir fait individuel.
+- En France, celui qui a importe les indée de Taylor c'est Fayon.
+- Augmenter la production.
+- Amelliorer l'efficacité.
+**** Fordisme
+- La production en série est l'invention de Henry Ford.
+- Un patron social, comme la plus part des patrons Americains.
+- 1913 c'est la premiere.
+- Les pieces viennnet à l'ouvrier, plutot que le contraire.
+- Pierre Naville et George Friedman 
+\begin{quote}
+«lorganisation du travail tels que
+  les divers operations reduites a la même duree ou a un multiples
+  soit executess sans interrepution entre elles et dans un ordre
+  constant dans l'espace»
+\end{quote}
+- Si on augmente la production, ça augmente le niveua de vie des ouvriers.
+**** Elton Mayo et l'école des relations humaines
+- Il faut dinstinguer entre le system technique et le systeme des
+  relations humaines dans l'entreprise.
+- Un mangement qui repose sur les relations entre les individus.
+- Sociologie, psychologie, économie.
+- Les patrons s'interesse aux \textit{facteurs humains}.
+- Il faut amelliorer la satisfaction des ouvrier dans l'entreprise.
+- Groupe test et groupe témoin.
+- Même quand on reduit l'éclairage la productivité va augmenter.
+- La productivité ne change pas avec les variations du salaire.
+- La productivité ne depends pas des cirsconstances physiques du
+  travail mais des relations humaines.
+- La productivité baissent lors qu'un ouvrier est licensié.
+- Si la productivité augmente, c'est parce que les conditions
+  d'observation contribuer augmenter une satisfactoin au travail, le
+  travail devient plus interessant, et cette valorisation permet de
+  penser que d'autres consideratoins comme le salaire devient moins
+  important.
+- Les relations humaines ne depends pas d'autres chose que combien les
+  ouvrier se connaient. 
+**** Transformations dans l'organisation du travail après les années soixante.
+- La super specialisation ne permet pas de reemplacer les ouvrier
+  facilement.
+- Polyvalence, la mobilité (du travailleur, du salarié)
+- L'organisation du travail repose sur les equipes, les petites
+  groupes de travail, où le groupe va plus-ou-moins controler .
+- Le travail devient de moins-en-moins en miette.
+- Fluidifier la production. Eliminer le temps noire dedans.
+- Flexibilite technique
+  - Changements liées au fait que dans l'industrie on va introduire de
+    la programmmation. Une machine va faire plusieurs taches.
+  - Flexibilité de remuneration. Une flexibilité dans l'horaire de
+    travail. Instensification de travail.
+  - La flexibilité du temps de travail reduit ... des travailleurs. 
+- Travail devient de plus-en-plus la suiveillance de machines.
+- Cristoph Dujour
+- Le jeu (de Scrabble) peremts un environments parfait à la
+  surveillance des machines. Un savoir pratique acquit par les
+  ouvrier. Ils peuvent determiner par le son, les vibratoins, etc. le
+  malfonctionnement des machines. Même si la pratique est deploré par
+  les patrons, ils le permets.
+- Dans les années 80, une valorisation de l'initiative des salariés et
+  pas seulement des cadres.
+- Un modele d'evaluation individuelle.
+  - Façon de mesurer de travail.
+  - Chaque salarié a la maitrise de sa productivité individuelle.
+  - La remuneration variable
+    - Collectif: Il y a des bonus quand le group atteint son objectif.
+    - Individuelle: imposition d'objetifs personeles a
+      atteindre. Chaque indivu est comptable de ses resultats.
+- 
+**** 
+- Plus les atellier son grands, plus ça pose des problemes de
+  cooperation entre les travailleurs.
+- On produit beaucoup et pas à la commande.
+- La production ne vas pas dependre du savoir fait individuel des individus.
+- Ça favorise l'interchangibilité.
+- L'augmentstaoin de la production industriel necessite plus et plus
+  de main d'oeuvre.
+- 
+*** Comptabiliser les travailleurs: la mesure du chômage et ses implications politques
+- L'idee que la mesure d'indicateur de chômage permet d'evaluer le
+  reuissite ou l'echec d'un period presidentiel.
+- La place des chiffres dans le discours politique.
+- Ça fonctionnne comme un espece de preuve plus valable que les autres.
+- Chiffres officiels qui depends de certaines insturments de mesures.
+- La politisation des chiffres fait penser qu'il y a des preuve
+  absolutes qui peuvent être utilisée pour legitimer leur point de
+  vue.
+- Les chiffres officiels (il y a differents mesures et differents
+  interpretations de celles-ci).
+- Differents categorizations du chomage
+  - Distinguer une populations active d'une inactive.
+  - Les instruments statistiques et institutions ont une certaine autonomie.
+- La rendition publique des statistiques.
+- Les commentaires qui vont faire les statisticien.
+  - Le marge d'erreur, etc.
+- Les ministeres vont commenter et annoncer publiquement les
+  chiffres.
+- Luttes pour les interpretations des chiffres.
+- Les statistician sont plus-ou-moins independent du gouvernement.
+- L'usage des chiffres par l'état depends assez peu de ce qu'on pense
+  des statisticien.
+- 1990 le /chomeur volontaire/ est une construction statistique.
+\annotation{\textsc{bit}} 
+- \textbf{Définition du chômage} : Personnne de 15 ans de plus:
+  - Sans emploi, n'avant pas travaillé dans la semaine de reference.
+  - Être disponsible a travailler.
+  - Aller commencer un travaille, ou en cherchant.
+  - En France
+    - \textsc{insee}: Enquête emploi.
+      - Elle fonction par sondage (échantillonage).
+      - Le marge d'erreur est parail par rapport à la fluctuation.
+    - Pôle emploi
+      - Beneficiaire de \textsc{rsa} sont requit de s'y inscrire.
+      - Problematique avec la declaration de la situation (suis-je chomeur?).
+      - La conjoncture influence la declaration.
+      - Trois categories:
+        - Sans emploi.
+        - Activité reduite de courte durée.
+        - Activité reduite de longue durée (aka. sous-emploi).
+      - Question de radiation. La date de l'inscription.
+      - Ceux qui arrive au terme de l'allcoation au chômage et donc ne
+        veut pas s'y inscrire encore.
+      - La mesure d'une phenomeno est toujours une operation de quantification.
+    - Institut statistique du ministere de travail.
+- La signification du taux de chômage
+  - Categories binaires (employé ou pas).
+  - Normes sociales.
+  - Stygme social du chômage.
+- Entre chômage et emploi il y a des nombreux situations.
+  - Auto-entrepreneur, etc.
+- Une definition de travail qui repose sur une seule definiton
+  d'emploi (salarié).
+- Delnur, Sociologue.
+  - La micro-entreprise et l'autoentrepreneurisat, sont-ils de parcour
+    vers l'independance?
+  - L'autoentrepreneur est une façon de gerer le sous-emploi.
+- Les autres chiffre de chômage
+  - Promouvoir un mouvement social autour des chiffres.
+  - Indicateur de precarité.
+  - La réalité n'était pas reflete dans les chiffres du chômage. 
+*** Quand le travail classifie classe: Les enjeux des catégories socio-rofessionnelles.
+**** La nomencalture actuelle et les caractéristiues sociales des \textsc{pcs}:
+- La nomenclature vient du 1982.
+- Consequences pratiques de la nomenclature.
+- Critiques: Les clivages sont dehors.
+- La construction des \textsc{pcs} prends en compte des criteres
+  objetivs et subjectifs.
+- C'est toujours un mode de classification qui continue malgré tout a
+  être utiliser.
+- Les \textsc{pcs} sont le produit de
+  - Certain autonomie de ces données.
+  - Comment on été codé?
+- 1801 le premier recensement en France.
+  - Essai de classer les gent par métier.
+  - Finalité militaire et fiscal.
+- \ordinalnum{19}[m] : qu'est-ce qu'on peut apprendre sur la
+  population par ses données.
+- Au \ordinalnum{19}[m] c'est la métier qui continue a être le
+  critaire de classement.
+- C'est l'organisation en métier qui predomine.
+- L'importance entr la distinction entre patrons, ouvrier entre en
+  force au \ordinalnum{19}[m] quand le salariat devient une relation importnat.
+- Logique hybride
+  - Classer par activité
+  - Classer par status vis-à-vis du salariat
+- A partir de 1930,
+  - Generalise les conventions collectif
+  - La base de codification de profession.
+- La difference entre ouvrié specialisé (voir non-qualifié).
+- Les caddres, les ouvrier, les employé non-techniciens.
+- Après 45, grille de la fonction publique.
+- Mouvement assez general de 
+  - deja opose patron et salariat
+- 1954, CSP.
+  - Representation dans le monde social.
+  - Comment estimer que des conditions professionels sont equivalentes socialement.
+  - Le regroupement les plus interessant sont ceux qui sont liée au
+    prestige social.
+  - Un niveau de prestige, et mode de vie entre un enseignant de lycée
+    et un avocat est similaire quoique leur salaires soit très
+    different. 
+- La nomenclature de \textsc{pcs} de 1982.
+  - Groupe socioprefessionels: Cadre, artisans, intellectuel, etc.
+  - Categories socioprofessionels:
+- Critères de classification: profession, status, qualification,
+  positions, hiérarchique, imporatnce del'entrepreis, secteur
+  d'activité, opposition pulic / privé.
+- Enjeux de cette categorie
+  - Ne s'applique qu'à la situatin française.
+  - Le cadre (apparu aux années 60).
+  - Representation (enjeux scientifique).
+  - Status social associé à la catégorie de cadre au sein de la population.
+- Classement europaines
+  - \textsc{insee} projet de nomenclature europain.
+  - \textsc{eurostat}
+    - Les discours se centre sur l'idée d'une Europe sociale.
+    - Montre les inegalités à l'échelle europainne.
+      - Donnée transnational.
+    - Statistiques du niveua d'éducaiton sont assez rares.
+    - La France et la Royaume-Uni, les conditions de vie et les
+      chances sont distribue. Une facteur d'inégalité different de
+      léechele des revenus, ni a une difference de salaire.
+  -  
+
+
+- Catégorie «Artisan, chef d'entrepise, etc.» a des problemes. L'écart
+  entre un patron et un petit independant est enorme mais pas prise en
+  compte par ce catégorie
+  
+
+
+\tableofcontents
+* Einstellungen :noexport:ARCHIVE:
+** Einführung
+#+LANGUAGE: fr
+#+OPTIONS: \n:nil ::t |:t ^:t f:t *:t ':t pro:nil H:5 timestamp:t
+#+OPTIONS: LaTeX:t TeX:t d:nil pri:t p:t tags:nil inline:t todo:nil
+#+LATEX_CLASS: scrbook
+#+LATEX_CLASS_OPTIONS: [paper=A4,portrait,twoside=true,twocolumn=false,headinclude=false,footinclude=false,fontsize=11,BCOR=10mm,DIV=9,pagesize=auto,titlepage=firstiscover,abstract=false,mpinclude=true,headings=big,headings=twolinechapter,open=left,toc=flat]
+#+LATEX_CMD: xelatex
+#+TAGS: vocabulary(v) noexport export
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+STARTUP: indent hidestars overview logdrawer
+** Paketverladung
+#+LATEX_HEADER: \usepackage{polyglossia} 
+#+LATEX_HEADER: \setmainlanguage{french} 
+#+LATEX_HEADER: \setotherlanguages{german,italian,english} 
+#+LATEX_HEADER: \usepackage[french=guillemets]{csquotes}
+#+LATEX_HEADER: \usepackage{xunicode}
+#+LATEX_HEADER: \usepackage{balance}
+#+LATEX_HEADER: \usepackage[french]{fmtcount} 
+#+LATEX_HEADER: \fmtcountsetoptions{french=france}
+#+LATEX_HEADER: \usepackage[singlespacing]{setspace}
+#+LATEX_HEADER: \usepackage[super]{nth}
+#+LATEX_HEADER: \usepackage{xcolor}
+#+LATEX_HEADER: \usepackage{microtype}
+#+LATEX_HEADER: \usepackage{ragged2e}
+#+LATEX_HEADER: \usepackage{lipsum}
+#+LATEX_HEADER: \usepackage{amsmath}
+#+LATEX_HEADER: \usepackage{amsthm}
+#+LATEX_HEADER: \usepackage{amssymb}
+#+LATEX_HEADER: \usepackage{hyperref}
+#+LATEX_HEADER: \hypersetup{colorlinks,urlcolor=blue,linkcolor=bibleblue,citecolor=red,filecolor=black}
+#+LATEX_HEADER: \usepackage{adforn}
+** Schriftart
+#+LATEX_HEADER: \usepackage{fontspec}
+#+LATEX_HEADER:\setmainfont[Numbers={Proportional},SmallCapsFeatures={LetterSpace=4}]{Minion Pro}
+##+LATEX_HEADER:\setmathsfont(Digits,Latin,Greek)[Numbers={Lining,Proportional}]{Minion Pro}
+** Seitenstil
+#+LATEX_HEADER:\renewcommand*{\chapterpagestyle}{plain}
+#+LATEX_HEADER:\renewcommand*{\partpagestyle}{empty}
+#+LATEX_HEADER:\usepackage{scrlayer-scrpage}
+#+LATEX_HEADER:\pagestyle{scrheadings}
+#+LATEX_HEADER:\clearscrheadfoot
+#+LATEX_HEADER:\automark[chapter]{part}
+##+LATEX_HEADER:\cehead{\headmark} 
+##+LATEX_HEADER:\cohead{\headmark} 
+#+LATEX_HEADER:\ifoot*{\thepage} 
+** Absätze
+#+LATEX_HEADER: \AfterTOCHead{\singlespacing}
+#+LATEX_HEADER: \setkomafont{disposition}{\normalfont\normalcolor}
+*** Titelblatt
+##+LATEX_HEADER: \addtokomafont{subject}{\scshape\lowercase}
+#+LATEX_HEADER: \addtokomafont{author}{\scshape\lowercase}
+#+LATEX_HEADER: \addtokomafont{dedication}{\itshape}
+*** Table of Contents
+#+LATEX_HEADER: \addtokomafont{partentry}{\scshape\lowercase}
+#+LATEX_HEADER: \addtokomafont{chapterentry}{\bfseries}
+##+LATEX_HEADER: \addtokomafont{sectionentry}{\itshape}
+*** Part
+#+LATEX_HEADER: \renewcommand*{\partformat}{\adforn{21}~\thepart~\adforn{49}}
+#+LATEX_HEADER: \addtokomafont{part}{\scshape\Huge\lowercase}
+*** Chapter 
+#+LATEX_HEADER:\renewcommand{\raggedchapter}{\centering}
+#+LATEX_HEADER: \addtokomafont{chapter}{\scshape\Huge\lowercase}
+*** Section
+#+LATEX_HEADER: \addtokomafont{section}{\scshape\LARGE\lowercase}
+*** Subsection
+#+LATEX_HEADER: \addtokomafont{subsection}{\sffamily\bfseries\normalsize}
+*** Subsubsection
+#+LATEX_HEADER: \addtokomafont{subsubsection}{\itshape\large}
+** User-defined elements
+#+LATEX_HEADER:\newenvironment{summary}{\begin{addmargin}{3em}\itshape}{\end{addmargin}} 
+#+LATEX_HEADER:\newcommand{\annotation}[1]{\marginpar{\small\itshape #1}}
+*** Dictum
+#+LATEX_HEADER: \renewcommand*{\dictumwidth}{.8\textwidth}
+#+LATEX_HEADER: \renewcommand*{\raggeddictum}{\centering}
+#+LATEX_HEADER: \renewcommand*{\raggeddictumtext}{\centering}
+#+LATEX_HEADER: \addtokomafont{dictum}{\large\rmfamily}
+
+** Andere
+#+LATEX_HEADER: \definecolor{bibleblue}{HTML}{00339a}
+#+LATEX_HEADER: \setcounter{secnumdepth}{\partnumdepth}
+#+LATEX_HEADER: \setcounter{tocdepth}{1}
+#+LATEX_HEADER: \recalctypearea
+#+LATEX_HEADER: \setlength{\marginparwidth}{3\marginparwidth}

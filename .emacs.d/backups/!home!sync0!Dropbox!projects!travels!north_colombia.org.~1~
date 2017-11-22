@@ -1,0 +1,91 @@
+* Itinerary 
+** july 19 - wednesday
+** july 20 - thursday (día de la independencia)
+** july 21 - friday
+** july 22 - saturday
+** july 23 - Sunday
+** july 24 - monday
+** july 25 - tuesday
+** july 26 - wednesday 
+** july 27 - thursday 
+** july 28 - friday 
+** july 29 - saturday 
+** july 30 - Sunday 
+** july 31 - monday
+** july 31 - monday
+** 4月8日 - 土 
+*** Flight to Lima (Avianca 147 - #4Q9MQA) 
+SCHEDULED: <2017-04-08 Sat 17:41>--<2017-04-08 Sat 20:42>
+*** Night in Lima
+** 4月9日 - 日
+*** Flight to Cusco (Avianca 839 - #4Q9MQA) 
+SCHEDULED: <2017-04-09 Sun 05:20>--<2017-04-09 Sun 06:39>
+*** Taxi to Ollantaytambo
+**** Visit Pisac
+**** Visit Moray
+**** Visit Salinas
+*** Night in Ollantaytambo
+Pachakusi Hostel 
+** 4月10日 - 月
+*** Ollantaytambo archeological sites 
+*** Train to Aguas Calientes
+*** Night in Aguas Calientes
+El Tambo Machupicchu
+** 4月11日 - 火
+*** Machu Picchu 
+*** Train to Ollantaytambo 
+*** Colectivo to Cusco
+*** Night in Cusco
+** 4月12日 - 水
+*** Cusco sightseeing
+*** Night in Cusco
+** 4月13日 - 木
+*** Flight to Lima (Avianca 836 - #4Q9MQA) 
+SCHEDULED: <2017-04-13 Thu 12:50>--<2017-04-13 Thu 14:15>
+*** Night in Lima
+** 4月14日 - 金
+*** Night in Lima
+** 4月15日 - 土 
+*** Night in Lima
+** 4月16日 - 日
+*** Flight to Medellin (Avianca 146 - #4Q9MQA)
+SCHEDULED: <2017-04-16 Sun 10:22>--<2017-04-16 Sun 13:32>
+* Einstellungen                                                    :noexport:ARCHIVE:
+#+LATEX_CMD: xelatex
+#+TITLE: Peru Trip
+#+STARTUP: indent hidestars content
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+TAGS: noexport export traduire
+#+AUTHOR: Minjung Choi
+#+EMAIL: fraiseblanche@hotmail.com 
+#+DATE: \today
+#+LANGUAGE: en
+#+OPTIONS: H:1 num:nil toc:nil \n:nil @:t ::t |:t ^:t f:t *:t timestamp:nil ':t email:t
+#+OPTIONS: TeX:t d:nil pri:nil tags:not-in-toc
+#+LATEX_CLASS: article
+#+LATEX_CLASS_OPTIONS: [12pt, letterpaper]
+#+LATEX_HEADER: \usepackage[english]{babel} 
+#+LATEX_HEADER: \newlength{\alphabet}
+#+LATEX_HEADER: \settowidth{\alphabet}{\normalfont abcdefghijklmnopqrstuvwxyz}
+#+LATEX_HEADER: \usepackage[letterpaper, textwidth=2.8\alphabet, hmarginratio={1:1}, top=2.5cm, bottom=2.5cm]{geometry}
+#+LATEX_HEADER: \usepackage[autostyle]{csquotes}
+#+LATEX_HEADER: \usepackage{hyperref}
+#+LATEX_HEADER: \hypersetup{colorlinks,urlcolor=blue,linkcolor=red,citecolor=red,filecolor=black}
+#+LATEX_HEADER: \usepackage[super]{nth}
+#+LATEX_HEADER: \usepackage{xunicode}
+#+LATEX_HEADER: \usepackage{microtype}
+#+LATEX_HEADER: \usepackage{ragged2e}
+#+LATEX_HEADER: \setlength{\JustifyingParindent}{0pt}
+#+LATEX_HEADER: \usepackage[all]{nowidow}
+#+LATEX_HEADER: \usepackage{setspace}
+#+LATEX_HEADER: \setstretch{1.5} 
+#+LATEX_HEADER: \usepackage[compact]{titlesec}
+#+LATEX_HEADER: \usepackage[extramarks]{titleps}
+#+LATEX_HEADER: \usepackage{textcase}
+#+LATEX_HEADER: \usepackage{fontspec}
+#+LATEX_HEADER: \setmainfont{Baekmuk Batang}
+#+LATEX_HEADER: \defaultfontfeatures[Baekmuk Batang]{Ligatures=TeX}
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+STARTUP: noindent hidestars content

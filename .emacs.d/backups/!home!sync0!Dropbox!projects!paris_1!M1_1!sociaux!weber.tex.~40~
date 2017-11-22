@@ -1,0 +1,46 @@
+% Intended LaTeX compiler: pdflatex
+\documentclass[bigger, presentation, 20pt]{beamer}
+\usepackage{fontspec}
+\usepackage{xunicode}
+\usepackage{url}
+\usepackage{xcolor}
+\usepackage{soul}
+\usepackage[xetex, colorlinks=true, urlcolor=FireBrick, plainpages=false, pdfpagelabels, bookmarksnumbered]{hyperref}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\PassOptionsToPackage{svgnames}{xcolor}
+\usepackage{polyglossia}
+\setmainlanguage{french}
+\setotherlanguages{german,italian,english}
+\usepackage{xunicode}
+\author{Carlos Alberto Rivera}
+\date{\today}
+\title{}
+\hypersetup{
+ pdfauthor={Carlos Alberto Rivera},
+ pdftitle={},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 25.3.1 (Org mode 9.1)}, 
+ pdflang={Frenchb}}
+\begin{document}
+
+\section{Introduktion}
+\label{sec:orgf8db8f3}
+\subsection{Pierce Brosnan}
+\label{sec:org0f9f393}
+Er heißt Pierce Brosnan, und er ist ein berühmter Schauspieler. In jedem Bild
+war er im Film \og The World is Not Enough,\fg{} worin er als Agent 007 gespielt hat.   
+\subsection{Die Kleidung}
+\label{sec:orgbb494f3}
+Er trägt schwarzen Schuhe, eine teure Uhr, die vielleicht eine Rollex ist.
+Ebenfalls, trägt er einen grauen Anzug mit einer blauen Krawatte und
+einem weißen Hemde.  
+\subsection{Die Erscheinung}
+\label{sec:org940f95d}
+Das Outfit gefällt mir sehr. 
+Die Farben stehen ihm immer gut. Als Agent 007, muss er sehr modisch
+und elegant sein. Das Auto passt ihm auch gut. Im Allgemeinen, seiner
+Stil gefällt mir.  
+\end{document}

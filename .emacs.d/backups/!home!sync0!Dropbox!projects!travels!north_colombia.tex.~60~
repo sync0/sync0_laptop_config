@@ -1,0 +1,279 @@
+% Intended LaTeX compiler: pdflatex
+\documentclass[11pt]{article}
+\usepackage{fontspec}
+\usepackage{xunicode}
+\usepackage{url}
+\usepackage[svgnames]{xcolor}
+\usepackage{soul}
+\usepackage[xetex, colorlinks=true, urlcolor=FireBrick, plainpages=false, pdfpagelabels, bookmarksnumbered]{hyperref}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage[a4paper, left=1cm, right=1cm, top=1cm, bottom=2cm]{geometry}
+\usepackage[english]{babel}
+\usepackage{csquotes}
+\usepackage{xunicode}
+\usepackage{balance}
+\usepackage[english]{fmtcount}
+\usepackage[singlespacing]{setspace}
+\usepackage[super]{nth}
+\usepackage{xcolor}
+\usepackage{microtype}
+\usepackage{ragged2e}
+\usepackage{amssymb}
+\usepackage{fontspec}
+\setmainfont{Linux Libertine}[SmallCapsFont={Linux Libertine}, SmallCapsFeatures={Letters=SmallCaps, LetterSpace=8.0}, Scale=1.2]
+\defaultfontfeatures[Linux Libertine]{Ligatures=TeX}
+\usepackage[all]{nowidow}
+\usepackage{titlesec}
+\usepackage[extramarks]{titleps}
+\newfontfamily\sectionheadfont{Linux Libertine}[WordSpace=3, SmallCapsFeatures={LetterSpace=7.5}]
+\newcommand{\sectionheadstyle}{\setstretch{0.8}\flushleft\sectionheadfont\LARGE\textsc}
+\titleformat{\section}[display]{\vspace{1em}}{}{0pt}{\sectionheadstyle}
+\titlespacing{\section}{0pt}{*1}{*2}
+\newfontfamily\subsectionheadfont{Linux Libertine}[WordSpace=2, SmallCapsFeatures={LetterSpace=6.0}]
+\newcommand{\subsectionheadstyle}{\flushleft\subsectionheadfont\Large\textsc}
+\titleformat{\subsection}[block]{\vspace{-3ex}}{}{0pt}{\setstretch{0.8}\subsectionheadstyle}
+\titlespacing{\subsection}{0pt}{*1}{*1}
+\newfontfamily\subsubsectionheadfont{Linux Libertine}[SmallCapsFeatures={LetterSpace=6.0}]
+\newcommand{\subsubsectionheadstyle}{\setstretch{0.5}\flushleft\subsubsectionheadfont\large\textit}
+\titleformat{\subsubsection}[display]{}{}{0pt}{\subsubsectionheadstyle}[\vspace{-1ex}]
+\titlespacing{\subsubsection}{0pt}{*1}{*2}
+\newfontfamily\koreanfont{Baekmuk Batang}
+\newfontfamily\koreansubsubsection{Baekmuk Batang}[Color=00339a]
+\newcommand\koreantext[1]{{\koreanfont #1}}
+\newcommand\koreanemp[1]{{\normalsize\koreansubsubsection #1}}
+\usepackage{multicol}
+\setlength{\columnsep}{1.5cm}
+\raggedleft
+\definecolor{bibleblue}{HTML}{00339a}
+\date{}
+\title{North Colombian Voyage}
+\hypersetup{
+ pdfauthor={},
+ pdftitle={North Colombian Voyage},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 25.2.1 (Org mode 9.0.9)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\vspace{-2cm}
+\begin{multicols}{2}
+\section*{july 19 - wednesday}
+\label{sec:org45de7e6}
+\subsection*{flight mde - smr}
+\label{sec:orgcb0e7f3}
+\subsection*{trip santa marta - camarones}
+\label{sec:org9dec219}
+\subsubsection*{Taxi Aeropuerto - Terminal de transporte}
+\label{sec:org0c6086e}
+COP 10 - 15,000 \\
+20 km \\
+23 min \\
+\subsubsection*{Bus Santa Marta - Riohacha}
+\label{sec:orgf2c433a}
+COP 30,000 PP \\
+152 km. \\
+2 hours, 30 mins. \\
+Drop off at Camarones
+\subsubsection*{Moto taxi}
+\label{sec:orgf4e106e}
+COP 1,000 PP \\
+Boca de Camarones, or \\
+Playa de Camarones \\
+10 min
+\subsection*{accomodation}
+\label{sec:orgea520f3}
+El Remanso del Santuario Ecolodge \\
+COP 15,000 P night PP \\
+Chinchorro
+\section*{july 20 - thursday}
+\label{sec:orge9f27b5}
+\subsection*{flamingo watch}
+\label{sec:org2d3d776}
+COP 20,000 PP, approx.
+\subsection*{night in camarones}
+\label{sec:org9e5d4fa}
+\section*{july 21 - friday}
+\label{sec:orgb9e6129}
+\subsection*{trip camarones - uribia}
+\label{sec:org70ebd14}
+\subsubsection*{Bus Camarones - Riohacha}
+\label{sec:org8f1fb5f}
+Bus Santa Marta - Riohacha \\
+COP 3,000 - 7,000 PP \\
+Take it in the entrance to Camarones town,\\
+Ask driver drop off, where ``colectivos'' leave for Uribia\\
+\begin{itemize}
+\item Tierra del Sol
+\item Cootraurí
+\end{itemize}
+\subsubsection*{Car Riohacha - Uribia}
+\label{sec:orgc158453}
+COP 13,000 - 15,000 PP \\
+2 hours \\
+In case arrival in Uribia after 3 pm, \\
+Look for a hotel!
+\subsubsection*{Shopping in Uribia}
+\label{sec:org49f6c11}
+3 lt. of water \\
+Toilet Paper \\
+Bread \\
+Peanuts \\
+Fruits \\
+Vegetables \\
+\subsection*{night in uribia}
+\label{sec:org518fe38}
+\subsubsection*{Hostal Villa María}
+\label{sec:orgb436e7e}
+COP 70,000
+\section*{july 22 - saturday}
+\label{sec:orgcd3bc6e}
+\subsection*{trip uribia - cabo de la vela}
+\label{sec:org48be9ca}
+\subsubsection*{Camion de Carga}
+\label{sec:orge244d1e}
+Camion de carga \\
+COP 15 - 20,000 PP \\
+Before 10:00 AM, in the market \\
+2 hours
+\subsubsection*{Mercado de las Pulgas}
+\label{sec:org6bd662a}
+COP 15,000 approx.\\
+Camioneta\\
+Mercado de las Pulgas\\
+\subsection*{book tour punta gallinas}
+\label{sec:org81b7f82}
+COP 150,000 PP \\
+\(4\times4\) Truck \\
+Tell driver that you stay night in Punta Gallinas
+\subsection*{pilón de azúcar}
+\label{sec:org211e553}
+COP 15,000 (PP?) \\
+Ask a Moto taxi 
+\subsection*{night in cabo de la vela}
+\label{sec:org148ebd8}
+\subsubsection*{Ranchería Utta}
+\label{sec:orga5164fb}
+\begin{itemize}
+\item 312 687 8237
+\item 313 8178076
+\end{itemize}
+\subsubsection*{El Caracol}
+\label{sec:org68fa671}
+COP 15,000 PP\\
+Chichorro\\
+To leave El Cabo, \\
+Ask hostal to book a seat in a ``camioneta''\\
+Departure 4-5:00 AM
+\section*{july 23 - sunday}
+\label{sec:orgc540af7}
+\subsection*{trip cabo de la vela - punta gallinas}
+\label{sec:orgedc41a7}
+\subsection*{faro de punta gallinas}
+\label{sec:orgdf0fbf6}
+\subsection*{night in punta gallinas}
+\label{sec:orgf005911}
+\subsubsection*{Hospedaje Luzmila}
+\label{sec:orgad4ad73}
+COP 20,000 PP\\
+Chinchorro
+\section*{july 24 - monday}
+\label{sec:org0c29512}
+\subsection*{dunas de taroa}
+\label{sec:orgc8ebb7a}
+\subsection*{bahia hondita}
+\label{sec:org591a6e8}
+\subsection*{night in punta gallinas}
+\label{sec:org215312a}
+\subsubsection*{Hospedaje Luzmila}
+\label{sec:orgae59add}
+COP 20,000 PP\\
+Chinchorro
+\section*{july 25 - tuesday}
+\label{sec:orgc8c1316}
+\subsection*{trip punta gallinas - cabo de la vela}
+\label{sec:org337de8c}
+\subsection*{sightseeing around utta}
+\label{sec:orgb5aea43}
+\subsubsection*{El Faro}
+\label{sec:org6653546}
+\subsubsection*{Playa Ojo del Agua}
+\label{sec:org2b5086e}
+\subsection*{night in cabo de la vela}
+\label{sec:org4c76a59}
+\subsubsection*{Ranchería Utta}
+\label{sec:org6855c5d}
+\subsubsection*{El Caracol}
+\label{sec:orgd131e89}
+\section*{july 26 - wednesday}
+\label{sec:org2189db8}
+\subsection*{trip cabo de la vela - uribia}
+\label{sec:orgf679b72}
+\subsection*{shopping in uribia}
+\label{sec:org61a7f83}
+3 lt. of water \\
+Toilet Paper \\
+Bread \\
+Peanuts \\
+Fruits \\
+Vegetables \\
+\subsection*{trip uribia - riohacha}
+\label{sec:org68d1d20}
+\subsection*{night in riohacha}
+\label{sec:orgb3d1440}
+\subsubsection*{Sol y Sombrilla}
+\label{sec:org514e4af}
+\section*{july 27 - thursday}
+\label{sec:orgeae5bdd}
+\subsection*{trip riohacha - calabazo}
+\label{sec:orgb63a211}
+\subsubsection*{Riohacha - Calabazo}
+\label{sec:org7ce60df}
+\subsection*{night in calabazo}
+\label{sec:org047f009}
+\subsubsection*{Casa Blanca Hospedaje}
+\label{sec:org18f97c8}
+COP 101,350\\
+Check-in 12:00\\
+Via Mingueo -  Santa Marta,\\
+KM 19,8\\
+Calabazo\\
+Tel: 319 246 7919
+\section*{july 28 - friday}
+\label{sec:org599e8fe}
+\subsection*{night in parque tayrona}
+\label{sec:org36cdcb7}
+\section*{july 29 - saturday}
+\label{sec:org2c1cca5}
+\subsection*{trip santa marta - cartagena}
+\label{sec:org2b9e68b}
+\subsection*{night in cartagena}
+\label{sec:org2fdeb37}
+\subsubsection*{Hampton by Hilton Cartagena}
+\label{sec:org3572190}
+COP 793,682\\
+Check-in 15:00\\
+Calle 8, Av. San Martin,\\
+Bocagrade\\
+Tel: 5 - 6945000
+\section*{july 30 - sunday}
+\label{sec:orgf5f118c}
+\subsection*{night in cartagena}
+\label{sec:org609af5a}
+\subsubsection*{Hampton by Hilton Cartagena}
+\label{sec:org1cc35ac}
+\section*{july 31 - monday}
+\label{sec:org618bf8a}
+\subsection*{night in cartagena}
+\label{sec:orgbc5d4b1}
+\subsubsection*{Hampton by Hilton Cartagena}
+\label{sec:org1d87cc9}
+\section*{august 01 - tuesday}
+\label{sec:org2a824bb}
+\subsection*{trip cartagena - medellín}
+\label{sec:org6a7625e}
+\end{multicols}
+\end{document}

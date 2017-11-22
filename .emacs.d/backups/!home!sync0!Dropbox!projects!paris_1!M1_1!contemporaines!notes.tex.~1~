@@ -1,0 +1,471 @@
+% Created 2017-09-29 Fri 13:21
+% Intended LaTeX compiler: pdflatex
+\documentclass[paper=A4,portrait,twoside=true,twocolumn=false,headinclude=false,footinclude=false,fontsize=11,BCOR=15mm,DIV=9,pagesize=auto,titlepage=firstiscover,abstract=false,mpinclude=true,headings=normal,open=left]{scrreprt}
+\usepackage{fontspec}
+\usepackage{xunicode}
+\usepackage{url}
+\usepackage[svgnames]{xcolor}
+\usepackage{soul}
+\usepackage[xetex, colorlinks=true, urlcolor=FireBrick, plainpages=false, pdfpagelabels, bookmarksnumbered]{hyperref}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{polyglossia}
+\setmainlanguage{french}
+\usepackage[autostyle]{csquotes}
+\usepackage{xunicode}
+\usepackage{balance}
+\usepackage[french]{fmtcount}
+\usepackage[singlespacing]{setspace}
+\usepackage[super]{nth}
+\usepackage{xcolor}
+\usepackage{microtype}
+\usepackage{ragged2e}
+\usepackage{lipsum}
+\usepackage{hyperref}
+\hypersetup{colorlinks,urlcolor=blue,linkcolor=red,citecolor=red,filecolor=black}
+\usepackage{fontspec}
+\setmainfont[Numbers={Proportional},SmallCapsFeatures={LetterSpace=4}]{Minion Pro}
+\usepackage{scrlayer-scrpage}
+\pagestyle{scrheadings}
+\renewcommand*{\chapterpagestyle}{plain}
+\clearscrheadfoot
+\automark{chapter}
+\chead{\headmark}
+\ifoot*{\thepage}
+\AfterTOCHead{\singlespacing}
+\setkomafont{disposition}{\normalfont\normalcolor}
+\renewcommand{\raggedchapter}{\centering}
+\addtokomafont{chapter}{\scshape\Huge\lowercase}
+\addtokomafont{section}{\scshape\large\lowercase}
+\addtokomafont{subsection}{\itshape\large}
+\newenvironment{summary}{\begin{addmargin}{3em}\itshape}{\end{addmargin}}
+\newcommand{\annotation}[1]{\marginpar{\small\itshape #1}}
+\definecolor{bibleblue}{HTML}{00339a}
+\setcounter{secnumdepth}{\partnumdepth}
+\recalctypearea
+\setlength{\marginparwidth}{3\marginparwidth}
+\date{\today}
+\title{}
+\hypersetup{
+ pdfauthor={},
+ pdftitle={},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 25.3.1 (Org mode 9.1)}, 
+ pdflang={Frenchb}}
+\begin{document}
+
+\chapter{Leçon du 22 Septembre}
+\label{sec:orgc154772}
+Thevenot, thevenot@univ-paris1.fr
+CES - MSE - bureau 202 
+118/D642
+Mot de passe = QEC
+\section{Planning}
+\label{sec:org570d63b}
+\subsection{Thevenot}
+\label{sec:orgebc8e79}
+L'eclatement de la relation de travail. CDI. Mobilisation de
+travail. Sous-traitance. 
+\subsection{Cristoph ??}
+\label{sec:org1d1cd27}
+L'état social
+C
+\subsection{Berta}
+\label{sec:orgc42384e}
+Marché de permits negociables. L'économie de l'environnement. Théorie
+micro.
+\subsection{Bruno ??}
+\label{sec:org2015e0b}
+Debt publique et rapports de classe. 
+\subsection{Clair Pignol, Justice, proprieté, et inegalité.}
+\label{sec:org25881c2}
+Comment on concoit les transferences de proprieté. 
+\subsection{Lechevalier}
+\label{sec:orge4f10ab}
+\begin{enumerate}
+\item Crise de la zone euro.
+\label{sec:org4567500}
+\item Dynamiques des régimes d'emploi du point de vue du gens en Allemangne et France.
+\label{sec:org4bba7b3}
+\end{enumerate}
+\subsection{Florence Jany-Catrice}
+\label{sec:orgc5847a9}
+Les nouveux indicateurs de richesse.
+
+\section{Parciel}
+\label{sec:orged90a14}
+2 sujets entre 4.
+Exposer une problematique et proposer une reponse estructure. 
+\begin{itemize}
+\item Qualite de la redaction
+\end{itemize}
+Ex: 
+3 heurs. 
+\section{Eclatement de la rélation de travail}
+\label{sec:org567c4b5}
+rel. de travail vs. rel d'emploi
+facon dont les entreprises mobilisent le travail.
+diff. moyen juridiques de d'emboucher
+\begin{itemize}
+\item CDI
+\item Interim
+\item recours aux autres entreprises (pour les utlisatrices)
+\item sous-traitance
+\end{itemize}
+\subsection{rel. d'emploi}
+\label{sec:org344aa2d}
+Relation entre employeur et son employee. 
+Juridiquement structure par le contrat de travail.
+\subsection{rel de travail}
+\label{sec:org3456412}
+Travalleur nest pas necessairement l'employee d'ou il travaille.  Ce
+qui commande le trava nest pas responsable du travailleur
+juridiquement.  Définir, mésurer, expliquer comment les pratiques des
+entreprises ont contribui a leclatement des collectifs de travail.
+\subsection{Statistiques}
+\label{sec:orge15ddb3}
+\begin{enumerate}
+\item En france on a des indicateurs de lemploi de lenquete emploi faite par l'INSEC
+\label{sec:org1ea832c}
+\item S'interesse a lemploi ne nous resnseigne pas sur la sous-traitance
+\label{sec:org22af93a}
+\item la sous-traitance napparait pas dans les statistiques
+\label{sec:orgd1dd623}
+il nya pas une demande social
+il faut demander les entreprises
+\item les entreprises sont reticentes a parles de ces donnees.
+\label{sec:org8a37e68}
+comment y acceder?
+\item Enquete emploi
+\label{sec:org5211d2b}
+lenquete emploi est de la part du main-d'oeuvre
+independant salarie: CDI, CDD, Interim, Apprentis?
+\begin{enumerate}
+\item Domination du salariat
+\label{sec:org8d80214}
+\begin{enumerate}
+\item Ya plus en plus de salaries.
+\label{sec:org3f9a438}
+\item Debut du XXe siecle 50\% de salaries.
+\label{sec:orgae56604}
+\end{enumerate}
+\item CDI
+\label{sec:orgabd4afe}
+Ily a une baisse du CDI en general.
+\item 85\% de salaries sont CDI
+\label{sec:org2914daa}
+bcp de CDI se terminent apres un ans.
+\item 12-13\% de salaries ne sont pas en CDI
+\label{sec:org0c79c3a}
+\item CDD
+\label{sec:orgc4332bf}
+\begin{enumerate}
+\item des 2000 les embauche a CDD crecen
+\label{sec:org94377d0}
+En periode de crise la part de CDI de lemploi total crece car ils ne
+sont pas touche premierement par la crise.
+\end{enumerate}
+\end{enumerate}
+\end{enumerate}
+\subsection{L'eclatement de la rélation de travail}
+\label{sec:org1b4709a}
+
+\begin{enumerate}
+\item Les indicateurs de l'éclatement de la rélation de travail
+\label{sec:org4cbc7a7}
+\begin{enumerate}
+\item Les indicateurs autour du statu d'emploi: les Formes Particulieres d'Emploi
+\label{sec:org881c002}
+\begin{enumerate}
+\item Domination du salariat
+\label{sec:org398b08b}
+\item Les formes particulieres d'emploi
+\label{sec:orgf197a90}
+\end{enumerate}
+\item Les formes de mobilisation du travail
+\label{sec:org8b29ba8}
+\end{enumerate}
+\item Eclatement de la relation de travail et sous-traitance
+\label{sec:org38fb468}
+\begin{enumerate}
+\item La sous-traitance come FMT: approche plurisdisciplinaire
+\label{sec:org70ba162}
+\item Quels indicateurs de l'extériorisation de la main-d'oeuvre par la sous-traitance
+\label{sec:org5b661d0}
+\item Sous-traiter ou embaucher?
+\label{sec:org619f391}
+\end{enumerate}
+\end{enumerate}
+\subsection{Conclusions}
+\label{sec:org3c47f8e}
+\begin{enumerate}
+\item Les donnees statistiques sont insufficentes
+\label{sec:org11b0819}
+\item Lestatus emploi cree un responsable (lemployeur)
+\label{sec:org738373d}
+\item ceux qui peuvent controller et commander de la main-doeuvre sans en etre responsable en droit.
+\label{sec:orgc4b2ad3}
+\item USA
+\label{sec:org5ae5d3f}
+\begin{enumerate}
+\item Construit des categories des travail pour
+\label{sec:orgd4f9aa9}
+\begin{enumerate}
+\item Travail-contingent, Polivka
+\label{sec:org6489cb0}
+Relations de travail concues pour ne pas durer.  (Votre emploi va
+durer plus d'un an?)
+
+4\% de travail contingent.
+\item Arrangment de travail alternatif
+\label{sec:org2aad2ab}
+Sous-traitance, interinat. 10\%.
+\end{enumerate}
+\end{enumerate}
+\end{enumerate}
+\subsection{Vocabulaire}
+\label{sec:org28761ca}
+\begin{enumerate}
+\item Entrerprise utilitsatrice / Donneur d'ordres
+\label{sec:orgf751f0a}
+\begin{enumerate}
+\item Salaries directes (contrat de travail) (gestion differencie)
+\label{sec:org937c181}
+\end{enumerate}
+\item Entreprise sous-traitante (contrat commmercial) / Preneur d'ordres
+\label{sec:org0e1ebb2}
+\begin{enumerate}
+\item Salaries directes (contrat de travail)\(^{\text{2}}\) (travail indirect) (gestion differencie)
+\label{sec:orga41b755}
+Quelle est la responsibilite en droit de l'entreprise utilisatrice
+vis-a-vis ces
+\end{enumerate}
+\end{enumerate}
+\subsection{Atkinson 1984}
+\label{sec:org41914e1}
+\begin{enumerate}
+\item La firme flexible
+\label{sec:org46d6df3}
+Les moyens que l'entrerpise utislisatrice va utiliser pour se
+flexibiliser. Elle divise sa force de travail entre un coeur et une
+peripherie. 
+\begin{enumerate}
+\item Les trois objectifs de la firme
+\label{sec:orgf1a77ba}
+\begin{enumerate}
+\item Capacite de s'adapter au environnment concurrentiel (
+\label{sec:orgce45221}
+\item increse productivity
+\label{sec:orge14bff2}
+\item reduce le cout de travail
+\label{sec:org1078c92}
+\end{enumerate}
+\item Conditions favorable au sous-traitance
+\label{sec:org9ec8f50}
+\begin{enumerate}
+\item Chomage Eleve
+\label{sec:org9b8a870}
+\item syndicalisme affaibli
+\label{sec:org1718985}
+\end{enumerate}
+\item Deux travaillleurs
+\label{sec:org7aaa3c6}
+\begin{enumerate}
+\item Coeur
+\label{sec:orgc8fe438}
+Il evoluera dans les competences que les travailleurs vons acquerir
+selon les changmenet technologiques. 
+Sont ils proteger de la sous-traitance, ou est-ce quils sont mis sous
+pression par la croissance de la peripherie.
+\begin{enumerate}
+\item CDI
+\label{sec:orge1f7ac4}
+\end{enumerate}
+\item Peripherie - Interne
+\label{sec:org51f2147}
+\begin{enumerate}
+\item CDD
+\label{sec:orgc30df57}
+\item TP
+\label{sec:orgf7dd490}
+\item Stage
+\label{sec:orga439e6c}
+\item Apprentissage
+\label{sec:orgef2909a}
+Lentreprise va les embaucher selon ses besoins.
+\end{enumerate}
+\item Peripherie - Externe (flexibilite numérique)
+\label{sec:org015b655}
+\begin{enumerate}
+\item Interin
+\label{sec:orgb296e17}
+\item ST
+\label{sec:org8c8be6c}
+\item Independants
+\label{sec:org09e146d}
+\end{enumerate}
+\end{enumerate}
+\end{enumerate}
+\item La taille de lentreprise est important.
+\label{sec:org0208c17}
+\begin{enumerate}
+\item CHCT
+\label{sec:org2471e0f}
+Obligation detre cree par les entreprises de plus de 50 travailleurs.
+\item 0,1\% des entreprises ont plus de 500 salaries.
+\label{sec:orgda31435}
+le tissu productive est dominee par les independants et les petites entreprises
+\item deconcentration de la taille productiv
+\label{sec:org0fd466a}
+\item concentration de pouvoir financier
+\label{sec:orgef7d201}
+\item Droit de travail
+\label{sec:org82c23d8}
+\begin{enumerate}
+\item Etablissement
+\label{sec:org4098c82}
+Les premieres legislation industrielle cetaient sur les etablissement.
+Instance de representation: comite detablissement
+\item Entrerprise
+\label{sec:orga26ee77}
+Instance de representation: comite dentreprise (CCE)
+Cest a cette niveaux quon signe le contrat de travail
+\item Groupe
+\label{sec:org91d3566}
+\end{enumerate}
+\end{enumerate}
+\end{enumerate}
+\section{Sous-traitance}
+\label{sec:org75dc4a6}
+M. L. Morin
+\subsection{Deconexion}
+\label{sec:org6be0e79}
+\subsection{Niveaux organisation dela production}
+\label{sec:orgb19796a}
+\begin{enumerate}
+\item Etablissement
+\label{sec:org184ad9f}
+Lieu ou les gens travaillent. Ou s'excercent le travail. Premiers
+legislations industriels. Combinaison du capital et le
+travail. Proteger le corps au travail 
+\item Entrerprise
+\label{sec:org1b0e878}
+La direction, lentreprise fordienne. Elle a le pouvoir de decision
+economique. Il est marque le lieu de travail. C'est le niveaux de
+representation des salaries. Au niveux de representation
+professionel. Ca depend de lactivite exerce par lentreprise.
+\item Groupe
+\label{sec:org8e71568}
+La firme nest pas vu comme producterur ou. Unite de gouvernance qui
+gere lallocation des resources. Commite de groupe. 
+\item Unite economique et social
+\label{sec:orgff8c27c}
+Ici se trouve la sous-traitance. Concerne un regroupement d'entreprise
+sur des decisions de justice ou par convention des entrepreises vont
+creer un comite (d'entreprise).
+\end{enumerate}
+\subsection{Hierarchie des niveux}
+\label{sec:orgc98d15d}
+\begin{enumerate}
+\item Frontieres de la firme
+\label{sec:org447a1f6}
+\item Sous-traitance
+\label{sec:org61b00ff}
+situation dautonomie controlle. Les entrepreiss sous-traitante sont
+controlle par une dependence eocnomique par les donneurs dordres
+(Entrepreise ulisatrice). Discuter des formes de subordination. 
+\begin{enumerate}
+\item Definition
+\label{sec:org00c200a}
+L'opération par laquelle une entreprise confie a une autre le soin
+d'executer pour elle et selon un cahier decharge preetabli une partie
+des actes de production ou de services dont elle conserve la
+responsabilite economique finale.
+\end{enumerate}
+\end{enumerate}
+\chapter{Leçon du 29 septembre}
+\label{sec:orgea6dcd6}
+\section{Revenue Universel}
+\label{sec:orge7656e0}
+\subsection{Questions}
+\label{sec:orgc550623}
+Que peut Marx nous apporter?
+Quels sont les enjeux théoriques?
+Il y a une plasticité de la théorie.
+\subsection{Thomas Paine}
+\label{sec:org21c62ee}
+\subsection{Charles Fourier}
+\label{sec:org4cfdfa0}
+\subsection{Karl Marx}
+\label{sec:orgd9ff194}
+\subsection{Théorie de l'équilibre général}
+\label{sec:org4f42fef}
+\subsection{Jean Jacques Rousseau}
+\label{sec:org821f6ee}
+\subsection{John Maynard Keynes}
+\label{sec:orgb39188e}
+\begin{enumerate}
+\item Néo-Keynesien
+\label{sec:org7294f2a}
+\begin{enumerate}
+\item John Hicks
+\label{sec:org57bdd6d}
+\item Patinkin
+\label{sec:orgfe3c8e9}
+\item Paul Samuelson
+\label{sec:org76293cd}
+\end{enumerate}
+\item Post-Keynesien
+\label{sec:org8c985bd}
+\begin{enumerate}
+\item Mark Lavoie
+\label{sec:org943b7d0}
+Allience entre néo-Ricardien et Keynes.
+\end{enumerate}
+\end{enumerate}
+\subsection{Philip van Parijs}
+\label{sec:org1ae75b4}
+Philosophie analytique.
+\begin{enumerate}
+\item Le marxisme analytique
+\label{sec:org7158256}
+Ils se reappropient des objetifs du Marxisme.
+Ils veullent actualiser/mettre à jour la question de la justice.
+Ils considerent que la theorie de l'explotation dennonce surtout
+l'injustice:
+\begin{itemize}
+\item Pourquoi l'organisation capitaliste est injuste?
+\end{itemize}
+
+Mais, ils vont rejetter:
+\begin{itemize}
+\item Théorie de la valeur-travail des économistes classiques.
+\item Philosophie de l'histoire d'Hégel.
+\end{itemize}
+
+Donc, ils vont utiliser les appareil théoriques de la théorie
+contemporaine, TOUS! 
+\item 
+\label{sec:orgab5f667}
+\end{enumerate}
+\subsection{Piero Sraffa}
+\label{sec:org0cd6a2e}
+\begin{enumerate}
+\item Refonder la théorie classique
+\label{sec:org5358d61}
+Les prix sont determinés par les conditions de production.
+Les prix ne sont pas determinés par la demande.
+Ils cherche une théorie générale de la société.
+Il utilisait l'algèbre linaire.  
+\item Production de marchandise par les marchandises
+\label{sec:orgb3edf81}
+soustitre: Prélude à une critique de la théorie économique.
+Brouloire??? contre les néo-classiques. 
+Il propose une théorie classique des prix. 
+Il a travaillé les oeuvres de Ricardo.
+\end{enumerate}
+\subsection{}
+\label{sec:org2181248}
+\end{document}

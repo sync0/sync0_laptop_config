@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: lecon_snip
+# key: lec
+# --
+* Leçon du  `insert-current-day` `insert-current-month`
+** $0

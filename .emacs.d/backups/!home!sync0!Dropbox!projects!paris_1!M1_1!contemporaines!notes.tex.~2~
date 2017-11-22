@@ -1,0 +1,553 @@
+% Created 2017-09-29 Fri 14:27
+% Intended LaTeX compiler: pdflatex
+\documentclass[paper=A4,portrait,twoside=true,twocolumn=false,headinclude=false,footinclude=false,fontsize=11,BCOR=15mm,DIV=9,pagesize=auto,titlepage=firstiscover,abstract=false,mpinclude=true,headings=normal,open=left]{scrreprt}
+\usepackage{fontspec}
+\usepackage{xunicode}
+\usepackage{url}
+\usepackage[svgnames]{xcolor}
+\usepackage{soul}
+\usepackage[xetex, colorlinks=true, urlcolor=FireBrick, plainpages=false, pdfpagelabels, bookmarksnumbered]{hyperref}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{polyglossia}
+\setmainlanguage{french}
+\usepackage[autostyle]{csquotes}
+\usepackage{xunicode}
+\usepackage{balance}
+\usepackage[french]{fmtcount}
+\usepackage[singlespacing]{setspace}
+\usepackage[super]{nth}
+\usepackage{xcolor}
+\usepackage{microtype}
+\usepackage{ragged2e}
+\usepackage{lipsum}
+\usepackage{hyperref}
+\hypersetup{colorlinks,urlcolor=blue,linkcolor=red,citecolor=red,filecolor=black}
+\usepackage{fontspec}
+\setmainfont[Numbers={Proportional},SmallCapsFeatures={LetterSpace=4}]{Minion Pro}
+\usepackage{scrlayer-scrpage}
+\pagestyle{scrheadings}
+\renewcommand*{\chapterpagestyle}{plain}
+\clearscrheadfoot
+\automark{chapter}
+\chead{\headmark}
+\ifoot*{\thepage}
+\AfterTOCHead{\singlespacing}
+\setkomafont{disposition}{\normalfont\normalcolor}
+\renewcommand{\raggedchapter}{\centering}
+\addtokomafont{chapter}{\scshape\Huge\lowercase}
+\addtokomafont{section}{\scshape\large\lowercase}
+\addtokomafont{subsection}{\itshape\large}
+\newenvironment{summary}{\begin{addmargin}{3em}\itshape}{\end{addmargin}}
+\newcommand{\annotation}[1]{\marginpar{\small\itshape #1}}
+\definecolor{bibleblue}{HTML}{00339a}
+\setcounter{secnumdepth}{\partnumdepth}
+\recalctypearea
+\setlength{\marginparwidth}{3\marginparwidth}
+\date{\today}
+\title{}
+\hypersetup{
+ pdfauthor={},
+ pdftitle={},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 25.3.1 (Org mode 9.1)}, 
+ pdflang={Frenchb}}
+\begin{document}
+
+\chapter{Leçon du 22 Septembre}
+\label{sec:orgdb914ae}
+Thevenot, thevenot@univ-paris1.fr
+CES - MSE - bureau 202 
+118/D642
+Mot de passe = QEC
+\section{Planning}
+\label{sec:org11969ee}
+\subsection{Thevenot}
+\label{sec:orga20a0ce}
+L'eclatement de la relation de travail. CDI. Mobilisation de
+travail. Sous-traitance. 
+\subsection{Cristoph ??}
+\label{sec:orga0a6a49}
+L'état social
+C
+\subsection{Berta}
+\label{sec:org2c3a227}
+Marché de permits negociables. L'économie de l'environnement. Théorie
+micro.
+\subsection{Bruno ??}
+\label{sec:org05ebfef}
+Debt publique et rapports de classe. 
+\subsection{Clair Pignol, Justice, proprieté, et inegalité.}
+\label{sec:org83c1225}
+Comment on concoit les transferences de proprieté. 
+\subsection{Lechevalier}
+\label{sec:org980181b}
+\begin{enumerate}
+\item Crise de la zone euro.
+\label{sec:orgcde6ca4}
+\item Dynamiques des régimes d'emploi du point de vue du gens en Allemangne et France.
+\label{sec:org03997f8}
+\end{enumerate}
+\subsection{Florence Jany-Catrice}
+\label{sec:orgda186f7}
+Les nouveux indicateurs de richesse.
+
+\section{Parciel}
+\label{sec:org696c75d}
+2 sujets entre 4.
+Exposer une problematique et proposer une reponse estructure. 
+\begin{itemize}
+\item Qualite de la redaction
+\end{itemize}
+Ex: 
+3 heurs. 
+\section{Eclatement de la rélation de travail}
+\label{sec:org077da23}
+rel. de travail vs. rel d'emploi
+facon dont les entreprises mobilisent le travail.
+diff. moyen juridiques de d'emboucher
+\begin{itemize}
+\item CDI
+\item Interim
+\item recours aux autres entreprises (pour les utlisatrices)
+\item sous-traitance
+\end{itemize}
+\subsection{rel. d'emploi}
+\label{sec:org39e1341}
+Relation entre employeur et son employee. 
+Juridiquement structure par le contrat de travail.
+\subsection{rel de travail}
+\label{sec:org826a471}
+Travalleur nest pas necessairement l'employee d'ou il travaille.  Ce
+qui commande le trava nest pas responsable du travailleur
+juridiquement.  Définir, mésurer, expliquer comment les pratiques des
+entreprises ont contribui a leclatement des collectifs de travail.
+\subsection{Statistiques}
+\label{sec:orgc7ca09d}
+\begin{enumerate}
+\item En france on a des indicateurs de lemploi de lenquete emploi faite par l'INSEC
+\label{sec:orgf9ea88f}
+\item S'interesse a lemploi ne nous resnseigne pas sur la sous-traitance
+\label{sec:org3a00ba3}
+\item la sous-traitance napparait pas dans les statistiques
+\label{sec:org881c1e6}
+il nya pas une demande social
+il faut demander les entreprises
+\item les entreprises sont reticentes a parles de ces donnees.
+\label{sec:orged20fcc}
+comment y acceder?
+\item Enquete emploi
+\label{sec:org252290d}
+lenquete emploi est de la part du main-d'oeuvre
+independant salarie: CDI, CDD, Interim, Apprentis?
+\begin{enumerate}
+\item Domination du salariat
+\label{sec:org19f0b08}
+\begin{enumerate}
+\item Ya plus en plus de salaries.
+\label{sec:orgb253670}
+\item Debut du XXe siecle 50\% de salaries.
+\label{sec:org3bfd2f3}
+\end{enumerate}
+\item CDI
+\label{sec:orgc1453d7}
+Ily a une baisse du CDI en general.
+\item 85\% de salaries sont CDI
+\label{sec:orge28fa78}
+bcp de CDI se terminent apres un ans.
+\item 12-13\% de salaries ne sont pas en CDI
+\label{sec:org8fdbdef}
+\item CDD
+\label{sec:org7203eb8}
+\begin{enumerate}
+\item des 2000 les embauche a CDD crecen
+\label{sec:org8e610a7}
+En periode de crise la part de CDI de lemploi total crece car ils ne
+sont pas touche premierement par la crise.
+\end{enumerate}
+\end{enumerate}
+\end{enumerate}
+\subsection{L'eclatement de la rélation de travail}
+\label{sec:org79ede0e}
+
+\begin{enumerate}
+\item Les indicateurs de l'éclatement de la rélation de travail
+\label{sec:org9a316bc}
+\begin{enumerate}
+\item Les indicateurs autour du statu d'emploi: les Formes Particulieres d'Emploi
+\label{sec:org96de036}
+\begin{enumerate}
+\item Domination du salariat
+\label{sec:org3e078a1}
+\item Les formes particulieres d'emploi
+\label{sec:org34388d8}
+\end{enumerate}
+\item Les formes de mobilisation du travail
+\label{sec:org82f81a0}
+\end{enumerate}
+\item Eclatement de la relation de travail et sous-traitance
+\label{sec:org7712f5f}
+\begin{enumerate}
+\item La sous-traitance come FMT: approche plurisdisciplinaire
+\label{sec:orge229b81}
+\item Quels indicateurs de l'extériorisation de la main-d'oeuvre par la sous-traitance
+\label{sec:orgd322879}
+\item Sous-traiter ou embaucher?
+\label{sec:org369b063}
+\end{enumerate}
+\end{enumerate}
+\subsection{Conclusions}
+\label{sec:org9695008}
+\begin{enumerate}
+\item Les donnees statistiques sont insufficentes
+\label{sec:org6ffa583}
+\item Lestatus emploi cree un responsable (lemployeur)
+\label{sec:org9a00263}
+\item ceux qui peuvent controller et commander de la main-doeuvre sans en etre responsable en droit.
+\label{sec:orgbd2b5b8}
+\item USA
+\label{sec:orgc68c9d1}
+\begin{enumerate}
+\item Construit des categories des travail pour
+\label{sec:orgf50f343}
+\begin{enumerate}
+\item Travail-contingent, Polivka
+\label{sec:orgd34da8d}
+Relations de travail concues pour ne pas durer.  (Votre emploi va
+durer plus d'un an?)
+
+4\% de travail contingent.
+\item Arrangment de travail alternatif
+\label{sec:org472587c}
+Sous-traitance, interinat. 10\%.
+\end{enumerate}
+\end{enumerate}
+\end{enumerate}
+\subsection{Vocabulaire}
+\label{sec:org532aa87}
+\begin{enumerate}
+\item Entrerprise utilitsatrice / Donneur d'ordres
+\label{sec:orgd634677}
+\begin{enumerate}
+\item Salaries directes (contrat de travail) (gestion differencie)
+\label{sec:org47d82dc}
+\end{enumerate}
+\item Entreprise sous-traitante (contrat commmercial) / Preneur d'ordres
+\label{sec:org369b804}
+\begin{enumerate}
+\item Salaries directes (contrat de travail)\(^{\text{2}}\) (travail indirect) (gestion differencie)
+\label{sec:org524323d}
+Quelle est la responsibilite en droit de l'entreprise utilisatrice
+vis-a-vis ces
+\end{enumerate}
+\end{enumerate}
+\subsection{Atkinson 1984}
+\label{sec:orga3cdb73}
+\begin{enumerate}
+\item La firme flexible
+\label{sec:org40c7cbd}
+Les moyens que l'entrerpise utislisatrice va utiliser pour se
+flexibiliser. Elle divise sa force de travail entre un coeur et une
+peripherie. 
+\begin{enumerate}
+\item Les trois objectifs de la firme
+\label{sec:orged7ac03}
+\begin{enumerate}
+\item Capacite de s'adapter au environnment concurrentiel (
+\label{sec:orgb97acbf}
+\item increse productivity
+\label{sec:orgc0a58b1}
+\item reduce le cout de travail
+\label{sec:orgd6d514e}
+\end{enumerate}
+\item Conditions favorable au sous-traitance
+\label{sec:orga83bc14}
+\begin{enumerate}
+\item Chomage Eleve
+\label{sec:orga3ad236}
+\item syndicalisme affaibli
+\label{sec:org7dd688c}
+\end{enumerate}
+\item Deux travaillleurs
+\label{sec:orge33d8e3}
+\begin{enumerate}
+\item Coeur
+\label{sec:org6c1304d}
+Il evoluera dans les competences que les travailleurs vons acquerir
+selon les changmenet technologiques. 
+Sont ils proteger de la sous-traitance, ou est-ce quils sont mis sous
+pression par la croissance de la peripherie.
+\begin{enumerate}
+\item CDI
+\label{sec:org404a2b7}
+\end{enumerate}
+\item Peripherie - Interne
+\label{sec:orgc5fb61d}
+\begin{enumerate}
+\item CDD
+\label{sec:org62e0629}
+\item TP
+\label{sec:org4e89123}
+\item Stage
+\label{sec:org4bb31f7}
+\item Apprentissage
+\label{sec:orgd760b1d}
+Lentreprise va les embaucher selon ses besoins.
+\end{enumerate}
+\item Peripherie - Externe (flexibilite numérique)
+\label{sec:org577b629}
+\begin{enumerate}
+\item Interin
+\label{sec:org56687fc}
+\item ST
+\label{sec:org4cc6743}
+\item Independants
+\label{sec:org536d8ef}
+\end{enumerate}
+\end{enumerate}
+\end{enumerate}
+\item La taille de lentreprise est important.
+\label{sec:org67591c0}
+\begin{enumerate}
+\item CHCT
+\label{sec:orge1b09a2}
+Obligation detre cree par les entreprises de plus de 50 travailleurs.
+\item 0,1\% des entreprises ont plus de 500 salaries.
+\label{sec:orgc96c3c5}
+le tissu productive est dominee par les independants et les petites entreprises
+\item deconcentration de la taille productiv
+\label{sec:orgf95b5e0}
+\item concentration de pouvoir financier
+\label{sec:org459c408}
+\item Droit de travail
+\label{sec:org6e9ec71}
+\begin{enumerate}
+\item Etablissement
+\label{sec:org85d4845}
+Les premieres legislation industrielle cetaient sur les etablissement.
+Instance de representation: comite detablissement
+\item Entrerprise
+\label{sec:orgcae26a6}
+Instance de representation: comite dentreprise (CCE)
+Cest a cette niveaux quon signe le contrat de travail
+\item Groupe
+\label{sec:org4c07926}
+\end{enumerate}
+\end{enumerate}
+\end{enumerate}
+\section{Sous-traitance}
+\label{sec:org0179d4f}
+M. L. Morin
+\subsection{Deconexion}
+\label{sec:orge7f6283}
+\subsection{Niveaux organisation dela production}
+\label{sec:org9a6c914}
+\begin{enumerate}
+\item Etablissement
+\label{sec:org8d99d2f}
+Lieu ou les gens travaillent. Ou s'excercent le travail. Premiers
+legislations industriels. Combinaison du capital et le
+travail. Proteger le corps au travail 
+\item Entrerprise
+\label{sec:orgb622eb9}
+La direction, lentreprise fordienne. Elle a le pouvoir de decision
+economique. Il est marque le lieu de travail. C'est le niveaux de
+representation des salaries. Au niveux de representation
+professionel. Ca depend de lactivite exerce par lentreprise.
+\item Groupe
+\label{sec:org767a9b2}
+La firme nest pas vu comme producterur ou. Unite de gouvernance qui
+gere lallocation des resources. Commite de groupe. 
+\item Unite economique et social
+\label{sec:org2a2b902}
+Ici se trouve la sous-traitance. Concerne un regroupement d'entreprise
+sur des decisions de justice ou par convention des entrepreises vont
+creer un comite (d'entreprise).
+\end{enumerate}
+\subsection{Hierarchie des niveux}
+\label{sec:orgccdf630}
+\begin{enumerate}
+\item Frontieres de la firme
+\label{sec:org1fa7838}
+\item Sous-traitance
+\label{sec:org846a2b7}
+situation dautonomie controlle. Les entrepreiss sous-traitante sont
+controlle par une dependence eocnomique par les donneurs dordres
+(Entrepreise ulisatrice). Discuter des formes de subordination. 
+\begin{enumerate}
+\item Definition
+\label{sec:orgdbfaae7}
+L'opération par laquelle une entreprise confie a une autre le soin
+d'executer pour elle et selon un cahier decharge preetabli une partie
+des actes de production ou de services dont elle conserve la
+responsabilite economique finale.
+\end{enumerate}
+\end{enumerate}
+\chapter{Leçon du 29 septembre}
+\label{sec:org5b0ba19}
+\section{Revenue Universel}
+\label{sec:org64de5c8}
+\subsection{Questions}
+\label{sec:org8f62533}
+Que peut Marx nous apporter?
+Quels sont les enjeux théoriques?
+Il y a une plasticité de la théorie.
+\subsection{Thomas Paine}
+\label{sec:orga9bf2e2}
+\subsection{Charles Fourier}
+\label{sec:org5d16765}
+\subsection{Théorie de l'équilibre général}
+\label{sec:org80a7491}
+\subsection{Jean Jacques Rousseau}
+\label{sec:org5eae3b9}
+\subsection{John Maynard Keynes}
+\label{sec:orgeb59ae3}
+\begin{enumerate}
+\item Néo-Keynesien
+\label{sec:org712863d}
+\begin{enumerate}
+\item John Hicks
+\label{sec:org4acba0a}
+\item Patinkin
+\label{sec:org143ee99}
+\item Paul Samuelson
+\label{sec:org662fe7c}
+\end{enumerate}
+\item Post-Keynesien
+\label{sec:org2191684}
+\begin{enumerate}
+\item Mark Lavoie
+\label{sec:org1bdbe49}
+Allience entre néo-Ricardien et Keynes.
+\end{enumerate}
+\end{enumerate}
+\subsection{Karl Marx}
+\label{sec:org6457e08}
+\begin{enumerate}
+\item Oeuvres
+\label{sec:orgf1fe799}
+\begin{enumerate}
+\item \emph{La Critique du programme Gotha} (1875)
+\label{sec:org0a39fdc}
+Marx reprends cet eslogan d'un socialiste français, Louis Blanc dans
+\emph{La Critique du programme de Gotha} (1875).
+
+Le programme de Gotha sont les principes d'une société à construire
+écrits par le parti ouvrier allemand à Gotha. Marx s'y oppose. 
+
+\begin{quote}
+«À chaqu'un selon son travail» 
+\end{quote}
+
+Marx: Ça vient du droit bourgeois!
+
+Chaque producteur individuel reçoit son compton individuel de
+travail. Droit inégal pour un travail inégal. Reconnait comme un
+privilege de nature les talents inegaux des travailleur et pourtant
+l'inégalité de leur capacité productive. 
+
+Marx vise à égaliser les conditions des personnes sans un rapport avec
+leur condition productive.  
+\item \emph{Manuscrits de 1844}
+\label{sec:orgb3a77c9}
+Théorie de l'aliénation.
+Le travail est l'essence de l'homme. C'est ça ce qui les definit. 
+Le terme vient du droit et d'Hegel. 
+Il reprend la critique de l'aliénation de Feueurbach.
+
+Dans la société capitaliste les gens sont aliéné de leur travail. 
+
+Les travailleurs sont deposedé des produits de leur travail. 
+Ils sont deposedés de la façon d'organiser leur travail. 
+Le travail n'est plus que le moyen de satisfaire d'autre besoins. 
+Ils sont aliénés d'eux meme et des autres. 
+\item «en matière de conclusion» Livre \sctext{iii} du Capital
+\label{sec:org9bd6ee4}
+\begin{enumerate}
+\item Le regne de la necessite
+\label{sec:org66d27ab}
+Lactivite dicte par la satisfactoin des besoins. 
+Le travail fait pour satisfaire des autre besoins.
+\item Le regne de la liberte
+\label{sec:org7ea4df6}
+Il commence où cesse le travail dicte par la necessité et les fins
+exterieurs.
+On travail pour travailer (le travail est un fin en soi-meme) pas pour
+ganger sa vie. 
+
+\begin{quote}
+«Tout comme l'homme primitif l'homme civilise est ... reproduire ça vie, cette contrainte existe sur t»
+\end{quote}
+
+La necessité et les besoins s'acroissent. Au meme temps se develope
+les processus productifs pour les satisfaire. 
+La necesité n'est pas le motive de la totalité de la vie des agents. 
+L'energie creative. , lecart entre le necessaire et la satisfaction
+d'un besoin.
+\end{enumerate}
+\end{enumerate}
+\end{enumerate}
+\subsection{Philip van Parijs}
+\label{sec:orgc5d44b4}
+\begin{enumerate}
+\item Le marxisme analytique
+\label{sec:org6cac2af}
+Philosophie analytique.
+Ils se reappropient des objetifs du Marxisme.
+Ils veullent actualiser/mettre à jour la question de la justice.
+Ils considerent que la theorie de l'explotation dennonce surtout
+l'injustice:
+\begin{itemize}
+\item Pourquoi l'organisation capitaliste est injuste?
+\end{itemize}
+
+Mais, ils vont rejetter:
+\begin{itemize}
+\item Théorie de la valeur-travail des économistes classiques.
+\item Philosophie de l'histoire d'Hégel.
+\end{itemize}
+
+Donc, ils vont utiliser les appareil théoriques de la théorie
+contemporaine, TOUS! 
+\item L'allocation universelle
+\label{sec:org1968aed}
+\begin{enumerate}
+\item \emph{Éthique économique \& sociale} (2000)
+\label{sec:org2d0cb9d}
+\item \emph{L'Allocation universelle} (2005)
+\label{sec:org7f3d8d1}
+Ch. 3.
+\item Revue Mouvements. Entretien (2013)
+\label{sec:org8290b16}
+Titre: De chaqu'un selon ces capacités, et a chaqu'un
+inconditionellement selon ses besoins.
+
+L'allocation universelle est une application possible et partiel de
+cet eslogan.
+
+La societe doit compenser les differences dans la capacité productive.
+
+La question de l'aliénation.
+\end{enumerate}
+\end{enumerate}
+\subsection{Piero Sraffa}
+\label{sec:org9f6c172}
+\begin{enumerate}
+\item Refonder la théorie classique
+\label{sec:org95a3f2c}
+Les prix sont determinés par les conditions de production.
+Les prix ne sont pas determinés par la demande.
+Ils cherche une théorie générale de la société.
+Il utilisait l'algèbre linaire.  
+\item \emph{Production de marchandise par les marchandises}
+\label{sec:org72852d8}
+soustitre: Prélude à une critique de la théorie économique.
+Brouloire??? contre les néo-classiques. 
+Il propose une théorie classique des prix. 
+Il a travaillé les oeuvres de Ricardo.
+\end{enumerate}
+\subsection{}
+\label{sec:orga1c8f9b}
+\end{document}

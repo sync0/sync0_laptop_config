@@ -1,0 +1,450 @@
+% Intended LaTeX compiler: pdflatex
+\documentclass[paper=A4,portrait,twoside=true,twocolumn=true,headinclude=false,footinclude=false,fontsize=11,BCOR=20mm,DIV=22,pagesize=auto,titlepage=firstiscover,abstract=false,mpinclude=false,headings=big,open=right,toc=flat,partpreface=false,pagestyleset=plain]{scrbook}
+\usepackage{fontspec}
+\usepackage{xunicode}
+\usepackage{url}
+\usepackage[svgnames]{xcolor}
+\usepackage{soul}
+\usepackage[xetex, colorlinks=true, urlcolor=FireBrick, plainpages=false, pdfpagelabels, bookmarksnumbered]{hyperref}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{polyglossia}
+\setmainlanguage{italian}
+\setotherlanguages{german,french,english}
+\usepackage[french=guillemets]{csquotes}
+\usepackage{xunicode}
+\usepackage{balance}
+\usepackage{enumitem}
+\usepackage[italian]{fmtcount}
+\usepackage[singlespacing]{setspace}
+\usepackage[super]{nth}
+\usepackage{xcolor}
+\usepackage{microtype}
+\usepackage{ragged2e}
+\usepackage{lipsum}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\hypersetup{colorlinks,urlcolor=blue,linkcolor=bibleblue,citecolor=red,filecolor=black}
+\usepackage{adforn}
+\usepackage{fontspec}
+\setmainfont[Numbers={Proportional},SmallCapsFeatures={LetterSpace=4}]{Minion Pro}
+\renewcommand*{\chapterpagestyle}{plain}
+\renewcommand*{\partpagestyle}{empty}
+\pagestyle{plain}
+\AfterTOCHead{\singlespacing}
+\setkomafont{disposition}{\normalfont\normalcolor}
+\addtokomafont{subject}{\scshape\lowercase}
+\addtokomafont{author}{\scshape\lowercase}
+\addtokomafont{partentry}{\scshape\lowercase}
+\addtokomafont{chapterentry}{\bfseries}
+\renewcommand*{\partformat}{\adforn{21}~\thepart~\adforn{49}}
+\addtokomafont{part}{\scshape\Huge\lowercase}
+\renewcommand{\raggedchapter}{\centering}
+\addtokomafont{chapter}{\scshape\Huge\lowercase}
+\addtokomafont{section}{\scshape\Large\lowercase}
+\addtokomafont{subsection}{\scshape\large\lowercase}
+\addtokomafont{subsubsection}{\itshape\normalsize}
+\newenvironment{summary}{\begin{addmargin}{3em}\itshape}{\end{addmargin}}
+\newenvironment{ingredienti}{\begin{flushleft}\itshape}{\end{flushleft}}
+\newcommand{\annotation}[1]{\marginpar{\small\itshape #1}}
+\renewcommand*\labelitemi{\adforn{14}}
+\renewcommand*{\dictumwidth}{.8\textwidth}
+\renewcommand*{\raggeddictum}{\centering}
+\renewcommand*{\raggeddictumtext}{\centering}
+\addtokomafont{dictum}{\large\rmfamily}
+\definecolor{bibleblue}{HTML}{00339a}
+\setcounter{secnumdepth}{\partnumdepth}
+\setcounter{tocdepth}{1}
+\recalctypearea
+\setlength{\columnsep}{2.5em}
+\setlist[1]{itemsep=0.2\parskip}
+\date{\today}
+\title{}
+\hypersetup{
+ pdfauthor={},
+ pdftitle={},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 25.3.1 (Org mode 9.1)}, 
+ pdflang={Italian}}
+\begin{document}
+
+\tableofcontents
+
+\title{Ricette} 
+
+\author{sync0} 
+\date{\today} 
+
+\maketitle
+\part{Italiana}
+\label{sec:org939a25a}
+\chapter{Salse}
+\label{sec:orgd493be9}
+\section{Salsa agrodolce}
+\label{sec:orgd3a765c}
+\subsection{Ingredienti}
+\label{sec:orga8cb027}
+\begin{itemize}
+\item 3 mostaccioli (biscotti secchi di mandorle), pestati
+\item 3 bicchieri di acqua
+\item 3 mostaccioli (biscotti secchi di mandorle), pestati
+\item 3 bicchieri di acqua
+\item 2 bicchieri di aceto forte
+\item 60 g di pangrattato (o mollica di pane)
+\item un cucchiaio di zucchero
+\item un nonnulla di cannella
+\item 40 g di cedro candito, tritato finemente
+\item 40 g di mandorle, tritate finemente
+\item sale e pepe di mulinello
+\end{itemize}
+\subsection{Preparazione}
+\label{sec:org56785ad}
+In una casseruola, portate a lento bollore l'acqua insieme all'aceto;
+calate il pesto dei mostaccioli, poi il pangrattato, e lo zucchero;
+regolate di sale e pepe, profumate con raspatura dicannella,
+incoperchiate e lasciate cuocere adagio per 10 minuti; aggiungete il
+trito di cedro e mandorle, mescolate più volte, incoperchiate e fate
+cuocere fino a quando la salsa vi risulta cremosa.
+
+Assaggiate se il risultato è giustamente agrodolce (aggiungendo
+zucchero o aceto), quindi servitela, calda o fredda, a piacere.
+\section{Salsa araba}
+\label{sec:org6c1e4f1}
+\subsection{Ingredienti}
+\label{sec:org2538975}
+\begin{itemize}
+\item 1 kg di pomodori maturi
+\item 2 spicchi di aglio
+\item 20 foglie di basilico
+\item un ciuffetto di foglioline di nepitella
+\item un peperoncino piccante rosso, fresco
+\item 1 dl di olio extra vergine di oliva
+\item sale
+\end{itemize}
+\subsection{Preparazione}
+\label{sec:org4f62828}
+A crudo, passate nel setaccio o nel passaverdure i pomodori, l'aglio,
+il basilico, la nepitella e il peperoncino.
+
+La salsa ottenuta va salata (ma non troppo), poi mescolata con
+abbondante olio (ideale quello fresco, di frantoio).
+\section{Besciamella}
+\label{sec:orgde4bff2}
+\subsection{Ingredienti}
+\label{sec:orgae87a19}
+\begin{itemize}
+\item 100 g di burro
+\item 100 g di farina
+\item 1 l di latte fresco
+\item un nonnulla di noce moscata
+\item sale e pepe di mulinello
+\item parmigiano reggiano grattugiato al momento
+\end{itemize}
+\subsection{Preparazione}
+\label{sec:org1544cff}
+Fondete il burro, unitevi la farina mescolando, lasciate tostare per
+qualche minuto e versatevi il latte (se freddo, tutto in una volta;
+se caldo, poco per volta).
+
+Proseguite la cottura mescolando, fino ad ottenere una crema
+vellutata, che rassodate con il parmigiano reggiano e profumate con
+raspatura di noce moscata, dopo aver regolato di sale e pepe.
+\section{Salsa del Papa}
+\label{sec:org2ea880c}
+\subsection{Ingredienti}
+\label{sec:org9bd5721}
+\begin{itemize}
+\item 30 g di capperini, sotto sale
+\item 60 g di olive, snocciolate
+\item una cipolla tritata
+\item 40 g di burro
+\item un bicchiere di brodo buono, di carne
+\item 2 cucchiai di aceto forte, di vino
+\item un cucchiaio di farina
+\item 2 filetti di acciuga sotto sale
+\end{itemize}
+\subsection{Preparazione}
+\label{sec:org2f7ed60}
+Innanzitutto, sotto un getto di acqua corrente dissalate i filetti di
+acciuga, poi metteteli ad asciugare sopra un canovaccio. Lavate anche
+i capperi. La polpa delle olive tritatela insieme ai capperi.
+
+Ora, in una casseruola, mettete a soffriggere in circa la metà del
+burro la cipolla tritata; appena rosola versate il brodo e stemperate
+il composto; calate il trito di capperi e olive e portate a leggero
+bollore; irrorate con l'aceto, stemperatevi la farina, quindi
+terminate con il burro rimasto e i filetti di acciuga frantumati con i
+rebbi di una forchetta.  
+
+Questa salsa si utilizza calda. 
+\section{Salsa ai peperoni}
+\label{sec:orgb82abf8}
+\subsection{Ingredienti}
+\label{sec:orgda463da}
+\begin{itemize}
+\item 6 peperoni grossi
+\item 350 g di giardiniera sott'aceto
+\item 1 dl di bagnetto rosso
+\item 1 dl di olio extra vergine di oliva
+\item sale e pepe di mulinello
+\end{itemize}
+\subsection{Preparazione}
+\label{sec:org3f3aa98}
+Nettate i peperoni asportando il torsolo centrale, i semi e le coste
+bianche, quindi tagliateli a larghe falde e passateli in forno,
+adarrrostire. Toglieteli, pelateli e mettereli nel frullatore (o
+mixer), insieme alla giardiniera sott'aceto e al bagnetto rosso;
+regolate di sale e pepe con questa salsa densa condite piatti di carne.
+
+\section{Salsa di pomodori Calabria}
+\label{sec:orgb01870a}
+\subsection{Ingredienti}
+\label{sec:org16cd938}
+\begin{itemize}
+\item 2 kg di pomodori freschi
+\item una puntina di bicarbonato
+\item foglie di basilico, appena raccolte
+\item 2 cipolle, a spicchi
+\item una costa di sedano, a pezzeti
+\item mezzo dl di olio extra vergine di oliva
+\item 2 cucchiai di zucchero
+\item noce moscata
+\item sale
+\end{itemize}
+\subsection{Preparazione}
+\label{sec:org7dcfe2b}
+Una volta che avete lavato i pomodori, tagliateli a pezzi e metteteli
+in pentola a bollire, insieme al bicarbonato, a 4-5 foglie di
+basilico, alle cipolle e al sedano. Ogni tanto mescolate con un
+cucchiaio di legno e proseguite nel lento bollore.
+
+Ora, passate il tutto al setaccio o nel passaverdure; la crema
+ottenuta rimettetela sulfuoco, aggiungete lo zucchero, poi l'olio,
+mescolate ancora e preseguite, a fiamma impercettibile, asciugando la
+salda, quasi addensandola. Un paio di minuti prima di spegnere il
+fuoco calate altre foglie di basilico, regolate di sale e pepe e
+terminate la cottura.
+\section{Salsa di pomodoro Campania}
+\label{sec:org0c389c1}
+\subsection{Ingredienti}
+\label{sec:org2b7158c}
+\begin{itemize}
+\item 1 kg di pomodori maturi (ideali i San marzano)
+\item una cipolla tritata finemente
+\item 2 cucchiai di zucchero
+\item un mazzetto di foglie di basilico
+\item un mazzetto di foglioline di prezzemolo
+\item sale
+\end{itemize}
+\subsection{Preparazione}
+\label{sec:org7a729b0}
+In un tegame, mettete a sobbollire adagio i pomodori tagliati a pezzi
+insieme agli altri ingredientei; trascorsa circa mezz'ora, passate il
+tutto al setaccio e la salsa è pronta; per condire piatti di pasta o
+arricchire altre salse o condimenti.
+
+\section{Ragù alla bolognese}
+\label{sec:org16edc14}
+\subsection{Ingredienti}
+\label{sec:orgb7759cc}
+\begin{itemize}
+\item 300 g di polpa di maiale (lombo o capocollo) macinata
+\item 300 g di muscolo di manzo macinato (possibilmente metà cartella e metà scannello)
+\item 100 g di pancetta macinata (facoltativamente 150 g di fegatini di pollo macinati)
+\item 100 g di prosciutto crudo tritato (facoltativo)
+\item 150 g di salsiccia (facoltativa)
+\item burro e olio
+\item una cipolla tritata o 4 scalogni
+\item una carota tritatat
+\item una costa di sedano tritata
+\item un bicchiere di vino rosso o bianco
+\item concentrato di pomodoro o 300 g di passata di pomodoro o di pelati passati
+\item brodo
+\item latte (facoltativo)
+\item sale e pepe di mulinello
+\end{itemize}
+\subsection{Preparazione}
+\label{sec:orga5720a1}
+Soffriggete in burro e olio, con la pancetta, il sedano, la carota e
+la cipolla, salando leggermente. Unite la carne tritata, fatela
+rosolare molto a lungo, affineché risulti leggermente croccante;
+bagnate con il vino, lasciatelo evaporare e aggiungete il pomodoro o
+il concentrato diluito nel brodo. Abbassate la fiamma al minimo e
+proseguite la cottura per almeno 3 ore, aggiungendo brodo, se
+necessario. Verso fine cottura, se vi piace versate un po' di latte
+fresco intero. Regolate di sale e pepe solo a fine cottura. 
+\chapter{Paste}
+\label{sec:org0ceb57d}
+\section{Penne all'arrabbiata}
+\label{sec:org0889969}
+\subsection{Ingredienti}
+\label{sec:orgdb6a0b1}
+Per sei persone.
+\begin{itemize}
+\item 500 g di penne
+\item 350 g di pomodori maturi (privati della pelle, dei semi e dell'acqua di vegetazione)
+\item 2 peperoncini rossi piccanti
+\item 2 spicchi di aglio
+\item 6 foglie di basilico
+\item sale
+\end{itemize}
+\subsection{Preparazione}
+\label{sec:orgbaf3b47}
+Dopo aver nettato i pomodori, tagliate la polpa a listarelle e
+mettela a soffreiggere in una padella grande, insieme all'olio,
+all'aglio, al basilico e ai peperoncini.
+
+Nel frattempo, lessate in abbondante acqua salata le penne; scolatele
+cotte al dente, passatele in padella e saltatele con il condimento
+per pochi minuti; servitele calde e fumati. 
+\subsection{Vino consigliato}
+\label{sec:org27b75af}
+Vignanello Greco.
+\section{Penne alla caprese}
+\label{sec:org7fd5dd4}
+\subsection{Ingredienti}
+\label{sec:org5a307ef}
+Per sei persone.
+\begin{itemize}
+\item 500 g di penne
+\item 500 g di pomodori pelati
+\item 250 g di mozzarella tritata grossolanamente
+\item 1 dl di olio di oliva
+\item uno spicchio di aglio tritato
+\item origano, a piacera
+\item sale e pepe di mulinello
+\item burro, per ungere la teglia
+\item parmigiano reggiano, grattugiato
+\end{itemize}
+\subsection{Preparazione}
+\label{sec:org51bf76b}
+Dopo aver lessato le penne in abbondante acqua salata, scolatele cotte
+al dente.
+
+In una padella, soffriggete nell'olio il trito di algio, unite la
+polpa dei pomodori, regolate di sale e pepe, profumate con l'origano
+e lasciate sobbollire e insaporire. 
+
+Nel frattempo, imburrate la teglia, calate la pasta, ricopritela con
+la mozzarella, poi la salsa di pomodoro, per ultimo il formaggio;
+passate in forno (caldo a 180\(^\circ\)) e lasciate rosalare per 10
+minuti circa, quindi servite.
+\subsection{Vino consigliato}
+\label{sec:orgc103b1c}
+Fiano di Avellino.
+\section{Penne alla cipolla}
+\label{sec:org48f0df1}
+\subsection{Ingredienti}
+\label{sec:orgc981161}
+Per sei persone.
+\begin{itemize}
+\item 400 g di penne
+\item 400 g di cipolla tritata
+\item 80 g di burro
+\item 2 cucchiai di olio di oliva
+\item un mestolino di brodo buono
+\item un bicchiere di vino bianco secco
+\item sale e pepe di mulinello
+\end{itemize}
+\subsection{Preparazione}
+\label{sec:orgc2fb67d}
+Soffriggete in padella, insieme al burro e all'olio, il trito di
+cipolla; dopo qualche minuto aggiungete il vino e fate asciugare;
+infine versate il brodo, regolate di sale e pepe e continuate nella
+cottura del sugo, a fiamma docile. Ora, lessate le penne in abbondante
+acqua salata; scolatele al dente, conditele con il sugo appena
+preparato e portate in tavola la vivanda ancora fumante.
+\subsection{Vino consigliato}
+\label{sec:org977f78f}
+Montuni del Reno.
+\section{Penne alla fiesolana}
+\label{sec:orgac07580}
+\subsection{Ingredienti}
+\label{sec:org1b19f7a}
+Per sei persone.
+\begin{itemize}
+\item 500 g di penne
+\item 80 g di prosciutto crudo tagliato a dadini
+\item 2 cucchiai di farina tipo 00
+\item 20 g di burro
+\item un quarto di litro di latte
+\item 60 g di parmigiano reggiano grattugiato
+\item un cucchiaio di prezzemolo tritato
+\item olio extra vergine di oliva
+\item sale e pepe di mulinello
+\end{itemize}
+\subsection{Preparazione}
+\label{sec:org5c2f681}
+Innanzitutto preparate la besciamella liquida, con burro, farina,
+latte, sale e pepe, incorporando con cura tutti gli ingredienti, poi
+aggiungete il parmigiano reggiano grattugiato e rigirate ancora. A
+parte, mettete a rosolare in una padella, in due cucchiai di olio, i
+cubettini di prosciutto, per poi unirvi la salsa bianca. Lessate al
+dente le penne in abbondante acqua salata, scolatelel e mettetele in
+padella con il condimento, da ::strascicarë per pochi minuti,
+regolando di sale e pepe poco prima di servirle, calde, spolverizzate
+con il trito di prezzemolo.
+\subsection{Vino consigliato}
+\label{sec:org59c7604}
+Bianco vergine Valdichiana.
+\section{Penne al peperoncino}
+\label{sec:org96f02f4}
+\subsection{Ingredienti}
+\label{sec:orgd818c51}
+Per sei persone.
+\begin{itemize}
+\item 600 g di penne rigate
+\item 3 peperoncini dolci, essiccati
+\item 2 peperoncini piccanti, freschi
+\item 2 spicchi di algio, schiaccciati
+\item 2 dl di olio di oliva
+\item sale
+\end{itemize}
+\subsection{Preparazione}
+\label{sec:orgd708da5}
+Lessate la penne in acqua bollente salata.
+
+Intanto, in una padella soffriggete nell'olio gli spicchi di aglio;
+quando hanno preso colore unite i peperoncini tritati e sbriciolati e
+lasciateli un paio di minuti, senza bruciarli; sgocciolateli insieme
+all'aglio, versate il tutto nel moraio e pestate con cura.
+
+Il pesto ottenuto rimettetelo in padella, dove l'olio sfrigola appena;
+scolate le penne cotte al dente, calatele nell'olio, mescolate più
+volte, fate insaporire un attimo, poi servite. 
+\subsection{Vino consigliato}
+\label{sec:org59a4b41}
+Basilicata bianco.
+\section{Penne saporite}
+\label{sec:orga613922}
+\subsection{Ingredienti}
+\label{sec:orgb425627}
+Per sei persone.
+\begin{itemize}
+\item 600 g di penne rigate
+\item 400 g di pomodori maturi (liberati della pelle, dei semi e dell'acqua di vegetazione)
+\item una cipolla tritata
+\item 1 dl di olio di oliva
+\item 80 g di pangrattato
+\item 4 foglie di basilico tritate
+\item pecorino grattugiato, a piacere
+\item sale
+\end{itemize}
+\subsection{Preparazione}
+\label{sec:org71d183b}
+In una padella, mettete a soffriggere nell'olio il trito di cipolla,
+insieme al pangrattato; pochi minuti ed aggiungete la polpa dei
+pomodori, il basilico ed il sale, mescolate più volte e lasciate
+insaporire, a tegame coperto.
+
+Dopo aver lessato la pasta in abbondante acqua salata, scolatela cotta
+al dente, conditela con il sugo sfiziosa, \textit{imbiancatela} con il
+formaggio grattugiato e portate in tavola la vivanda ancora fumante.
+\subsection{Vino consigliato}
+\label{sec:org3d4bd0a}
+Scilla rosato.
+\end{document}

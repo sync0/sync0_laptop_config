@@ -1,0 +1,116 @@
+% Created 2017-08-28 Mon 11:06
+% Intended LaTeX compiler: pdflatex
+\documentclass[paper=A4,portrait,twoside=false,twocolumn=false,headinclude=false,footinclude=false,fontsize=10,BCOR=0mm,DIV=9,pagesize=auto,titlepage=firstiscover,abstract=false,mpinclude=true,headings=normal]{scrartcl}
+\usepackage{fontspec}
+\usepackage{xunicode}
+\usepackage{url}
+\usepackage[svgnames]{xcolor}
+\usepackage{soul}
+\usepackage[xetex, colorlinks=true, urlcolor=FireBrick, plainpages=false, pdfpagelabels, bookmarksnumbered]{hyperref}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage[french, frenchb]{babel}
+\usepackage[autostyle]{csquotes}
+\usepackage{xunicode}
+\usepackage{balance}
+\usepackage[french]{fmtcount}
+\usepackage[onehalfspacing]{setspace}
+\usepackage[super]{nth}
+\usepackage{xcolor}
+\usepackage{microtype}
+\usepackage{ragged2e}
+\usepackage{amssymb}
+\usepackage{lipsum}
+\usepackage{hyperref}
+\hypersetup{colorlinks,urlcolor=blue,linkcolor=red,citecolor=red,filecolor=black}
+\usepackage{fontspec}
+\setmainfont{Linux Libertine}[SmallCapsFeatures={LetterSpace=3},Numbers=Lowercase]
+\defaultfontfeatures[Linux Libertine]{Ligatures=TeX}
+\newfontfamily\sectionheadfont{Linux Libertine}[WordSpace=3, SmallCapsFeatures={LetterSpace=6.0}, Numbers=Lowercase,]
+\AfterTOCHead{\singlespacing}
+\setkomafont{disposition}{\normalfont\normalcolor}
+\addtokomafont{section}{\scshape\huge\centering}
+\addtokomafont{subsection}{\scshape\large}
+\addtokomafont{subsubsection}{\itshape\large}
+\definecolor{bibleblue}{HTML}{00339a}
+\pagestyle{plain}
+\setcounter{secnumdepth}{\partnumdepth}
+\renewcommand*{\dictumwidth}{.8\textwidth}
+\renewcommand*{\raggeddictum}{\centering}
+\renewcommand*{\raggeddictumtext}{\relax}
+\addtokomafont{dictum}{\normalfont\itshape}
+\recalctypearea
+\date{\today}
+\title{}
+\hypersetup{
+ pdfauthor={},
+ pdftitle={},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 25.2.1 (Org mode 9.0.9)}, 
+ pdflang={Frenchb}}
+\begin{document}
+
+\subject{Université Paris I - Panthéon Sorbonne} 
+\title{Histoire de la pensée économique} 
+\subtitle{Prise de notes} 
+\author{Carlos Alberto Rivera Carreño} 
+\date{\today} 
+\publishers{Prof. John Eccentric Doe} 
+\maketitle
+\section{Leçon du 18 septembre}
+\label{sec:org53d5660}
+\bigskip
+\dictum[]{\lipsum[1]}
+\subsection{L'économie n'est pas une science}
+\label{sec:org977d8e3}
+\subsubsection{Si on la deteste}
+\label{sec:org1bf0017}
+\lipsum[1]
+\subsection{L'économie n'est pas une science}
+\label{sec:orgeaa5256}
+\lipsum[1]
+\subsection{L'économie n'est pas une science}
+\label{sec:orgf40bd34}
+\subsubsection{Quand on le reve}
+\label{sec:org84fb526}
+\lipsum[1]
+\subsection{L'économie n'est pas une science}
+\label{sec:orgaa65c77}
+\lipsum[1]
+\subsection{L'économie n'est pas une science}
+\label{sec:orgebeff8e}
+\lipsum[1]
+\subsection{L'économie n'est pas une science}
+\label{sec:orge413df7}
+\lipsum[1]
+\section{leçon du 18 septembre}
+\label{sec:orgf2b300d}
+\begin{quote}
+\enp{%
+\lipsum[1]}
+\end{quote}
+\subsection{Ce n'est pas possible de le trouver}
+\label{sec:org258836e}
+asdfsadf est une probleme de ce qúon peut le savoir, et ansi.
+\subsection{L'économie n'est pas une science}
+\label{sec:orgfbca2fc}
+adsfadsf 
+\section{leçon du 18 septembre}
+\label{sec:org68e5e8a}
+\subsection{Ce n'est pas possible de le trouver}
+\label{sec:org766a28e}
+asdfsadf est une probleme de ce qúon peut le savoir, et ansi.
+\subsection{L'économie n'est pas une science}
+\label{sec:orge7f6c95}
+adsfadsf 
+\section{leçon du 18 septembre}
+\label{sec:orgf1dce57}
+\subsection{Ce n'est pas possible de le trouver}
+\label{sec:org18eab43}
+asdfsadf est une probleme de ce qúon peut le savoir, et ansi.
+\subsection{L'économie n'est pas une science}
+\label{sec:org236a751}
+adsfadsf 
+\end{document}

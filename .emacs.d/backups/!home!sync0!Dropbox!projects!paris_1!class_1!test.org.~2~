@@ -1,0 +1,88 @@
+\subject{Université Paris I - Panthéon Sorbonne} 
+\title{Histoire de la pensée économique} 
+\subtitle{Prise de notes} 
+\author{Carlos Alberto Rivera Carreño} 
+\date{\today} 
+\publishers{Prof. John Eccentric Doe} 
+\maketitle
+* Classes du 21e septembre 
+** Ce n'est pas possible de le trouver
+asdfsadf est une probleme de ce qúon peut le savoir, et ansi.
+** L'économie n'est pas une science
+adsfadsf 
+* Classes du 21e septembre 
+** Ce n'est pas possible de le trouver
+asdfsadf est une probleme de ce qúon peut le savoir, et ansi.
+** L'économie n'est pas une science
+adsfadsf 
+* Classes du 21e septembre 
+** Ce n'est pas possible de le trouver
+asdfsadf est une probleme de ce qúon peut le savoir, et ansi.
+** L'économie n'est pas une science
+adsfadsf 
+* Classes du 21e septembre 
+** Ce n'est pas possible de le trouver
+asdfsadf est une probleme de ce qúon peut le savoir, et ansi.
+** L'économie n'est pas une science
+adsfadsf 
+* Classes du 21e septembre 
+** Ce n'est pas possible de le trouver
+asdfsadf est une probleme de ce qúon peut le savoir, et ansi.
+** L'économie n'est pas une science
+adsfadsf 
+* Classes du 21e septembre 
+** Ce n'est pas possible de le trouver
+asdfsadf est une probleme de ce qúon peut le savoir, et ansi.
+** L'économie n'est pas une science
+adsfadsf 
+* Classes du 21e septembre 
+** Ce n'est pas possible de le trouver
+asdfsadf est une probleme de ce qúon peut le savoir, et ansi.
+** L'économie n'est pas une science
+adsfadsf 
+* Classes du 21e septembre 
+** Ce n'est pas possible de le trouver
+asdfsadf est une probleme de ce qúon peut le savoir, et ansi.
+** L'économie n'est pas une science
+adsfadsf 
+
+* Einstellungen :noexport:ARCHIVE:
+** Einführung
+#+LANGUAGE: fr
+#+OPTIONS: num:nil toc:nil \n:nil ::t |:t ^:t f:t *:t ':t pro:nil 
+#+OPTIONS: LaTeX:t TeX:t d:nil pri:t p:t tags:nil inline:t todo:nil
+#+LATEX_CLASS: scrartcl
+#+LATEX_CLASS_OPTIONS: [paper=A4,portrait,twoside=semi,twocolumn=true,headinclude=false,footinclude=false,fontsize=9pt,BCOR=0mm,DIV=calc,pagesize=auto,titlepage=true,abstract=false]
+#+LATEX_CMD: xelatex
+#+TAGS: vocabulary(v) noexport export
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+STARTUP: indent hidestars content logdrawer
+** Paketverladung
+#+LATEX_HEADER: \usepackage[french]{babel} 
+#+LATEX_HEADER: \usepackage[autostyle]{csquotes}
+#+LATEX_HEADER: \usepackage{xunicode}
+#+LATEX_HEADER: \usepackage{balance}
+#+LATEX_HEADER: \usepackage[french]{fmtcount} 
+#+LATEX_HEADER: \usepackage[singlespacing]{setspace}
+#+LATEX_HEADER: \usepackage[super]{nth}
+#+LATEX_HEADER: \usepackage{xcolor}
+#+LATEX_HEADER: \usepackage{microtype}
+#+LATEX_HEADER: \usepackage{ragged2e}
+#+LATEX_HEADER: \usepackage{amssymb}
+#+LATEX_HEADER: \usepackage{hyperref}
+#+LATEX_HEADER: \hypersetup{colorlinks,urlcolor=blue,linkcolor=red,citecolor=red,filecolor=black}
+** Schriftart
+#+LATEX_HEADER: \usepackage{fontspec}
+#+LATEX_HEADER: \setmainfont{Linux Libertine}[SmallCapsFeatures={Letters=SmallCaps, LetterSpace=8.0}]
+#+LATEX_HEADER: \defaultfontfeatures[Linux Libertine]{Ligatures=TeX}
+** Absätze
+#+LATEX_HEADER: \AfterTOCHead{\singlespacing}
+*** Section 
+##+LATEX_HEADER: \setkomafont{section}{\scshape}
+*** Subsection
+*** Subsubsection
+** Andere
+#+LATEX_HEADER: \definecolor{bibleblue}{HTML}{00339a}
+#+LATEX_HEADER: \recalctypearea
+

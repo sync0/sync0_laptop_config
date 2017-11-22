@@ -1,0 +1,98 @@
+% Created 2017-10-06 Fri 22:52
+% Intended LaTeX compiler: pdflatex
+\documentclass[paper=A4,portrait,twoside=false,twocolumn=false,headinclude=false,footinclude=false,fontsize=11,BCOR=10mm,DIV=9,pagesize=auto,titlepage=firstiscover,abstract=false,mpinclude=true,headings=big]{scrartcl}
+\usepackage{fontspec}
+\usepackage{xunicode}
+\usepackage{url}
+\usepackage[svgnames]{xcolor}
+\usepackage{soul}
+\usepackage[xetex, colorlinks=true, urlcolor=FireBrick, plainpages=false, pdfpagelabels, bookmarksnumbered]{hyperref}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{polyglossia}
+\setmainlanguage{french}
+\setotherlanguages{english}
+\usepackage[french=guillemets]{csquotes}
+\usepackage{xunicode}
+\usepackage{balance}
+\usepackage[french]{fmtcount}
+\fmtcountsetoptions{french=france}
+\usepackage[singlespacing]{setspace}
+\usepackage[super]{nth}
+\usepackage{xcolor}
+\usepackage{microtype}
+\usepackage{ragged2e}
+\usepackage{lipsum}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\hypersetup{colorlinks,urlcolor=blue,linkcolor=red,citecolor=red,filecolor=black}
+\usepackage{adforn}
+\usepackage{fontspec}
+\setmainfont[Numbers={Proportional},SmallCapsFeatures={LetterSpace=4}]{Minion Pro}
+\AfterTOCHead{\singlespacing}
+\setkomafont{disposition}{\normalfont\normalcolor}
+\addtokomafont{section}{\scshape\LARGE\lowercase}
+\addtokomafont{subsection}{\sffamily\bfseries\normalsize}
+\addtokomafont{subsubsection}{\itshape\large}
+\newenvironment{summary}{\begin{addmargin}{3em}\itshape}{\end{addmargin}}
+\newcommand{\annotation}[1]{\marginpar{\small\itshape #1}}
+\definecolor{bibleblue}{HTML}{00339a}
+\setcounter{secnumdepth}{\partnumdepth}
+\recalctypearea
+\date{\today}
+\title{}
+\hypersetup{
+ pdfauthor={},
+ pdftitle={},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 25.3.1 (Org mode 9.1)}, 
+ pdflang={Frenchb}}
+\begin{document}
+
+\subject{Techniques Quantitatives} 
+\title{Titre du report} 
+\subtitle{Sous-titre du report} 
+\author{Bassitan Toure \\ Jorge Fernandez \\ Carlos Rivera} 
+\date{\today} 
+\publishers{Prof. Corine Perraudin} 
+
+\maketitle
+\section{Membres:}
+\label{sec:orgdebe97d}
+\subsection{Bassitan Toure}
+\label{sec:org137d709}
+\subsection{Jorge Fernandez}
+\label{sec:org249eb95}
+\subsection{Carlos Rivera}
+\label{sec:orgf707919}
+\section{Sujet:}
+\label{sec:orgde832f1}
+\subsection{Quel est l'effet de l'origine dans la determination du type de contrat?}
+\label{sec:org10cfe61}
+\subsection{Parmi nos variables explicatives laquelle explique le mieux? Et pourquoi?}
+\label{sec:org95951f2}
+\section{Variables:}
+\label{sec:orgd748c0a}
+\subsection{Expliquée}
+\label{sec:org483853c}
+\subsubsection{STATUTR : Statut regroupé en 4 postes pour les salariés}
+\label{sec:org13b564f}
+\subsection{Explicative}
+\label{sec:org4a1846d}
+\subsubsection{NFR3 : Nationalité regroupée en 3 postes}
+\label{sec:orgde01a30}
+\subsubsection{SEXE : Sexe}
+\label{sec:org892aee8}
+\subsubsection{IMMI2 : Origine en 3 postes (non immigré, immigré dans l'UE ou hors UE)}
+\label{sec:org1b896cd}
+\subsubsection{AGE3 : Âge regroupé en 3 postes (au dernier jour de la semaine de référence}
+\label{sec:orgb94f0d5}
+\subsubsection{DDIPL : Diplôme le plus élevé obtenu agrégé}
+\label{sec:orgf26eb74}
+\subsubsection{NAFG005UN : Activité économique de l'établissement de l'emploi principal actuel (NA en 5 postes)}
+\label{sec:orgbcb9932}
+\end{document}

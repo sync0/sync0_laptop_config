@@ -1,0 +1,93 @@
+% Created 2017-10-09 Mon 11:38
+% Intended LaTeX compiler: pdflatex
+\documentclass[paper=A4,portrait,twoside=false,twocolumn=false,headinclude=false,footinclude=false,fontsize=11,BCOR=0mm,DIV=7,pagesize=auto,abstract=false,mpinclude=false,headings=big]{scrartcl}
+\usepackage{fontspec}
+\usepackage{xunicode}
+\usepackage{url}
+\usepackage[svgnames]{xcolor}
+\usepackage{soul}
+\usepackage[xetex, colorlinks=true, urlcolor=FireBrick, plainpages=false, pdfpagelabels, bookmarksnumbered]{hyperref}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage[french, frenchb]{babel}
+\usepackage[french=guillemets]{csquotes}
+\usepackage{xunicode}
+\usepackage{balance}
+\usepackage[french]{fmtcount}
+\fmtcountsetoptions{french=france}
+\usepackage[singlespacing]{setspace}
+\usepackage[super]{nth}
+\usepackage{xcolor}
+\usepackage[babel=true,kerning=french]{microtype}
+\usepackage{ragged2e}
+\usepackage{lipsum}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\hypersetup{colorlinks,urlcolor=blue,linkcolor=red,citecolor=red,filecolor=black}
+\usepackage{adforn}
+\usepackage{fontspec}
+\setmainfont[Numbers={Proportional},SmallCapsFeatures={LetterSpace=4}]{Minion Pro}
+\AfterTOCHead{\singlespacing}
+\setkomafont{disposition}{\normalfont\normalcolor}
+\addtokomafont{section}{\scshape\LARGE\lowercase}
+\addtokomafont{subsection}{\sffamily\bfseries\normalsize}
+\addtokomafont{subsubsection}{\itshape\large}
+\newenvironment{summary}{\begin{addmargin}{3em}\itshape}{\end{addmargin}}
+\newcommand{\annotation}[1]{\marginpar{\small\itshape #1}}
+\definecolor{bibleblue}{HTML}{00339a}
+\setcounter{secnumdepth}{\partnumdepth}
+\recalctypearea
+\date{\today}
+\title{}
+\hypersetup{
+ pdfauthor={},
+ pdftitle={},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 25.3.1 (Org mode 9.1)}, 
+ pdflang={Frenchb}}
+\begin{document}
+
+\subject{Sociologie des comportements sociaux} 
+\title{Pierre Bourdieu, La Distinction}
+
+\author{Carlos Alberto Rivera Carreño} 
+
+\maketitle
+
+Pierre Bourdieu est un des sociologues les plus importants de la
+seconde moitié du \ordinalnum{20}[m] siècle. Né en France à Denguin,
+il commence sa formation en philosophie à l'\textsc{ens} d'Ulm, mais
+il se tourne vers la sociologie après s'être intéréssé aux études
+ethnologiques et après avoir servi une partie du service militaire en
+Algerie. Son oeuvre, très diverse, se caracterise pour un intêrét aux
+facteurs culturels et symboliques dans la reproduction des hiérarchies
+sociales.
+
+Dans cet extrait de son ouvrage de 1979 \emph{La Distinction}, le
+sociologue esssai de montrer les differentes preferences alimentaires
+et vestimentaires des classes sociales et leurs subdivisions. Il
+soutien que ces differences correspondent aux differences de
+l'habitus de chaque classe social, ce qu'il argumente en analysant
+les reponses d'une enquête française de 1967. L'extrait est divisé en
+trois parties:
+\section{Troi manières de se distinguer}
+\label{sec:org652186e}
+Dans al première partie, Bourdieu rassemble des differentes types de
+consomations (vêtements, chaussure, livres, sport, fruits frais,
+etc.) en trois categories: alimentation, présentation, et culture. 
+
+\begin{quote}
+«Ainsi se dessine un espace des corps de classe qui, aux hasards biologiques près, tend à reproduire dans sa logique spécificque la structure de l'espace social. Et ce n'est donc pas par hasard que les propriétés corporelles sont appréhendées à travers des systèmes de classement sociaux qui ne sont pas indépendants de la distribution entre les classes sociales des différentes propriétés.»
+\end{quote}
+
+\section{Sans façons ou sans gêne?}
+\label{sec:orgb3ce3f8}
+\section{Le visible et l'invisible}
+\label{sec:org9495610}
+\section{Conclusion}
+\label{sec:orgdc5b547}
+\end{document}

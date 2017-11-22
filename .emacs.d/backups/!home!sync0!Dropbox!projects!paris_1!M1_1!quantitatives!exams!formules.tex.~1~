@@ -1,0 +1,82 @@
+% Intended LaTeX compiler: pdflatex
+\documentclass[paper=A4,portrait,twoside=false,twocolumn=false,headinclude=false,footinclude=false,fontsize=11,BCOR=10mm,DIV=9,pagesize=auto,titlepage=firstiscover,abstract=false,mpinclude=false,headings=small,headings=twolinechapter,open=left,toc=flat]{scrartcl}
+\usepackage{fontspec}
+\usepackage{xunicode}
+\usepackage{url}
+\usepackage[svgnames]{xcolor}
+\usepackage{soul}
+\usepackage[xetex, colorlinks=true, urlcolor=FireBrick, plainpages=false, pdfpagelabels, bookmarksnumbered]{hyperref}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{polyglossia}
+\setmainlanguage{french}
+\setotherlanguages{german,italian,english}
+\usepackage[french=guillemets]{csquotes}
+\usepackage{xunicode}
+\usepackage{balance}
+\usepackage[french]{fmtcount}
+\fmtcountsetoptions{french=france}
+\usepackage[singlespacing]{setspace}
+\usepackage[super]{nth}
+\usepackage{xcolor}
+\usepackage{microtype}
+\usepackage{minted}
+\microtypecontext{kerning=french}
+\usepackage{ragged2e}
+\usepackage{lipsum}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\hypersetup{colorlinks,urlcolor=blue,linkcolor=bibleblue,citecolor=red,filecolor=black}
+\usepackage{enumitem}
+\usepackage{adforn}
+\usepackage{fontspec}
+\setmainfont[Numbers={OldStyle},SmallCapsFeatures={LetterSpace=4,Ligatures={NoCommon, NoDiscretionary, NoHistoric, NoRequired, NoContextual}}]{Linux Libertine}
+\setkomafont{disposition}{\normalfont\normalcolor}
+\addtokomafont{section}{\scshape\LARGE\lowercase}
+\addtokomafont{subsection}{\sffamily\bfseries\normalsize}
+\addtokomafont{subsubsection}{\itshape\large}
+\usemintedstyle{borland}
+\newenvironment{summary}{\begin{addmargin}{3em}\itshape}{\end{addmargin}}
+\newcommand{\annotation}[1]{\marginpar{\small\itshape #1}}
+\renewcommand*\labelitemi{\adforn{14}}
+\renewcommand*\labelitemii{\adforn{71}}
+\renewcommand*\labelitemiii{\adforn{2}}
+\renewcommand*\labelitemiv{\adforn{43}}
+\renewcommand*{\dictumwidth}{.8\textwidth}
+\renewcommand*{\raggeddictum}{\centering}
+\renewcommand*{\raggeddictumtext}{\centering}
+\addtokomafont{dictum}{\large\rmfamily}
+\definecolor{bibleblue}{HTML}{00339a}
+\setcounter{secnumdepth}{\partnumdepth}
+\setcounter{tocdepth}{1}
+\recalctypearea
+\setlist[1]{itemsep=\parskip}
+\setlength{\columnsep}{2.5em}
+\setlist[1]{itemsep=\parskip}
+\date{\today}
+\title{}
+\hypersetup{
+ pdfauthor={},
+ pdftitle={},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 25.3.1 (Org mode 9.1)}, 
+ pdflang={Frenchb}}
+\begin{document}
+
+\tableofcontents
+
+\title{Formules} 
+
+\#\author{sync0} 
+\#\date{\today} 
+
+\maketitle
+\section{Italiana}
+\label{sec:org93c311c}
+\section{asdf}
+\label{sec:orgcd09319}
+\end{document}

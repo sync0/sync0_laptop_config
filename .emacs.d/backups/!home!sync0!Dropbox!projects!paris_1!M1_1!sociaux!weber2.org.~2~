@@ -1,0 +1,98 @@
+\subject{Sociologie des comportements sociaux} 
+\title{Max Weber}
+\subtitle{Économie et Société} 
+\author{Carlos Alberto Rivera Carreño} 
+\date{\today} 
+# \publishers{Prof. Corine Perraudin} 
+# \dedication{Die Philosophen haben die Welt nur verschieden interpretiert; \\ es kömmt drauf an, sie zu verändern.} 
+\maketitle
+*  Biographie
+** Qui est Max Weber
+* Contexte
+** Théorie de l'évolution
+** 
+* Conclusion
+* Einstellungen :noexport:ARCHIVE:
+** Einführung
+#+LANGUAGE: fr
+#+OPTIONS: toc:t \n:nil ::t |:t ^:t f:t *:t ':t pro:nil date:t
+#+OPTIONS: LaTeX:t TeX:t d:nil pri:t p:t tags:nil inline:t todo:nil
+#+LATEX_CLASS: scrartcl
+#+LATEX_CLASS_OPTIONS: [paper=16cm:12cm,portrait,twoside=false,twocolumn=false,headinclude=false,footinclude=false,fontsize=13,BCOR=0mm,DIV=18,titlepage=firstiscover,pagesize=auto,abstract=false,mpinclude=false,headings=small]
+#+LATEX_CMD: xelatex
+#+TAGS: vocabulary(v) noexport export
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+STARTUP: indent hidestars content logdrawer
+** Paketverladung
+#+LATEX_HEADER: \usepackage{polyglossia} 
+#+LATEX_HEADER: \setmainlanguage{french} 
+#+LATEX_HEADER: \setotherlanguages{german,english} 
+#+LATEX_HEADER: \usepackage[french=guillemets]{csquotes}
+#+LATEX_HEADER: \usepackage{xunicode}
+#+LATEX_HEADER: \usepackage{balance}
+#+LATEX_HEADER: \usepackage[french]{fmtcount} 
+#+LATEX_HEADER: \fmtcountsetoptions{french=france}
+#+LATEX_HEADER: \usepackage[onehalfspacing]{setspace}
+#+LATEX_HEADER: \usepackage[super]{nth}
+#+LATEX_HEADER: \usepackage{xcolor}
+#+LATEX_HEADER: \usepackage{microtype}
+#+LATEX_HEADER: \usepackage{ragged2e}
+#+LATEX_HEADER: \usepackage{lipsum}
+#+LATEX_HEADER: \usepackage{amsmath}
+#+LATEX_HEADER: \usepackage{amsthm}
+#+LATEX_HEADER: \usepackage{amssymb}
+#+LATEX_HEADER: \usepackage{hyperref}
+#+LATEX_HEADER: \hypersetup{colorlinks,urlcolor=blue,linkcolor=blue,citecolor=red,filecolor=black}
+#+LATEX_HEADER: \usepackage{adforn}
+#+LATEX_HEADER: \usepackage{enumitem}
+** Schriftart
+#+LATEX_HEADER: \usepackage{fontspec}
+#+LATEX_HEADER:\setmainfont[Numbers={OldStyle},SmallCapsFeatures={LetterSpace=4,Ligatures={NoCommon, NoDiscretionary, NoHistoric, NoRequired, NoContextual}}]{Linux Libertine}
+** Seitenstil
+##+LATEX_HEADER:\usepackage{scrlayer-scrpage}
+##+LATEX_HEADER:\pagestyle{scrheadings}
+##+LATEX_HEADER:\renewcommand*{\chapterpagestyle}{plain}
+##+LATEX_HEADER:\clearscrheadfoot
+##+LATEX_HEADER:\automark{chapter}
+##+LATEX_HEADER:\chead{\headmark} 
+##+LATEX_HEADER:\ifoot*{\thepage} 
+** Absätze
+#+LATEX_HEADER: \AfterTOCHead{\singlespacing}
+#+LATEX_HEADER: \setkomafont{disposition}{\normalfont\normalcolor}
+*** Titelblatt
+##+LATEX_HEADER: \addtokomafont{subject}{\scshape\lowercase}
+#+LATEX_HEADER: \addtokomafont{author}{\scshape\lowercase}
+##+LATEX_HEADER: \addtokomafont{dedication}{\itshape}
+*** Table of Contents
+#+LATEX_HEADER: \addtokomafont{partentry}{\scshape\lowercase}
+##+LATEX_HEADER: \addtokomafont{chapterentry}{\bfseries}
+##+LATEX_HEADER: \addtokomafont{sectionentry}{\itshape}
+*** Part
+##+LATEX_HEADER: \renewcommand*{\partformat}{\adforn{21}~\thepart~\adforn{49}}
+##+LATEX_HEADER: \addtokomafont{part}{\scshape\Huge\lowercase}
+*** Chapter 
+##+LATEX_HEADER:\renewcommand{\raggedchapter}{\centering}
+##+LATEX_HEADER: \addtokomafont{chapter}{\scshape\Huge\lowercase}
+*** Section
+#+LATEX_HEADER: \addtokomafont{section}{\scshape\large\lowercase}
+*** Subsection
+#+LATEX_HEADER: \addtokomafont{subsection}{\sffamily\bfseries\normalsize}
+*** Subsubsection
+#+LATEX_HEADER: \addtokomafont{subsubsection}{\itshape\large}
+
+** User-defined elements
+#+LATEX_HEADER:\newenvironment{summary}{\begin{addmargin}{3em}\itshape}{\end{addmargin}} 
+#+LATEX_HEADER:\newcommand{\annotation}[1]{\marginpar{\small\itshape #1}}
+#+LATEX_HEADER:\renewcommand*\labelitemi{\adforn{14}}
+#+LATEX_HEADER:\renewcommand*\labelitemii{\adforn{71}}
+#+LATEX_HEADER:\renewcommand*\labelitemiii{\adforn{2}}
+#+LATEX_HEADER:\renewcommand*\labelitemiv{\adforn{43}}
+** Andere
+#+LATEX_HEADER: \definecolor{bibleblue}{HTML}{00339a}
+#+LATEX_HEADER: \setcounter{secnumdepth}{\partnumdepth}
+#+LATEX_HEADER: \setcounter{tocdepth}{1}
+#+LATEX_HEADER: \recalctypearea
+#+LATEX_HEADER: \setlist[1]{itemsep=\parskip}
+##+LATEX_HEADER: \setlength{\marginparwidth}{3\marginparwidth}
+

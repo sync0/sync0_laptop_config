@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: org_source_code
+# key: code
+# --
+#+BEGIN_SRC sass
+${1:DATA base1}
+#+END_SRC
+$0
