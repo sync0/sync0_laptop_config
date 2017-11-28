@@ -67,3 +67,20 @@ alias pdf_compress="gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=
 -r150"
 alias pdf_shrink='bash $HOME/Scripts/shell/shrinkpdf.sh'
 screenfetch
+
+# keep the prompt on top
+#prompt_on_top() {
+#  tput cup 0 0
+#  tput el
+#  tput el1
+#}
+
+#pre_cmd() {
+#  if [ "$BASH_COMMAND" = "$PROMPT_COMMAND" ] || [ -n "$COMP_LINE" ]; then
+#    return
+#  fi
+#  printf "\33[2J"
+#}
+
+#PROMPT_COMMAND="prompt_on_top"
+#trap 'pre_cmd' DEBUG

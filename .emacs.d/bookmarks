@@ -23,8 +23,8 @@
  (rear-context-string . "\")))\n\n;; German ")
  (position . 10727))
 ("here"
- (filename . "~/Dropbox/projects/paris_1/M1_1/max_notes.org")
- (front-context-string . "\n**** Quelle int")
- (rear-context-string . "nciennété donée.")
- (position . 11836))
+ (filename . "~/Dropbox/projects/paris_1/M1_1/m1_1_notes.org")
+ (front-context-string . " \n  - Constructi")
+ (rear-context-string . "treet repose .\n-")
+ (position . 312257))
 )

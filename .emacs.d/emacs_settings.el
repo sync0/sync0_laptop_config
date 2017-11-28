@@ -259,14 +259,14 @@
 
   ;; german-postfix for evil insert mode
   ;;(add-hook 'evil-insert-state-entry-hook
-   ;; (lambda () (set-input-method "german-postfix")))
-  ;; (key-chord-define evil-insert-state-map  "fd" 'evil-normal-state)
+  ;;  (lambda () (set-input-method "german-postfix")))
 
   ;; german-postfix for evil replace mode
   ;;(add-hook 'evil-replace-state-entry-hook
-  ;; (lambda () (set-input-method "german-postfix")))
+   ;;(lambda () (set-input-method "german-postfix")))
 
 
+  ;; (key-chord-define evil-insert-state-map  "fd" 'evil-normal-state)
 
 
 
@@ -620,14 +620,22 @@ FUN function callback"
   )
 
 (evil-define-key 'normal org-mode-map
-  "K" 'outline-previous-visible-heading
-  "L" (if (fboundp 'org-forward-same-level) ;to be backward compatible with older org version
-	   'org-forward-same-level
-	  'org-forward-heading-same-level)
-  "H" (if (fboundp 'org-backward-same-level)
-	   'org-backward-same-level
-	  'org-backward-heading-same-level)
-  "J" 'outline-next-visible-heading
+  "<" 'outline-previous-visible-heading
+  ">" 'outline-next-visible-heading
+  "H" 'org-metaleft
+  "L" 'org-metaright
+  "J" 'org-metaup
+  "K" 'org-metadown
+ ;; "K" 'outline-previous-visible-heading
+  ;;"J" 'outline-next-visible-heading
+ ;; "H" (if (fboundp 'org-backward-same-level)
+	;;   'org-backward-same-level
+	  ;;'org-backward-heading-same-level)
+;;  "L" (if (fboundp 'org-forward-same-level) ;to be backward compatible with older org version
+	;;   'org-forward-same-level
+	  ;;'org-forward-heading-same-level)
+;;  "<" 'org-metaleft
+ ;; ">" 'org-metaright
   "k" 'previous-line
   "j" 'next-line
   "m" 'set-mark-command
@@ -636,8 +644,6 @@ FUN function callback"
   "O" '(lambda () (interactive) (evil-org-eol-call 'org-insert-heading))
   "$" 'org-end-of-line
   "^" 'org-beginning-of-line
-  "<" 'org-metaleft
-  ">" 'org-metaright
   "[" 'backward-sentence
   "]" 'forward-sentence
   "{" 'org-backward-paragraph

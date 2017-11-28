@@ -3,6 +3,6 @@
 # key: quote 
 # --
 \begin{quote}
-«${1:remplacer la France des mots par la France des chiffres}»
+\enquote{${1:Lorem ipsum dolor sit amet}}
 \end{quote}
 $0
