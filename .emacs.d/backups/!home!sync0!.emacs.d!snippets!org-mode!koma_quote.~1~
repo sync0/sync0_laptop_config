@@ -1,8 +1,0 @@
-# -*- mode: snippet -*-
-# name: koma_quote
-# key: quote 
-# --
-\begin{quote}
-${1:remplacer la France des mots par la France des chiffres}
-\end{quote}
-$0

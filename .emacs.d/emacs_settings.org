@@ -327,11 +327,11 @@
 
   ;; german-postfix for evil insert mode
   ;;(add-hook 'evil-insert-state-entry-hook
-  ;;  (lambda () (set-input-method "german-postfix")))
+    ;;(lambda () (set-input-method "german-postfix")))
 
   ;; german-postfix for evil replace mode
   ;;(add-hook 'evil-replace-state-entry-hook
-   ;;(lambda () (set-input-method "german-postfix")))
+  ;; (lambda () (set-input-method "german-postfix")))
 
 
   ;; (key-chord-define evil-insert-state-map  "fd" 'evil-normal-state)

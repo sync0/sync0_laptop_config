@@ -2,7 +2,7 @@
 # name: org_source_code
 # key: code
 # --
-#+BEGIN_SRC sass
+#+BEGIN_SRC sas
 ${1:DATA base1}
 #+END_SRC
 $0

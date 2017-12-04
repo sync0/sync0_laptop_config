@@ -1,1 +1,0 @@
-setxkbmap -model "pc105" -rules "xorg" -layout "us,es" -variant "altgr-intl,deadtilde" -option "grp:rctrl_switch,compose:ralt"

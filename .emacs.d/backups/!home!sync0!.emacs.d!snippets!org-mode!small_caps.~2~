@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: small_caps
-# key: sc
-# --
-\textsc{$1}$0
