@@ -109,7 +109,7 @@
 (load-theme 'solarized-light t)
 
 ;; load dark theme
-;; (load-theme 'solarized-dark t)
+;;(load-theme 'solarized-dark t)
 
 ;; disable CJK coding/encoding (Chinese/Japanese/Korean characters)
 ;; (setq utf-translate-cjk-mode nil)
@@ -252,18 +252,18 @@
 (lambda () (set-input-method "french-postfix")))
 
   ;; french-postfix for evil replace mode
-  (add-hook 'evil-replace-state-entry-hook
-   (lambda () (set-input-method "french-postfix")))
+(add-hook 'evil-replace-state-entry-hook
+(lambda () (set-input-method "french-postfix")))
 
 ;; German 
 
   ;; german-postfix for evil insert mode
   ;;(add-hook 'evil-insert-state-entry-hook
-    ;;(lambda () (set-input-method "german-postfix")))
+  ;;(lambda () (set-input-method "german-postfix")))
 
   ;; german-postfix for evil replace mode
-  ;;(add-hook 'evil-replace-state-entry-hook
-  ;; (lambda () (set-input-method "german-postfix")))
+;;(add-hook 'evil-replace-state-entry-hook
+;;(lambda () (set-input-method "german-postfix")))
 
 
   ;; (key-chord-define evil-insert-state-map  "fd" 'evil-normal-state)
@@ -848,6 +848,10 @@ FUN function callback"
 
 ;; export colored code blocks
 (setq org-latex-listings 'minted)
+
+;; set word wrap for code blocks
+(setq org-latex-minted-options '(("breaklines" "true")
+                                 ("breakanywhere" "true")))
 
 (require 'yasnippet)
 (yas-reload-all)
