@@ -156,6 +156,9 @@
                     text-mode-hook))
       (add-hook hook (lambda () (abbrev-mode 1))))
 
+;; (add-hook 'eval-expression-minibuffer-setup-hook #'eldoc-mode)
+;; (add-hook 'eval-expression-minibuffer-setup-hook #'paredit-mode)
+
 (cond
   ;; try hunspell at first
   ;; if hunspell does NOT exist, use aspell
@@ -258,8 +261,8 @@
 ;; German 
 
   ;; german-postfix for evil insert mode
-  ;;(add-hook 'evil-insert-state-entry-hook
-  ;;(lambda () (set-input-method "german-postfix")))
+ ;;(add-hook 'evil-insert-state-entry-hook
+ ;;(lambda () (set-input-method "german-postfix")))
 
   ;; german-postfix for evil replace mode
 ;;(add-hook 'evil-replace-state-entry-hook
@@ -373,28 +376,28 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
 ;; build composite agenda view
 (setq org-agenda-custom-commands
  '(("x" agenda)
-    ("n" todo "不")
-    ("N" todo-tree "不")
-    ("w" todo "等")
+    ("n" todo "無")
+    ("N" todo-tree "無")
+    ("w" todo "待")
     ("W" "Weekly Review"
          ((tags "PRIORITY=\"A\""
            ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("完" "答" "取")))
             (org-agenda-overriding-header "Tâches prioritaires:")))
           (agenda "" ((org-agenda-ndays 7)))
           (alltodo ""
-           ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("行"))
+           ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("中"))
                                                              (air-org-skip-subtree-if-habit)
                                                              (air-org-skip-subtree-if-priority ?A)
                                                              (org-agenda-skip-if nil '(scheduled deadline))))
                                                              (org-agenda-overriding-header "Tâches en cours:")))
           (alltodo ""
-           ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("不"))
+           ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("無"))
                                                              (air-org-skip-subtree-if-habit)
                                                              (air-org-skip-subtree-if-priority ?A)
                                                              (org-agenda-skip-if nil '(scheduled deadline))))
                                                              (org-agenda-overriding-header "Tâches urgentes:")))
           (alltodo ""
-           ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("等"))
+           ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("待"))
                                                              (air-org-skip-subtree-if-habit)
                                                              (air-org-skip-subtree-if-priority ?A)
                                                              (org-agenda-skip-if nil '(scheduled deadline))))
@@ -413,19 +416,20 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
 ;; (setq org-hide-emphasis-markers t)
 
 (setq org-todo-keywords 
-          '((sequence "不(t)" "行(p)" "完(d)")
-            (sequence "等(w)" "|" "取(c)")
+          '((sequence "無(t)" "中(p)" "完(d)")
+            (sequence "待(w)" "|" "取(c)")
             (sequence "疑(q)" "|" "答(a)")))
+
 
 ;; set faces for org-todo-keywords
 (setq org-todo-keyword-faces
-      '(("不" . (:foreground "#dc322f" :weight bold))
+      '(("無" . (:foreground "#dc322f" :weight bold))
         ("完" . (:foreground "#859900" :weight bold))   
         ("疑" . (:foreground "#d33682" :weight bold))
         ("答" . (:foreground "#268bd2" :weight bold)) 
-        ("等" . (:foreground "#cb4b16" :weight bold))
+        ("待" . (:foreground "#cb4b16" :weight bold))
         ("取" . (:foreground "#6c71c4" :weight bold)) 
-        ("行" . (:foreground "#b58900" :weight bold)) 
+        ("中" . (:foreground "#b58900" :weight bold)) 
         ))
 
 (require 'org-bullets)
@@ -656,23 +660,24 @@ FUN function callback"
 ;; fast show in buffer
 ;; (define-key org-mode-map (kbd "C-b") 'org-tree-to-indirect-buffer)
 
+;; export references (to tables, graphics, etc.) properly, evaluating the +NAME property. 
+(setq org-latex-prefer-user-labels t)
+
 ;; export process is sent to the background
  (setq org-export-in-background t)
 
-
 ;; select tasks (i.e., TODOs) for export
- (setq org-export-with-tasks '("不" "行" "等" "疑"))
+ (setq org-export-with-tasks '("無" "中" "待" "疑"))
 
 ;; speed keybinding for latex pdf export
 (add-hook 'org-mode-hook
      (lambda () (define-key org-mode-map "\M-p" 'org-latex-export-to-pdf)))
 
-
 ;; Default packages included in every tex file, pdflatex or xelatex
-(setq org-latex-packages-alist
-      '(("" "graphicx" t)
-        ("" "longtable" nil)
-        ("" "float" nil)))
+;;(setq org-latex-packages-alist
+;;      '(("" "graphicx" t)
+;;        ("" "longtable" nil)
+;;        ("" "float" nil)))
 
 ;; source: https://lists.gnu.org/archive/html/emacs-orgmode/2013-06/msg00240.html
 (defun my-auto-tex-cmd (backend)
@@ -708,7 +713,7 @@ FUN function callback"
                   ;; ("american" "babel" t)
                   ;; ("babel" "csquotes" t)
                   ;; ("" "listings" nil)
-                  ("svgnames" "xcolor" t)
+                  ;; ("svgnames" "xcolor" t)
                   ("" "soul" t)
                   ("xetex, colorlinks=true, urlcolor=FireBrick, plainpages=false, pdfpagelabels, bookmarksnumbered" "hyperref" nil)
                   ))
