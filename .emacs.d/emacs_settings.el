@@ -368,8 +368,8 @@ FUN function callback"
 ; Make horizontal movement cross lines                                    
 (setq-default evil-cross-lines t)
 
-(define-key evil-normal-state-map (kbd "C-j") 'next-buffer)
-(define-key evil-normal-state-map (kbd "C-k") 'previous-buffer)
+(define-key evil-normal-state-map (kbd "C-h") 'next-buffer)
+(define-key evil-normal-state-map (kbd "C-l") 'previous-buffer)
 (define-key evil-normal-state-map (kbd "C-S-h") 'evil-window-left)
 (define-key evil-normal-state-map (kbd "C-S-j") 'evil-window-down)
 (define-key evil-normal-state-map (kbd "C-S-k") 'evil-window-up)
@@ -381,9 +381,11 @@ FUN function callback"
 (require 'evil-mc)
 (global-evil-mc-mode  1)
 (define-key evil-mc-key-map (kbd "C->") 'evil-mc-make-and-goto-next-match)
-(define-key evil-mc-key-map (kbd "M->") 'evil-mc-make-and-goto-next-cursor)
+(define-key evil-mc-key-map (kbd "M->") 'evil-mc-skip-and-goto-next-cursor)
+;;(define-key evil-mc-key-map (kbd "M->") 'evil-mc-make-and-goto-next-cursor)
 (define-key evil-mc-key-map (kbd "C-<") 'evil-mc-make-and-goto-prev-match)
-(define-key evil-mc-key-map (kbd "M-<") 'evil-mc-make-and-goto-prev-cursor)
+(define-key evil-mc-key-map (kbd "M-<") 'evil-mc-skip-and-goto-prev-cursor)
+;;(define-key evil-mc-key-map (kbd "M-<") 'evil-mc-make-and-goto-prev-cursor)
 
 ;; enable projectile by default
 (projectile-global-mode)
@@ -885,13 +887,36 @@ from the `before-change-functions' in the current buffer."
 (all-the-icons-ivy-setup)
 
 (require 'neotree)
-(global-set-key [f6] 'neotree-toggle)
+;; (global-set-key [f6] 'neotree-toggle)
 
 ;; theme config
 (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
 
 ;; show neotree on startup
 (neotree-show)
+
+;; Every time when the neotree window is opened, let it find current file and jump to node.
+(setq neo-smart-open t)
+
+;; When running ‘projectile-switch-project’ (C-c p p), ‘neotree’ will change root automatically.
+(setq projectile-switch-project-action 'neotree-projectile-action)
+
+;; Similar to find-file-in-project, NeoTree can be opened (toggled) at projectile project root as follows:
+ (defun neotree-project-dir ()
+    "Open NeoTree using the git root."
+    (interactive)
+    (let ((project-dir (projectile-project-root))
+          (file-name (buffer-file-name)))
+      (neotree-toggle)
+      (if project-dir
+          (if (neo-global--window-exists-p)
+              (progn
+                (neotree-dir project-dir)
+                (neotree-find file-name)))
+        (message "Could not find git project root."))))
+
+;; remap last function
+ (global-set-key [f6] 'neotree-project-dir)
 
 (require 'powerline)
 (powerline-evil-vim-color-theme)
@@ -918,13 +943,63 @@ from the `before-change-functions' in the current buffer."
    (interactive)
    (scroll-up 1))
 
-(global-set-key "\M-j" 'gcm-scroll-down)
+(global-set-key (kbd "M-S-j") 'gcm-scroll-down)
 
 (defun gcm-scroll-up ()
    (interactive)
    (scroll-down 1))
 
-(global-set-key "\M-k" 'gcm-scroll-up)
+(global-set-key (kbd "M-S-k") 'gcm-scroll-up)
+
+(require 'company)
+
+(add-hook 'after-init-hook 'global-company-mode)
+
+;; Don't enable company-mode in below major modes, OPTIONAL
+(setq company-global-modes '(not eshell-mode comint-mode erc-mode rcirc-mode))
+
+;; "text-mode" is a major mode for editing files of text in a human language"
+;; most major modes for non-programmers inherit from text-mode
+(defun text-mode-hook-setup ()
+  ;; make `company-backends' local is critcal
+  ;; or else, you will have completion in every major mode, that's very annoying!
+  (make-local-variable 'company-backends)
+
+  ;; company-ispell is the plugin to complete words
+  (add-to-list 'company-backends 'company-ispell)
+
+;; OPTIONAL, if `company-ispell-dictionary' is nil, `ispell-complete-word-dict' is used
+;; but I prefer hard code the dictionary path. That's more portable.
+(setq company-ispell-dictionary (file-truename "~/.emacs.d/dictionaries/francais.txt")))
+
+(add-hook 'text-mode-hook 'text-mode-hook-setup)
+
+(defun toggle-company-ispell ()
+  (interactive)
+  (cond
+   ((memq 'company-ispell company-backends)
+    (setq company-backends (delete 'company-ispell company-backends))
+    (message "company-ispell disabled"))
+   (t
+    (add-to-list 'company-backends 'company-ispell)
+    (message "company-ispell enabled!"))))
+
+(setq company-idle-delay 0.1)
+(setq company-selection-wrap-around t)
+(define-key company-active-map [tab] 'company-complete)
+(define-key company-active-map (kbd "M-j") 'company-select-next)
+(define-key company-active-map (kbd "M-k") 'company-select-previous)
+;;(add-hook 'company-mode-hook
+ ;;           (lambda ()
+   ;;           (define-key evil-insert-state-local-map (kbd "TAB") 'company-complete)
+     ;;         (define-key evil-insert-state-local-map (kbd "C-j") 'company-select-next)
+       ;;       (define-key evil-insert-state-local-map (kbd "C-k") 'company-select-previous)))
+
+;; avoid conflict with yasnippet 
+(advice-add 'company-complete-common :before (lambda () (setq my-company-point (point))))
+(advice-add 'company-complete-common :after (lambda ()
+  		  				(when (equal my-company-point (point))
+  			  			  (yas-expand))))
 
 (defun insert-current-day () (interactive)
   (insert (shell-command-to-string "echo -n $(date +%d)")))
