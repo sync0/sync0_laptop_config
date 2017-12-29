@@ -106,10 +106,10 @@
 (setq solarized-use-variable-pitch nil)
 
 ;; load light theme
-(load-theme 'solarized-light t)
+;;(load-theme 'solarized-light t)
 
 ;; load dark theme
-;;(load-theme 'solarized-dark t)
+(load-theme 'solarized-dark t)
 
 ;; disable CJK coding/encoding (Chinese/Japanese/Korean characters)
 ;; (setq utf-translate-cjk-mode nil)
@@ -159,23 +159,28 @@
 ;; (add-hook 'eval-expression-minibuffer-setup-hook #'eldoc-mode)
 ;; (add-hook 'eval-expression-minibuffer-setup-hook #'paredit-mode)
 
+(setq fringes-outside-margins t)
+
 (cond
   ;; try hunspell at first
   ;; if hunspell does NOT exist, use aspell
  ((executable-find "hunspell")
   (setq ispell-program-name "hunspell")
-  (setq ispell-local-dictionary "en_US")
+  (setq ispell-local-dictionary "francais-tex")
+  ;;(setq ispell-local-dictionary "en_US")
   (setq ispell-local-dictionary-alist '(  
-    (nil "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_US" ) nil utf-8)
-    ("english" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_US" ) nil utf-8)
-    ("german" "[[:alpha:]ÄÖÜéäöüß]" "[^[:alpha:]ÄÖÜéäöüß]" "[']" t ("-d" "de_DE_frami") nil utf-8)
-    ("spanish" "[[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "[^[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "[']" t ("-d" "es_ANY") nil utf-8)
-    ("french" "[[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[^[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[-']" t ("-d" "fr-toutesvariantes") nil  utf-8))))
+    (nil "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "american" ) nil utf-8)
+    ("english" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "american" ) nil utf-8)
+    ("german" "[[:alpha:]ÄÖÜéäöüß]" "[^[:alpha:]ÄÖÜéäöüß]" "[']" t ("-d" "deutsch8") nil utf-8)
+    ("spanish" "[[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "[^[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "[']" t ("-d" "castellano8") nil utf-8)
+    ("french" "[[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[^[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[-']" t ("-d" "francais-tex") nil  utf-8))))
 
  ((executable-find "aspell")
   (setq ispell-program-name "aspell")
   ;; Please note ispell-extra-args contains ACTUAL parameters passed to aspell
-  (setq ispell-extra-args '("--sug-mode=ultra" "--lang=en_US"))))
+  ;;(setq ispell-extra-args '("--sug-mode=ultra"))))
+  ;;(setq ispell-extra-args '("--sug-mode=ultra" "--lang=en_US"))))
+  (setq ispell-extra-args '("--sug-mode=ultra" "--lang=fr_FR"))))
 
 ;; check next highlighted word custom function
 (defun flyspell-check-next-highlighted-word ()
@@ -203,9 +208,14 @@
 (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_EXAMPLE" . "#\\+END_EXAMPLE"))
 (add-to-list 'ispell-skip-region-alist '("^\\*\sEinstellungen" . "^\\*\\*\sEnde"))
 
-;; (setq-default flyspell-mode t)
+;;(setq-default flyspell-mode t)
 ;; better performance
 (setq flyspell-issue-message-flag nil)
+
+(add-to-list 'load-path "~/.emacs.d/flyspell-lazy")
+(require 'flyspell-lazy)
+(flyspell-lazy-mode 1)
+(flyspell-mode 1)      ; or (flyspell-prog-mode)
 
 (setq Tex-PDF-mode t)
 
@@ -284,6 +294,59 @@
   ;; keybing
   ;;    (global-set-key (kbd "s-SPC") 'evil-toggle-input-method)
 
+(defun clever-insert-item ()
+  "Clever insertion of org item."
+  (if (not (org-in-item-p))
+      (insert "\n")
+    (org-insert-item))
+  )
+
+(defun evil-org-eol-call (fun)
+  "Go to end of line and call provided function.
+FUN function callback"
+  (end-of-line)
+  (funcall fun)
+  (evil-append nil)
+  )
+
+;; redefinition evils visual mode map
+(evil-define-key 'normal org-mode-map
+  "<" 'outline-previous-visible-heading
+  ">" 'outline-next-visible-heading
+  "H" 'org-metaleft
+  "L" 'org-metaright
+  "J" 'org-metaup
+  "K" 'org-metadown
+ ;; "K" 'outline-previous-visible-heading
+  ;;"J" 'outline-next-visible-heading
+ ;; "H" (if (fboundp 'org-backward-same-level)
+	;;   'org-backward-same-level
+	  ;;'org-backward-heading-same-level)
+;;  "L" (if (fboundp 'org-forward-same-level) ;to be backward compatible with older org version
+	;;   'org-forward-same-level
+	  ;;'org-forward-heading-same-level)
+;;  "<" 'org-metaleft
+ ;; ">" 'org-metaright
+  "k" 'previous-line
+  "j" 'next-line
+  "m" 'set-mark-command
+  "q" 'fill-paragraph
+  "o" '(lambda () (interactive) (evil-org-eol-call 'clever-insert-item))
+  "O" '(lambda () (interactive) (evil-org-eol-call 'org-insert-heading))
+  "$" 'org-end-of-line
+  "^" 'org-beginning-of-line
+  "[" 'backward-sentence
+  "]" 'forward-sentence
+  "{" 'org-backward-paragraph
+  "}" 'org-forward-paragraph
+  "-" 'org-cycle-list-bullet
+  (kbd "<tab>") 'org-cycle)
+
+;; redefinition evils visual mode map
+;;(evil-define-key 'visual global-map
+ ;; "-" '
+  ;;(kbd "<tab>") 'org-cycle)
+
 (define-key evil-normal-state-map [escape] 'keyboard-quit)
 (define-key evil-visual-state-map [escape] 'keyboard-quit)
 (define-key minibuffer-local-map [escape] 'minibuffer-keyboard-quit)
@@ -315,15 +378,12 @@
 ;; make navigation easy
 (setq frame-title-format "%b")
 
-;; (require 'multiple-cursors)
-
-;; add one cursor with click
-;; (global-set-key (kbd "C-S-<mouse-1>") 'mc/add-cursor-on-click)
-
-;; add cursors with marks
-;; (global-set-key (kbd "C->") 'mc/mark-next-like-this)
-;; (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-;; (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+(require 'evil-mc)
+(global-evil-mc-mode  1)
+(define-key evil-mc-key-map (kbd "C->") 'evil-mc-make-and-goto-next-match)
+(define-key evil-mc-key-map (kbd "M->") 'evil-mc-make-and-goto-next-cursor)
+(define-key evil-mc-key-map (kbd "C-<") 'evil-mc-make-and-goto-prev-match)
+(define-key evil-mc-key-map (kbd "M-<") 'evil-mc-make-and-goto-prev-cursor)
 
 ;; enable projectile by default
 (projectile-global-mode)
@@ -332,8 +392,8 @@
 (global-set-key (kbd "C-p") nil) 
 
 ;; add a more nemonic command
-(setq projectile-keymap-prefix (kbd "C-p"))
-(require 'projectile)
+ (setq projectile-keymap-prefix (kbd "C-p"))
+ (require 'projectile)
 
 (ivy-mode 1)
 (setq ivy-use-virtual-buffers t)
@@ -436,7 +496,7 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 (setq org-bullets-bullet-list '("一" "二" "三" "四" "五" "六" "七" "八" "七" "九" "十"))
 
-;; (add-hook 'org-mode-hook 'flyspell-mode)
+(add-hook 'org-mode-hook 'flyspell-mode)
 ;; (add-hook 'org-mode-hook 'flyspell-buffer)
 
 (eval-when-compile (require 'cl))
@@ -607,53 +667,6 @@ from the `before-change-functions' in the current buffer."
 ;;          :password "kosmos666"
 ;;          :default-title "Penseé"
 ;;          :tags-as-categories nil)))
-
-(defun clever-insert-item ()
-  "Clever insertion of org item."
-  (if (not (org-in-item-p))
-      (insert "\n")
-    (org-insert-item))
-  )
-
-(defun evil-org-eol-call (fun)
-  "Go to end of line and call provided function.
-FUN function callback"
-  (end-of-line)
-  (funcall fun)
-  (evil-append nil)
-  )
-
-(evil-define-key 'normal org-mode-map
-  "<" 'outline-previous-visible-heading
-  ">" 'outline-next-visible-heading
-  "H" 'org-metaleft
-  "L" 'org-metaright
-  "J" 'org-metaup
-  "K" 'org-metadown
- ;; "K" 'outline-previous-visible-heading
-  ;;"J" 'outline-next-visible-heading
- ;; "H" (if (fboundp 'org-backward-same-level)
-	;;   'org-backward-same-level
-	  ;;'org-backward-heading-same-level)
-;;  "L" (if (fboundp 'org-forward-same-level) ;to be backward compatible with older org version
-	;;   'org-forward-same-level
-	  ;;'org-forward-heading-same-level)
-;;  "<" 'org-metaleft
- ;; ">" 'org-metaright
-  "k" 'previous-line
-  "j" 'next-line
-  "m" 'set-mark-command
-  "q" 'fill-paragraph
-  "o" '(lambda () (interactive) (evil-org-eol-call 'clever-insert-item))
-  "O" '(lambda () (interactive) (evil-org-eol-call 'org-insert-heading))
-  "$" 'org-end-of-line
-  "^" 'org-beginning-of-line
-  "[" 'backward-sentence
-  "]" 'forward-sentence
-  "{" 'org-backward-paragraph
-  "}" 'org-forward-paragraph
-  "-" 'org-cycle-list-bullet
-  (kbd "<tab>") 'org-cycle)
 
 ;; fast insert drawer
 ;; (define-key org-mode-map (kbd "C-d") 'org-insert-drawer)
@@ -866,6 +879,35 @@ FUN function callback"
 ;; annoying warning
 (add-to-list 'warning-suppress-types '(yasnippet backquote-change))
 
+(require 'all-the-icons)
+
+;; ivy setup
+(all-the-icons-ivy-setup)
+
+(require 'neotree)
+(global-set-key [f6] 'neotree-toggle)
+
+;; theme config
+(setq neo-theme (if (display-graphic-p) 'icons 'arrow))
+
+;; show neotree on startup
+(neotree-show)
+
+(require 'powerline)
+(powerline-evil-vim-color-theme)
+
+(global-anzu-mode +1)
+
+;; configuration for EVIL mode
+;; Emacs 24.4 or higher
+(with-eval-after-load 'evil
+  (require 'evil-anzu))
+
+;; Emacs <= 24.3
+(eval-after-load 'evil
+  '(progn
+     (require 'evil-anzu)))
+
 (require 'smooth-scrolling)
 (smooth-scrolling-mode 1)
 (setq smooth-scroll-margin 5)
@@ -889,6 +931,48 @@ FUN function callback"
 
 (defun insert-current-month () (interactive)
   (insert (shell-command-to-string "echo -n $(date +%B)")))
+
+(define-key ctl-x-map "\C-i"
+  #'endless/ispell-word-then-abbrev)
+
+(defun endless/simple-get-word ()
+  (car-safe (save-excursion (ispell-get-word nil))))
+
+(defun endless/ispell-word-then-abbrev (p)
+  "Call `ispell-word', then create an abbrev for it.
+With prefix P, create local abbrev. Otherwise it will
+be global.
+If there's nothing wrong with the word at point, keep
+looking for a typo until the beginning of buffer. You can
+skip typos you don't want to fix with `SPC', and you can
+abort completely with `C-g'."
+  (interactive "P")
+  (let (bef aft)
+    (save-excursion
+      (while (if (setq bef (endless/simple-get-word))
+                 ;; Word was corrected or used quit.
+                 (if (ispell-word nil 'quiet)
+                     nil ; End the loop.
+                   ;; Also end if we reach `bob'.
+                   (not (bobp)))
+               ;; If there's no word at point, keep looking
+               ;; until `bob'.
+               (not (bobp)))
+        (backward-word)
+        (backward-char))
+      (setq aft (endless/simple-get-word)))
+    (if (and aft bef (not (equal aft bef)))
+        (let ((aft (downcase aft))
+              (bef (downcase bef)))
+          (define-abbrev
+            (if p local-abbrev-table global-abbrev-table)
+            bef aft)
+          (message "\"%s\" now expands to \"%s\" %sally"
+                   bef aft (if p "loc" "glob")))
+      (user-error "No typo at or before point"))))
+
+(setq save-abbrevs 'silently)
+(setq-default abbrev-mode t)
 
 (define-key global-map (kbd "C-+") 'text-scale-increase)
 (define-key global-map (kbd "C--") 'text-scale-decrease)

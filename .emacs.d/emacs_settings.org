@@ -148,10 +148,10 @@
 (setq solarized-use-variable-pitch nil)
 
 ;; load light theme
-(load-theme 'solarized-light t)
+;;(load-theme 'solarized-light t)
 
 ;; load dark theme
-;;(load-theme 'solarized-dark t)
+(load-theme 'solarized-dark t)
 #+END_SRC
 ** Force UTF-8 encoding
 #+BEGIN_SRC emacs-lisp
@@ -209,6 +209,10 @@
 ;; (add-hook 'eval-expression-minibuffer-setup-hook #'eldoc-mode)
 ;; (add-hook 'eval-expression-minibuffer-setup-hook #'paredit-mode)
 #+END_SRC 
+** Git gutter thingy
+#+BEGIN_SRC emacs-lisp
+(setq fringes-outside-margins t)
+#+END_SRC 
 * Packages 
 ** Ispell - spell checking
 *** basic setup
@@ -218,18 +222,21 @@
   ;; if hunspell does NOT exist, use aspell
  ((executable-find "hunspell")
   (setq ispell-program-name "hunspell")
-  (setq ispell-local-dictionary "en_US")
+  (setq ispell-local-dictionary "francais-tex")
+  ;;(setq ispell-local-dictionary "en_US")
   (setq ispell-local-dictionary-alist '(  
-    (nil "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_US" ) nil utf-8)
-    ("english" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_US" ) nil utf-8)
-    ("german" "[[:alpha:]ÄÖÜéäöüß]" "[^[:alpha:]ÄÖÜéäöüß]" "[']" t ("-d" "de_DE_frami") nil utf-8)
-    ("spanish" "[[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "[^[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "[']" t ("-d" "es_ANY") nil utf-8)
-    ("french" "[[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[^[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[-']" t ("-d" "fr-toutesvariantes") nil  utf-8))))
+    (nil "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "american" ) nil utf-8)
+    ("english" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "american" ) nil utf-8)
+    ("german" "[[:alpha:]ÄÖÜéäöüß]" "[^[:alpha:]ÄÖÜéäöüß]" "[']" t ("-d" "deutsch8") nil utf-8)
+    ("spanish" "[[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "[^[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "[']" t ("-d" "castellano8") nil utf-8)
+    ("french" "[[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[^[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[-']" t ("-d" "francais-tex") nil  utf-8))))
 
  ((executable-find "aspell")
   (setq ispell-program-name "aspell")
   ;; Please note ispell-extra-args contains ACTUAL parameters passed to aspell
-  (setq ispell-extra-args '("--sug-mode=ultra" "--lang=en_US"))))
+  ;;(setq ispell-extra-args '("--sug-mode=ultra"))))
+  ;;(setq ispell-extra-args '("--sug-mode=ultra" "--lang=en_US"))))
+  (setq ispell-extra-args '("--sug-mode=ultra" "--lang=fr_FR"))))
 
 ;; check next highlighted word custom function
 (defun flyspell-check-next-highlighted-word ()
@@ -263,10 +270,17 @@
 #+END_SRC
 ** Flyspell
 #+BEGIN_SRC emacs-lisp
-;; (setq-default flyspell-mode t)
+;;(setq-default flyspell-mode t)
 ;; better performance
 (setq flyspell-issue-message-flag nil)
 #+END_SRC
+*** Flyspell-lazy
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/flyspell-lazy")
+(require 'flyspell-lazy)
+(flyspell-lazy-mode 1)
+(flyspell-mode 1)      ; or (flyspell-prog-mode)
+#+END_SRC 
 ** Auc-Tex
 *** set pdf conversion automatic
 #+BEGIN_SRC emacs-lisp
@@ -390,8 +404,108 @@
 (defun activate-default-input-method ()
   (interactive)
   (activate-input-method default-input-method))
-
+  
 (add-hook 'org-mode-hook 'activate-default-input-method)
+*** EVIL org
+**** basic settings
+#+BEGIN_SRC emacs-lisp
+(defun clever-insert-item ()
+  "Clever insertion of org item."
+  (if (not (org-in-item-p))
+      (insert "\n")
+    (org-insert-item))
+  )
+
+(defun evil-org-eol-call (fun)
+  "Go to end of line and call provided function.
+FUN function callback"
+  (end-of-line)
+  (funcall fun)
+  (evil-append nil)
+  )
+#+END_SRC
+**** key bindings
+#+BEGIN_SRC emacs-lisp
+;; redefinition evils visual mode map
+(evil-define-key 'normal org-mode-map
+  "<" 'outline-previous-visible-heading
+  ">" 'outline-next-visible-heading
+  "H" 'org-metaleft
+  "L" 'org-metaright
+  "J" 'org-metaup
+  "K" 'org-metadown
+ ;; "K" 'outline-previous-visible-heading
+  ;;"J" 'outline-next-visible-heading
+ ;; "H" (if (fboundp 'org-backward-same-level)
+	;;   'org-backward-same-level
+	  ;;'org-backward-heading-same-level)
+;;  "L" (if (fboundp 'org-forward-same-level) ;to be backward compatible with older org version
+	;;   'org-forward-same-level
+	  ;;'org-forward-heading-same-level)
+;;  "<" 'org-metaleft
+ ;; ">" 'org-metaright
+  "k" 'previous-line
+  "j" 'next-line
+  "m" 'set-mark-command
+  "q" 'fill-paragraph
+  "o" '(lambda () (interactive) (evil-org-eol-call 'clever-insert-item))
+  "O" '(lambda () (interactive) (evil-org-eol-call 'org-insert-heading))
+  "$" 'org-end-of-line
+  "^" 'org-beginning-of-line
+  "[" 'backward-sentence
+  "]" 'forward-sentence
+  "{" 'org-backward-paragraph
+  "}" 'org-forward-paragraph
+  "-" 'org-cycle-list-bullet
+  (kbd "<tab>") 'org-cycle)
+
+;; redefinition evils visual mode map
+;;(evil-define-key 'visual global-map
+ ;; "-" '
+  ;;(kbd "<tab>") 'org-cycle)
+#+END_SRC
+*** 待 EVIL org_copy
+**** basic settings
+(defun clever-insert-item ()
+  "Clever insertion of org item."
+  (if (not (org-in-item-p))
+      (insert "\n")
+    (org-insert-item))
+  )
+
+(defun evil-org-eol-call (fun)
+  "Go to end of line and call provided function.
+FUN function callback"
+  (end-of-line)
+  (funcall fun)
+  (evil-append nil)
+  )
+**** key bindings
+(evil-define-key 'normal org-mode-map
+  "K" 'outline-previous-visible-heading
+  "L" (if (fboundp 'org-forward-same-level) ;to be backward compatible with older org version
+	   'org-forward-same-level
+	  'org-forward-heading-same-level)
+  "H" (if (fboundp 'org-backward-same-level)
+	   'org-backward-same-level
+	  'org-backward-heading-same-level)
+  "J" 'outline-next-visible-heading
+  "k" 'previous-line
+  "j" 'next-line
+  "m" 'set-mark-command
+  "q" 'fill-paragraph
+  "o" '(lambda () (interactive) (evil-org-eol-call 'clever-insert-item))
+  "O" '(lambda () (interactive) (evil-org-eol-call 'org-insert-heading))
+  "$" 'org-end-of-line
+  "^" 'org-beginning-of-line
+  "<" 'org-metaleft
+  ">" 'org-metaright
+  "[" 'backward-sentence
+  "]" 'forward-sentence
+  "{" 'org-backward-paragraph
+  "}" 'org-forward-paragraph
+  "-" 'org-cycle-list-bullet
+  (kbd "<tab>") 'org-cycle)
 *** ESC quits almost anything
 #+BEGIN_SRC emacs-lisp
    (define-key evil-normal-state-map [escape] 'keyboard-quit)
@@ -433,18 +547,15 @@
 #+END_SRC 
 *** turn off auto-indent 
 (setq evil-auto-indent nil)
-** Multiple cursors
+*** EVIL multiple cursors
 #+BEGIN_SRC emacs-lisp
-;; (require 'multiple-cursors)
-
-;; add one cursor with click
-;; (global-set-key (kbd "C-S-<mouse-1>") 'mc/add-cursor-on-click)
-
-;; add cursors with marks
-;; (global-set-key (kbd "C->") 'mc/mark-next-like-this)
-;; (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-;; (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
-#+END_SRC
+(require 'evil-mc)
+(global-evil-mc-mode  1)
+(define-key evil-mc-key-map (kbd "C->") 'evil-mc-make-and-goto-next-match)
+(define-key evil-mc-key-map (kbd "M->") 'evil-mc-make-and-goto-next-cursor)
+(define-key evil-mc-key-map (kbd "C-<") 'evil-mc-make-and-goto-prev-match)
+(define-key evil-mc-key-map (kbd "M-<") 'evil-mc-make-and-goto-prev-cursor)
+#+END_SRC 
 ** Projectile
 #+BEGIN_SRC emacs-lisp
 ;; enable projectile by default
@@ -454,8 +565,8 @@
 (global-set-key (kbd "C-p") nil) 
 
 ;; add a more nemonic command
-(setq projectile-keymap-prefix (kbd "C-p"))
-(require 'projectile)
+ (setq projectile-keymap-prefix (kbd "C-p"))
+ (require 'projectile)
 #+END_SRC
 ** Swiper - Ivy - Counsel
 *** basic config
@@ -480,7 +591,7 @@
 #+BEGIN_SRC emacs-lisp
 (setq projectile-completion-system 'ivy)
 #+END_SRC
-*** 未 add cycling to counsel-yank-pop
+*** add cycling to counsel-yank-pop
 (use-package counsel
   :bind
   (("M-y" . counsel-yank-pop)
@@ -591,7 +702,7 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
 #+END_SRC 
 *** hook flyspell into org-mode
 #+BEGIN_SRC emacs-lisp
- ;; (add-hook 'org-mode-hook 'flyspell-mode)
+(add-hook 'org-mode-hook 'flyspell-mode)
 ;; (add-hook 'org-mode-hook 'flyspell-buffer)
 #+END_SRC
 *** word count (experimental)
@@ -785,100 +896,6 @@ from the `before-change-functions' in the current buffer."
           (format-time-string "%Y-%m-%d" (current-time)))))
           (setq org2blog/wp-buffer-format-function
 'my-format-function)
-*** EVIL org
-**** basic settings
-#+BEGIN_SRC emacs-lisp
-(defun clever-insert-item ()
-  "Clever insertion of org item."
-  (if (not (org-in-item-p))
-      (insert "\n")
-    (org-insert-item))
-  )
-
-(defun evil-org-eol-call (fun)
-  "Go to end of line and call provided function.
-FUN function callback"
-  (end-of-line)
-  (funcall fun)
-  (evil-append nil)
-  )
-#+END_SRC
-**** key bindings
-#+BEGIN_SRC emacs-lisp
-(evil-define-key 'normal org-mode-map
-  "<" 'outline-previous-visible-heading
-  ">" 'outline-next-visible-heading
-  "H" 'org-metaleft
-  "L" 'org-metaright
-  "J" 'org-metaup
-  "K" 'org-metadown
- ;; "K" 'outline-previous-visible-heading
-  ;;"J" 'outline-next-visible-heading
- ;; "H" (if (fboundp 'org-backward-same-level)
-	;;   'org-backward-same-level
-	  ;;'org-backward-heading-same-level)
-;;  "L" (if (fboundp 'org-forward-same-level) ;to be backward compatible with older org version
-	;;   'org-forward-same-level
-	  ;;'org-forward-heading-same-level)
-;;  "<" 'org-metaleft
- ;; ">" 'org-metaright
-  "k" 'previous-line
-  "j" 'next-line
-  "m" 'set-mark-command
-  "q" 'fill-paragraph
-  "o" '(lambda () (interactive) (evil-org-eol-call 'clever-insert-item))
-  "O" '(lambda () (interactive) (evil-org-eol-call 'org-insert-heading))
-  "$" 'org-end-of-line
-  "^" 'org-beginning-of-line
-  "[" 'backward-sentence
-  "]" 'forward-sentence
-  "{" 'org-backward-paragraph
-  "}" 'org-forward-paragraph
-  "-" 'org-cycle-list-bullet
-  (kbd "<tab>") 'org-cycle)
-#+END_SRC
-*** EVIL org_copy
-**** basic settings
-(defun clever-insert-item ()
-  "Clever insertion of org item."
-  (if (not (org-in-item-p))
-      (insert "\n")
-    (org-insert-item))
-  )
-
-(defun evil-org-eol-call (fun)
-  "Go to end of line and call provided function.
-FUN function callback"
-  (end-of-line)
-  (funcall fun)
-  (evil-append nil)
-  )
-**** key bindings
-(evil-define-key 'normal org-mode-map
-  "K" 'outline-previous-visible-heading
-  "L" (if (fboundp 'org-forward-same-level) ;to be backward compatible with older org version
-	   'org-forward-same-level
-	  'org-forward-heading-same-level)
-  "H" (if (fboundp 'org-backward-same-level)
-	   'org-backward-same-level
-	  'org-backward-heading-same-level)
-  "J" 'outline-next-visible-heading
-  "k" 'previous-line
-  "j" 'next-line
-  "m" 'set-mark-command
-  "q" 'fill-paragraph
-  "o" '(lambda () (interactive) (evil-org-eol-call 'clever-insert-item))
-  "O" '(lambda () (interactive) (evil-org-eol-call 'org-insert-heading))
-  "$" 'org-end-of-line
-  "^" 'org-beginning-of-line
-  "<" 'org-metaleft
-  ">" 'org-metaright
-  "[" 'backward-sentence
-  "]" 'forward-sentence
-  "{" 'org-backward-paragraph
-  "}" 'org-forward-paragraph
-  "-" 'org-cycle-list-bullet
-  (kbd "<tab>") 'org-cycle)
 *** keybindings
 #+BEGIN_SRC emacs-lisp
 ;; fast insert drawer
@@ -1152,10 +1169,6 @@ FUN function callback"
 (setq org-latex-minted-options '(("breaklines" "true")
                                  ("breakanywhere" "true")))
 #+END_SRC 
-** 取 Synonyms
-;;(require 'www-synonyms)
-;; get key here: http://thesaurus.altervista.org/mykey
-;;(setq www-synonyms-key "IzJAvK2nynoUNt8XK5Um")
 ** Yasnippets
 #+BEGIN_SRC emacs-lisp
 (require 'yasnippet)
@@ -1166,18 +1179,43 @@ FUN function callback"
 ;; annoying warning
 (add-to-list 'warning-suppress-types '(yasnippet backquote-change))
 #+END_SRC
-** Merriam Webster dictionary 
+** All the icons
+#+BEGIN_SRC emacs-lisp
+(require 'all-the-icons)
 
-(require 'w3m)
+;; ivy setup
+(all-the-icons-ivy-setup)
+#+END_SRC 
+** Neotree
+#+BEGIN_SRC emacs-lisp
+(require 'neotree)
+(global-set-key [f6] 'neotree-toggle)
 
-(defvar webster-url "http://www.m-w.com/cgi-bin/dictionary?book=Dictionary&va=")
+;; theme config
+(setq neo-theme (if (display-graphic-p) 'icons 'arrow))
 
-(defun merriam (word)
-        (interactive "sLook up a word: ")
-                (let ((start (point)))
-                        (w3m-goto-url (concat webster-url word))))
+;; show neotree on startup
+(neotree-show)
+#+END_SRC 
+** Powerline
+#+BEGIN_SRC emacs-lisp
+(require 'powerline)
+(powerline-evil-vim-color-theme)
+#+END_SRC 
+** Anzu
+#+BEGIN_SRC emacs-lisp
+(global-anzu-mode +1)
 
-(provide 'merriam)
+;; configuration for EVIL mode
+;; Emacs 24.4 or higher
+(with-eval-after-load 'evil
+  (require 'evil-anzu))
+
+;; Emacs <= 24.3
+(eval-after-load 'evil
+  '(progn
+     (require 'evil-anzu)))
+#+END_SRC 
 ** Smooth scrolling
 #+BEGIN_SRC emacs-lisp
 (require 'smooth-scrolling)
@@ -1211,6 +1249,50 @@ FUN function callback"
   (defun insert-current-month () (interactive)
     (insert (shell-command-to-string "echo -n $(date +%B)")))
 #+END_SRC
+** Automatic abbrevs integration with ispell
+#+BEGIN_SRC emacs-lisp
+(define-key ctl-x-map "\C-i"
+  #'endless/ispell-word-then-abbrev)
+
+(defun endless/simple-get-word ()
+  (car-safe (save-excursion (ispell-get-word nil))))
+
+(defun endless/ispell-word-then-abbrev (p)
+  "Call `ispell-word', then create an abbrev for it.
+With prefix P, create local abbrev. Otherwise it will
+be global.
+If there's nothing wrong with the word at point, keep
+looking for a typo until the beginning of buffer. You can
+skip typos you don't want to fix with `SPC', and you can
+abort completely with `C-g'."
+  (interactive "P")
+  (let (bef aft)
+    (save-excursion
+      (while (if (setq bef (endless/simple-get-word))
+                 ;; Word was corrected or used quit.
+                 (if (ispell-word nil 'quiet)
+                     nil ; End the loop.
+                   ;; Also end if we reach `bob'.
+                   (not (bobp)))
+               ;; If there's no word at point, keep looking
+               ;; until `bob'.
+               (not (bobp)))
+        (backward-word)
+        (backward-char))
+      (setq aft (endless/simple-get-word)))
+    (if (and aft bef (not (equal aft bef)))
+        (let ((aft (downcase aft))
+              (bef (downcase bef)))
+          (define-abbrev
+            (if p local-abbrev-table global-abbrev-table)
+            bef aft)
+          (message "\"%s\" now expands to \"%s\" %sally"
+                   bef aft (if p "loc" "glob")))
+      (user-error "No typo at or before point"))))
+
+(setq save-abbrevs 'silently)
+(setq-default abbrev-mode t)
+#+END_SRC 
 * Useful Key Bindings
 ** Font size change
 #+BEGIN_SRC emacs-lisp
