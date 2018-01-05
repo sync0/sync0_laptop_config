@@ -25,7 +25,7 @@
 ")
  '(package-selected-packages
    (quote
-    (company eldoc-eval use-package evil-multiedit flycheck iedit powerline-evil anzu evil-anzu neotree powerline all-the-icons all-the-icons-ivy evil-mc ess auctex org ivy smooth-scrolling org-ref yasnippet solarized-theme projectile org-bullets evil counsel))))
+    (magit hlinum doom-themes solaire-mode company eldoc-eval use-package evil-multiedit flycheck iedit powerline-evil anzu evil-anzu neotree powerline all-the-icons all-the-icons-ivy evil-mc ess auctex org ivy smooth-scrolling org-ref yasnippet solarized-theme projectile org-bullets evil counsel))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

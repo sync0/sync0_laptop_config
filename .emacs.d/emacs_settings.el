@@ -12,8 +12,8 @@
 (setq-default fill-column 70)
 (setq mode-line-format nil)
 (setq inhibit-splash-screen t)
-(setq left-margin-width 26)
-(setq right-margin-width 26)
+;;(setq left-margin-width 26)
+;; (setq right-margin-width 26)
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 ;; (add-hook 'emacs-startup-hook 'toggle-frame-maximized)
 
@@ -61,16 +61,6 @@
 
 (put 'narrow-to-region 'disabled nil)
 
-(defun buffer-cleanup ()
-  "Clean up the buffer"
-  (interactive)
-  (delete-blank-lines)
-  (delete-trailing-whitespace)
-  (untabify (point-min) (point-max))
-  (indent-region (point-min) (point-max)))
-
-(global-set-key (kbd "C-c n") 'buffer-cleanup)
-
 (require 'recentf)
 (setq recentf-max-saved-items 25
       recentf-max-menu-items 25)
@@ -98,18 +88,17 @@
 ;; set key binding
 (global-set-key [C-f9] 'my-toggle-margins)
 
-;;(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
-(add-to-list 'custom-theme-load-path "/home/sync0/.emacs.d/elpa/")
+;;(add-to-list 'custom-theme-load-path "/home/sync0/.emacs.d/elpa/")
 ;; Don't change size of org-mode headlines (but keep other size-changes)
-(setq solarized-scale-org-headlines nil)
+;;(setq solarized-scale-org-headlines nil)
 ;; Don't change the font for some headings and titles
-(setq solarized-use-variable-pitch nil)
+;;(setq solarized-use-variable-pitch nil)
 
 ;; load light theme
 ;;(load-theme 'solarized-light t)
 
 ;; load dark theme
-(load-theme 'solarized-dark t)
+;;(load-theme 'solarized-dark t)
 
 ;; disable CJK coding/encoding (Chinese/Japanese/Korean characters)
 ;; (setq utf-translate-cjk-mode nil)
@@ -155,6 +144,9 @@
                     emacs-lisp-mode-hook
                     text-mode-hook))
       (add-hook hook (lambda () (abbrev-mode 1))))
+
+;; try emacs to accept ' as a word constituent. 
+(setq dabbrev-abbrev-char-regexp  "\\sw")
 
 ;; (add-hook 'eval-expression-minibuffer-setup-hook #'eldoc-mode)
 ;; (add-hook 'eval-expression-minibuffer-setup-hook #'paredit-mode)
@@ -368,8 +360,8 @@ FUN function callback"
 ; Make horizontal movement cross lines                                    
 (setq-default evil-cross-lines t)
 
-(define-key evil-normal-state-map (kbd "C-h") 'next-buffer)
-(define-key evil-normal-state-map (kbd "C-l") 'previous-buffer)
+(define-key evil-normal-state-map (kbd "C-j") 'next-buffer)
+(define-key evil-normal-state-map (kbd "C-k") 'previous-buffer)
 (define-key evil-normal-state-map (kbd "C-S-h") 'evil-window-left)
 (define-key evil-normal-state-map (kbd "C-S-j") 'evil-window-down)
 (define-key evil-normal-state-map (kbd "C-S-k") 'evil-window-up)
@@ -378,13 +370,13 @@ FUN function callback"
 ;; make navigation easy
 (setq frame-title-format "%b")
 
-(require 'evil-mc)
-(global-evil-mc-mode  1)
-(define-key evil-mc-key-map (kbd "C->") 'evil-mc-make-and-goto-next-match)
-(define-key evil-mc-key-map (kbd "M->") 'evil-mc-skip-and-goto-next-cursor)
+;;(require 'evil-mc)
+;;(global-evil-mc-mode  1)
+;;(define-key evil-mc-key-map (kbd "C->") 'evil-mc-make-and-goto-next-match)
+;;(define-key evil-mc-key-map (kbd "M->") 'evil-mc-skip-and-goto-next-cursor)
 ;;(define-key evil-mc-key-map (kbd "M->") 'evil-mc-make-and-goto-next-cursor)
-(define-key evil-mc-key-map (kbd "C-<") 'evil-mc-make-and-goto-prev-match)
-(define-key evil-mc-key-map (kbd "M-<") 'evil-mc-skip-and-goto-prev-cursor)
+;;(define-key evil-mc-key-map (kbd "C-<") 'evil-mc-make-and-goto-prev-match)
+;;(define-key evil-mc-key-map (kbd "M-<") 'evil-mc-skip-and-goto-prev-cursor)
 ;;(define-key evil-mc-key-map (kbd "M-<") 'evil-mc-make-and-goto-prev-cursor)
 
 ;; enable projectile by default
@@ -682,11 +674,14 @@ from the `before-change-functions' in the current buffer."
  (setq org-export-in-background t)
 
 ;; select tasks (i.e., TODOs) for export
- (setq org-export-with-tasks '("無" "中" "待" "疑"))
+ (setq org-export-with-tasks '("完" "無" "中" "待" "疑"))
 
 ;; speed keybinding for latex pdf export
-(add-hook 'org-mode-hook
-     (lambda () (define-key org-mode-map "\M-p" 'org-latex-export-to-pdf)))
+(global-set-key "\M-p" 'org-latex-export-to-pdf)
+
+;(add-hook 'org-mode-hook
+;     (lambda () (define-key global-map "\M-p" 'org-latex-export-to-pdf)))
+     ;;(lambda () (define-key org-mode-map "\M-p" 'org-latex-export-to-pdf)))
 
 ;; Default packages included in every tex file, pdflatex or xelatex
 ;;(setq org-latex-packages-alist
@@ -893,7 +888,7 @@ from the `before-change-functions' in the current buffer."
 (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
 
 ;; show neotree on startup
-(neotree-show)
+;; (neotree-show)
 
 ;; Every time when the neotree window is opened, let it find current file and jump to node.
 (setq neo-smart-open t)
@@ -918,8 +913,21 @@ from the `before-change-functions' in the current buffer."
 ;; remap last function
  (global-set-key [f6] 'neotree-project-dir)
 
+;;(add-hook 'neotree-mode-hook
+ ;;   (lambda ()
+  ;;    (define-key evil-normal-state-local-map (kbd "q") 'neotree-hide)
+   ;;   (define-key evil-normal-state-local-map (kbd "I") 'neotree-hidden-file-toggle)
+    ;;  (define-key evil-normal-state-local-map (kbd "z") 'neotree-stretch-toggle)
+    ;;  (define-key evil-normal-state-local-map (kbd "R") 'neotree-refresh)
+     ;; (define-key evil-normal-state-local-map (kbd "m") 'neotree-rename-node)
+      ;;(define-key evil-normal-state-local-map (kbd "c") 'neotree-create-node)
+      ;;(define-key evil-normal-state-local-map (kbd "d") 'neotree-delete-node)
+      ;;(define-key evil-normal-state-local-map (kbd "s") 'neotree-enter-vertical-split)
+      ;;(define-key evil-normal-state-local-map (kbd "S") 'neotree-enter-horizontal-split)
+      ;;(define-key evil-normal-state-local-map (kbd "RET") 'neotree-enter))))
+
 (require 'powerline)
-(powerline-evil-vim-color-theme)
+;;(powerline-evil-vim-color-theme)
 
 (global-anzu-mode +1)
 
@@ -943,13 +951,13 @@ from the `before-change-functions' in the current buffer."
    (interactive)
    (scroll-up 1))
 
-(global-set-key (kbd "M-S-j") 'gcm-scroll-down)
+(global-set-key (kbd "M-j") 'gcm-scroll-down)
 
 (defun gcm-scroll-up ()
    (interactive)
    (scroll-down 1))
 
-(global-set-key (kbd "M-S-k") 'gcm-scroll-up)
+(global-set-key (kbd "M-k") 'gcm-scroll-up)
 
 (require 'company)
 
@@ -965,12 +973,16 @@ from the `before-change-functions' in the current buffer."
   ;; or else, you will have completion in every major mode, that's very annoying!
   (make-local-variable 'company-backends)
 
+
+(setq company-ispell-available t) ; error without this
+
   ;; company-ispell is the plugin to complete words
-  (add-to-list 'company-backends 'company-ispell)
+(add-to-list 'company-backends 'company-ispell)
 
 ;; OPTIONAL, if `company-ispell-dictionary' is nil, `ispell-complete-word-dict' is used
 ;; but I prefer hard code the dictionary path. That's more portable.
 (setq company-ispell-dictionary (file-truename "~/.emacs.d/dictionaries/francais.txt")))
+
 
 (add-hook 'text-mode-hook 'text-mode-hook-setup)
 
@@ -984,11 +996,15 @@ from the `before-change-functions' in the current buffer."
     (add-to-list 'company-backends 'company-ispell)
     (message "company-ispell enabled!"))))
 
+;; skip the downcase that company does to the variables I autocomplete
+(setq company-dabbrev-downcase 0)
+
+;; time it takes before company begins completing
 (setq company-idle-delay 0.1)
-(setq company-selection-wrap-around t)
+;;(setq company-selection-wrap-around t)
 (define-key company-active-map [tab] 'company-complete)
-(define-key company-active-map (kbd "M-j") 'company-select-next)
-(define-key company-active-map (kbd "M-k") 'company-select-previous)
+;;(define-key company-active-map (kbd "M-j") 'company-select-next)
+;;(define-key company-active-map (kbd "M-k") 'company-select-previous)
 ;;(add-hook 'company-mode-hook
  ;;           (lambda ()
    ;;           (define-key evil-insert-state-local-map (kbd "TAB") 'company-complete)
@@ -1001,14 +1017,64 @@ from the `before-change-functions' in the current buffer."
   		  				(when (equal my-company-point (point))
   			  			  (yas-expand))))
 
+(require 'doom-themes)
+
+;; Global settings (defaults)
+(setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+      doom-themes-enable-italic t) ; if nil, italics is universally disabled
+
+;; Load the theme (doom-one, doom-molokai, etc); keep in mind that each theme
+;; may have their own settings.
+(load-theme 'doom-one-light t)
+;;(load-theme 'doom-one t)
+
+;; Enable flashing mode-line on errors
+(doom-themes-visual-bell-config)
+
+;; Enable custom neotree theme
+(doom-themes-neotree-config)  ; all-the-icons fonts must be installed!
+
+;; Corrects (and improves) org-mode's native fontification.
+(doom-themes-org-config)
+
+(require 'solaire-mode)
+
+;; brighten buffers (that represent real files)
+(add-hook 'after-change-major-mode-hook #'turn-on-solaire-mode)
+;; To enable solaire-mode unconditionally for certain modes:
+(add-hook 'ediff-prepare-buffer-hook #'solaire-mode)
+
+;; ...if you use auto-revert-mode, this prevents solaire-mode from turning
+;; itself off every time Emacs reverts the file
+(add-hook 'after-revert-hook #'turn-on-solaire-mode)
+
+;; highlight the minibuffer when it is activated:
+(add-hook 'minibuffer-setup-hook #'solaire-mode-in-minibuffer)
+
+;; if the bright and dark background colors are the wrong way around, use this
+;; to switch the backgrounds of the `default` and `solaire-default-face` faces.
+;; This should be used *after* you load the active theme!
+;;
+;; NOTE: This is necessary for themes in the doom-themes package!
+(solaire-mode-swap-bg)
+
+(require 'hlinum)
+(hlinum-activate)
+
+;; activate for doom-theme 
+(setq nlinum-highlight-current-line t)
+
+;; bind a quick and dirty shortcut to 
+(global-set-key (kbd "C-x g") 'magit-status)
+
 (defun insert-current-day () (interactive)
   (insert (shell-command-to-string "echo -n $(date +%d)")))
 
 (defun insert-current-month () (interactive)
   (insert (shell-command-to-string "echo -n $(date +%B)")))
 
-(define-key ctl-x-map "\C-i"
-  #'endless/ispell-word-then-abbrev)
+;;(define-key ctl-x-map "\C-i"
+  ;;#'endless/ispell-word-then-abbrev)
 
 (defun endless/simple-get-word ()
   (car-safe (save-excursion (ispell-get-word nil))))
@@ -1049,6 +1115,9 @@ abort completely with `C-g'."
 (setq save-abbrevs 'silently)
 (setq-default abbrev-mode t)
 
+;; set a faster shortcut
+(define-key global-map (kbd "M-i") 'endless/ispell-word-then-abbrev)
+
 (define-key global-map (kbd "C-+") 'text-scale-increase)
 (define-key global-map (kbd "C--") 'text-scale-decrease)
 
@@ -1067,10 +1136,13 @@ abort completely with `C-g'."
       (pop-global-mark)))
 
 ;; keybinding
-(global-set-key (kbd "C-SPC") nil) ;; default bound to set-mark
-(global-set-key (kbd "C-SPC") 'pop-local-or-global-mark)
+;;(global-set-key (kbd "C-SPC") nil) ;; default bound to set-mark
+;;(global-set-key (kbd "C-SPC") 'pop-local-or-global-mark)
 
 (global-set-key "\M-w" 'save-buffer)
+
+(global-set-key (kbd "M-m") 'bookmark-set)
+(global-set-key (kbd "M-b") 'bookmark-jump)
 
 (setq auto-save-file-name-transforms
       `((".*" ,temporary-file-directory t)))
