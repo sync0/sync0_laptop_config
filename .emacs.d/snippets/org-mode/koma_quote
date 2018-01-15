@@ -1,9 +1,8 @@
 # -*- mode: snippet -*-
 # name: koma_quote
-# key: quote 
+# key: kquote 
 # --
 \begin{quote}
 \enquote{${1:Lorem ipsum dolor sit amet}} \par
 \hfill ${2:Marcus Tullius Cicero}
-\end{quote}
-$0
+\end{quote} $0

@@ -183,7 +183,7 @@
   )
 
 ;; keybindings
-(global-set-key (kbd "<f7>") 'ispell-word)
+;;(global-set-key (kbd "<f7>") 'ispell-word)
 (global-set-key (kbd "C-S-<f7>") 'flyspell-mode)
 (global-set-key (kbd "C-M-<f7>") 'flyspell-buffer)
 (global-set-key (kbd "C-<f7>") 'flyspell-check-previous-highlighted-word)
@@ -307,8 +307,8 @@ FUN function callback"
   ">" 'outline-next-visible-heading
   "H" 'org-metaleft
   "L" 'org-metaright
-  "J" 'org-metaup
-  "K" 'org-metadown
+  "K" 'org-metaup
+  "J" 'org-metadown
  ;; "K" 'outline-previous-visible-heading
   ;;"J" 'outline-next-visible-heading
  ;; "H" (if (fboundp 'org-backward-same-level)
@@ -321,7 +321,7 @@ FUN function callback"
  ;; ">" 'org-metaright
   "k" 'previous-line
   "j" 'next-line
-  "m" 'set-mark-command
+;;  "m" 'set-mark-command
   "q" 'fill-paragraph
   "o" '(lambda () (interactive) (evil-org-eol-call 'clever-insert-item))
   "O" '(lambda () (interactive) (evil-org-eol-call 'org-insert-heading))
@@ -338,6 +338,10 @@ FUN function callback"
 ;;(evil-define-key 'visual global-map
  ;; "-" '
   ;;(kbd "<tab>") 'org-cycle)
+
+(evil-define-key 'visual org-mode-map
+  "e" 'org-emphasize
+)
 
 (define-key evil-normal-state-map [escape] 'keyboard-quit)
 (define-key evil-visual-state-map [escape] 'keyboard-quit)
@@ -378,6 +382,46 @@ FUN function callback"
 ;;(define-key evil-mc-key-map (kbd "C-<") 'evil-mc-make-and-goto-prev-match)
 ;;(define-key evil-mc-key-map (kbd "M-<") 'evil-mc-skip-and-goto-prev-cursor)
 ;;(define-key evil-mc-key-map (kbd "M-<") 'evil-mc-make-and-goto-prev-cursor)
+
+(require 'evil-multiedit)
+
+;; Keybindings
+
+;; Highlights all matches of the selection in the buffer.
+(define-key evil-visual-state-map "R" 'evil-multiedit-match-all)
+
+;; Match the word under cursor (i.e. make it an edit region). Consecutive presses will
+;; incrementally add the next unmatched match.
+(define-key evil-normal-state-map (kbd "M-d") 'evil-multiedit-match-and-next)
+;; Match selected region.
+(define-key evil-visual-state-map (kbd "M-d") 'evil-multiedit-and-next)
+;; Insert marker at point
+(define-key evil-insert-state-map (kbd "M-d") 'evil-multiedit-toggle-marker-here)
+
+;; Same as M-d but in reverse.
+(define-key evil-normal-state-map (kbd "M-D") 'evil-multiedit-match-and-prev)
+(define-key evil-visual-state-map (kbd "M-D") 'evil-multiedit-and-prev)
+
+;; OPTIONAL: If you prefer to grab symbols rather than words, use
+;; `evil-multiedit-match-symbol-and-next` (or prev).
+
+;; Restore the last group of multiedit regions.
+(define-key evil-visual-state-map (kbd "C-M-D") 'evil-multiedit-restore)
+
+;; RET will toggle the region under the cursor
+(define-key evil-multiedit-state-map (kbd "RET") 'evil-multiedit-toggle-or-restrict-region)
+
+;; ...and in visual mode, RET will disable all fields outside the selected region
+(define-key evil-motion-state-map (kbd "RET") 'evil-multiedit-toggle-or-restrict-region)
+
+;; For moving between edit regions
+(define-key evil-multiedit-state-map (kbd "C-n") 'evil-multiedit-next)
+(define-key evil-multiedit-state-map (kbd "C-p") 'evil-multiedit-prev)
+(define-key evil-multiedit-insert-state-map (kbd "C-n") 'evil-multiedit-next)
+(define-key evil-multiedit-insert-state-map (kbd "C-p") 'evil-multiedit-prev)
+
+;; Ex command that allows you to invoke evil-multiedit with a regular expression, e.g.
+(evil-ex-define-cmd "ie[dit]" 'evil-multiedit-ex-match)
 
 ;; enable projectile by default
 (projectile-global-mode)
@@ -464,8 +508,8 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
 
 ;; (setq org-startup-folded nil)
 
-;; (add-hook 'org-mode-hook 'turn-on-visual-line-mode)
-(add-hook 'org-mode-hook 'turn-on-auto-fill)
+(add-hook 'org-mode-hook 'turn-on-visual-line-mode)
+;; (add-hook 'org-mode-hook 'turn-on-auto-fill)
 
 ;; (setq org-hide-emphasis-markers t)
 
@@ -927,7 +971,7 @@ from the `before-change-functions' in the current buffer."
       ;;(define-key evil-normal-state-local-map (kbd "RET") 'neotree-enter))))
 
 (require 'powerline)
-;;(powerline-evil-vim-color-theme)
+;; (powerline-evil-vim-color-theme)
 
 (global-anzu-mode +1)
 
@@ -959,64 +1003,6 @@ from the `before-change-functions' in the current buffer."
 
 (global-set-key (kbd "M-k") 'gcm-scroll-up)
 
-(require 'company)
-
-(add-hook 'after-init-hook 'global-company-mode)
-
-;; Don't enable company-mode in below major modes, OPTIONAL
-(setq company-global-modes '(not eshell-mode comint-mode erc-mode rcirc-mode))
-
-;; "text-mode" is a major mode for editing files of text in a human language"
-;; most major modes for non-programmers inherit from text-mode
-(defun text-mode-hook-setup ()
-  ;; make `company-backends' local is critcal
-  ;; or else, you will have completion in every major mode, that's very annoying!
-  (make-local-variable 'company-backends)
-
-
-(setq company-ispell-available t) ; error without this
-
-  ;; company-ispell is the plugin to complete words
-(add-to-list 'company-backends 'company-ispell)
-
-;; OPTIONAL, if `company-ispell-dictionary' is nil, `ispell-complete-word-dict' is used
-;; but I prefer hard code the dictionary path. That's more portable.
-(setq company-ispell-dictionary (file-truename "~/.emacs.d/dictionaries/francais.txt")))
-
-
-(add-hook 'text-mode-hook 'text-mode-hook-setup)
-
-(defun toggle-company-ispell ()
-  (interactive)
-  (cond
-   ((memq 'company-ispell company-backends)
-    (setq company-backends (delete 'company-ispell company-backends))
-    (message "company-ispell disabled"))
-   (t
-    (add-to-list 'company-backends 'company-ispell)
-    (message "company-ispell enabled!"))))
-
-;; skip the downcase that company does to the variables I autocomplete
-(setq company-dabbrev-downcase 0)
-
-;; time it takes before company begins completing
-(setq company-idle-delay 0.1)
-;;(setq company-selection-wrap-around t)
-(define-key company-active-map [tab] 'company-complete)
-;;(define-key company-active-map (kbd "M-j") 'company-select-next)
-;;(define-key company-active-map (kbd "M-k") 'company-select-previous)
-;;(add-hook 'company-mode-hook
- ;;           (lambda ()
-   ;;           (define-key evil-insert-state-local-map (kbd "TAB") 'company-complete)
-     ;;         (define-key evil-insert-state-local-map (kbd "C-j") 'company-select-next)
-       ;;       (define-key evil-insert-state-local-map (kbd "C-k") 'company-select-previous)))
-
-;; avoid conflict with yasnippet 
-(advice-add 'company-complete-common :before (lambda () (setq my-company-point (point))))
-(advice-add 'company-complete-common :after (lambda ()
-  		  				(when (equal my-company-point (point))
-  			  			  (yas-expand))))
-
 (require 'doom-themes)
 
 ;; Global settings (defaults)
@@ -1025,8 +1011,16 @@ from the `before-change-functions' in the current buffer."
 
 ;; Load the theme (doom-one, doom-molokai, etc); keep in mind that each theme
 ;; may have their own settings.
-(load-theme 'doom-one-light t)
 ;;(load-theme 'doom-one t)
+;;(load-theme 'doom-one-vibrant t)
+(load-theme 'doom-molokai t)
+;;(load-theme 'doom-nova t)
+;;(load-theme 'doom-nova t)
+;;(load-theme 'doom-one-light t)
+;;(load-theme 'doom-peacock t)
+;;(load-theme 'doom-tomorrow-night t)
+;;(load-theme 'doom-spacegrey t)
+;;(load-theme 'doom-solarized-light t)
 
 ;; Enable flashing mode-line on errors
 (doom-themes-visual-bell-config)
@@ -1058,14 +1052,20 @@ from the `before-change-functions' in the current buffer."
 ;; NOTE: This is necessary for themes in the doom-themes package!
 (solaire-mode-swap-bg)
 
-(require 'hlinum)
-(hlinum-activate)
+;;(require 'hlinum)
+;;(hlinum-activate)
 
+(global-nlinum-mode)
 ;; activate for doom-theme 
 (setq nlinum-highlight-current-line t)
 
+(global-hl-line-mode 1)
+
 ;; bind a quick and dirty shortcut to 
 (global-set-key (kbd "C-x g") 'magit-status)
+
+;; bind the popup of popus
+(global-set-key (kbd "C-x M-g") 'magit-dispatch-popup)
 
 (defun insert-current-day () (interactive)
   (insert (shell-command-to-string "echo -n $(date +%d)")))

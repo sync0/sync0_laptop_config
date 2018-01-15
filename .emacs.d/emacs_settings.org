@@ -136,7 +136,7 @@
 ;; set key binding
 (global-set-key [C-f9] 'my-toggle-margins)
 #+END_SRC
-** Solarized theme
+** 取 Solarized theme
 #+BEGIN_SRC emacs-lisp
 ;;(add-to-list 'custom-theme-load-path "/home/sync0/.emacs.d/elpa/")
 ;; Don't change size of org-mode headlines (but keep other size-changes)
@@ -247,7 +247,7 @@
   )
 
 ;; keybindings
-(global-set-key (kbd "<f7>") 'ispell-word)
+;;(global-set-key (kbd "<f7>") 'ispell-word)
 (global-set-key (kbd "C-S-<f7>") 'flyspell-mode)
 (global-set-key (kbd "C-M-<f7>") 'flyspell-buffer)
 (global-set-key (kbd "C-<f7>") 'flyspell-check-previous-highlighted-word)
@@ -274,7 +274,7 @@
 ;; better performance
 (setq flyspell-issue-message-flag nil)
 #+END_SRC
-*** Flyspell-lazy
+*** Flyspell lazy
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'load-path "~/.emacs.d/flyspell-lazy")
 (require 'flyspell-lazy)
@@ -432,8 +432,8 @@ FUN function callback"
   ">" 'outline-next-visible-heading
   "H" 'org-metaleft
   "L" 'org-metaright
-  "J" 'org-metaup
-  "K" 'org-metadown
+  "K" 'org-metaup
+  "J" 'org-metadown
  ;; "K" 'outline-previous-visible-heading
   ;;"J" 'outline-next-visible-heading
  ;; "H" (if (fboundp 'org-backward-same-level)
@@ -446,7 +446,7 @@ FUN function callback"
  ;; ">" 'org-metaright
   "k" 'previous-line
   "j" 'next-line
-  "m" 'set-mark-command
+;;  "m" 'set-mark-command
   "q" 'fill-paragraph
   "o" '(lambda () (interactive) (evil-org-eol-call 'clever-insert-item))
   "O" '(lambda () (interactive) (evil-org-eol-call 'org-insert-heading))
@@ -463,8 +463,12 @@ FUN function callback"
 ;;(evil-define-key 'visual global-map
  ;; "-" '
   ;;(kbd "<tab>") 'org-cycle)
+
+(evil-define-key 'visual org-mode-map
+  "e" 'org-emphasize
+)
 #+END_SRC
-*** 待 EVIL org_copy
+*** 取 EVIL org_copy
 **** basic settings
 (defun clever-insert-item ()
   "Clever insertion of org item."
@@ -547,7 +551,7 @@ FUN function callback"
 #+END_SRC 
 *** turn off auto-indent 
 (setq evil-auto-indent nil)
-*** EVIL multiple cursors
+*** 取 EVIL multiple cursors
 #+BEGIN_SRC emacs-lisp
 ;;(require 'evil-mc)
 ;;(global-evil-mc-mode  1)
@@ -557,6 +561,48 @@ FUN function callback"
 ;;(define-key evil-mc-key-map (kbd "C-<") 'evil-mc-make-and-goto-prev-match)
 ;;(define-key evil-mc-key-map (kbd "M-<") 'evil-mc-skip-and-goto-prev-cursor)
 ;;(define-key evil-mc-key-map (kbd "M-<") 'evil-mc-make-and-goto-prev-cursor)
+#+END_SRC 
+*** EVIL multiedit
+#+BEGIN_SRC emacs-lisp
+(require 'evil-multiedit)
+
+;; Keybindings
+
+;; Highlights all matches of the selection in the buffer.
+(define-key evil-visual-state-map "R" 'evil-multiedit-match-all)
+
+;; Match the word under cursor (i.e. make it an edit region). Consecutive presses will
+;; incrementally add the next unmatched match.
+(define-key evil-normal-state-map (kbd "M-d") 'evil-multiedit-match-and-next)
+;; Match selected region.
+(define-key evil-visual-state-map (kbd "M-d") 'evil-multiedit-and-next)
+;; Insert marker at point
+(define-key evil-insert-state-map (kbd "M-d") 'evil-multiedit-toggle-marker-here)
+
+;; Same as M-d but in reverse.
+(define-key evil-normal-state-map (kbd "M-D") 'evil-multiedit-match-and-prev)
+(define-key evil-visual-state-map (kbd "M-D") 'evil-multiedit-and-prev)
+
+;; OPTIONAL: If you prefer to grab symbols rather than words, use
+;; `evil-multiedit-match-symbol-and-next` (or prev).
+
+;; Restore the last group of multiedit regions.
+(define-key evil-visual-state-map (kbd "C-M-D") 'evil-multiedit-restore)
+
+;; RET will toggle the region under the cursor
+(define-key evil-multiedit-state-map (kbd "RET") 'evil-multiedit-toggle-or-restrict-region)
+
+;; ...and in visual mode, RET will disable all fields outside the selected region
+(define-key evil-motion-state-map (kbd "RET") 'evil-multiedit-toggle-or-restrict-region)
+
+;; For moving between edit regions
+(define-key evil-multiedit-state-map (kbd "C-n") 'evil-multiedit-next)
+(define-key evil-multiedit-state-map (kbd "C-p") 'evil-multiedit-prev)
+(define-key evil-multiedit-insert-state-map (kbd "C-n") 'evil-multiedit-next)
+(define-key evil-multiedit-insert-state-map (kbd "C-p") 'evil-multiedit-prev)
+
+;; Ex command that allows you to invoke evil-multiedit with a regular expression, e.g.
+(evil-ex-define-cmd "ie[dit]" 'evil-multiedit-ex-match)
 #+END_SRC 
 ** Projectile
 #+BEGIN_SRC emacs-lisp
@@ -670,14 +716,14 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
 #+END_SRC
 **** auto-fill 
 #+BEGIN_SRC emacs-lisp
-;; (add-hook 'org-mode-hook 'turn-on-visual-line-mode)
-(add-hook 'org-mode-hook 'turn-on-auto-fill)
+(add-hook 'org-mode-hook 'turn-on-visual-line-mode)
+;; (add-hook 'org-mode-hook 'turn-on-auto-fill)
 #+END_SRC
 **** better display of italics & bold
 #+BEGIN_SRC emacs-lisp
 ;; (setq org-hide-emphasis-markers t)
 #+END_SRC
-**** 無 custom TODO states 
+**** custom TODO states 
 #+BEGIN_SRC emacs-lisp
 (setq org-todo-keywords 
           '((sequence "無(t)" "中(p)" "完(d)")
@@ -1174,6 +1220,14 @@ from the `before-change-functions' in the current buffer."
 (setq org-latex-minted-options '(("breaklines" "true")
                                  ("breakanywhere" "true")))
 #+END_SRC 
+*** 取 Org clock budget 
+(add-to-list 'load-path "~/.emacs.d/org-clock-budget")
+(require 'org-clock-budget)
+;(setq org-clock-budget-intervals '(
+;("BUDGET_YEAR" org-clock-budget-interval-this-year)
+;("BUDGET_MONTH" org-clock-budget-interval-this-month)
+;("BUDGET_WEEK" org-clock-budget-interval-this-week)
+;))
 ** Yasnippets
 #+BEGIN_SRC emacs-lisp
 (require 'yasnippet)
@@ -1241,7 +1295,7 @@ from the `before-change-functions' in the current buffer."
 ** Powerline
 #+BEGIN_SRC emacs-lisp
 (require 'powerline)
-;;(powerline-evil-vim-color-theme)
+;; (powerline-evil-vim-color-theme)
 #+END_SRC 
 ** Anzu
 #+BEGIN_SRC emacs-lisp
@@ -1269,20 +1323,19 @@ from the `before-change-functions' in the current buffer."
 #+END_SRC 
 *** useful scrolling things
 #+BEGIN_SRC emacs-lisp
-    (defun gcm-scroll-down ()
-      (interactive)
-      (scroll-up 1))
+(defun gcm-scroll-down ()
+   (interactive)
+   (scroll-up 1))
 
-   (global-set-key (kbd "M-j") 'gcm-scroll-down)
+(global-set-key (kbd "M-j") 'gcm-scroll-down)
 
-   (defun gcm-scroll-up ()
-      (interactive)
-      (scroll-down 1))
+(defun gcm-scroll-up ()
+   (interactive)
+   (scroll-down 1))
 
-   (global-set-key (kbd "M-k") 'gcm-scroll-up)
+(global-set-key (kbd "M-k") 'gcm-scroll-up)
 #+END_SRC 
-** Company Mode
-#+BEGIN_SRC emacs-lisp
+** 取 Company mode
 (require 'company)
 
 (add-hook 'after-init-hook 'global-company-mode)
@@ -1340,7 +1393,6 @@ from the `before-change-functions' in the current buffer."
 (advice-add 'company-complete-common :after (lambda ()
   		  				(when (equal my-company-point (point))
   			  			  (yas-expand))))
-#+END_SRC 
 ** Doom theme
 #+BEGIN_SRC emacs-lisp
 (require 'doom-themes)
@@ -1351,8 +1403,16 @@ from the `before-change-functions' in the current buffer."
 
 ;; Load the theme (doom-one, doom-molokai, etc); keep in mind that each theme
 ;; may have their own settings.
-(load-theme 'doom-one-light t)
 ;;(load-theme 'doom-one t)
+;;(load-theme 'doom-one-vibrant t)
+(load-theme 'doom-molokai t)
+;;(load-theme 'doom-nova t)
+;;(load-theme 'doom-nova t)
+;;(load-theme 'doom-one-light t)
+;;(load-theme 'doom-peacock t)
+;;(load-theme 'doom-tomorrow-night t)
+;;(load-theme 'doom-spacegrey t)
+;;(load-theme 'doom-solarized-light t)
 
 ;; Enable flashing mode-line on errors
 (doom-themes-visual-bell-config)
@@ -1363,7 +1423,7 @@ from the `before-change-functions' in the current buffer."
 ;; Corrects (and improves) org-mode's native fontification.
 (doom-themes-org-config)
 #+END_SRC 
-*** Solaire mode
+** Solaire mode
 #+BEGIN_SRC emacs-lisp
 (require 'solaire-mode)
 
@@ -1386,18 +1446,28 @@ from the `before-change-functions' in the current buffer."
 ;; NOTE: This is necessary for themes in the doom-themes package!
 (solaire-mode-swap-bg)
 #+END_SRC 
-** Hlinum
+** 取 Hlinum
 #+BEGIN_SRC emacs-lisp
-(require 'hlinum)
-(hlinum-activate)
-
+;;(require 'hlinum)
+;;(hlinum-activate)
+#+END_SRC 
+** Nlinum
+#+BEGIN_SRC emacs-lisp
+(global-nlinum-mode)
 ;; activate for doom-theme 
 (setq nlinum-highlight-current-line t)
+#+END_SRC 
+** Hl-line mode
+#+BEGIN_SRC emacs-lisp
+(global-hl-line-mode 1)
 #+END_SRC 
 ** Magit
 #+BEGIN_SRC emacs-lisp
 ;; bind a quick and dirty shortcut to 
 (global-set-key (kbd "C-x g") 'magit-status)
+
+;; bind the popup of popus
+(global-set-key (kbd "C-x M-g") 'magit-dispatch-popup)
 #+END_SRC 
 * Custom Functions
 ** Date
