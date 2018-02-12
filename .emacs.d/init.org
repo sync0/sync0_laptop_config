@@ -1,21 +1,138 @@
-#+TITLE: Emacs settings
-#+AUTHOR: Carlos Alberto Rivera 
+#+TITLE: Emacs Settings
+#+AUTHOR: Carlos Alberto Rivera Carreño
 #+EMAIL: cantorlunae@gmail.com
-#+STARTUP: indent hidestars overview
-* Remember
-** remember that <s + tab creates a code block for adding more entries. remember to add to it "emacs-lisp"
-** remember the location for hunspell dictionaries should be in /usr/share/hunspell
-* Repositories 
-#+BEGIN_SRC emacs-lisp
-(require 'package)
-(setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
-                         ("melpa" . "http://melpa.org/packages/") 
-                         ("org" . "http://orgmode.org/elpa/")))
-#+END_SRC
+#+STARTUP: noindent  overview
+#+PROPERTY: header-args :tangle yes
 * Initialization
-** Error with package signatures
+** Notes
+- Remember that <s + tab creates a code block for adding more entries. remember to add to it "emacs-lisp".
+- Remember the location for hunspell dictionaries should be in /usr/share/hunspell.
+** Lexical bindings
 #+BEGIN_SRC emacs-lisp
-;;(setq package-check-signature nil)
+;;; -*- lexical-binding: t -*-
+#+END_SRC 
+** Tangling 
+#+BEGIN_SRC emacs-lisp
+(defun tangle-init ()
+  "If the current buffer is 'init.org' the code-blocks are
+tangled, and the tangled file is compiled."
+  (when (equal (buffer-file-name)
+               (expand-file-name (concat user-emacs-directory "init.org")))
+    ;; Avoid running hooks when tangling.
+    (let ((prog-mode-hook nil))
+      (org-babel-tangle)
+      (byte-compile-file (concat user-emacs-directory "init.el")))))
+
+(add-hook 'after-save-hook 'tangle-init)
+#+END_SRC 
+** Packages
+#+BEGIN_SRC emacs-lisp
+(require 'cl)
+(require 'package)
+(package-initialize)
+
+;; Repositories 
+(add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/"))
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+(add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/"))
+(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
+
+;; Install missing packages
+
+(setq package-list '(
+alert
+all-the-icons
+all-the-icons-ivy
+anzu
+async
+auctex
+biblio
+biblio-core
+bind-key
+cl
+counsel
+          ;;company              ; Modular text completion framework
+dash
+doom-themes
+eldoc-eval
+epl
+ess
+evil
+evil-anzu
+evil-multiedit
+;; define-word
+f
+ghub
+          ;;git-gutter-fringe    ; Fringe version of git-gutter.el
+          ;;golden-ratio         ; Automatic resizing windows to golden ratio
+git-commit
+gntp
+goto-chg
+helm
+helm-bibtex
+helm-core
+hlinum
+hydra
+iedit
+ivy
+julia-mode
+key-chord
+let-alist
+log4e
+magit
+memoize
+minimap
+magit-popup
+neotree
+nlinum
+nlinum-hl
+org
+;;org-bullets
+org-gcal
+org-ref
+parsebib
+pdf-tools
+pkg-info
+popup
+powerline
+projectile           ; Manage and navigate projects in Emacs easily
+request
+request-deferred
+s
+smooth-scrolling
+solaire-mode
+swiper
+tablist
+undo-tree
+use-package
+with-editor
+;; which-key
+yasnippet))
+
+; fetch the list of packages available 
+(unless package-archive-contents
+  (package-refresh-contents))
+
+; install the missing packages
+(dolist (package package-list)
+  (unless (package-installed-p package)
+    (package-install package)))
+
+;; avoid error with package signatures
+(setq package-check-signature nil)
+#+END_SRC
+** Idle require
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/sync0_git/idle-require.el")
+(load "idle-require")             ; Need in order to use idle-require
+
+(dolist (feature
+         '(
+           tex-mode))               ; TeX, LaTeX, and SliTeX mode commands
+  (idle-require feature))
+
+(setq idle-require-idle-delay 5)
+(idle-require-mode 1)
 #+END_SRC
 ** Workspace settings 
 #+BEGIN_SRC emacs-lisp
@@ -23,16 +140,30 @@
        (menu-bar-mode -1)
        (scroll-bar-mode -1)
        (menu-bar-showhide-fringe-menu-customize-disable)
-       (setq-default fill-column 70)
-       (setq mode-line-format nil)
-       (setq inhibit-splash-screen t)
+       (add-to-list 'default-frame-alist '(fullscreen . maximized))
+
+       (setq mode-line-format nil
+       inhibit-splash-screen t
+       echo-keystrokes 0.1
+       auto-revert-interval 1
+       ;right-margin-width 70
+;;(setq-default truncate-lines 1)
+;;(setq-default word-wrap nil)
        ;;(setq left-margin-width 26)
        ;; (setq right-margin-width 26)
-       (add-to-list 'default-frame-alist '(fullscreen . maximized))
+)
        ;; (add-hook 'emacs-startup-hook 'toggle-frame-maximized)
-#+END_SRC
-** Workspace keybindgs
-#+BEGIN_SRC emacs-lisp
+
+   (setq-default                    ; Maximum line width
+              ;truncate-lines t                  ; Don't fold lines
+              indent-tabs-mode nil              ; Use spaces instead of tabs
+              split-width-threshold 160         ; Split verticly by default
+              split-height-threshold nil        ; Split verticly by default
+              ;auto-fill-function 'do-auto-fill) ; Auto-fill-mode everywhere
+)
+
+
+;;Workspace keybindgs
 (defun toggle-mode-line () "toggles the modeline on and off"
   (interactive) 
   (setq mode-line-format
@@ -44,67 +175,50 @@
 (global-set-key (kbd "<f8>") 'tool-bar-mode)
 (global-set-key (kbd "<f9>") 'menu-bar-mode)
 #+END_SRC
-** Bookmarks directory
+** Mixed settings
 #+BEGIN_SRC emacs-lisp
+;; Bookmarks directory
 (setq bookmark-default-file (concat user-emacs-directory "bookmarks")
       bookmark-save-flag 1)
-#+END_SRC
-** Autosave
-#+BEGIN_SRC emacs-lisp
+
+;; Autosave
 (setq auto-save-interval 100
          auto-save-timeout 60)
-#+END_SRC
-** CUSTOM directory
-#+BEGIN_SRC emacs-lisp
+
+;; CUSTOM directory
 (setq custom-file (expand-file-name "custom_settings.el" user-emacs-directory))
 (load custom-file)
-#+END_SRC
-** Text settings
-*** Different faces for different buffers
-**** Monospaced faces 
-#+BEGIN_SRC emacs-lisp
-;; define default faces
-(set-face-attribute 'default nil :font "Fira Mono")
-(set-face-attribute 'default nil :height 130)
 
- (defun my-buffer-face-mode-fixed ()
-   "Sets a fixed width (monospace) font in current buffer"
-   (interactive)
-   (setq buffer-face-mode-face '(:family "Fira Mono" :height 130 :spacing monospace))
-   (buffer-face-mode))
-#+END_SRC
-**** Variable-width faces 
-#+BEGIN_SRC emacs-lisp
- (defun my-buffer-face-mode-variable ()
-   "Set font to a variable width (proportional) fonts in current buffer"
-   (interactive)
-   (setq buffer-face-mode-face '(:family "Linux Libertine Display" :height 160 :width expanded))
-   (buffer-face-mode))
-#+END_SRC
-**** Set default font faces for Info, ERC, and Org
-#+BEGIN_SRC emacs-lisp
- (add-hook 'erc-mode-hook 'my-buffer-face-mode-variable)
- (add-hook 'Info-mode-hook 'my-buffer-face-mode-variable)
- (add-hook 'org-mode-hook 'my-buffer-face-mode-variable)
-#+END_SRC
-*** No tabs, only spaces
-#+BEGIN_SRC emacs-lisp
-(setq-default indent-tabs-mode nil)
-#+END_SRC
-*** Allow narrowing
-#+BEGIN_SRC emacs-lisp
-(put 'narrow-to-region 'disabled nil)
-#+END_SRC
-*** Dealing with whitespace
-(defun buffer-cleanup ()
-  "Clean up the buffer"
-  (interactive)
-  (delete-blank-lines)
-  (delete-trailing-whitespace)
-  (untabify (point-min) (point-max))
-  (indent-region (point-min) (point-max)))
+;; Remove yes-no EMACS inconsistency
+(fset 'yes-or-no-p 'y-or-n-p)
 
-(global-set-key (kbd "C-c n") 'buffer-cleanup)
+;; Git gutter thingy
+(setq fringes-outside-margins nil)
+
+;; Force UTF-8 encoding
+
+;; disable CJK coding/encoding (Chinese/Japanese/Korean characters)
+;; (setq utf-translate-cjk-mode nil)
+(set-language-environment 'utf-8)
+;; backwards compatibility as default-buffer-file-coding-system
+;; is deprecated in 23.2.
+;; (if (boundp buffer-file-coding-system)
+;;    (setq buffer-file-coding-system 'utf-8)
+;; (setq default-buffer-file-coding-system 'utf-8))
+
+;; set the default encoding system
+(setq default-file-name-coding-system 'utf-8)
+(set-default-coding-systems 'utf-8)
+(setq locale-coding-system 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(set-selection-coding-system 'utf-8)
+(prefer-coding-system 'utf-8)
+(when (display-graphic-p)
+
+;; Treat clipboard input as UTF-8 string first; compound text next, etc.
+   (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
+#+END_SRC
 ** List of recent files
 #+BEGIN_SRC emacs-lisp
 (require 'recentf)
@@ -136,6 +250,110 @@
 ;; set key binding
 (global-set-key [C-f9] 'my-toggle-margins)
 #+END_SRC
+** Text settings
+#+BEGIN_SRC emacs-lisp
+;; Monospaced faces 
+;; define default faces
+(set-face-attribute 'default nil :font "Fira Mono")
+(set-face-attribute 'default nil :height 130)
+
+ (defun my-buffer-face-mode-fixed ()
+   "Sets a fixed width (monospace) font in current buffer"
+   (interactive)
+   (setq buffer-face-mode-face '(:family "Fira Mono" :height 130 :spacing monospace))
+   (buffer-face-mode))
+
+;; Variable-width faces 
+ (defun my-buffer-face-mode-variable ()
+   "Set font to a variable width (proportional) fonts in current buffer"
+   (interactive)
+   (setq buffer-face-mode-face '(:family "Linux Libertine Display" :height 160))
+   ;;(setq buffer-face-mode-face '(:family "Linux Libertine Display" :height 160 :width expanded))
+   (buffer-face-mode))
+
+;; Set default font faces for Info, ERC, and Org
+ (add-hook 'erc-mode-hook 'my-buffer-face-mode-variable)
+ (add-hook 'Info-mode-hook 'my-buffer-face-mode-variable)
+ (add-hook 'org-mode-hook 'my-buffer-face-mode-variable)
+
+;; Allow narrowing
+(put 'narrow-to-region 'disabled nil)
+
+;; Word wrap
+ (setq org-startup-truncated t)
+
+ ;; Auto-fill settings
+ (setq-default fill-column 75)
+ (add-hook 'text-mode-hook 'turn-on-visual-line-mode)
+ ;; respect de la typographie française par fill
+ (setq fill-nobreak-predicate '(fill-french-nobreak-p))
+ (add-hook 'text-mode-hook 'turn-off-auto-fill)
+ ;; (add-hook 'org-mode-hook 'turn-on-auto-fill)
+ #+END_SRC
+*** Replace smart quotes with straight quotes 
+Replace smart quotes with straight quotes so that spell check can recognize
+words with contractions like “don’t” and “can’t.” For when I paste text in
+that I’ve copied from the web.
+#+BEGIN_SRC emacs-lisp
+(setq smart-quote-regexp-replacements
+'(
+("\\(\\w\\)- " . "\\1")
+("\\(\\w\\)\\(  [-—] \\|—\\)" . "\\1---")
+
+))
+
+(defun replace-smart-quotes-regexp (beg end)
+  "Replace 'smart quotes' in buffer or region with ascii quotes."
+  (interactive "r")
+  (mapcar
+   (lambda (r)
+     (save-excursion
+       (replace-regexp (car r) (cdr r) nil beg (min end (point-max)))))
+   smart-quote-regexp-replacements)
+  )
+
+(defun replace-smart-quotes (beg end)
+  "Replace 'smart quotes' in buffer or region with ascii quotes."
+  (interactive "r")
+;;(while (search-forward-regexp "- " nil to)
+;; (replace-match "") nil t)
+;; add alpha. And replace the alpha.
+
+  (replace-smart-quotes-regexp beg end)
+  (format-replace-strings '(
+                            ("\x201C" . "``")
+                            ("“" . "``")
+                            ("\x201D" . "''")
+                            ("”" . "''")
+                            ("\x2018" . "`")
+                            ("\x2019" . "'")
+                            ("’" . "'")
+;;("''" . "\"")
+;;("​" . "")
+;;("…" . "...")
+("…" . "\\ldots")
+("..." . "\\ldots")
+;;("• " . "- ")
+;;(" " . "")
+("  " . " ")
+
+;("ó" . "-")
+;("á" . "-")
+;("Õ" . "'")
+;("Õ" . "'")
+;("Ò" . "\"")
+;("Ó" . "\"")
+
+;("―" . "\"")
+;("‖" . "\"")
+
+;; ("- " . "") ; also remove stray spac- es
+;; ("­ " . "") ; also remove stray spac- es
+)
+                       nil   beg (min end (point-max)))
+
+)
+#+END_SRC 
 ** 取 Solarized theme
 #+BEGIN_SRC emacs-lisp
 ;;(add-to-list 'custom-theme-load-path "/home/sync0/.emacs.d/elpa/")
@@ -149,34 +367,6 @@
 
 ;; load dark theme
 ;;(load-theme 'solarized-dark t)
-#+END_SRC
-** Force UTF-8 encoding
-#+BEGIN_SRC emacs-lisp
-;; disable CJK coding/encoding (Chinese/Japanese/Korean characters)
-;; (setq utf-translate-cjk-mode nil)
-(set-language-environment 'utf-8)
-;; backwards compatibility as default-buffer-file-coding-system
-;; is deprecated in 23.2.
-;; (if (boundp buffer-file-coding-system)
-;;    (setq buffer-file-coding-system 'utf-8)
-;; (setq default-buffer-file-coding-system 'utf-8))
-
-;; set the default encoding system
-(setq default-file-name-coding-system 'utf-8)
-(set-default-coding-systems 'utf-8)
-(setq locale-coding-system 'utf-8)
-(set-terminal-coding-system 'utf-8)
-(set-keyboard-coding-system 'utf-8)
-(set-selection-coding-system 'utf-8)
-(prefer-coding-system 'utf-8)
-(when (display-graphic-p)
-
-;; Treat clipboard input as UTF-8 string first; compound text next, etc.
-   (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
-#+END_SRC
-** Remove yes-no EMACS inconsistency
-#+BEGIN_SRC emacs-lisp
-(fset 'yes-or-no-p 'y-or-n-p)
 #+END_SRC
 ** Abbrev Mode
 #+BEGIN_SRC emacs-lisp
@@ -209,78 +399,133 @@
 ;; (add-hook 'eval-expression-minibuffer-setup-hook #'eldoc-mode)
 ;; (add-hook 'eval-expression-minibuffer-setup-hook #'paredit-mode)
 #+END_SRC 
-** Git gutter thingy
-#+BEGIN_SRC emacs-lisp
-(setq fringes-outside-margins t)
-#+END_SRC 
+** Annoying character replacement
+(defcustom smart-to-ascii '(("\x201C" . "``")
+                ("\x201D" . "''")
+                ("\x2018" . "`")
+                            ("\x2019" . "'")
+                            ;; en-dash
+                            ("\x2013" . "--")
+                            ;; em-dash
+                            ("\x2014" . "---"))
+  ""
+  :type '(repeat (cons (string :tag "Smart Character  ")
+                       (string :tag "Ascii Replacement"))))
+
+(defun replace-smart-to-ascii (beg end)
+  (interactive "r")
+  (format-replace-strings smart-to-ascii
+                          nil beg end))
+
+;; make it automatic
+(advice-add 'yank :after (lambda (&optional ignore)
+                           (replace-smart-to-ascii (mark) (point)))
+            '(name replace-smart))
 * Packages 
-** Ispell - spell checking
-*** basic setup
+** Doom theme
 #+BEGIN_SRC emacs-lisp
-(cond
-  ;; try hunspell at first
-  ;; if hunspell does NOT exist, use aspell
- ((executable-find "hunspell")
-  (setq ispell-program-name "hunspell")
-  (setq ispell-local-dictionary "francais-tex")
-  ;;(setq ispell-local-dictionary "en_US")
-  (setq ispell-local-dictionary-alist '(  
-    (nil "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "american" ) nil utf-8)
-    ("english" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "american" ) nil utf-8)
-    ("german" "[[:alpha:]ÄÖÜéäöüß]" "[^[:alpha:]ÄÖÜéäöüß]" "[']" t ("-d" "deutsch8") nil utf-8)
-    ("spanish" "[[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "[^[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "[']" t ("-d" "castellano8") nil utf-8)
-    ("french" "[[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[^[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[-']" t ("-d" "francais-tex") nil  utf-8))))
+(require 'doom-themes)
 
- ((executable-find "aspell")
-  (setq ispell-program-name "aspell")
-  ;; Please note ispell-extra-args contains ACTUAL parameters passed to aspell
-  ;;(setq ispell-extra-args '("--sug-mode=ultra"))))
-  ;;(setq ispell-extra-args '("--sug-mode=ultra" "--lang=en_US"))))
-  (setq ispell-extra-args '("--sug-mode=ultra" "--lang=fr_FR"))))
+;; Global settings (defaults)
+(setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+      doom-themes-enable-italic t) ; if nil, italics is universally disabled
 
-;; check next highlighted word custom function
-(defun flyspell-check-next-highlighted-word ()
-  "Custom function to spell check next highlighted word"
-  (interactive)
-  (flyspell-goto-next-error)
-  (ispell-word)
-  )
+;; Load the theme (doom-one, doom-molokai, etc); keep in mind that each theme
+;; may have their own settings.
+(load-theme 'doom-one t)
+;;(load-theme 'doom-one-vibrant t)
+;;(load-theme 'doom-molokai t)
+;;(load-theme 'doom-nova t)
+(load-theme 'doom-one-light t)
+;;(load-theme 'doom-peacock t)
+;;(load-theme 'doom-tomorrow-night t)
+;;(load-theme 'doom-solarized-light t)
+(load-theme 'doom-spacegrey t)
 
-;; keybindings
-;;(global-set-key (kbd "<f7>") 'ispell-word)
-(global-set-key (kbd "C-S-<f7>") 'flyspell-mode)
-(global-set-key (kbd "C-M-<f7>") 'flyspell-buffer)
-(global-set-key (kbd "C-<f7>") 'flyspell-check-previous-highlighted-word)
-(global-set-key (kbd "M-<f7>") 'flyspell-check-next-highlighted-word)
-#+END_SRC
-*** ignore tex commands
-#+BEGIN_SRC emacs-lisp
-(add-hook 'org-mode-hook (lambda () (setq ispell-parser 'tex)))
-(defun flyspell-ignore-tex ()
-  (interactive)
-  (set (make-variable-buffer-local 'ispell-parser) 'tex))
-(add-hook 'org-mode-hook 'flyspell-ignore-tex)
-#+END_SRC
-*** ignore sections of files for spellcheck
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'ispell-skip-region-alist '(":\\(PROPERTIES\\|LOGBOOK\\):" . ":END:"))
-(add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_SRC" . "#\\+END_SRC"))
-(add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_EXAMPLE" . "#\\+END_EXAMPLE"))
-(add-to-list 'ispell-skip-region-alist '("^\\*\sEinstellungen" . "^\\*\\*\sEnde"))
-#+END_SRC
-** Flyspell
-#+BEGIN_SRC emacs-lisp
-;;(setq-default flyspell-mode t)
-;; better performance
-(setq flyspell-issue-message-flag nil)
-#+END_SRC
-*** Flyspell lazy
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'load-path "~/.emacs.d/flyspell-lazy")
-(require 'flyspell-lazy)
-(flyspell-lazy-mode 1)
-(flyspell-mode 1)      ; or (flyspell-prog-mode)
+;; Enable flashing mode-line on errors
+(doom-themes-visual-bell-config)
+
+;; Enable custom neotree theme
+(doom-themes-neotree-config)  ; all-the-icons fonts must be installed!
+
+;; Corrects (and improves) org-mode's native fontification.
+(doom-themes-org-config)
+
+;; Cycley between thèmes
+(add-to-list 'load-path "~/.emacs.d/sync0_git/cycle-themes.el/")
+(load "cycle-themes")
+
+(setq cycle-themes-theme-list
+'(doom-spacegrey doom-one-light doom-one doom-molokai doom-solarized-light))
+
+(cycle-themes-mode)
 #+END_SRC 
+** Spellchecking
+ #+BEGIN_SRC emacs-lisp
+;; Ispell - spell checking
+;; basic setup
+
+ (cond
+   ;; try hunspell at first
+   ;; if hunspell does NOT exist, use aspell
+  ((executable-find "hunspell")
+   (setq ispell-program-name "hunspell")
+   (setq ispell-local-dictionary "fr_FR")
+   ;;(setq ispell-local-dictionary "en_US")
+   (setq ispell-local-dictionary-alist '(  
+     (nil "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_US" ) nil utf-8)
+     ("english" "[[:alpha:]]" "[^[:alpha:]]" "[']" t ("-d" "en_US" ) nil utf-8)
+     ("german" "[[:alpha:]ÄÖÜéäöüß]" "[^[:alpha:]ÄÖÜéäöüß]" "[']" t ("-d" "de_DE") nil utf-8)
+     ("spanish" "[[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "[^[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "[']" t ("-d" "es_ES") nil utf-8)
+     ("italian" "[[:alpha:]AEÉIOUàèéìòù]" "[^[:alpha:]AEÉIOUàèéìòù]" "[---']" t ("-d" "it_IT") "~tex" nil utf-8)
+     ("french" "[[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[^[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[']" t ("-d" "fr_FR") nil  utf-8))))
+
+  ((executable-find "aspell")
+   (setq ispell-program-name "aspell")
+   ;; Please note ispell-extra-args contains ACTUAL parameters passed to aspell
+   (setq ispell-extra-args '("--sug-mode=ultra"))))
+   ;;(setq ispell-extra-args '("--sug-mode=ultra" "--lang=en_US"))))
+   ;;(setq ispell-extra-args '("--sug-mode=ultra" "--lang=fr_FR"))))
+
+ ;; check next highlighted word custom function
+ (defun flyspell-check-next-highlighted-word ()
+   "Custom function to spell check next highlighted word"
+   (interactive)
+   (flyspell-goto-next-error)
+   (ispell-word)
+   )
+
+ ;; keybindings
+ ;;(global-set-key (kbd "<f7>") 'ispell-word)
+ (global-set-key (kbd "C-S-<f7>") 'flyspell-mode)
+ (global-set-key (kbd "C-M-<f7>") 'flyspell-buffer)
+ (global-set-key (kbd "C-<f7>") 'flyspell-check-previous-highlighted-word)
+ (global-set-key (kbd "M-<f7>") 'flyspell-check-next-highlighted-word)
+
+;; ignore tex commands
+ (add-hook 'org-mode-hook (lambda () (setq ispell-parser 'tex)))
+ (defun flyspell-ignore-tex ()
+   (interactive)
+   (set (make-variable-buffer-local 'ispell-parser) 'tex))
+ (add-hook 'org-mode-hook 'flyspell-ignore-tex)
+
+;; ignore sections of files for spellcheck
+ (add-to-list 'ispell-skip-region-alist '(":\\(PROPERTIES\\|LOGBOOK\\):" . ":END:"))
+ (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_SRC" . "#\\+END_SRC"))
+ (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_EXAMPLE" . "#\\+END_EXAMPLE"))
+ (add-to-list 'ispell-skip-region-alist '("^\\*\sEinstellungen" . "^\\*\\*\sEnde"))
+
+;; Flyspell
+ ;;(setq-default flyspell-mode t)
+ ;; better performance
+ (setq flyspell-issue-message-flag nil)
+
+;; Flyspell lazy
+ (add-to-list 'load-path "~/.emacs.d/sync0_git/flyspell-lazy")
+ (require 'flyspell-lazy)
+ (flyspell-lazy-mode 1)
+ (flyspell-mode 1)      ; or (flyspell-prog-mode)
+ #+END_SRC 
 ** Auc-Tex
 *** set pdf conversion automatic
 #+BEGIN_SRC emacs-lisp
@@ -428,8 +673,10 @@ FUN function callback"
 #+BEGIN_SRC emacs-lisp
 ;; redefinition evils visual mode map
 (evil-define-key 'normal org-mode-map
-  "<" 'outline-previous-visible-heading
-  ">" 'outline-next-visible-heading
+  ;; "<" 'outline-previous-visible-heading
+  ">"   'org-forward-heading-same-level
+  "<"  'org-backward-heading-same-level
+  ;; ">" 'outline-next-visible-heading
   "H" 'org-metaleft
   "L" 'org-metaright
   "K" 'org-metaup
@@ -607,7 +854,7 @@ FUN function callback"
 ** Projectile
 #+BEGIN_SRC emacs-lisp
 ;; enable projectile by default
-(projectile-global-mode)
+(projectile-mode)
 
 ;; replace annoying EMACS cursor commands
 (global-set-key (kbd "C-p") nil) 
@@ -646,10 +893,91 @@ FUN function callback"
    :map ivy-minibuffer-map
    ("M-y" . ivy-next-line)))
 ** Org-mode 
+*** Capture mode
+#+BEGIN_SRC emacs-lisp
+(setq org-default-notes-file "~/Dropbox/org/todo.org")
+(define-key global-map "\C-cc" 'org-capture)
+;; == Capture Mode Settings ==
+;; Define the custum capture templates
+(defvar org-capture-templates '(
+             ("t" "Tâche" entry (file+headline "~/Dropbox/org/todo.org" "Université")
+              "**** 無 %?")
+("a" "Appointment" entry (file  "~/Dropbox/org/gcal.org" )
+	 "* %?\n\n%^T\n\n:PROPERTIES:\n\n:END:\n\n")
+	 ("b" "Blank" entry (file org-default-notes-file)
+	  "**** %?")
+	 ;;("m" "Meeting" entry (file org-default-notes-file)
+	  ;;"* MEETING with %? :MEETING:\n%t" :clock-in t :clock-resume t)
+	 ;;("d" "Diary" entry (file+datetree "~/org/diary.org")
+	  ;;"* %?\n%U\n" :clock-in t :clock-resume t)
+	 ;;("D" "Daily Log" entry (file "~/org/daily-log.org")
+	  ;;"* %u %?\n*Summary*: \n\n*Problem*: \n\n*Insight*: \n\n*Tomorrow*: " :clock-in t :clock-resume t)
+	 ("i" "Idea" entry (file+headline "~/Dropbox/org/todo.org" "Idées")
+	  "*** %? :Idea: \n%u" :prepend t)
+))
+#+END_SRC 
+**** Another settings
+(defvar org-capture-templates
+       '(("t" "todo" entry (file org-default-notes-file)
+       "*** 無 %?\n%u\n%a\n" :clock-in t :clock-resume t)
+	 ("b" "Blank" entry (file org-default-notes-file)
+	  "*** %?\n%u")
+	 ("m" "Meeting" entry (file org-default-notes-file)
+	  "* MEETING with %? :MEETING:\n%t" :clock-in t :clock-resume t)
+	 ;;("d" "Diary" entry (file+datetree "~/org/diary.org")
+	  ;;"* %?\n%U\n" :clock-in t :clock-resume t)
+	 ;;("D" "Daily Log" entry (file "~/org/daily-log.org")
+	  ;;"* %u %?\n*Summary*: \n\n*Problem*: \n\n*Insight*: \n\n*Tomorrow*: " :clock-in t :clock-resume t)
+	 ("i" "Idea" entry (file org-default-notes-file)
+	  "* %? :IDEA: \n%u" :clock-in t :clock-resume t)
+))
+
+
+(setq org-capture-templates
+      '(("a" "Appointment" entry (file  "~/Dropbox/orgfiles/gcal.org" )
+	 "* %?\n\n%^T\n\n:PROPERTIES:\n\n:END:\n\n")
+	("l" "Link" entry (file+headline "~/Dropbox/orgfiles/links.org" "Links")
+	 "* %? %^L %^g \n%T" :prepend t)
+	("b" "Blog idea" entry (file+headline "~/Dropbox/orgfiles/i.org" "Blog Topics:")
+	 "* %?\n%T" :prepend t)
+	("t" "To Do Item" entry (file+headline "~/Dropbox/orgfiles/i.org" "To Do")
+	 "* TODO %?\n%u" :prepend t)
+	("n" "Note" entry (file+headline "~/Dropbox/orgfiles/i.org" "Note space")
+	 "* %?\n%u" :prepend t)
+	("j" "Journal" entry (file+datetree "~/Dropbox/journal.org")
+	 "* %?\nEntered on %U\n  %i\n  %a")
+	("s" "Screencast" entry (file "~/Dropbox/orgfiles/screencastnotes.org")
+	 "* %?\n%i\n")))
+*** Tags
+#+BEGIN_SRC emacs-lisp
+(setq org-tag-alist '(
+		      ("examinatio" . ?e)
+		      ("projectum" . ?p)
+		      ("legere" . ?l)
+		      ("revisere" . ?r)
+		      ("chores" . ?c)
+		      ("hodie" . ?h)
+		      ("noexport" . ?n)
+		      ))
+
+;; Allow setting single tags without the menu
+;;(setq org-fast-tag-selection-single-key 'expert)
+
+#+END_SRC 
 *** Agenda
 #+BEGIN_SRC emacs-lisp
 ;; specify agenda files
-(setq org-agenda-files (list "~/Dropbox/org/todo.org"))
+(setq org-agenda-files (list "~/Dropbox/org/gcal.org"
+                                            "~/Dropbox/org/unterrichte.org"
+                                            "~/Dropbox/org/ereignisse.org"
+        ;;                                    "~/Dropbox/org/gewohnheiten.org"
+                                            "~/Dropbox/org/jahrestage.org"
+                                             "~/Dropbox/org/todo.org"))
+
+(setq org-use-fast-todo-selection t) 
+;; Include the todo keywords
+(setq org-fast-tag-selection-include-todo t)
+(setq org-fast-tag-selection-single-key t)
 
 ;; necessary function 1
 (defun air-org-skip-subtree-if-priority (priority)
@@ -670,15 +998,198 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
         subtree-end
       nil)))
 
+;; Compact the block agenda view (disabled)
+(setq org-agenda-compact-blocks nil)
+
+;; Make agenda the only window by default
+(setq org-agenda-window-setup  'only-window)
+
 ;; build composite agenda view
 (setq org-agenda-custom-commands
  '(("x" agenda)
-    ("n" todo "無")
-    ("N" todo-tree "無")
-    ("w" todo "待")
+    ;;("n" "power agenda" ((agenda  "") (alltodo))
+     ;;                ((org-agenda-ndays 10)
+;;	                   (org-agenda-start-on-weekday nil)
+;;	                   (org-agenda-start-day "-1d")))
+    ("H" "Horaire hebdomadaire" (
+	         (agenda "" ((org-agenda-overriding-header "Today's Schedule:")
+					    (org-agenda-span 'day)
+					    (org-agenda-ndays 14)
+					    (org-agenda-start-on-weekday nil)
+					    (org-agenda-start-day "+0d")
+					    (org-agenda-todo-ignore-deadlines nil)))
+                              (tags-todo "universitas/!+次|+待|+中"
+					   ((org-agenda-overriding-header "Current University Tasks:")
+					    ))
+                              (tags-todo "universitas/!+無"
+					   ((org-agenda-overriding-header "Undone University Tasks:")
+					    ))
+				 (agenda "" ((org-agenda-overriding-header "Week At A Glance:")
+				 	    (org-agenda-ndays 7)
+				 	    (org-agenda-start-day "+1d")
+				 	    (org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled))
+				 	    (org-agenda-prefix-format '((agenda . "  %-12:c%?-12t %s [%b] ")))))
+))
+      ("d" "Daily agenda and all TODOs"
+         ((tags "PRIORITY=\"A\""
+                ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                 (org-agenda-overriding-header "High-priority unfinished tasks:")))
+          (agenda "" ((org-agenda-ndays 1)))
+          (alltodo ""
+                   ((org-agenda-skip-function '(or (air-org-skip-subtree-if-habit)
+                                                   (air-org-skip-subtree-if-priority ?A)
+                                                   (org-agenda-skip-if nil '(scheduled deadline))))
+                    (org-agenda-overriding-header "ALL normal priority tasks:"))))
+;; list of crazy options
+         ((org-agenda-compact-blocks t)))
+    ;;("N" todo-tree "無")
+    ;;("w" todo "待")
+("s" "Study Planner" (
+          (tags-todo "revisere/!+次|+待|+中|+無"
+                                                             ((org-agenda-overriding-header "Revisions:")))
+          (tags-todo "legere/!+次|+待|+中|+無"
+                                                             ((org-agenda-overriding-header "Lectures:")))
+          (tags-todo "projectum/!+次|+待|+中|+無"
+                                                             ((org-agenda-overriding-header "Projects:")))
+          (tags-todo "examinatio/!+次|+待|+中|+無"
+                                                             ((org-agenda-overriding-header "Examens:"))))
+;; list options for block display
+         ((org-agenda-compact-blocks t)
+          (org-agenda-view-columns-initially t)))
+
+;;("h" "Aujourd'hui" (
+ ;;         (tags-todo "revisere&hodie/!+次|+待|+中|+無"
+  ;;                                                           ((org-agenda-overriding-header "Révisions:")))
+   ;;       (tags-todo "legere&hodie/!+次|+待|+中|+無"
+    ;;                                                         ((org-agenda-overriding-header "Lectures:")))
+     ;;     (tags-todo "projectum&hodie/!+次|+待|+中|+無"
+       ;;                                                      ((org-agenda-overriding-header "Projects:")))
+         ;; (tags-todo "examinatio&hodie/!+次|+待|+中|+無"
+           ;;                                                  ((org-agenda-overriding-header "Examens:"))))
+;; list options for block display
+       ;;  ((org-agenda-compact-blocks t)
+         ;; (org-agenda-view-columns-initially t)))
+
+    ("h" "Révision des Tâches" (
+
+         (tags "PRIORITY=\"A\""
+           ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("完" "取")))
+            (org-agenda-overriding-header "Tâches prioritaires:")))
+          ;;(agenda "" ((org-agenda-ndays 14)))
+
+          (alltodo ""
+           ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("中" "次"))
+                                                             (air-org-skip-subtree-if-habit)
+                                                             (air-org-skip-subtree-if-priority ?A)))
+                                                             ;;(org-agenda-skip-if nil '(scheduled deadline))))
+                                                             (org-agenda-overriding-header "Tâches en cours:")))
+          (alltodo ""
+           ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("待"))
+                                                             (air-org-skip-subtree-if-habit)
+                                                             (air-org-skip-subtree-if-priority ?A)))
+                                                             ;;(org-agenda-skip-if nil '(scheduled deadline))))
+                                                             (org-agenda-overriding-header "Tâches en attente:")))
+          (alltodo ""
+           ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("無"))
+                                                             (air-org-skip-subtree-if-habit)
+                                                             (air-org-skip-subtree-if-priority ?A)
+                                                             (org-agenda-skip-if nil '(scheduled deadline))))
+                                                             (org-agenda-overriding-header "Tâches à faire:"))))
+;; list options for block display
+          ((org-agenda-compact-blocks t)))))
+
+;; Display properties
+(setq org-cycle-separator-lines 0)
+(setq org-tags-column 80)
+(setq org-agenda-tags-column org-tags-column)
+(setq org-agenda-sticky t)
+
+(setq org-refile-targets (quote (("todo.org" :maxlevel . 2))))
+(setq org-refile-use-outline-path 'file)
+(setq org-outline-path-complete-in-steps nil)
+
+
+;; function to have evil bindings in org-agenda
+(defun air-org-agenda-next-header ()
+  "Jump to the next header in an agenda series."
+  (interactive)
+  (air--org-agenda-goto-header))
+
+(defun air-org-agenda-previous-header ()
+  "Jump to the previous header in an agenda series."
+  (interactive)
+  (air--org-agenda-goto-header t))
+
+(defun air--org-agenda-goto-header (&optional backwards)
+  "Find the next agenda series header forwards or BACKWARDS."
+  (let ((pos (save-excursion
+               (goto-char (if backwards
+                              (line-beginning-position)
+                            (line-end-position)))
+               (let* ((find-func (if backwards
+                                     'previous-single-property-change
+                                   'next-single-property-change))
+                      (end-func (if backwards
+                                    'max
+                                  'min))
+                      (all-pos-raw (list (funcall find-func (point) 'org-agenda-structural-header)
+                                         (funcall find-func (point) 'org-agenda-date-header)))
+                      (all-pos (cl-remove-if-not 'numberp all-pos-raw))
+                      (prop-pos (if all-pos (apply end-func all-pos) nil)))
+                 prop-pos))))
+    (if pos (goto-char pos))
+    (if backwards (goto-char (line-beginning-position)))))
+
+
+;; fast access agenda view
+(defun air-pop-to-org-agenda (&optional split)
+  "Visit the org agenda, in the current window or a SPLIT."
+  (interactive "P")
+  (org-agenda nil "h") ;; the h corresponds to the agenda view that will be displayed once this command is called
+  (when (not split)
+    (delete-other-windows)))
+
+;;(define-key evil-normal-state-map (kbd "S-SPC") 'air-pop-to-org-agenda)
+(global-set-key [f6] 'air-pop-to-org-agenda)
+
+;; sacha's configuration 
+(defun sacha/org-agenda-new ()
+  "Create a new note or task at the current agenda item.
+Creates it at the same level as the previous task, so it's better to use
+this with to-do items than with projects or headings."
+  (interactive)
+  (org-agenda-switch-to)
+  (org-capture 0))
+
+(defun sacha/org-agenda-mark-done-and-add-followup ()
+    "Mark the current TODO as done and add another task after it.
+Creates it at the same level as the previous task, so it's better to use
+this with to-do items than with projects or headings."
+    (interactive)
+    (org-agenda-todo "DONE")
+    (org-agenda-switch-to)
+    (org-capture 0 "t"))
+
+
+;; movement in agenda buffer
+(eval-after-load "org-agenda"
+'(progn
+(define-key org-agenda-mode-map "j" 'org-agenda-next-item)
+(define-key org-agenda-mode-map "k" 'org-agenda-previous-item)
+(define-key org-agenda-mode-map "J" 'air-org-agenda-next-header)
+(define-key org-agenda-mode-map "K" 'air-org-agenda-previous-header)
+;; New key assignment
+(define-key org-agenda-mode-map "N" 'sacha/org-agenda-new)
+;; Override the key définition
+(define-key org-agenda-mode-map "X" 'sacha/org-agenda-mark-done-and-add-followup)
+))
+#+END_SRC
+**** Stuck projects 
+ ;; (setq org-stuck-projects      '("TODO={.+}/-DONE" nil nil "SCHEDULED:\\|DEADLINE:"))
+**** GJ agenda
     ("W" "Weekly Review"
          ((tags "PRIORITY=\"A\""
-           ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("完" "答" "取")))
+           ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("完" "取")))
             (org-agenda-overriding-header "Tâches prioritaires:")))
           (agenda "" ((org-agenda-ndays 7)))
           (alltodo ""
@@ -700,36 +1211,167 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
                                                              (org-agenda-skip-if nil '(scheduled deadline))))
                                                              (org-agenda-overriding-header "Tâches en attente:"))))
           ((org-agenda-compact-blocks t)))))
-#+END_SRC
+
+
+
+("s" "Study Planner" (
+          (tags "+revisere"
+           ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取"))
+                                                                (air-org-skip-subtree-if-habit)
+                                                                (org-agenda-skip-if nil '(scheduled deadline))))
+                                                             (org-agenda-overriding-header "Revisions:")))
+          (tags "+legere"
+           ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取"))
+                                                             (air-org-skip-subtree-if-habit)
+                                                             (org-agenda-skip-if nil '(scheduled deadline))))
+                                                             (org-agenda-overriding-header "Lectures:")))
+          (tags "+projectum"
+           ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取"))
+                                                             (air-org-skip-subtree-if-habit)
+                                                             (org-agenda-skip-if nil '(scheduled deadline))))
+                                                             (org-agenda-overriding-header "Projects:")))
+          (tags "+examinatio"
+           ((org-agenda-skip-function '(or 
+                                                             (org-agenda-skip-entry-if 'todo '("完" "取"))
+                                                             (air-org-skip-subtree-if-habit)
+                                                             (org-agenda-skip-if nil '(scheduled deadline))))
+            (org-agenda-overriding-header "Examens:")))
+          ))
+
+;; Custom agenda command definitions
+(setq org-agenda-custom-commands
+      '(("h" "Habits" agenda "STYLE=\"habit\""
+	 ((org-agenda-overriding-header "Habits")
+	  (org-agenda-sorting-strategy
+	   '(todo-state-down effort-up category-keep))))
+	(" " "Export Schedule" ((agenda "" ((org-agenda-overriding-header "Today's Schedule:")
+					    (org-agenda-span 'day)
+					    (org-agenda-ndays 1)
+					    (org-agenda-start-on-weekday nil)
+					    (org-agenda-start-day "+0d")
+					    (org-agenda-todo-ignore-deadlines nil)))
+				(tags-todo "-INACTIVE-CANCELLED-ARCHIVE/!NEXT"
+					   ((org-agenda-overriding-header "Next Tasks:")
+					    ))
+				(tags "REFILE-ARCHIVE-REFILE=\"nil\""
+				      ((org-agenda-overriding-header "Tasks to Refile:")
+				       (org-tags-match-list-sublevels nil)))
+				(tags-todo "-INACTIVE-HOLD-CANCELLED-REFILE-ARCHIVEr/!"
+					   ((org-agenda-overriding-header "Active Projects:")
+					    (org-agenda-skip-function 'gs/select-projects)))
+				(tags-todo "-INACTIVE-HOLD-CANCELLED-REFILE-ARCHIVE-STYLE=\"habit\"/!-NEXT"
+					   ((org-agenda-overriding-header "Standalone Tasks:")
+					    (org-agenda-skip-function 'gs/select-standalone-tasks)))
+				;; (agenda "" ((org-agenda-overriding-header "Week At A Glance:")
+				;; 	    (org-agenda-ndays 5)
+				;; 	    (org-agenda-start-day "+1d")
+				;; 	    (org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled))
+				;; 	    (org-agenda-prefix-format '((agenda . "  %-12:c%?-12t %s [%b] ")))))
+				(tags-todo "-INACTIVE-HOLD-CANCELLED-REFILE-ARCHIVE/!-NEXT"
+					   ((org-agenda-overriding-header "Remaining Project Tasks:")
+					    (org-agenda-skip-function 'gs/select-project-tasks)))
+				(tags "INACTIVE-ARCHIVE"
+	;;			      ((org-agenda-overriding-header "Inactive Projects and Tasks")
+	;;			       (org-tags-match-list-sublevels nil)))
+				(tags "ENDOFAGENDA"
+				      ((org-agenda-overriding-header "End of Agenda")
+				       (org-tags-match-list-sublevels nil))))
+	 ((org-agenda-start-with-log-mode t)
+	  (org-agenda-log-mode-items '(clock))
+	  (org-agenda-prefix-format '((agenda . "  %-12:c%?-12t %(gs/org-agenda-add-location-string)% s")
+				      (timeline . "  % s")
+				      (todo . "  %-12:c %(gs/org-agenda-prefix-string) ")
+				      (tags . "  %-12:c %(gs/org-agenda-prefix-string) ")
+				      (search . "  %i %-12:c")))
+	  (org-agenda-todo-ignore-deadlines 'near)
+	  (org-agenda-todo-ignore-scheduled t)))
+	("X" "Agenda" ((agenda "") (alltodo))
+	 ((org-agenda-ndays 10)
+	  (org-agenda-start-on-weekday nil)
+	  (org-agenda-start-day "-1d")
+	  (org-agenda-start-with-log-mode t)
+	  (org-agenda-log-mode-items '(closed clock state)))
+	 )))
+*** Clocking
+#+BEGIN_SRC emacs-lisp
+;; Agenda clock report parameters
+(setq org-agenda-clockreport-parameter-plist
+      '(:link t :maxlevel 6 :fileskip0 t :compact t :narrow 60 :score 0))
+
+;; If idle for more than 15 minutes, resolve the things by asking what to do
+;; with the clock time
+(setq org-clock-idle-time 15)
+
+;; global Effort estimate values
+(setq org-global-properties
+      '(("Effort_ALL" .
+         "0:15 0:30 0:45 1:00 2:00 3:00 4:00 5:00 6:00 0:00")))
+;;        1    2    3    4    5    6    7    8    9    0
+;; These are the hotkeys ^
+
+;; Set default column view headings: Task Priority Effort Clock_Summary
+(setq org-columns-default-format "%TAGS %ITEM(Task) %1PRIORITY %DEADLINE %SCHEDULED %10CLOCKSUM")
+;;(setq org-columns-default-format "%50ITEM(Task) %10Effort(Effort){:} %10CLOCKSUM %16TIMESTAMP_IA")
+;;(setq org-columns-default-format "%50ITEM(Task) %2PRIORITY %10Effort(Effort){:} %10CLOCKSUM")
+
+;; Show lot of clocking history so it's easy to pick items off the `C-c I` list
+(setq org-clock-history-length 23)
+
+(defun eos/org-clock-in ()
+  (interactive)
+  (org-clock-in '(4)))
+
+(global-set-key (kbd "C-c I") #'eos/org-clock-in)
+(global-set-key (kbd "C-c O") #'org-clock-out)
+
+;; Resume clocking task when emacs is restarted
+(org-clock-persistence-insinuate)
+;; Save the running clock and all clock history when exiting Emacs, load it on startup
+(setq org-clock-persist 'history)
+;;(setq org-clock-persist t)
+;; Resume clocking task on clock-in if the clock is open
+(setq org-clock-in-resume t)
+;; Do not prompt to resume an active clock, just resume it
+(setq org-clock-persist-query-resume nil)
+
+;; Change tasks to whatever when clocking in
+(setq org-clock-in-switch-to-state "中")
+;; Save clock data and state changes and notes in the LOGBOOK drawer
+(setq org-clock-into-drawer t)
+;; Sometimes I change tasks I'm clocking quickly - this removes clocked tasks
+;; with 0:00 duration
+(setq org-clock-out-remove-zero-time-clocks t)
+;; Clock out when moving task to a done state
+(setq org-clock-out-when-done t)
+;; Enable auto clock resolution for finding open clocks
+(setq org-clock-auto-clock-resolution (quote when-no-clock-is-running))
+;; Include current clocking task in clock reports
+(setq org-clock-report-include-clocking-task t)
+;; use pretty things for the clocktable
+(setq org-pretty-entities t)
+#+END_SRC 
 *** initial visualization
 **** initial indentation
 #+BEGIN_SRC emacs-lisp 
-(setq org-startup-indented t)         
-#+END_SRC
-**** word wrap 
-#+BEGIN_SRC emacs-lisp 
-(setq org-startup-truncated nil)
+(setq org-startup-indented nil)         
 #+END_SRC
 **** begin displaying entire trees
 #+BEGIN_SRC emacs-lisp 
 ;; (setq org-startup-folded nil) 
 #+END_SRC
-**** auto-fill 
-#+BEGIN_SRC emacs-lisp
-(add-hook 'org-mode-hook 'turn-on-visual-line-mode)
-;; (add-hook 'org-mode-hook 'turn-on-auto-fill)
-#+END_SRC
 **** better display of italics & bold
 #+BEGIN_SRC emacs-lisp
-;; (setq org-hide-emphasis-markers t)
+(setq org-hide-emphasis-markers t)
 #+END_SRC
-**** custom TODO states 
+*** custom TODO states 
 #+BEGIN_SRC emacs-lisp
+(setq org-use-fast-todo-selection nil)
 (setq org-todo-keywords 
-          '((sequence "無(t)" "中(p)" "完(d)")
-            (sequence "待(w)" "|" "取(c)")
-            (sequence "疑(q)" "|" "答(a)")))
-
+          '((sequence "無(t)" "次" "中" "待" "完(d)")
+            (sequence "阻" "取(c)")))
+            ;;(sequence "疑(q)" "|" "答(a)")))
+;; (sequence "待(w)" "次" "取(c)")
+            ;;(sequence "待(w)" "|" "取(c)")
 
 ;; set faces for org-todo-keywords
 (setq org-todo-keyword-faces
@@ -741,8 +1383,24 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
         ("取" . (:foreground "#6c71c4" :weight bold)) 
         ("中" . (:foreground "#b58900" :weight bold)) 
         ))
+
+(defun gs/mark-next-done-parent-tasks-todo ()
+ ;; "Visit each parent task and change 中 (or 完) states to 無."
+  ;; Don't change the value if new state is "完"
+  (let ((mystate (or (and (fboundp 'org-state)
+                          (member state
+				  (list "中" "無")))
+                     (member (nth 2 (org-heading-components))
+			     (list "中" "無")))))
+    (when mystate
+      (save-excursion
+        (while (org-up-heading-safe)
+          (when (member (nth 2 (org-heading-components)) (list "中" "完"))
+            (org-todo "無")))))))
+
+(add-hook 'org-after-todo-state-change-hook 'gs/mark-next-done-parent-tasks-todo 'append)
 #+END_SRC
-**** org-bullets
+*** org-bullets
 #+BEGIN_SRC emacs-lisp
 (require 'org-bullets)
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
@@ -753,8 +1411,7 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
 (add-hook 'org-mode-hook 'flyspell-mode)
 ;; (add-hook 'org-mode-hook 'flyspell-buffer)
 #+END_SRC
-*** word count (experimental)
-#+BEGIN_SRC emacs-lisp
+*** 取 word count (experimental)
 (eval-when-compile (require 'cl))
 ;; (require 'org)
 (defun org-wc-in-heading-line ()
@@ -910,7 +1567,6 @@ from the `before-change-functions' in the current buffer."
                    'org-wc-remove-overlays 'local))))
 
 (provide 'org-wc)
-#+END_SRC
 **** setting short-cut key
 #+BEGIN_SRC emacs-lips
 (define-key org-mode-map "\C-c\C-w" 'org-word-count)
@@ -1220,6 +1876,10 @@ from the `before-change-functions' in the current buffer."
 (setq org-latex-minted-options '(("breaklines" "true")
                                  ("breakanywhere" "true")))
 #+END_SRC 
+*** Code  export
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'org-export-exclude-tags "取")
+#+END_SRC 
 *** 取 Org clock budget 
 (add-to-list 'load-path "~/.emacs.d/org-clock-budget")
 (require 'org-clock-budget)
@@ -1277,7 +1937,7 @@ from the `before-change-functions' in the current buffer."
         (message "Could not find git project root."))))
 
 ;; remap last function
- (global-set-key [f6] 'neotree-project-dir)
+;;(global-set-key [f6] 'neotree-project-dir)
 
 ;;(add-hook 'neotree-mode-hook
  ;;   (lambda ()
@@ -1307,9 +1967,9 @@ from the `before-change-functions' in the current buffer."
   (require 'evil-anzu))
 
 ;; Emacs <= 24.3
-(eval-after-load 'evil
-  '(progn
-     (require 'evil-anzu)))
+;;(eval-after-load 'evil
+  ;;'(progn
+     ;;(require 'evil-anzu)))
 #+END_SRC 
 ** Smooth scrolling
 #+BEGIN_SRC emacs-lisp
@@ -1393,36 +2053,6 @@ from the `before-change-functions' in the current buffer."
 (advice-add 'company-complete-common :after (lambda ()
   		  				(when (equal my-company-point (point))
   			  			  (yas-expand))))
-** Doom theme
-#+BEGIN_SRC emacs-lisp
-(require 'doom-themes)
-
-;; Global settings (defaults)
-(setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-      doom-themes-enable-italic t) ; if nil, italics is universally disabled
-
-;; Load the theme (doom-one, doom-molokai, etc); keep in mind that each theme
-;; may have their own settings.
-;;(load-theme 'doom-one t)
-;;(load-theme 'doom-one-vibrant t)
-(load-theme 'doom-molokai t)
-;;(load-theme 'doom-nova t)
-;;(load-theme 'doom-nova t)
-;;(load-theme 'doom-one-light t)
-;;(load-theme 'doom-peacock t)
-;;(load-theme 'doom-tomorrow-night t)
-;;(load-theme 'doom-spacegrey t)
-;;(load-theme 'doom-solarized-light t)
-
-;; Enable flashing mode-line on errors
-(doom-themes-visual-bell-config)
-
-;; Enable custom neotree theme
-(doom-themes-neotree-config)  ; all-the-icons fonts must be installed!
-
-;; Corrects (and improves) org-mode's native fontification.
-(doom-themes-org-config)
-#+END_SRC 
 ** Solaire mode
 #+BEGIN_SRC emacs-lisp
 (require 'solaire-mode)
@@ -1457,6 +2087,13 @@ from the `before-change-functions' in the current buffer."
 ;; activate for doom-theme 
 (setq nlinum-highlight-current-line t)
 #+END_SRC 
+** Nlinum hl 
+#+BEGIN_SRC emacs-lisp
+(require 'nlinum-hl) ; load this after nlinum
+;; Changing fonts can leave nlinum line numbers in their original size; this
+;; forces them to resize.
+(advice-add #'set-frame-font :after #'nlinum-hl-flush-all-windows)
+#+END_SRC 
 ** Hl-line mode
 #+BEGIN_SRC emacs-lisp
 (global-hl-line-mode 1)
@@ -1468,6 +2105,149 @@ from the `before-change-functions' in the current buffer."
 
 ;; bind the popup of popus
 (global-set-key (kbd "C-x M-g") 'magit-dispatch-popup)
+#+END_SRC 
+** Org-gcal
+#+BEGIN_SRC emacs-lisp
+(setq package-check-signature nil)
+(require 'org-gcal)
+
+(setq org-gcal-client-id "907076689223-ch6g792uumt7kkh9j7pjm8i80qr7uccq.apps.googleusercontent.com"
+	org-gcal-client-secret "mdYQf4gdYkwlQSAMYCHkSkHS"
+	org-gcal-file-alist '(("cantorlunae@gmail.com" .  "~/Dropbox/org/gcal.org")
+("uv89i0rlnv503i17nedvmo95f8@group.calendar.google.com" . "~/Dropbox/org/unterrichte.org")
+("c83agj55j9uipbjdd2mmp7h9v8@group.calendar.google.com" . "~/Dropbox/org/ereignisse.org")
+("ekk7658f3jm5fh1mea2sdnu8vc@group.calendar.google.com" . "~/Dropbox/org/gewohnheiten.org")
+("#contacts@group.v.calendar.google.com" . "~/Dropbox/org/jahrestage.org")
+))
+
+;;(add-hook 'org-agenda-mode-hook (lambda () (org-gcal-sync) ))
+;;(add-hook 'org-capture-after-finalize-hook (lambda () (org-gcal-sync) ))
+#+END_SRC 
+** Calfw
+#+BEGIN_SRC emacs-lisp
+(require 'calfw)
+(require 'calfw-gcal)
+(require 'calfw-org)
+
+(defun my-open-calendar ()
+  (interactive)
+  (cfw:open-calendar-buffer
+   :contents-sources
+   (list
+    (cfw:org-create-source "Light Grey")  ; orgmode source
+    ;;(cfw:org-create-source "Green")  ; orgmode source
+    ;;(cfw:howm-create-source "Blue")  ; howm source
+    ;;(cfw:cal-create-source "Orange") ; diary source
+    ;;(cfw:ical-create-source "Moon" "~/moon.ics" "Gray")  ; ICS source1
+    ;;(cfw:ical-create-source "gcal" "https://..../basic.ics" "IndianRed") ; google calendar ICS
+   ))) 
+
+;; keybinding
+ (global-set-key (kbd "<f7>") 'cfw:open-org-calendar)
+#+END_SRC 
+*** Grid
+#+BEGIN_SRC emacs-lisp
+;; Unicode characters
+(setq cfw:fchar-junction ?╋
+      cfw:fchar-vertical-line ?┃
+      cfw:fchar-horizontal-line ?━
+      cfw:fchar-left-junction ?┣
+      cfw:fchar-right-junction ?┫
+      cfw:fchar-top-junction ?┯
+      cfw:fchar-top-left-corner ?┏
+      cfw:fchar-top-right-corner ?┓)
+#+END_SRC 
+*** 取 Months                                                                   :noexport:
+ (;; Month
+ (setq calendar-month-name-array
+   ["Janvier" "Février" "Mars"     "April"   "Mai"      "Juin"
+    "Juillet"    "Août"   "Septembre" "Octobre" "Novembre" "Décembre"])
+
+ ;; Week days
+ (setq calendar-day-name-array
+       ["Dimanche" "Lundi" "Mardi" "Mercredi" "Jeudi" "Vendredi" "Samedi"])
+
+ ;; First day of the week
+ (setq calendar-week-start-day 1) ; 0:Sunday, 1:Mondaysetq cfw:org-agenda-schedule-args '(:timestamp))
+**** Backup 
+   (;; Month
+   (setq calendar-month-name-array
+     ["January" "February" "March"     "April"   "May"      "June"
+      "July"    "August"   "September" "October" "November" "December"])
+
+   ;; Week days
+   (setq calendar-day-name-array
+         ["Sunday" "Monday" "Tuesday" "Wednesday" "Thursday" "Friday" "Saturday"])
+*** 取 Face customization 
+  (custom-set-faces
+   '(cfw:face-title ((t (:foreground "#f0dfaf" :weight bold :height 2.0 :inherit variable-pitch))))
+   '(cfw:face-header ((t (:foreground "#d0bf8f" :weight bold))))
+   '(cfw:face-sunday ((t :foreground "#cc9393" :background "grey10" :weight bold)))
+   '(cfw:face-saturday ((t :foreground "#8cd0d3" :background "grey10" :weight bold)))
+   '(cfw:face-holiday ((t :background "grey10" :foreground "#8c5353" :weight bold)))
+   '(cfw:face-grid ((t :foreground "DarkGrey")))
+   '(cfw:face-default-content ((t :foreground "#bfebbf")))
+   '(cfw:face-periods ((t :foreground "cyan")))
+   '(cfw:face-day-title ((t :background "grey10")))
+   '(cfw:face-default-day ((t :weight bold :inherit cfw:face-day-title)))
+   '(cfw:face-annotation ((t :foreground "RosyBrown" :inherit cfw:face-day-title)))
+   '(cfw:face-disable ((t :foreground "DarkGray" :inherit cfw:face-day-title)))
+   '(cfw:face-today-title ((t :background "#7f9f7f" :weight bold)))
+   '(cfw:face-today ((t :background: "grey10" :weight bold)))
+   '(cfw:face-select ((t :background "#2f2f2f")))
+   '(cfw:face-toolbar ((t :foreground "Steelblue4" :background "Steelblue4")))
+   '(cfw:face-toolbar-button-off ((t :foreground "Gray10" :weight bold)))
+   '(cfw:face-toolbar-button-on ((t :foreground "Gray50" :weight bold))))
+** 取 Visual fill column
+(require 'visual-fill-column)
+
+;; visual-fill-column-mode will then be activated in every buffer that uses visual-line-mode
+(global-visual-fill-column-mode)
+
+;; Set column width.
+(setq visual-fill-column-width 70)
+
+;; Put the fringes outside the margins.
+(setq visual-fill-column-fringes-outside-margins t)
+
+;; Solve problem with adjusting text size and margin calculation
+(advice-add 'text-scale-adjust :after #'visual-fill-column-adjust)
+** Alert (Growl) 
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/sync0_git/alert")
+(require 'alert)
+#+END_SRC 
+** Use package
+#+BEGIN_SRC emacs-lisp
+(eval-when-compile
+  (require 'use-package))
+#+END_SRC 
+** Guess Language
+#+BEGIN_SRC emacs-lisp
+(require 'guess-language)
+
+;; Optionally:
+(setq guess-language-languages '(en fr it))
+(setq guess-language-min-paragraph-length 30)
+
+;; Tell guess-language-mode which dictionary should be used 
+(setq guess-language-langcodes '(
+    (en . ("en_US" "English"))
+    ;;(es . ("es_ES" "Spanish"))
+    (fr . ("fr_FR" "French"))
+    (it . ("it_IT" "Italian"))
+    ;;(de . ("de_DE" "German"))
+))
+
+;; Activate guess-language-mode in the buffer in which you want to use it.
+(add-hook 'text-mode-hook (lambda () (guess-language-mode 1)))
+
+;; When a new language is detected, change abbrev maps
+;;(defun my-custom-function (lang beginning end)
+;;  (do-something))
+
+;;(add-hook 'guess-language-after-detection-functions #'my-custom-function)
+
 #+END_SRC 
 * Custom Functions
 ** Date
@@ -1578,8 +2358,9 @@ abort completely with `C-g'."
 (setq backup-by-copying t
       backup-directory-alist '(("." . "~/.emacs.d/backups"))
       delete-old-versions t
-      kept-new-versions 2
-      kept-old-versions 2
+      kept-new-versions 10
+      kept-old-versions 0
+;; use versioned backups
       version-control t)
 
 ;; no lockfiles
