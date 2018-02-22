@@ -16,15 +16,12 @@
    ["#1B2229" "#BF616A" "#A3BE8C" "#ECBE7B" "#8FA1B3" "#c678dd" "#46D9FF" "#DFDFDF"])
  '(custom-safe-themes
    (quote
-    ("6be42070d23e832a7493166f90e9bb08af348a818ec18389c1f21d33542771af" "a7e7804313dbf827a441c86a8109ef5b64b03011383322cbdbf646eb02692f76" "2e1d19424153d41462ad31144549efa41f55dacda9b76571f73904612b15fd0a" "3481e594ae6866d72c40ad77d86a1ffa338d01daa9eb0977e324f365cef4f47c" default)))
+    ("7666b079fc1493b74c1f0c5e6857f3cf0389696f2d9b8791c892c696ab4a9b64" "2a1b4531f353ec68f2afd51b396375ac2547c078d035f51242ba907ad8ca19da" "77c3f5f5acaa5a276ca709ff82cce9b303f49d383415f740ba8bcc76570718b9" "2af26301bded15f5f9111d3a161b6bfb3f4b93ec34ffa95e42815396da9cb560" "6be42070d23e832a7493166f90e9bb08af348a818ec18389c1f21d33542771af" "a7e7804313dbf827a441c86a8109ef5b64b03011383322cbdbf646eb02692f76" "2e1d19424153d41462ad31144549efa41f55dacda9b76571f73904612b15fd0a" "3481e594ae6866d72c40ad77d86a1ffa338d01daa9eb0977e324f365cef4f47c" default)))
  '(fci-rule-color "#65737E")
  '(fringe-mode 0 nil (fringe))
  '(jdee-db-active-breakpoint-face-colors (cons "#1B2229" "#D08770"))
  '(jdee-db-requested-breakpoint-face-colors (cons "#1B2229" "#A3BE8C"))
  '(jdee-db-spec-breakpoint-face-colors (cons "#1B2229" "#4f5b66"))
- '(org-agenda-files
-   (quote
-    ("~/Dropbox/org/gcal.org" "~/Dropbox/org/unterrichte.org" "~/Dropbox/org/ereignisse.org" "~/Dropbox/org/jahrestage.org" "~/Dropbox/org/todo.org")))
  '(org-agenda-sticky t)
  '(org-agenda-tags-column 80)
  '(org-fontify-done-headline t)
@@ -42,16 +39,16 @@
 ")
  '(org-tag-faces
    (quote
-    (("examinatio" . "#ff9999")
-     ("projectum" . "#ffff99")
-     ("legere" . "#00ffcc")
-     ("revisere" . "#ff9933")
+    (("exam" . "#ff9999")
+     ("project" . "#ffff99")
+     ("reading" . "#00ffcc")
+     ("review" . "#ff9933")
      ("ereignisse" . "#66ff66")
      ("unterrichte" . "#66ccff"))))
  '(org-tags-column 80)
  '(package-selected-packages
    (quote
-    (guess-language calfw-org calfw-gcal calfw org-gcal request nlinum-hl visual-fill-column minimap nlinum magit hlinum doom-themes solaire-mode eldoc-eval use-package evil-multiedit iedit anzu evil-anzu neotree powerline all-the-icons all-the-icons-ivy ess auctex org ivy smooth-scrolling org-ref yasnippet solarized-theme projectile org-bullets evil counsel)))
+    (calfw-cal guess-language calfw-org calfw-gcal calfw org-gcal request nlinum-hl visual-fill-column minimap nlinum magit hlinum doom-themes solaire-mode eldoc-eval use-package evil-multiedit iedit anzu evil-anzu neotree powerline all-the-icons all-the-icons-ivy ess auctex org ivy smooth-scrolling org-ref yasnippet solarized-theme projectile org-bullets evil counsel)))
  '(vc-annotate-background "#1B2229")
  '(vc-annotate-color-map
    (list
