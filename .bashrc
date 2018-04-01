@@ -30,7 +30,7 @@ alias fat32="sudo mkfs.vfat"
 alias pacup="sudo pacman -Syu" 
 alias pacout="sudo pacman -Syu --noconfirm && shutdown +1" 
 alias pacaup="pacaur -Syua" 
-alias paclean="sudo pacman -Rsn $(pacman -Qdtq)"
+# alias paclean="sudo pacman -Rsn $(pacman -Qdtq)"
 alias bashrc="emacs ~/.bashrc && source ~/.bashrc"
 alias mynotes="emacs ~/Dropbox/projects/paris_1/m1_2/m1_2_notes.org"
 alias mypdf="zathura ~/Dropbox/projects/paris_1/m1_2/m1_2_notes.pdf"
@@ -84,3 +84,4 @@ screenfetch
 
 #PROMPT_COMMAND="prompt_on_top"
 #trap 'pre_cmd' DEBUG
+source /home/sync0/.oh-my-git/prompt.sh
