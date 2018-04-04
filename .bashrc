@@ -84,4 +84,4 @@ screenfetch
 
 #PROMPT_COMMAND="prompt_on_top"
 #trap 'pre_cmd' DEBUG
-source /home/sync0/.oh-my-git/prompt.sh
+# source /home/sync0/.oh-my-git/prompt.sh

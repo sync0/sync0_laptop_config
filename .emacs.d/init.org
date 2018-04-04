@@ -3,10 +3,11 @@
 #+EMAIL: cantorlunae@gmail.com
 #+STARTUP: noindent  showall
 #+PROPERTY: header-args :tangle yes
-* Reminders
+* Rseminders
 - Remember that <s + tab creates a code block for adding more entries.
-  - Remember to include the line "emacs-lisp".
+  - Remember to include the line "emacs-lisp". 
 - Remember the location for hunspell dictionaries should be in /usr/share/hunspell.
+- (PROPERTY: header-args :tangle yes)
 * Initialization
 ** Scratch Message
 The following code changes the welcoming message displayed by Emacs in the
@@ -47,7 +48,7 @@ The following code changes the welcoming message displayed by Emacs in the
    This code, which I borrowed from another user, sets up tangling to
    byte-compile the /init.org/ file, and thus, make Emacs load faster. Also,
    when byte-compiling, Emacs displays whether there are any errors or
-   warnings, which makes it easier to track bugs.
+   warnings, which makes it easier to track bugs and else.
    #+BEGIN_SRC emacs-lisp
      (defun tangle-init ()
        "If the current buffer is 'init.org' the code-blocks are
@@ -58,7 +59,6 @@ The following code changes the welcoming message displayed by Emacs in the
          (let ((prog-mode-hook nil))
            (org-babel-tangle)
            (byte-compile-file (concat user-emacs-directory "init.el")))))
-
      (add-hook 'after-save-hook 'tangle-init)
    #+END_SRC 
 ** Packages
@@ -71,22 +71,23 @@ The following code changes the welcoming message displayed by Emacs in the
      ;; Set up the package repositories 
      (add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/"))
      (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
-     (add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/"))
+;;     (add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/"))
      (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
 
      (setq package-check-signature nil)
    #+END_SRC
 ** Use-package
 #+BEGIN_SRC emacs-lisp
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
-(setq use-package-verbose t)
-(setq use-package-always-ensure t)
-(require 'use-package)
-;;(eval-when-compile
- ;; (require 'use-package))
-;;(use-package diminish :ensure t)
+  (unless (package-installed-p 'use-package)
+    (package-refresh-contents)
+    (package-install 'use-package))
+  (setq use-package-verbose t)
+  ;;(setq use-package-always-ensure t)
+  (require 'use-package)
+;;  (eval-when-compile
+ ;;  (require 'use-package))
+  ;;(use-package diminish )
+  (require 'bind-key)
 #+END_SRC 
 ** Modeline
 #+BEGIN_SRC emacs-lisp
@@ -108,7 +109,9 @@ The following code changes the welcoming message displayed by Emacs in the
 #+END_SRC 
 ** Fancy Battery 
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'after-init-hook #'fancy-battery-mode)
+(use-package fancy-battery
+:init 
+  (add-hook 'after-init-hook #'fancy-battery-mode))
   #+END_SRC 
 ** Text settings
 #+BEGIN_SRC emacs-lisp
@@ -144,6 +147,8 @@ The following code changes the welcoming message displayed by Emacs in the
                                              ;auto-fill-function 'do-auto-fill) ; Auto-fill-mode everywhere
       )
 
+;; make navigation easy
+(setq frame-title-format "%b")
 
      ;;Workspace keybindgs
      (defun toggle-mode-line () 
@@ -210,7 +215,6 @@ The following code changes the welcoming message displayed by Emacs in the
 (recentf-mode +1)
 
 ;;(global-set-key (kbd "<f5>") 'recentf-open-files)
-(global-set-key (kbd "<f5>") 'counsel-recentf)
 
 (define-key recentf-dialog-mode-map (kbd "j") 'next-line)
 (define-key recentf-dialog-mode-map (kbd "k") 'previous-line)
@@ -442,24 +446,23 @@ that I’ve copied from the web.
 #+END_SRC
 ** Elisp evaluation
 #+BEGIN_SRC emacs-lisp
-(use-package lisp-mode
-:defer t
-  :init
-(use-package eldoc
-      :commands turn-on-eldoc-mode
-      :init
-      (progn
-        (add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
-        (add-hook 'lisp-interaction-mode-hook 'turn-on-eldoc-mode)
-        (add-hook 'ielm-mode-hook 'turn-on-eldoc-mode))))
+  ;; (use-package lisp-mode
+  ;; :defer t
+  ;;   :init
+  ;; (use-package eldoc
+  ;;       :init
+  ;;       (progn
+  ;;         (add-hook 'emacs-lisp-mode-hook #'eldoc-mode)
+  ;;         (add-hook 'lisp-interaction-mode-hook #'eldoc-mode)
+  ;;         (add-hook 'ielm-mode-hook #'eldoc-mode))))
 
-;; Have org-mode indent elips sections by default
-(setq org-src-tab-acts-natively t) 
+  ;; Have org-mode indent elips sections by default
+  (setq org-src-tab-acts-natively t) 
 #+END_SRC 
 * Packages 
 ** All the icons
 #+BEGIN_SRC emacs-lisp
-(use-package all-the-icons
+(use-package all-the-icons :after ivy
 :config
 ;; ivy setup
 (progn
@@ -469,7 +472,7 @@ that I’ve copied from the web.
 #+END_SRC 
 ** Doom theme
 #+BEGIN_SRC emacs-lisp
-  (use-package doom-themes :ensure t :defer t 
+  (use-package doom-themes  :defer t 
 :init
 (progn
     ;;(load-theme 'doom-one-vibrant t)
@@ -567,281 +570,255 @@ that I’ve copied from the web.
  (setq flyspell-issue-message-flag nil)
 
 ;; Flyspell lazy
- (add-to-list 'load-path "~/.emacs.d/sync0_git/flyspell-lazy")
- (require 'flyspell-lazy)
- (flyspell-lazy-mode 1)
+(use-package flyspell-lazy :after flyspell-mode :load-path "~/.emacs.d/sync0_git/flyspell-lazy"
+:config
+ (flyspell-lazy-mode 1))
+
  (flyspell-mode 1)      ; or (flyspell-prog-mode)
  #+END_SRC 
 ** Auc-Tex
 #+BEGIN_SRC emacs-lisp
-(setq Tex-PDF-mode t)
+(use-package tex
+:defer t
+:ensure auctex
+:config
+(setq Tex-PDF-mode t))
 #+END_SRC
 ** EVIL mode 
-*** initializing
-#+BEGIN_SRC emacs-lisp
-(require 'evil)
-(evil-mode 1)
-;;(add-hook 'org-mode-hook (lambda () (evil-mode 1)))
-(add-to-list 'evil-emacs-state-modes 'cfw:details-mode)
-#+END_SRC
-*** Key-chord for fast exit insert mode
-#+BEGIN_SRC emacs-lisp
-;; (require 'evil-escape)
-;; (evil-escape 1)
-;; (setq-default evil-escape-key-sequence "fd")
-;; (setq-default evil-escape-delay 0.2)
+   #+BEGIN_SRC emacs-lisp
+     ;; initializing
+     (use-package evil  :after org
+       :bind (
+              ;; ESC quits almost anything
+              :map evil-normal-state-map
+              ;;     ("ESC" . keyboard-quit)
+                   ;; quickly switch buffers
+                   ("C-j" . next-buffer)
+                   ("C-k" . previous-buffer)
+                   ("C-S-h" . evil-window-left)
+                   ("C-S-j" . evil-window-down)
+                   ("C-S-k" . evil-window-up)
+                   ("C-S-l" . evil-window-right))
+               ;;    :map evil-visual-state-map
+                ;;   ("ESC" . keyboard-quit))
+                  ;; :map minibuffer-local-map
+                   ;;("ESC" . minibuffer-keyboard-quit)
+                  ;; :map minibuffer-local-ns-map
+                   ;;("ESC" . minibuffer-keyboard-quit)
+                   ;;:map minibuffer-local-completion-map
+                  ;; ("ESC" . minibuffer-keyboard-quit)
+                   ;;:map minibuffer-local-must-match-map
+                  ;; ("ESC" . minibuffer-keyboard-quit)
+                   ;;:map minibuffer-local-isearch-map
+                   ;;("ESC" . minibuffer-keyboard-quit))
+:init
+         (evil-mode 1)
+       :config
+  
 
- ;; (require 'key-chord)
- ;;(key-chord-mode 1)
- ;;(key-chord-define evil-insert-state-map  "fd" 'evil-normal-state)
-#+END_SRC 
-*** evil-escape
-#+BEGIN_SRC emacs-lisp
-(require 'evil-escape)
-;; (evil-escape 1)
-;; The key sequence can be customized with the variable
-;; (setq-default evil-escape-key-sequence "fd")
+         ;;(add-hook 'org-mode-hook (lambda () (evil-mode 1)))
+         ;;(add-hook 'after-init-hook '#evil-mode) 
+         (add-to-list 'evil-emacs-state-modes 'cfw:details-mode)
 
-;; The delay between the two key presses can be customized with
-;; (setq-default evil-escape-delay 0.1)
+       ;; input methods 
+       ;; set default input method
+       ;; (setq default-input-method "TeX")
+       ;; no input method for evil normal state
+       (add-hook 'evil-normal-state-entry-hook
+                 (lambda () (set-input-method 'nil)))
+       ;; Spanish
 
-;; The key sequence can be entered in any order by setting
-(setq evil-escape-unordered-key-sequence t) 
-  #+END_SRC 
+       ;; spanish-postfix for evil insert mode
+       ;;(add-hook 'evil-insert-state-entry-hook
+       ;; (lambda () (set-input-method "spanish-postfix")))
+
+       ;; spanish-postfix for evil insert mode
+       ;;(add-hook 'evil-insert-state-entry-hook
+       ;; (lambda () (set-input-method "spanish-postfix")))
+       ;; Latin
+
+       ;; latin-1-postfix for evil replace mode
+       ;;(add-hook 'evil-replace-state-entry-hook
+       ;; (lambda () (set-input-method "latin-1-postfix")))
+
+       ;; latin-1-postfix for evil replace mode
+       ;;(add-hook 'evil-replace-state-entry-hook
+       ;; (lambda () (set-input-method "latin-1-postfix")))
+       ;; French 
+
+       ;; french-postfix for evil insert mode 
+       (add-hook 'evil-insert-state-entry-hook 
+                 (lambda () (set-input-method "french-postfix")))
+
+       ;; french-postfix for evil replace mode
+       (add-hook 'evil-replace-state-entry-hook
+                 (lambda () (set-input-method "french-postfix")))
+       ;; German 
+
+       ;; german-postfix for evil insert mode
+       ;;(add-hook 'evil-insert-state-entry-hook
+       ;;(lambda () (set-input-method "german-postfix")))
+
+       ;; german-postfix for evil replace mode
+       ;;(add-hook 'evil-replace-state-entry-hook
+       ;;(lambda () (set-input-method "german-postfix")))
+
+         ;; EVIL org
+         ;; setup functions
+         (defun clever-insert-item ()
+           "Clever insertion of org item."
+           (if (not (org-in-item-p))
+               (insert "\n")
+             (org-insert-item)))
+
+         (defun evil-org-eol-call (fun)
+           "Go to end of line and call provided function.
+       FUN function callback"
+           (end-of-line)
+           (funcall fun)
+           (evil-append nil))
+
+         ;; key bindings
+         ;; redefinition evils visual mode map
+         (evil-define-key 'normal org-mode-map
+           ;; "<" 'outline-previous-visible-heading
+           ">"   'org-forward-heading-same-level
+           "<"  'org-backward-heading-same-level
+           ;; ">" 'outline-next-visible-heading
+           "H" 'org-metaleft
+           "L" 'org-metaright
+           "K" 'org-metaup
+           "J" 'org-metadown
+           ;; "K" 'outline-previous-visible-heading
+           ;;"J" 'outline-next-visible-heading
+           ;; "H" (if (fboundp 'org-backward-same-level)
+           ;;   'org-backward-same-level
+           ;;'org-backward-heading-same-level)
+           ;;  "L" (if (fboundp 'org-forward-same-level) ;to be backward compatible with older org version
+           ;;   'org-forward-same-level
+           ;;'org-forward-heading-same-level)
+           ;;  "<" 'org-metaleft
+           ;; ">" 'org-metaright
+           "k" 'previous-line
+           "j" 'next-line
+           ;;  "m" 'set-mark-command
+           "q" 'fill-paragraph
+           "o" '(lambda () (interactive) (evil-org-eol-call 'clever-insert-item))
+           "O" '(lambda () (interactive) (evil-org-eol-call 'org-insert-heading))
+           "$" 'org-end-of-line
+           "^" 'org-beginning-of-line
+           "[" 'backward-sentence
+           "]" 'forward-sentence
+           "{" 'org-backward-paragraph
+           "}" 'org-forward-paragraph
+           "-" 'org-cycle-list-bullet
+           (kbd "<tab>") 'org-cycle)
+
+         (evil-define-key 'visual org-mode-map
+           "e" 'org-emphasize)
+         (setq evil-mode-line-format nil
+         ;; turn off auto-indent 
+          evil-auto-indent nil
+         ;; Change color of evil cursor
+               evil-insert-state-cursor '(bar "#dc322f")
+               evil-normal-state-cursor '(box "#268bd2")
+               evil-visual-state-cursor '(box "#d33682"))
+         ;; Improve EVIL behavior with visual lines
+         ;; Make movement keys work like they should
+         (define-key evil-normal-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
+         (define-key evil-normal-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line)
+         (define-key evil-motion-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
+         (define-key evil-motion-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line)
+         ;; Make horizontal movement cross lines                                    
+         (setq-default evil-cross-lines t))
+   #+END_SRC 
 *** evil-snipe
 #+BEGIN_SRC emacs-lisp
-    ;; enable both globally:
-    (evil-snipe-mode +1)
-    (evil-snipe-override-mode +1)
-
-  ;; These variables determine the scope of snipes (and the incremental highlighter):
-    (setq evil-snipe-scope 'buffer 
-          evil-snipe-repeat-scope 'buffer)
-
-  ;; To map [ to any opening parentheses or bracket in all modes:
-                (push '(?\[ "[[{(]") evil-snipe-aliases)
-                (push '(?\{ "[[{(]") evil-snipe-aliases)
-                (push '(?\( "[[{(]") evil-snipe-aliases)
-
-  ;; To map : to a python function (but only in python-mode):
-                ;; (add-hook 'org-mode-hook
-                ;;           (lambda ()
-                ;;             (make-variable-buffer-local 'evil-snipe-aliases)
-                ;;             (push '(?qt "blockquote") evil-snipe-aliases)
-                ;;             (push '(?bg "begin") evil-snipe-aliases)))
-
-  ;; It seems evil-snipe-override-mode causes problems in Magit buffers, to fix this:
-  (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode)
+         ;; evil-escape
+(use-package evil-snipe :after evil
+  :commands (evil-snipe-mode evil-snipe-override-mode
+             evil-snipe-local-mode evil-snipe-override-local-mode)
+  :init
+  (setq evil-snipe-smart-case t
+        evil-snipe-scope 'line
+        evil-snipe-repeat-scope 'whole-line
+        evil-snipe-char-fold t
+       ;; evil-snipe-disabled-modes 'magit-mode
+        evil-snipe-aliases '((?\[ "[[{(]")
+                             (?\] "[]})]")
+                             (?\; "[;:]")))
+  (add-hook 'after-init-hook 'evil-snipe-mode)
+ (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode)
+ (add-hook 'after-init-hook 'evil-snipe-override-mode))
   #+END_SRC 
-*** input methods 
+*** evil-escape
 #+BEGIN_SRC emacs-lisp
-  ;; set default input method
-  ;; (setq default-input-method "TeX")
+(use-package evil-escape :after evil
+  :commands evil-escape-mode
+  :init
+  (setq evil-escape-excluded-states '(normal visual multiedit emacs motion)
+        ;; evil-escape-excluded-major-modes '(neotree-mode)
+        evil-escape-key-sequence "fd"
+evil-escape-unordered-key-sequence t
+        evil-escape-delay 0.25)
+  (add-hook 'after-init-hook 'evil-escape-mode)
+  :config
+  ;; no `evil-escape' in minibuffer
+  (cl-pushnew #'minibufferp evil-escape-inhibit-functions :test #'eq))
 
-  ;; no input method for evil normal state
-  (add-hook 'evil-normal-state-entry-hook
-    (lambda () (set-input-method 'nil)))
-
-;; Spanish
-
-  ;; spanish-postfix for evil insert mode
-  ;;(add-hook 'evil-insert-state-entry-hook
-  ;; (lambda () (set-input-method "spanish-postfix")))
-
-  ;; spanish-postfix for evil insert mode
-  ;;(add-hook 'evil-insert-state-entry-hook
-  ;; (lambda () (set-input-method "spanish-postfix")))
-
-;; Latin
-
-  ;; latin-1-postfix for evil replace mode
-  ;;(add-hook 'evil-replace-state-entry-hook
-  ;; (lambda () (set-input-method "latin-1-postfix")))
-
-  ;; latin-1-postfix for evil replace mode
-  ;;(add-hook 'evil-replace-state-entry-hook
-  ;; (lambda () (set-input-method "latin-1-postfix")))
-
-;; French 
-
-  ;; french-postfix for evil insert mode 
-(add-hook 'evil-insert-state-entry-hook 
-(lambda () (set-input-method "french-postfix")))
-
-  ;; french-postfix for evil replace mode
-(add-hook 'evil-replace-state-entry-hook
-(lambda () (set-input-method "french-postfix")))
-
-;; German 
-
-  ;; german-postfix for evil insert mode
- ;;(add-hook 'evil-insert-state-entry-hook
- ;;(lambda () (set-input-method "german-postfix")))
-
-  ;; german-postfix for evil replace mode
-;;(add-hook 'evil-replace-state-entry-hook
-;;(lambda () (set-input-method "german-postfix")))
-
-
-  ;; (key-chord-define evil-insert-state-map  "fd" 'evil-normal-state)
-
-
-
-  ;; (add-hook 'evil-insert-state-entry-hook 'my-french-setup)
-  ;; (add-hook 'evil-normal-state-entry-hook 'my-english-setup)
-  ;; (add-hook 'evil-replace-state-entry-hook 'my-french-setup)
-
-  ;; (add-hook 'evil-normal-state-entry-hook 'toggle-input-method)
-  ;; (add-hook 'evil-insert-state-entry-hook 'toggle-input-method)
-  ;; (add-hook 'evil-replace-state-entry-hook 'toggle-input-method)
-
-  ;; keybing
-  ;;    (global-set-key (kbd "s-SPC") 'evil-toggle-input-method)
-#+END_SRC
-*** EVIL org
-**** basic settings
-#+BEGIN_SRC emacs-lisp
-(defun clever-insert-item ()
-  "Clever insertion of org item."
-  (if (not (org-in-item-p))
-      (insert "\n")
-    (org-insert-item))
-  )
-
-(defun evil-org-eol-call (fun)
-  "Go to end of line and call provided function.
-FUN function callback"
-  (end-of-line)
-  (funcall fun)
-  (evil-append nil)
-  )
-#+END_SRC
-**** key bindings
-#+BEGIN_SRC emacs-lisp
-;; redefinition evils visual mode map
-(evil-define-key 'normal org-mode-map
-  ;; "<" 'outline-previous-visible-heading
-  ">"   'org-forward-heading-same-level
-  "<"  'org-backward-heading-same-level
-  ;; ">" 'outline-next-visible-heading
-  "H" 'org-metaleft
-  "L" 'org-metaright
-  "K" 'org-metaup
-  "J" 'org-metadown
- ;; "K" 'outline-previous-visible-heading
-  ;;"J" 'outline-next-visible-heading
- ;; "H" (if (fboundp 'org-backward-same-level)
-	;;   'org-backward-same-level
-	  ;;'org-backward-heading-same-level)
-;;  "L" (if (fboundp 'org-forward-same-level) ;to be backward compatible with older org version
-	;;   'org-forward-same-level
-	  ;;'org-forward-heading-same-level)
-;;  "<" 'org-metaleft
- ;; ">" 'org-metaright
-  "k" 'previous-line
-  "j" 'next-line
-;;  "m" 'set-mark-command
-  "q" 'fill-paragraph
-  "o" '(lambda () (interactive) (evil-org-eol-call 'clever-insert-item))
-  "O" '(lambda () (interactive) (evil-org-eol-call 'org-insert-heading))
-  "$" 'org-end-of-line
-  "^" 'org-beginning-of-line
-  "[" 'backward-sentence
-  "]" 'forward-sentence
-  "{" 'org-backward-paragraph
-  "}" 'org-forward-paragraph
-  "-" 'org-cycle-list-bullet
-  (kbd "<tab>") 'org-cycle)
-
-(evil-define-key 'visual org-mode-map
-  "e" 'org-emphasize
-)
-#+END_SRC
-*** 取 EVIL org_copy
-**** basic settings
-(defun clever-insert-item ()
-  "Clever insertion of org item."
-  (if (not (org-in-item-p))
-      (insert "\n")
-    (org-insert-item))
-  )
-
-(defun evil-org-eol-call (fun)
-  "Go to end of line and call provided function.
-FUN function callback"
-  (end-of-line)
-  (funcall fun)
-  (evil-append nil)
-  )
-**** key bindings
-(evil-define-key 'normal org-mode-map
-  "K" 'outline-previous-visible-heading
-  "L" (if (fboundp 'org-forward-same-level) ;to be backward compatible with older org version
-	   'org-forward-same-level
-	  'org-forward-heading-same-level)
-  "H" (if (fboundp 'org-backward-same-level)
-	   'org-backward-same-level
-	  'org-backward-heading-same-level)
-  "J" 'outline-next-visible-heading
-  "k" 'previous-line
-  "j" 'next-line
-  "m" 'set-mark-command
-  "q" 'fill-paragraph
-  "o" '(lambda () (interactive) (evil-org-eol-call 'clever-insert-item))
-  "O" '(lambda () (interactive) (evil-org-eol-call 'org-insert-heading))
-  "$" 'org-end-of-line
-  "^" 'org-beginning-of-line
-  "<" 'org-metaleft
-  ">" 'org-metaright
-  "[" 'backward-sentence
-  "]" 'forward-sentence
-  "{" 'org-backward-paragraph
-  "}" 'org-forward-paragraph
-  "-" 'org-cycle-list-bullet
-  (kbd "<tab>") 'org-cycle)
-*** ESC quits almost anything
-#+BEGIN_SRC emacs-lisp
-   (define-key evil-normal-state-map [escape] 'keyboard-quit)
-   (define-key evil-visual-state-map [escape] 'keyboard-quit)
-   (define-key minibuffer-local-map [escape] 'minibuffer-keyboard-quit)
-   (define-key minibuffer-local-ns-map [escape] 'minibuffer-keyboard-quit)
-   (define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
-   (define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
-   (define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
-#+END_SRC
-*** Change color of evil cursor
-#+BEGIN_SRC emacs-lisp
-(setq evil-mode-line-format nil
-         evil-insert-state-cursor '(bar "#dc322f")
-         evil-normal-state-cursor '(box "#268bd2")
-         evil-visual-state-cursor '(box "#d33682"))
-#+END_SRC 
-*** Improve EVIL behavior with visual lines
-#+BEGIN_SRC emacs-lisp
-;; Make movement keys work like they should
-(define-key evil-normal-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
-(define-key evil-normal-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line)
-(define-key evil-motion-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
-(define-key evil-motion-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line)
-; Make horizontal movement cross lines                                    
-(setq-default evil-cross-lines t)
-#+END_SRC
-*** quickly switch buffers
-#+BEGIN_SRC emacs-lisp
-(define-key evil-normal-state-map (kbd "C-j") 'next-buffer)
-(define-key evil-normal-state-map (kbd "C-k") 'previous-buffer)
-(define-key evil-normal-state-map (kbd "C-S-h") 'evil-window-left)
-(define-key evil-normal-state-map (kbd "C-S-j") 'evil-window-down)
-(define-key evil-normal-state-map (kbd "C-S-k") 'evil-window-up)
-(define-key evil-normal-state-map (kbd "C-S-l") 'evil-window-right)
-
-;; make navigation easy
-(setq frame-title-format "%b")
-#+END_SRC 
-*** turn off auto-indent 
-(setq evil-auto-indent nil)
+  ;;(define-key evil-insert-state-map  (kbd "C-g") #'evil-escape)
+  ;;(define-key evil-replace-state-map (kbd "C-g") #'evil-escape)
+  ;;(define-key evil-visual-state-map  (kbd "C-g") #'evil-escape)
+  ;;(define-key evil-operator-state-map (kbd "C-g") #'evil-escape))
+         ;; evil-snipe
+  #+END_SRC 
+*** evil-multiedit
+         (use-package evil-multiedit :after evil
+  :commands (evil-multiedit-match-all
+             evil-multiedit-match-and-next
+             evil-multiedit-match-and-prev
+             evil-multiedit-match-symbol-and-next
+             evil-multiedit-match-symbol-and-prev
+             evil-multiedit-toggle-or-restrict-region
+             evil-multiedit-next
+             evil-multiedit-prev
+             evil-multiedit-abort
+             evil-multiedit-ex-match))
+           ;; :bind (:map evil-visual-state-map 
+           ;;             ;; Highlights all matches of the selection in the buffer.
+           ;;             ("R" . evil-multiedit-match-all)
+           ;;             ;; Match selected region.
+           ;;             ("M-d" . evil-multiedit-and-next)
+           ;;             ;; Same as M-d but in reverse.
+           ;;             ("M-D" . evil-multiedit-and-prev)
+           ;;             ;; Restore the last group of multiedit régions.
+           ;;             ;;("C-M-D" . evil-multiedit-restore)
+           ;;             :map evil-normal-state-map 
+           ;;             ;; Match the word under cursor (i.e. make it an edit region). Consecutive presses will
+           ;;             ;; incrementally add the next unmatched match.
+           ;;             ("M-d" . evil-multiedit-match-and-next)
+           ;;             ;; Same as M-d but in reverse.
+           ;;             ("M-D" . evil-multiedit-match-and-prev)
+           ;;             :map evil-insert-state-map 
+           ;;             ;; Insert marker at point
+           ;;             ("M-d" . evil-multiedit-toggle-marker-here)
+           ;;             :map evil-multiedit-state-map 
+           ;;             ;; RET will toggle the region under the cursor
+           ;;             ("RET" . evil-multiedit-toggle-or-restrict-region)
+           ;;             ;; For moving between edit régions
+           ;;             ("C-n" . evil-multiedit-next)
+           ;;             ("C-p" . evil-multiedit-prev)
+           ;;             :map evil-motion-state-map
+           ;;             ;; ...and in visual mode, RET will disable all fields outside the selected region
+           ;;             ("RET" . evil-multiedit-toggle-or-restrict-region)
+           ;;             :map evil-multiedit-insert-state-map
+           ;;             ;; For moving between edit régions
+           ;;             ("C-n" . evil-multiedit-next)
+           ;;             ("C-p" . evil-multiedit-prev)))
+          ;; :config
+           ;; Ex command that allows you to invoke evil-multiedit with a regular expression, e.g.
+           ;;(evil-ex-define-cmd "ie[dit]" 'evil-multiedit-ex-match))
 *** 取 EVIL multiple cursors
-#+BEGIN_SRC emacs-lisp
 ;;(require 'evil-mc)
 ;;(global-evil-mc-mode  1)
 ;;(define-key evil-mc-key-map (kbd "C->") 'evil-mc-make-and-goto-next-match)
@@ -850,90 +827,49 @@ FUN function callback"
 ;;(define-key evil-mc-key-map (kbd "C-<") 'evil-mc-make-and-goto-prev-match)
 ;;(define-key evil-mc-key-map (kbd "M-<") 'evil-mc-skip-and-goto-prev-cursor)
 ;;(define-key evil-mc-key-map (kbd "M-<") 'evil-mc-make-and-goto-prev-cursor)
-#+END_SRC 
-*** EVIL multiedit
-#+BEGIN_SRC emacs-lisp
-(require 'evil-multiedit)
-
-;; Keybindings
-
-;; Highlights all matches of the selection in the buffer.
-(define-key evil-visual-state-map "R" 'evil-multiedit-match-all)
-
-;; Match the word under cursor (i.e. make it an edit region). Consecutive presses will
-;; incrementally add the next unmatched match.
-(define-key evil-normal-state-map (kbd "M-d") 'evil-multiedit-match-and-next)
-;; Match selected region.
-(define-key evil-visual-state-map (kbd "M-d") 'evil-multiedit-and-next)
-;; Insert marker at point
-(define-key evil-insert-state-map (kbd "M-d") 'evil-multiedit-toggle-marker-here)
-
-;; Same as M-d but in reverse.
-(define-key evil-normal-state-map (kbd "M-D") 'evil-multiedit-match-and-prev)
-(define-key evil-visual-state-map (kbd "M-D") 'evil-multiedit-and-prev)
-
-;; OPTIONAL: If you prefer to grab symbols rather than words, use
-;; `evil-multiedit-match-symbol-and-next` (or prev).
-
-;; Restore the last group of multiedit regions.
-(define-key evil-visual-state-map (kbd "C-M-D") 'evil-multiedit-restore)
-
-;; RET will toggle the region under the cursor
-(define-key evil-multiedit-state-map (kbd "RET") 'evil-multiedit-toggle-or-restrict-region)
-
-;; ...and in visual mode, RET will disable all fields outside the selected region
-(define-key evil-motion-state-map (kbd "RET") 'evil-multiedit-toggle-or-restrict-region)
-
-;; For moving between edit regions
-(define-key evil-multiedit-state-map (kbd "C-n") 'evil-multiedit-next)
-(define-key evil-multiedit-state-map (kbd "C-p") 'evil-multiedit-prev)
-(define-key evil-multiedit-insert-state-map (kbd "C-n") 'evil-multiedit-next)
-(define-key evil-multiedit-insert-state-map (kbd "C-p") 'evil-multiedit-prev)
-
-;; Ex command that allows you to invoke evil-multiedit with a regular expression, e.g.
-(evil-ex-define-cmd "ie[dit]" 'evil-multiedit-ex-match)
-#+END_SRC 
 ** Projectile
 #+BEGIN_SRC emacs-lisp
-;; enable projectile by default
-(projectile-mode)
-
-;; replace annoying EMACS cursor commands
-(global-set-key (kbd "C-p") nil) 
-
-;; add a more nemonic command
- (setq projectile-keymap-prefix (kbd "C-p"))
- (require 'projectile)
+(use-package projectile :after ivy
+  :config
+  (progn
+    (setq projectile-keymap-prefix (kbd "C-p"))
+    (setq projectile-completion-system 'ivy)
+    (setq projectile-enable-caching t)
+    ;;(setq projectile-indexing-method 'alien)
+    (add-to-list 'projectile-globally-ignored-files "node-modules"))
+  :config
+  (projectile-mode))
 #+END_SRC
-** Swiper - Ivy - Counsel
-*** basic config
+** Swiper
 #+BEGIN_SRC emacs-lisp
-(ivy-mode 1)
+(use-package swiper 
+:bind
+(("C-s" . swiper)))
+#+END_SRC
+** Counsel
+#+BEGIN_SRC emacs-lisp
+(use-package counsel 
+:bind
+(("M-x" . counsel-M-x)
+("M-y" . counsel-yank-pop)
+("C-x C-f" . counsel-find-file)
+("<f5>" . counsel-recentf)
+("<f1> f" . counsel-describe-function)
+("<f1> v" . counsel-describe-variable)
+("<f1> l" . counsel-load-library)
+("<f2> i" . counsel-info-lookup-symbol)
+("<f2> u" . counsel-unicode-char)))
+#+END_SRC
+** Ivy 
+#+BEGIN_SRC emacs-lisp
+(use-package ivy
+:init
+(progn
 (setq ivy-use-virtual-buffers t)
-(setq ivy-count-format "(%d/%d) ") 
+(setq ivy-count-format "(%d/%d) "))
+:config
+(add-hook 'after-init-hook 'ivy-mode))
 #+END_SRC
-*** keybindings
-#+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "C-s") 'swiper)
-(global-set-key (kbd "M-x") 'counsel-M-x)
-(global-set-key (kbd "M-y") 'counsel-yank-pop)
-(global-set-key (kbd "C-x C-f") 'counsel-find-file)
-(global-set-key (kbd "<f1> f") 'counsel-describe-function)
-(global-set-key (kbd "<f1> v") 'counsel-describe-variable)
-(global-set-key (kbd "<f1> l") 'counsel-load-library)
-(global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
-(global-set-key (kbd "<f2> u") 'counsel-unicode-char)
-#+END_SRC
-*** projectile settings
-#+BEGIN_SRC emacs-lisp
-(setq projectile-completion-system 'ivy)
-#+END_SRC
-*** add cycling to counsel-yank-pop
-(use-package counsel
-  :bind
-  (("M-y" . counsel-yank-pop)
-   :map ivy-minibuffer-map
-   ("M-y" . ivy-next-line)))
 ** Org-mode 
 *** Capture mode
 #+BEGIN_SRC emacs-lisp
@@ -1434,9 +1370,12 @@ There is a strange inconsistency when habits are enabled. See [[https://emacs.st
 #+END_SRC
 *** Org-bullets
 #+BEGIN_SRC emacs-lisp
-(require 'org-bullets)
-(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+(use-package org-bullets :after org
+:commands org-bullets-mode
+:init
+(progn
 (setq org-bullets-bullet-list '("一" "二" "三" "四" "五" "六" "七" "八" "七" "九" "十"))
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))))
 #+END_SRC 
 *** hook flyspell into org-mode
 #+BEGIN_SRC emacs-lisp
@@ -1919,7 +1858,7 @@ from the `before-change-functions' in the current buffer."
 #+END_SRC 
 ** Yasnippets
 #+BEGIN_SRC emacs-lisp
-(use-package yasnippet :ensure t
+(use-package yasnippet :defer t 
   :commands (yas-minor-mode) ; autoload `yasnippet' when `yas-minor-mode' is called
                                         ; using any means: via a hook or by user
                                         ; Feel free to add more commands to this
@@ -1982,7 +1921,7 @@ from the `before-change-functions' in the current buffer."
       ;;(define-key evil-normal-state-local-map (kbd "RET") 'neotree-enter))))
 ** Anzu
 #+BEGIN_SRC emacs-lisp
-  (use-package anzu :ensure t :defer 5
+  (use-package anzu  :defer 5
     :config 
 (progn
 (global-anzu-mode)
@@ -1991,7 +1930,7 @@ from the `before-change-functions' in the current buffer."
 #+END_SRC 
 ** Smooth scrolling
 #+BEGIN_SRC emacs-lisp
-(use-package smooth-scrolling
+(use-package smooth-scrolling :defer t
 :config
 (progn
 (smooth-scrolling-mode 1)
@@ -2075,7 +2014,7 @@ from the `before-change-functions' in the current buffer."
   			  			  (yas-expand))))
 ** Solaire mode
 #+BEGIN_SRC emacs-lisp
-(use-package solaire-mode :ensure t :after doom-themes 
+(use-package solaire-mode  :after doom-themes 
   :init ; stuff to do before requiring the package
   (progn
 ;; brighten buffers (that represent real files)
@@ -2096,17 +2035,16 @@ from the `before-change-functions' in the current buffer."
 #+END_SRC 
 ** Nlinum
 #+BEGIN_SRC emacs-lisp
-(use-package nlinum-mode :ensure t 
-:commands (global-nlinum-mode)
-:config
-;; activate for doom-theme 
+(use-package nlinum  
+:config 
 (progn
 (setq nlinum-highlight-current-line t)
-(setq nlinum-format "%d ")))
+(setq nlinum-format "%d ")
+(add-hook 'org-mode-hook '(lambda () (nlinum-mode t)))))
 #+END_SRC 
 ** Nlinum hl 
 #+BEGIN_SRC emacs-lisp
-(use-package nlinum-hl :ensure t :after nlinum-mode
+(use-package nlinum-hl  :after nlinum
 :config
 ;; Changing fonts can leave nlinum line numbers in their original size; this
 ;; forces them to resize.
@@ -2114,26 +2052,25 @@ from the `before-change-functions' in the current buffer."
 #+END_SRC 
 ** Hl-line mode
 #+BEGIN_SRC emacs-lisp
-(use-package hl-line-mode :ensure t :after nlinum-mode
+(use-package hl-line-mode  :after nlinum
+:commands global-hl-line-mode
 :config
 (global-hl-line-mode 1))
 #+END_SRC 
 ** Magit
 #+BEGIN_SRC emacs-lisp
   (use-package magit
-    :ensure t
     :defer t
     :bind
   ;; bind a quick and dirty shortcut to 
    (("C-x g" . magit-status)
   ;; bind the popup of popus
    ("C-x M-g" . magit-dispatch-popup)))
-#+END_SRC 
+  #+END_SRC 
 ** Org-gcal
 #+BEGIN_SRC emacs-lisp
-(setq package-check-signature nil)
-(require 'org-gcal)
-
+(use-package org-gcal :defer t :after org 
+:init
 (setq org-gcal-client-id "478680381907-rdq488vt3kdutlt1a32sajihog95iuo2.apps.googleusercontent.com"
 	org-gcal-client-secret "EsCu2Ikaga6TIa0KVpZ9jRTS"
 	org-gcal-file-alist '(("cantorlunae@gmail.com" .  "~/Dropbox/org/gcal.org")
@@ -2142,7 +2079,7 @@ from the `before-change-functions' in the current buffer."
 ("ekk7658f3jm5fh1mea2sdnu8vc@group.calendar.google.com" . "~/Dropbox/org/gewohnheiten.org")
 ("#contacts@group.v.calendar.google.com" . "~/Dropbox/org/jahrestage.org")
 ;;("#contacts@group.v.calendar.google.com" . "~/Dropbox/org/jahrestage.org")
-))
+)))
 
 ;;(add-hook 'org-agenda-mode-hook (lambda () (org-gcal-sync) ))
 ;;(add-hook 'org-capture-after-finalize-hook (lambda () (org-gcal-sync) ))
@@ -2208,26 +2145,11 @@ from the `before-change-functions' in the current buffer."
         cfw:fchar-top-left-corner ?┏
         cfw:fchar-top-right-corner ?┓)
 #+END_SRC 
-** 取 Visual fill column
-(require 'visual-fill-column)
-
-;; visual-fill-column-mode will then be activated in every buffer that uses visual-line-mode
-(global-visual-fill-column-mode)
-
-;; Set column width.
-(setq visual-fill-column-width 70)
-
-;; Put the fringes outside the margins.
-(setq visual-fill-column-fringes-outside-margins t)
-
-;; Solve problem with adjusting text size and margin calculation
-(advice-add 'text-scale-adjust :after #'visual-fill-column-adjust)
 ** Alert (Growl) 
 #+BEGIN_SRC emacs-lisp
-(use-package alert :load-path "~/.emacs.d/sync0_git/alert")
+(use-package alert :load-path "~/.emacs.d/sync0_git/alert" :defer t)
 #+END_SRC 
 ** Dim
-#+BEGIN_SRC emacs-lisp
   ;; (when (require 'dim nil t)
   ;; (dim-major-names
   ;;  '((emacs-lisp-mode           "EL")
@@ -2237,7 +2159,6 @@ from the `before-change-functions' in the current buffer."
   ;;  '((abbrev-mode   "")
   ;;    (snipe-mode       "" )))
   ;; )
- #+END_SRC 
 ** 阻 Diminish
 ;; This package implements hiding or abbreviation of the mode line displays (lighters) of minor-modes.
 (require 'diminish)
@@ -2250,7 +2171,7 @@ from the `before-change-functions' in the current buffer."
   #+END_SRC 
 ** Spaceline
 #+BEGIN_SRC emacs-lisp
-  (use-package spaceline :after powerline :ensure t
+  (use-package spaceline :after powerline 
     :config (setq spaceline-responsive nil))
   ;; (use-package spaceline-colors :after spaceline-all-the-icons :load-path "init/spaceline-colors"
   ;;   :config (advice-add 'load-theme :after 'spaceline-update-faces))
