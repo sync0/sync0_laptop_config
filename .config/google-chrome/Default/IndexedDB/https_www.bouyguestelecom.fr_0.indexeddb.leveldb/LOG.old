@@ -1,0 +1,6 @@
+2017/11/05-04:43:31.177 14016 Reusing MANIFEST /home/sync0/.config/google-chrome/Default/IndexedDB/https_www.bouyguestelecom.fr_0.indexeddb.leveldb/MANIFEST-000001
+2017/11/05-04:43:31.178 14016 Recovering log #10
+2017/11/05-04:43:31.178 14016 Reusing old log /home/sync0/.config/google-chrome/Default/IndexedDB/https_www.bouyguestelecom.fr_0.indexeddb.leveldb/000010.log 
+2017/11/05-04:59:26.906 12484 Level-0 table #14: started
+2017/11/05-04:59:26.919 12484 Level-0 table #14: 854094 bytes OK
+2017/11/05-04:59:26.921 12484 Delete type=0 #10

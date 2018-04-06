@@ -1,0 +1,9 @@
+2017/09/16-03:10:21.725 17730 Reusing MANIFEST /home/sync0/.config/google-chrome/Default/IndexedDB/https_de.scribd.com_0.indexeddb.leveldb/MANIFEST-000001
+2017/09/16-03:10:24.702 17730 Current memtable full; waiting...
+2017/09/16-03:10:24.702 18115 Level-0 table #5: started
+2017/09/16-03:10:24.705 18115 Level-0 table #5: 392 bytes OK
+2017/09/16-03:10:24.707 18115 Delete type=0 #3
+2017/09/16-03:10:24.707 18115 Level-0 table #7: started
+2017/09/16-03:10:24.707 18115 Level-0 table #7: 0 bytes OK
+2017/09/16-03:10:24.709 18115 Delete type=0 #4
+2017/09/16-03:10:24.711 18115 Manual compaction at level-0 from '\x00\x01\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x02\x00\x00\x00' @ 0 : 0; will stop at (end)

@@ -1,0 +1,16 @@
+2018/04/05-15:04:20.989 2084 Reusing MANIFEST /home/sync0/.config/google-chrome/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2018/04/05-15:04:20.989 2084 Recovering log #83
+2018/04/05-15:04:20.990 2084 Reusing old log /home/sync0/.config/google-chrome/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/000083.log 
+2018/04/05-15:04:28.566 2517 Compacting 1@1 + 4@2 files
+2018/04/05-15:04:28.640 2517 Generated table #86@1: 44257 keys, 2231846 bytes
+2018/04/05-15:04:28.707 2517 Generated table #87@1: 40778 keys, 2235723 bytes
+2018/04/05-15:04:28.775 2517 Generated table #88@1: 40327 keys, 2237656 bytes
+2018/04/05-15:04:28.845 2517 Generated table #89@1: 72167 keys, 2248719 bytes
+2018/04/05-15:04:28.853 2517 Generated table #90@1: 980 keys, 273344 bytes
+2018/04/05-15:04:28.853 2517 Compacted 1@1 + 4@2 files => 9227288 bytes
+2018/04/05-15:04:28.856 2517 compacted to: files[ 0 0 7 0 0 0 0 ]
+2018/04/05-15:04:28.856 2517 Delete type=2 #81
+2018/04/05-15:04:28.856 2517 Delete type=2 #84
+2018/04/05-15:04:28.856 2517 Delete type=2 #80
+2018/04/05-15:04:28.857 2517 Delete type=2 #78
+2018/04/05-15:04:28.857 2517 Delete type=2 #79

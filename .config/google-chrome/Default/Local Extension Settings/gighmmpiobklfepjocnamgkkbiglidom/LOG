@@ -1,0 +1,29 @@
+2018/04/06-18:01:48.911 1574 Reusing MANIFEST /home/sync0/.config/google-chrome/Default/Local Extension Settings/gighmmpiobklfepjocnamgkkbiglidom/MANIFEST-000001
+2018/04/06-18:01:48.916 1574 Recovering log #8845
+2018/04/06-18:01:48.927 1574 Reusing old log /home/sync0/.config/google-chrome/Default/Local Extension Settings/gighmmpiobklfepjocnamgkkbiglidom/008845.log 
+2018/04/06-18:02:48.695 2311 Level-0 table #8849: started
+2018/04/06-18:02:48.731 2311 Level-0 table #8849: 3252738 bytes OK
+2018/04/06-18:02:48.733 2311 Delete type=0 #8845
+2018/04/06-18:10:25.914 2311 Level-0 table #8851: started
+2018/04/06-18:10:25.962 2311 Level-0 table #8851: 3252875 bytes OK
+2018/04/06-18:10:25.966 2311 Delete type=0 #8848
+2018/04/06-19:02:48.701 2311 Level-0 table #8853: started
+2018/04/06-19:02:48.749 2311 Level-0 table #8853: 3258587 bytes OK
+2018/04/06-19:02:48.751 2311 Delete type=0 #8850
+2018/04/06-19:02:48.752 2311 Compacting 4@0 + 2@1 files
+2018/04/06-19:02:48.818 2311 Generated table #8854@0: 1 keys, 3252594 bytes
+2018/04/06-19:02:48.821 2311 Generated table #8855@0: 5 keys, 525 bytes
+2018/04/06-19:02:48.821 2311 Compacted 4@0 + 2@1 files => 3253119 bytes
+2018/04/06-19:02:48.823 2311 compacted to: files[ 0 4 7 0 0 0 0 ]
+2018/04/06-19:02:48.824 2311 Delete type=2 #8853
+2018/04/06-19:02:48.824 2311 Delete type=2 #8844
+2018/04/06-19:02:48.824 2311 Delete type=2 #8846
+2018/04/06-19:02:48.825 2311 Delete type=2 #8849
+2018/04/06-19:02:48.825 2311 Delete type=2 #8851
+2018/04/06-19:02:48.825 2311 Delete type=2 #8843
+2018/04/06-19:02:49.780 2311 Level-0 table #8857: started
+2018/04/06-19:02:49.818 2311 Level-0 table #8857: 3252929 bytes OK
+2018/04/06-19:02:49.820 2311 Delete type=0 #8852
+2018/04/06-19:04:25.727 2311 Level-0 table #8859: started
+2018/04/06-19:04:25.777 2311 Level-0 table #8859: 3254904 bytes OK
+2018/04/06-19:04:25.779 2311 Delete type=0 #8856

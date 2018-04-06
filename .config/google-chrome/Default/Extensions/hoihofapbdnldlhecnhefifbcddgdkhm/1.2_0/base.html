@@ -1,0 +1,293 @@
+<!-- Copyright 2011 Google Inc. All rights reserved. -->
+<!--
+@fileoverview This file serves as the content page for the clock app.
+-->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Clock</title>
+    <link rel="stylesheet" href="./css/clock.css"/>
+    <link rel="stylesheet" href="/css/alarmClock.css"/>
+    <link rel="icon" type="image/png" href="./images/favicon.png">
+    <link rel="stylesheet" href="../css/closure-calendar.css"/>
+    <script type="text/javascript" src="../javascript/city_timeZone_mapping.js"></script>
+    <script type="text/javascript" src="../javascript/clock-constants.js"></script>
+    <script type="text/javascript" src="../javascript/quicksort.js"></script>
+    <script type="text/javascript" src="../javascript/clock-core.js"></script>
+    <script type="text/javascript" src="../javascript/closure-binary.js"></script>
+    <script type="text/javascript" src="../javascript/clock-db.js"></script>
+    <script type="text/javascript" src="../javascript/stopClock.js"></script>
+  </head>
+  <body onload="displayClockAndCalendar();">
+    <div class="outer-box">
+      <div>
+        <div class="page-container">
+          <div id="header"> 
+          <ul > 
+              <li><a class="selected" onclick="selectMe(this, 'div1');setWindowTitle('Clock - Date & Time');" id="default-tab"><div class="calendar-icon"></div></a></li>
+              <li id="world_clock_li"><a onclick="selectMe(this, 'div2');setWindowTitle('Clock - World Clock');" id="clock-tab"><div class="clock-icon" ></div></a></li>
+              <li><a onclick="selectMe(this, 'div3');setWindowTitle('Clock - Alarm');" id="alarm-tab"><div class="alarm-icon"></div></a></li>
+              <li><a onclick="selectMe(this, 'div4');setWindowTitle('Clock - Timer');" id="timer-tab"><div class="timer-icon"></div></a></li>
+              <li><a onclick="selectMe(this, 'div5');setWindowTitle('Clock - Stop Watch');"  id="stopWatch-tab"><div class="stopwatch-icon"></div></a></li>
+          </ul> 
+          </div> 
+          <div id="content">
+            <div id="div1" >
+              <div  style="overflow:auto;">
+                <table width="100%" border="0">
+                  <tbody>
+                    <tr>
+                      <td  width="50%" align="right" style="padding-left: 10px;">
+                        <canvas id="myClock" width="50" height="65"></canvas>
+                      </td>
+                      <td  width="50%" align="left">
+                        <div id="time-div" class="time-div"></div>
+                        <div id="time-char-div"></div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="2" align="center" >
+                        <div id="widget_en_US" style="text-align:center;"></div>
+                      </td>     
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div id="div2" class="hidden">
+              <div id="multi_clock_page">
+              </div>
+              <div class="div-seperator"></div>
+              <div id="add_button_clock" style="width: 100%;position: absolute;bottom: 0">
+                <input type="button" id="add_city" value="Add" onclick="onFetchCityNames()" class="button-gray" />
+              </div>
+              <div id="city_list_div"  style="display: none;">
+                <div style="padding: 5px;">
+                  <input  type="search" inputId="city-to-list" id="city-to-list" placeholder="Search to add a city" class="search-box"/>
+                </div>
+              </div>
+              <div id="done_button_clock" style="position: absolute;bottom: 0;display: none;">
+                <input type="button" id="Done" value="Done" onclick="addUserClockToDB()" class="button-gray"/>
+              </div>
+              <div>
+                <input type="button" id="done_delete_button" value="Done" onclick="doneButtonHandler()" style="display: none;" class="button-gray"/>
+                <input type="button" id="delete_button_clock" value="Delete" onclick="removeClockFromDB("{city_marked_for_deletion}")" class="button-gray" style="display:none;"/>
+              </div>
+            </div>
+            <div id="div3" class="hidden">
+              <div id="clockContainer" style="margin-top: 14px; width: 100%; height: 217px; display: none">
+                <div id="outerDiv" class="outerDiv">
+                  <div id="timeContainer" class="timeContainer">
+                    <div id="innerHrs" style="float: left;">
+                      <input type="text" maxlength="2" id="hours" class="alarmTime" value="12" onfocus="toggleClass(this.id)" onblur="validateTime(this.id)">
+                    </div>
+                    <div id="separator" style="float: left; font-weight: bold; margin-top: 5px;">
+                      <h3 style="position: relative; left: 2px; top: -10px;">:</h3>
+                    </div>
+                    <div id="innerMin" style="float: left;">
+                      <input type="text" maxlength="2" class="alarmTime" id="minutes" value="00" onfocus="toggleClass(this.id)" onblur="validateTime(this.id)">
+                    </div>
+                    <div id="innerTime" style="float: left;">
+                      <input type="text" class="alarmTime" maxlength="2" id="ampm" value="am" readonly="readonly" style="width: 36px;" onfocus="toggleClass(this.id)" onblur="validateTime(this.id)">
+                    </div>
+                  </div>
+                  <div id="spin" class="spin">
+                    <button id="increase" class="timeButton" onclick="changeTime('alarm', 'i')"><div class="arrow-top"></div></button>
+                    <button id="decrease" class="timeButton" onmousedown="changeTime('alarm', 'd')"><div class="arrow-bottom"></div></button>
+                  </div>
+                </div>
+                <div id="repeatDiv" style="margin-left: 19%; font-size: 11px; height:27px;">
+                  <input type="radio" name="repeat" style="margin: 0; padding: 0" id="repeatNo" value="NoRepeat" checked="checked" onclick="onRepeat('d')">&nbsp;&nbsp;No repeat&nbsp;&nbsp;
+                  <input type="radio" name="repeat" style="margin: 0; padding: 0" id="repeatYes" value="Repeat" onclick="onRepeat('e')">&nbsp;&nbsp;Repeat
+                </div>
+                <div id="dayList" style="width: 217px; height: 40px; margin-left: 5%;">
+                  <input type="button" class="days" id="Sun" value="S" disabled="disabled" onclick="toggleDays(this.id)"/>
+                  <input type="button" id="Mon" class="days" value="M" disabled="disabled" onclick="toggleDays(this.id)" />
+                  <input type="button" id="Tue" class="days" value="T" disabled="disabled" onclick="toggleDays(this.id)"/>
+                  <input type="button" id="Wed" class="days" value="W" disabled="disabled" onclick="toggleDays(this.id)"/>
+                  <input type="button" id="Thu" class="days" value="T" disabled="disabled" onclick="toggleDays(this.id)"/>
+                  <input type="button" id="Fri" class="days" value="F" disabled="disabled" onclick="toggleDays(this.id)"/>
+                  <input type="button" id="Sat" class="days" value="S" style="border-bottom-right-radius: 3px; border-top-right-radius: 3px;" disabled="disabled" onclick="toggleDays(this.id)"/>
+                </div>
+                <div id="alarmSound" style="margin-left: 6%; font-size: 11px;">
+                  <button id="sound" onclick="selectSound()" class="button-gray sound-button"><div class="sound-icon"></div></button>
+                  <input type="text" id="selectSound" value="Sound: Digital" readonly="readonly" style="border: 0; font-size: 11px;background-color: #F2F5F7; width: 170px">
+                </div>
+              </div>
+              <div id="alarmData" style="display: none;">
+                
+              </div>
+              <div class="div-seperator"></div>
+              <div id="functionBar" style="position: absolute;bottom: 0; display: none;">
+                <input type="button" id="done" value="Done" onclick="saveAlarm()" class="button-gray"/>
+                <input type="button" id="delete" value="Delete" onclick="deleteAlarm()" class="button-gray"/>
+                <input type="button" id="add" value="Add" onclick="setNewAlarm()" class="button-gray"/>
+              </div>
+              <div id="audioBar" style="display: none;">
+                <input type="text" id="alarmTimeText" readonly="readonly" style="width: 170px;"/>
+                <div style="text-align:center">
+                <input type="button" id="stop" value="Stop" onclick="stopAlarm()" class="button-blue button-blue-big"/>
+                <input type="button" id="snooze" value="Snooze" onclick="snoozeAlarm()" class="button-gray button-blue-big"  style="margin-left: -4px;"/>
+                </div>
+              </div>
+            </div>
+            <div id="soundData" style="display: none;width: 95%; font-size: 11px;padding-left: 7px; margin-top: 10px; display: none">
+                <div style="font-weight: bold; font-size: 11px; height: 20px;">Select an alarm sound</div>
+                <div class="soundtype" id="digi" onclick="changeSound(this.id)"><div class="play-icon"><div style="margin-left: 25px">Digital</div></div></div>
+                <div class="soundtype" id="door" onclick="changeSound(this.id)"><div class="play-icon"><div style="margin-left: 25px">Door bell</div></div></div>
+                <div class="soundtype" id="drum" onclick="changeSound(this.id)"><div class="play-icon"><div style="margin-left: 25px">Drum roll</div></div></div>
+                <div class="soundtype" id="lond" onclick="changeSound(this.id)"><div class="play-icon"><div style="margin-left: 25px">London bridge</div></div></div>
+                <div class="soundtype" id="robit" onclick="changeSound(this.id)"><div class="play-icon"><div style="margin-left: 25px">Robit</div></div></div>
+                <div class="soundtype" id="train" onclick="changeSound(this.id)"><div class="play-icon"><div style="margin-left: 25px">Train station</div></div></div>
+                <div class="soundtype" id="twin" onclick="changeSound(this.id)"><div class="play-icon"><div style="margin-left: 25px">Twingle little star</div></div></div>
+            </div>
+            <div id="div4" class="hidden">
+              <div id="outerDiv_timer" class="outerDiv">
+                  <div id="timeContainer_timer" class="timeContainer">
+                    <div id="innerHrs_timer" style="float: left;">
+                      <input type="text" maxlength="2" id="hours_timer" class="alarmTime" value="00" onfocus="toggleClass(this.id)" onblur="validateTimeOfTimer(this.id)">
+                    </div>
+                    <div style="float: left; font-weight: bold; margin-top: 5px;">
+                      <h3 style="position: relative; left: 2px; top: -10px;">:</h3>
+                    </div>
+                    <div id="innerMin_timer" style="float: left;">
+                      <input type="text" maxlength="2" class="alarmTime" id="minutes_timer" value="00" onfocus="toggleClass(this.id)" onblur="validateTimeOfTimer(this.id)">
+                    </div>
+                     <div style="float: left; font-weight: bold; margin-top: 5px;">
+                      <h3 style="position: relative; left: 2px; top: -10px;">:</h3>
+                    </div>
+                    <div style="float: left;">
+                      <input type="text" maxlength="2" class="alarmTime" id="seconds_timer" value="00" onfocus="toggleClass(this.id)" onblur="validateTimeOfTimer(this.id)">
+                    </div>
+                  </div>
+                  <div id="spin_timer" class="spin">
+                    <button id="increase_timer" class="timeButton" onclick="changeTime('timer', 'i')"><div class="arrow-top"></div></button>
+                    <button id="decrease_timer" class="timeButton" onmousedown="changeTime('timer', 'd')"><div class="arrow-bottom"></div></button>
+                  </div>
+                </div>
+                <div id="timer_display" style="display: none;"></div>
+                <div id="timer_display_subtitle" style="display: none">
+                  <span>hrs</span><span>min</span><span>sec</span>
+                </div>
+                <div style="text-align: center" id="functionBar_timer">
+                  <input type="button" id="timer_start_button" value="Start" onclick="startTimer()" class="button-blue button-big" style="display: none;"/>
+                  <input type="button" id="timer_set_button" value="Set" onclick="setTimer()" class="button-blue button-big"/>
+                  <input type="button" id="timer_pause_button" value="Pause" onclick="pauseTimer()" style="display: none;" class="button-red button-big"/>
+                  <input type="button" id="timer_reset_button" value="Reset" onclick="resetTimer()" class="button-gray button-big" style="margin-left: -4px;"/>
+                </div>
+                <div id="alarmSound_timer" style="width: 100%;position: absolute;bottom: 0;">
+                  <button id="sound_timer" onclick="selectSound()" class="button-gray sound-button" ><div class="sound-icon"></div></button>
+                  <input type="text" id="selectSound_timer" value="Sound: Digital" readonly="readonly" style="border: 0; font-size: 11px;background-color: #F2F5F7; width: 170px" data-sound="audio_digi">
+                </div>
+            </div>
+            <div id="div5" class="hidden" >
+              <!--<div id="static_stop_clock_display">
+                <span>00:00:00</span> 000
+              </div>-->
+              <div id="stop_clock_display" style=";"><span>00:00:00</span> 000
+              </div>
+              <div style="text-align: center">
+                <input type="button" id="stop_clock_start_button" value="Start" onclick="loadStopClock()" class="button-blue button-big"/>
+                <input type="button" id="stop_clock_mark_button" value="Mark" onclick="markClock()" class="button-red button-big" style="display: none;"/>
+                <input type="button" id="stop_clock_stop_button" value="Stop" onclick="stopStopClock()" class="button-gray button-big" style="display: none;margin-left: -2px;"/>
+                <input type="button" id="stop_clock_reset_button" value="Reset" onclick="resetStopClock()" class="button-gray button-big" style="margin-left: -2px;"/>
+              </div>
+              <br/>
+              <div id="stop_clock_mark_display_div">
+                <table width="100%" id="stop_clock_mark_display">
+                </table>
+              </div>
+            </div> 
+          </div> 
+        </div>
+      </div>
+    </div>
+    <div style="display: none">
+      <img id="s1_center_whiteclock_id" src="../images/s1_center_whiteclock.png">
+      <img id="clock2_worldclock-calender_id" src="../images/clock2_worldclock-calender.png">
+      <img id="s1_clock_dark_id" src="../images/s1_clock_dark.png">
+      <img id="s1_center_darkclock_id" src="../images/s1_center_darkclock.png">
+      <img id="s1_clock_light_id" src="../images/s1_clock_light.png">
+      <img id="s1_center_whiteclock_id" src="../images/s1_center_whiteclock.png">
+      <img id="s2_clock_light_id" src="../images/s2_clock_light.png">
+      <img id="s2_center_darkclock_id" src="../images/s2_center_darkclock.png">
+    </div>
+    <script type="text/javascript" src="./javascript/clock-util.js"></script>
+    <script type="text/javascript" src="../javascript/alarm-clock.js"></script>
+    <script type="text/javascript" src="../javascript/timer.js"> </script>
+  </body>
+</html>
+<textarea style="display: none" id="page1-time-tpl">
+  <div>
+      {hours}:{min}<span style="font-size: 14px;font-weight: normal;padding-left:3px;">{partOfDay}</span>
+  </div>
+</textarea>
+<textarea style="display: none" id ="page1-char-time-tpl">
+  <div class="day-month" >
+      {day}, {month} {dateNumber}
+  </div>
+</textarea>
+<textarea id="alarmTemplate" style="display:none">
+  <div id="alarm-{id}" onclick="openAlarm('{id}','{alarmTime}','{isRepeat}','{repeatDays}','{sound}')" class="alarm-div">
+    <div class="sub-div">
+      <div class="alarmTm" style="float:left;width: 50%;margin-left: 8px;">
+         <div style="font-size: 20px;font-weight: bold;">{alarmTime}</div>
+         <span style="color: #999999;font-size: 11px;">{repeatDays}</span>
+      </div>
+      <div style="float:right; margin-top: 5px;margin-right: 3px;">
+      <input type="checkbox" id="check-{id}" onclick="enableDisableAlarm(this.id)" {checkAlarm}/>
+      <label style="font-size: 11px; font-weight: bold;">Alarm on</label>
+      </div>
+      </div>
+   </div>
+</textarea>
+
+<!-- Template to display multiple clocks on second tab. -->
+<textarea id="multiClockTemplate" style="display:none">
+  <table id="{table_id}" width="100%" cellspacing="0" cellpadding="0" height="100%">
+    <tr id="{table_row_id}" onmouseover="this.className='mc_grey_bg'" onclick="editSelectedClock('{clock_cityName}')" onmouseout= "this.className='mc_normal_bg'">
+      <td style="width:30%;">
+        <div  style="font-weight:bold;font-size:8px;color: #000">
+         <div id="{clock_city_span_id}"class="city_name">{clock_cityName} </div>
+         <div id="{clock_zone_span_id}" class="city_timezone" >{clock_timeZone} </div>
+        </div>
+        <div class="edit_page_position" id="{priority_check_box_div_del}" style="display: none;">
+          <input type="checkbox" id="{priority_check_box}" />
+          <label>Move to top</label>
+        </div>
+      </td>
+      <td style="width:40%;" align="center">
+        <div id="{clock_time_value}" class="time_format">
+        </div>
+        <div id="{clock_DayAndMonth_Name}" class="month_format">
+        </div>
+      </td>
+      <td style="width:30%;" align="center">
+        <canvas id="{clock_canvas_id}" width="60%" height="70%">
+        </canvas>
+      </td>
+    </tr>
+  </table>
+</textarea>
+<!-- Template to display single clock on second tab.-->
+<textarea id="Page2SingleClockTemplate" style="display:none">
+  <div style="font-size:25px;font-weight: bold;padding-top: 20px;">
+    <div id="{clock_time_value}">
+    </div>
+    <div id="{clock_DayAndMonth_Name}">
+    </div>
+    
+    <div style="text-align:center;">
+      <canvas id="{clock_canvas_id}" width="100%" height="100%" style="margin-top: 20px;">
+      </canvas>
+    </div>
+  </div>
+</textarea>
+<!-- Template for stop clock laps.-->
+<textarea id="LapCountTemplate" style="display:none">
+     <tr>
+       <td width="20%" class="lap_count">{lap_count}</td>
+       <td width="40%" class="timer_mark_class">{lap_time}</td>
+       <td width="40%" class="lap_difference">{lap_time_difference}</td>
+     </tr>
+</textarea>

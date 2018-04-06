@@ -1,0 +1,18 @@
+2018/03/31-00:05:57.778 9434 Reusing MANIFEST /home/sync0/.config/google-chrome/Default/IndexedDB/https_wego.here.com_0.indexeddb.leveldb/MANIFEST-000001
+2018/03/31-00:05:57.779 9434 Recovering log #22
+2018/03/31-00:05:57.779 9434 Reusing old log /home/sync0/.config/google-chrome/Default/IndexedDB/https_wego.here.com_0.indexeddb.leveldb/000022.log 
+2018/03/31-00:05:58.373 9436 Current memtable full; waiting...
+2018/03/31-00:05:58.373 9741 Level-0 table #27: started
+2018/03/31-00:05:58.375 9741 Level-0 table #27: 368 bytes OK
+2018/03/31-00:05:58.380 9741 Delete type=0 #22
+2018/03/31-00:05:58.380 9741 Level-0 table #29: started
+2018/03/31-00:05:58.380 9741 Level-0 table #29: 0 bytes OK
+2018/03/31-00:05:58.386 9741 Delete type=0 #26
+2018/03/31-00:05:58.386 9741 Manual compaction at level-0 from '\x00\x06\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x07\x00\x00\x00' @ 0 : 0; will stop at '\x00\x06\x00\x00\x05' @ 61 : 1
+2018/03/31-00:05:58.386 9741 Compacting 1@0 + 1@1 files
+2018/03/31-00:05:58.389 9741 Generated table #30@0: 3 keys, 340 bytes
+2018/03/31-00:05:58.389 9741 Compacted 1@0 + 1@1 files => 340 bytes
+2018/03/31-00:05:58.390 9741 compacted to: files[ 0 1 1 0 0 0 0 ]
+2018/03/31-00:05:58.391 9741 Delete type=2 #27
+2018/03/31-00:05:58.391 9741 Delete type=2 #24
+2018/03/31-00:05:58.391 9741 Manual compaction at level-0 from '\x00\x06\x00\x00\x05' @ 61 : 1 .. '\x00\x07\x00\x00\x00' @ 0 : 0; will stop at (end)

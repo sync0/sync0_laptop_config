@@ -1,0 +1,36 @@
+2018/04/06-18:01:49.063 1611 Reusing MANIFEST /home/sync0/.config/google-chrome/Default/Session Storage/MANIFEST-000001
+2018/04/06-18:01:49.063 1611 Recovering log #3682
+2018/04/06-18:01:49.065 1611 Reusing old log /home/sync0/.config/google-chrome/Default/Session Storage/003682.log 
+2018/04/06-18:13:53.644 2311 Compacting 1@1 + 1@2 files
+2018/04/06-18:13:53.649 2311 Generated table #3685@1: 71 keys, 5784 bytes
+2018/04/06-18:13:53.649 2311 Compacted 1@1 + 1@2 files => 5784 bytes
+2018/04/06-18:13:53.651 2311 compacted to: files[ 0 0 1 0 0 0 0 ]
+2018/04/06-18:13:53.651 2311 Delete type=2 #3680
+2018/04/06-18:13:53.651 2311 Delete type=2 #3683
+2018/04/06-18:25:21.549 2311 Level-0 table #3687: started
+2018/04/06-18:25:21.554 2311 Level-0 table #3687: 17443 bytes OK
+2018/04/06-18:25:21.556 2311 Delete type=0 #3682
+2018/04/06-18:35:26.640 2311 Compacting 1@1 + 1@2 files
+2018/04/06-18:35:26.646 2311 Generated table #3688@1: 120 keys, 7258 bytes
+2018/04/06-18:35:26.646 2311 Compacted 1@1 + 1@2 files => 7258 bytes
+2018/04/06-18:35:26.647 2311 compacted to: files[ 0 0 1 0 0 0 0 ]
+2018/04/06-18:35:26.648 2311 Delete type=2 #3687
+2018/04/06-18:35:26.648 2311 Delete type=2 #3685
+2018/04/06-18:43:20.360 2311 Level-0 table #3690: started
+2018/04/06-18:43:20.364 2311 Level-0 table #3690: 20303 bytes OK
+2018/04/06-18:43:20.366 2311 Delete type=0 #3686
+2018/04/06-18:53:40.956 2311 Compacting 1@1 + 1@2 files
+2018/04/06-18:53:40.960 2311 Generated table #3691@1: 247 keys, 16465 bytes
+2018/04/06-18:53:40.960 2311 Compacted 1@1 + 1@2 files => 16465 bytes
+2018/04/06-18:53:40.962 2311 compacted to: files[ 0 0 1 0 0 0 0 ]
+2018/04/06-18:53:40.963 2311 Delete type=2 #3688
+2018/04/06-18:53:40.963 2311 Delete type=2 #3690
+2018/04/06-18:56:48.190 2311 Level-0 table #3693: started
+2018/04/06-18:56:48.194 2311 Level-0 table #3693: 22418 bytes OK
+2018/04/06-18:56:48.197 2311 Delete type=0 #3689
+2018/04/06-19:14:30.402 2311 Compacting 1@1 + 1@2 files
+2018/04/06-19:14:30.407 2311 Generated table #3694@1: 259 keys, 25512 bytes
+2018/04/06-19:14:30.407 2311 Compacted 1@1 + 1@2 files => 25512 bytes
+2018/04/06-19:14:30.409 2311 compacted to: files[ 0 0 1 0 0 0 0 ]
+2018/04/06-19:14:30.409 2311 Delete type=2 #3693
+2018/04/06-19:14:30.409 2311 Delete type=2 #3691

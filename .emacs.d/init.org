@@ -3,7 +3,7 @@
 #+EMAIL: cantorlunae@gmail.com
 #+STARTUP: noindent  showall
 #+PROPERTY: header-args :tangle yes
-* Rseminders
+* Reminders
 - Remember that <s + tab creates a code block for adding more entries.
   - Remember to include the line "emacs-lisp". 
 - Remember the location for hunspell dictionaries should be in /usr/share/hunspell.
@@ -765,25 +765,59 @@ evil-escape-unordered-key-sequence t
   :config
   ;; no `evil-escape' in minibuffer
   (cl-pushnew #'minibufferp evil-escape-inhibit-functions :test #'eq))
-
   ;;(define-key evil-insert-state-map  (kbd "C-g") #'evil-escape)
   ;;(define-key evil-replace-state-map (kbd "C-g") #'evil-escape)
   ;;(define-key evil-visual-state-map  (kbd "C-g") #'evil-escape)
   ;;(define-key evil-operator-state-map (kbd "C-g") #'evil-escape))
-         ;; evil-snipe
   #+END_SRC 
 *** evil-multiedit
-         (use-package evil-multiedit :after evil
-  :commands (evil-multiedit-match-all
-             evil-multiedit-match-and-next
-             evil-multiedit-match-and-prev
-             evil-multiedit-match-symbol-and-next
-             evil-multiedit-match-symbol-and-prev
-             evil-multiedit-toggle-or-restrict-region
-             evil-multiedit-next
-             evil-multiedit-prev
-             evil-multiedit-abort
-             evil-multiedit-ex-match))
+#+BEGIN_SRC emacs-lisp
+           (use-package evil-multiedit :after evil
+    ;; :commands (evil-multiedit-match-all
+    ;;            evil-multiedit-match-and-next
+    ;;            evil-multiedit-match-and-prev
+    ;;            evil-multiedit-match-symbol-and-next
+    ;;            evil-multiedit-match-symbol-and-prev
+    ;;            evil-multiedit-toggle-or-restrict-region
+    ;;            evil-multiedit-next
+    ;;            evil-multiedit-prev
+    ;;            evil-multiedit-abort
+    ;;            evil-multiedit-ex-match)
+  :config
+  ;; Highlights all matches of the selection in the buffer.
+  (define-key evil-visual-state-map "R" 'evil-multiedit-match-all)
+
+  ;; Match the word under cursor (i.e. make it an edit region). Consecutive presses will
+  ;; incrementally add the next unmatched match.
+  (define-key evil-normal-state-map (kbd "M-d") 'evil-multiedit-match-and-next)
+  ;; Match selected region.
+  (define-key evil-visual-state-map (kbd "M-d") 'evil-multiedit-and-next)
+  ;; Insert marker at point
+  (define-key evil-insert-state-map (kbd "M-d") 'evil-multiedit-toggle-marker-here)
+
+  ;; Same as M-d but in reverse.
+  (define-key evil-normal-state-map (kbd "M-D") 'evil-multiedit-match-and-prev)
+  (define-key evil-visual-state-map (kbd "M-D") 'evil-multiedit-and-prev)
+
+  ;; OPTIONAL: If you prefer to grab symbols rather than words, use
+  ;; `evil-multiedit-match-symbol-and-next` (or prev).
+
+  ;; Restore the last group of multiedit regions.
+  (define-key evil-visual-state-map (kbd "C-M-D") 'evil-multiedit-restore)
+
+  ;; RET will toggle the region under the cursor
+  (define-key evil-multiedit-state-map (kbd "RET") 'evil-multiedit-toggle-or-restrict-region)
+
+  ;; ...and in visual mode, RET will disable all fields outside the selected region
+  (define-key evil-motion-state-map (kbd "RET") 'evil-multiedit-toggle-or-restrict-region)
+
+  ;; For moving between edit regions
+  (define-key evil-multiedit-state-map (kbd "C-n") 'evil-multiedit-next)
+  (define-key evil-multiedit-state-map (kbd "C-p") 'evil-multiedit-prev)
+  (define-key evil-multiedit-insert-state-map (kbd "C-n") 'evil-multiedit-next)
+  (define-key evil-multiedit-insert-state-map (kbd "C-p") 'evil-multiedit-prev))
+
+  #+END_SRC 
            ;; :bind (:map evil-visual-state-map 
            ;;             ;; Highlights all matches of the selection in the buffer.
            ;;             ("R" . evil-multiedit-match-all)
@@ -2190,7 +2224,7 @@ from the `before-change-functions' in the current buffer."
     (spaceline-toggle-all-the-icons-bookmark-on)
     (spaceline-toggle-all-the-icons-dedicated-on)
     (spaceline-toggle-all-the-icons-fullscreen-on)
-    (spaceline-toggle-all-the-icons-buffer-position-on)
+    ;;(spaceline-toggle-all-the-icons-buffer-position-on)
     (spaceline-all-the-icons--setup-anzu)
     (spaceline-all-the-icons--setup-package-updates)
     ;;(spaceline-all-the-icons--setup-paradox)
