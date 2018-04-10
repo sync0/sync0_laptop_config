@@ -562,6 +562,11 @@ that I’ve copied from the web.
  (add-to-list 'ispell-skip-region-alist '(":\\(PROPERTIES\\|LOGBOOK\\):" . ":END:"))
  (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_SRC" . "#\\+END_SRC"))
  (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_EXAMPLE" . "#\\+END_EXEMPLE"))
+ (add-to-list 'ispell-skip-region-alist '("\\begin{equation}" . "\\end{equation}"))
+ (add-to-list 'ispell-skip-region-alist '("\\begin{equation\*}" . "\\end{equation\*}"))
+ (add-to-list 'ispell-skip-region-alist '("\\begin{align}" . "\\end{align}"))
+ (add-to-list 'ispell-skip-region-alist '("\\begin{align\*}" . "\\end{align\*}"))
+ (add-to-list 'ispell-skip-region-alist '("\*Einstellungen+"))
 ;; (add-to-list 'ispell-skip-region-alist '("^\\*\sEinstellungen" . "^\\*\\*\sEnde"))
 
 ;; Flyspell
@@ -570,7 +575,7 @@ that I’ve copied from the web.
  (setq flyspell-issue-message-flag nil)
 
 ;; Flyspell lazy
-(use-package flyspell-lazy :after flyspell-mode :load-path "~/.emacs.d/sync0_git/flyspell-lazy"
+(use-package flyspell-lazy :after flyspell :load-path "~/.emacs.d/sync0_git/flyspell-lazy"
 :config
  (flyspell-lazy-mode 1))
 
@@ -1404,12 +1409,12 @@ There is a strange inconsistency when habits are enabled. See [[https://emacs.st
 #+END_SRC
 *** Org-bullets
 #+BEGIN_SRC emacs-lisp
-(use-package org-bullets :after org
-:commands org-bullets-mode
-:init
-(progn
-(setq org-bullets-bullet-list '("一" "二" "三" "四" "五" "六" "七" "八" "七" "九" "十"))
-(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))))
+  ;; (use-package org-bullets :after org
+  ;; :commands org-bullets-mode
+  ;; :init
+  ;; (progn
+  ;; (setq org-bullets-bullet-list '("一" "二" "三" "四" "五" "六" "七" "八" "七" "九" "十"))
+  ;; (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))))
 #+END_SRC 
 *** hook flyspell into org-mode
 #+BEGIN_SRC emacs-lisp
@@ -2226,7 +2231,7 @@ from the `before-change-functions' in the current buffer."
     (spaceline-toggle-all-the-icons-fullscreen-on)
     ;;(spaceline-toggle-all-the-icons-buffer-position-on)
     (spaceline-all-the-icons--setup-anzu)
-    (spaceline-all-the-icons--setup-package-updates)
+;;    (spaceline-all-the-icons--setup-package-updates)
     ;;(spaceline-all-the-icons--setup-paradox)
   ;;  (spaceline-all-the-icons--setup-neotree)
     (spaceline-all-the-icons-theme)))

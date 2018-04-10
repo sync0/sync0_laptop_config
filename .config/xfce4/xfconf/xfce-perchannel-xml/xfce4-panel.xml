@@ -48,11 +48,11 @@
     <property name="plugin-7" type="string" value="systray">
       <property name="names-visible" type="array">
         <value type="string" value="applet networkmanager"/>
-        <value type="string" value="redshift-gtk"/>
       </property>
       <property name="names-hidden" type="array">
         <value type="string" value="terminal xfce"/>
         <value type="string" value="albert"/>
+        <value type="string" value="redshift-gtk"/>
         <value type="string" value="google-chrome"/>
       </property>
       <property name="size-max" type="uint" value="22"/>
