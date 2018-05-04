@@ -22,6 +22,7 @@
       <property name="length" type="uint" value="100"/>
       <property name="size" type="uint" value="30"/>
       <property name="position-locked" type="bool" value="true"/>
+      <property name="autohide-behavior" type="uint" value="0"/>
     </property>
   </property>
   <property name="plugins" type="empty">

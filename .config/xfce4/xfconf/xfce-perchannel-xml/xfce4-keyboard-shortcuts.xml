@@ -36,6 +36,7 @@
       <property name="override" type="bool" value="true"/>
       <property name="Super_L" type="string" value="albert show"/>
       <property name="F12" type="string" value="xfce4-terminal --drop-down"/>
+      <property name="Print" type="string" value="xfce4-screenshooter"/>
     </property>
   </property>
   <property name="xfwm4" type="empty">

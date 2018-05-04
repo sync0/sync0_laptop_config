@@ -1,3 +1,6 @@
-2018/04/10-23:20:15.679 2274 Reusing MANIFEST /home/sync0/.config/google-chrome/Default/Extension State/MANIFEST-000001
-2018/04/10-23:20:15.680 2274 Recovering log #381
-2018/04/10-23:20:15.694 2274 Reusing old log /home/sync0/.config/google-chrome/Default/Extension State/000381.log 
+2018/05/04-19:03:25.928 2210 Reusing MANIFEST /home/sync0/.config/google-chrome/Default/Extension State/MANIFEST-000001
+2018/05/04-19:03:25.928 2210 Recovering log #416
+2018/05/04-19:03:25.945 2210 Reusing old log /home/sync0/.config/google-chrome/Default/Extension State/000416.log 
+2018/05/04-19:23:51.644 2844 Level-0 table #420: started
+2018/05/04-19:23:51.666 2844 Level-0 table #420: 2354279 bytes OK
+2018/05/04-19:23:51.672 2844 Delete type=0 #416

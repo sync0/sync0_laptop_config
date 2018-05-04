@@ -1,11 +1,9 @@
-2018/04/09-14:13:05.235 1626 Reusing MANIFEST /home/sync0/.config/google-chrome/Default/Local Extension Settings/gighmmpiobklfepjocnamgkkbiglidom/MANIFEST-000001
-2018/04/09-14:13:05.257 1626 Recovering log #8923
-2018/04/09-14:13:05.393 1626 Level-0 table #8928: started
-2018/04/09-14:13:05.471 1626 Level-0 table #8928: 3256366 bytes OK
-2018/04/09-14:13:05.490 1626 Delete type=0 #8923
-2018/04/09-14:14:06.129 2189 Level-0 table #8931: started
-2018/04/09-14:14:06.178 2189 Level-0 table #8931: 3256108 bytes OK
-2018/04/09-14:14:06.180 2189 Delete type=0 #8929
-2018/04/09-14:15:48.420 2189 Level-0 table #8933: started
-2018/04/09-14:15:48.460 2189 Level-0 table #8933: 3256358 bytes OK
-2018/04/09-14:15:48.462 2189 Delete type=0 #8930
+2018/05/04-16:28:04.977 1871 Reusing MANIFEST /home/sync0/.config/google-chrome/Default/Local Extension Settings/gighmmpiobklfepjocnamgkkbiglidom/MANIFEST-000001
+2018/05/04-16:28:04.984 1871 Recovering log #10073
+2018/05/04-16:28:04.986 1871 Reusing old log /home/sync0/.config/google-chrome/Default/Local Extension Settings/gighmmpiobklfepjocnamgkkbiglidom/010073.log 
+2018/05/04-16:29:06.129 2478 Level-0 table #10077: started
+2018/05/04-16:29:06.172 2478 Level-0 table #10077: 3276911 bytes OK
+2018/05/04-16:29:06.175 2478 Delete type=0 #10073
+2018/05/04-16:30:23.485 2478 Level-0 table #10079: started
+2018/05/04-16:30:23.534 2478 Level-0 table #10079: 3277045 bytes OK
+2018/05/04-16:30:23.536 2478 Delete type=0 #10076

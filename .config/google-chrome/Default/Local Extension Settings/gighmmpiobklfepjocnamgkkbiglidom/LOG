@@ -1,23 +1,26 @@
-2018/04/10-23:20:13.806 2274 Reusing MANIFEST /home/sync0/.config/google-chrome/Default/Local Extension Settings/gighmmpiobklfepjocnamgkkbiglidom/MANIFEST-000001
-2018/04/10-23:20:13.809 2274 Recovering log #8932
-2018/04/10-23:20:13.810 2274 Reusing old log /home/sync0/.config/google-chrome/Default/Local Extension Settings/gighmmpiobklfepjocnamgkkbiglidom/008932.log 
-2018/04/10-23:21:14.828 2977 Level-0 table #8936: started
-2018/04/10-23:21:14.871 2977 Level-0 table #8936: 3256109 bytes OK
-2018/04/10-23:21:14.873 2977 Delete type=0 #8932
-2018/04/10-23:21:14.875 2977 Compacting 4@0 + 2@1 files
-2018/04/10-23:21:14.963 2977 Generated table #8937@0: 1 keys, 3256019 bytes
-2018/04/10-23:21:14.966 2977 Generated table #8938@0: 5 keys, 471 bytes
-2018/04/10-23:21:14.966 2977 Compacted 4@0 + 2@1 files => 3256490 bytes
-2018/04/10-23:21:14.968 2977 compacted to: files[ 0 4 7 0 0 0 0 ]
-2018/04/10-23:21:14.969 2977 Delete type=2 #8926
-2018/04/10-23:21:14.969 2977 Delete type=2 #8936
-2018/04/10-23:21:14.969 2977 Delete type=2 #8931
-2018/04/10-23:21:14.970 2977 Delete type=2 #8925
-2018/04/10-23:21:14.970 2977 Delete type=2 #8928
-2018/04/10-23:21:14.970 2977 Delete type=2 #8933
-2018/04/10-23:21:17.558 2977 Level-0 table #8940: started
-2018/04/10-23:21:17.597 2977 Level-0 table #8940: 3256307 bytes OK
-2018/04/10-23:21:17.600 2977 Delete type=0 #8935
-2018/04/10-23:21:18.744 2977 Level-0 table #8942: started
-2018/04/10-23:21:18.785 2977 Level-0 table #8942: 3252141 bytes OK
-2018/04/10-23:21:18.787 2977 Delete type=0 #8939
+2018/05/04-19:03:24.363 2210 Reusing MANIFEST /home/sync0/.config/google-chrome/Default/Local Extension Settings/gighmmpiobklfepjocnamgkkbiglidom/MANIFEST-000001
+2018/05/04-19:03:24.366 2210 Recovering log #10078
+2018/05/04-19:03:24.366 2210 Reusing old log /home/sync0/.config/google-chrome/Default/Local Extension Settings/gighmmpiobklfepjocnamgkkbiglidom/010078.log 
+2018/05/04-19:04:25.076 2844 Level-0 table #10082: started
+2018/05/04-19:04:25.114 2844 Level-0 table #10082: 3276907 bytes OK
+2018/05/04-19:04:25.116 2844 Delete type=0 #10078
+2018/05/04-19:04:25.117 2844 Compacting 4@0 + 2@1 files
+2018/05/04-19:04:25.163 2844 Generated table #10083@0: 1 keys, 3276707 bytes
+2018/05/04-19:04:25.168 2844 Generated table #10084@0: 5 keys, 525 bytes
+2018/05/04-19:04:25.168 2844 Compacted 4@0 + 2@1 files => 3277232 bytes
+2018/05/04-19:04:25.170 2844 compacted to: files[ 0 4 7 0 0 0 0 ]
+2018/05/04-19:04:25.170 2844 Delete type=2 #10072
+2018/05/04-19:04:25.170 2844 Delete type=2 #10079
+2018/05/04-19:04:25.171 2844 Delete type=2 #10074
+2018/05/04-19:04:25.172 2844 Delete type=2 #10082
+2018/05/04-19:04:25.173 2844 Delete type=2 #10077
+2018/05/04-19:04:25.174 2844 Delete type=2 #10071
+2018/05/04-19:05:54.606 2844 Level-0 table #10086: started
+2018/05/04-19:05:54.647 2844 Level-0 table #10086: 3276994 bytes OK
+2018/05/04-19:05:54.649 2844 Delete type=0 #10081
+2018/05/04-20:04:25.073 2844 Level-0 table #10088: started
+2018/05/04-20:04:25.112 2844 Level-0 table #10088: 3277233 bytes OK
+2018/05/04-20:04:25.114 2844 Delete type=0 #10085
+2018/05/04-20:20:09.849 2844 Level-0 table #10090: started
+2018/05/04-20:20:09.890 2844 Level-0 table #10090: 3277035 bytes OK
+2018/05/04-20:20:09.892 2844 Delete type=0 #10087

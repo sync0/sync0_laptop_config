@@ -1,7 +1,7 @@
 #+TITLE: Emacs Settings
 #+AUTHOR: Carlos Alberto Rivera Carreño
 #+EMAIL: cantorlunae@gmail.com
-#+STARTUP: noindent  showall
+#+STARTUP: noindent  showall showstars
 #+PROPERTY: header-args :tangle yes
 * Reminders
 - Remember that <s + tab creates a code block for adding more entries.
@@ -107,6 +107,17 @@ The following code changes the welcoming message displayed by Emacs in the
   ;;            ;; value of user
   ;;            (getenv "USER")))
 #+END_SRC 
+** Line numbers
+#+BEGIN_SRC emacs-lisp
+  ;;   (setq-default display-line-numbers 'visual
+  ;;                 display-line-numbers-current-absolute t
+  ;;                 display-line-numbers-width 4
+  ;;                 display-line-numbers-widen nil)
+     (setq-default line-spacing 0.15)
+  ;; (when (version<= "26.0.50" emacs-version )
+  ;;   (global-display-line-numbers-mode))
+
+  #+END_SRC 
 ** Fancy Battery 
 #+BEGIN_SRC emacs-lisp
 (use-package fancy-battery
@@ -123,19 +134,15 @@ The following code changes the welcoming message displayed by Emacs in the
      (tool-bar-mode -1) ; introduced in emacs 21
      (menu-bar-mode -1)
      (scroll-bar-mode -1)
-     (menu-bar-showhide-fringe-menu-customize-disable)
+     ;;(menu-bar-showhide-fringe-menu-customize-disable)
      (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
      (setq mode-line-format nil
            inhibit-splash-screen t
            echo-keystrokes 0.1
            auto-revert-interval 1
-           left-margin-width 10
-                                             ;right-margin-width 70
            ;;(setq-default truncate-lines 1)
            ;;(setq-default word-wrap nil)
-           ;;(setq left-margin-width 26)
-           ;; (setq right-margin-width 26)
            )
      ;; (add-hook 'emacs-startup-hook 'toggle-frame-maximized)
 
@@ -144,20 +151,55 @@ The following code changes the welcoming message displayed by Emacs in the
       indent-tabs-mode nil              ; Use spaces instead of tabs
       split-width-threshold 160         ; Split verticly by default
       split-height-threshold nil        ; Split verticly by default
-                                             ;auto-fill-function 'do-auto-fill) ; Auto-fill-mode everywhere
+      bidi-display-reordering nil ; disable bidirectional text for tiny performance boost
+      blink-matching-paren nil    ; don't blink--too distracting
+      cursor-in-non-selected-windows nil  ; hide cursors in other windows
+      frame-inhibit-implied-resize t
+      ;; avoid ugly problèmes with gît-gutter 
+      fringes-outside-margins t
+      left-fringe-width 3
+      right-fringe-width 0
+      ;; remove continuation arrow on right fringe
+      fringe-indicator-alist (delq (assq 'continuation fringe-indicator-alist)
+                                   fringe-indicator-alist)
+      highlight-nonselected-windows nil
+      image-animate-loop t
+      indicate-buffer-boundaries nil
+      indicate-empty-lines nil
+      max-mini-window-height 0.3
+                                             ;; auto-fill-function 'do-auto-fill) ; Auto-fill-mode everywhere
+      ;; left-margin-width 3
+                                             ;; right-margin-width 7
       )
 
-;; make navigation easy
-(setq frame-title-format "%b")
+
+     ;; highlight matching delimiters
+     (setq show-paren-delay 0.1
+           show-paren-highlight-openparen t
+           show-paren-when-point-inside-paren t)
+     (show-paren-mode 1)
+
+     (setq-default window-divider-default-places t
+                   window-divider-default-bottom-width 0
+                   window-divider-default-right-width 1)
+     (add-hook 'emacs-startup-hook #'window-divider-mode)
+
+
+     ;; (use-package fringe-helper :load-path "~/.emacs.d/sync0_git/fringe-helper.el/" 
+     ;;   :commands (fringe-helper-define fringe-helper-convert))
+
+
+     ;; make navigation easy
+     (setq frame-title-format "%b")
 
      ;;Workspace keybindgs
      (defun toggle-mode-line () 
-"toggles the modeline on and off"
-            (interactive) 
-            (setq mode-line-format
-                  (if (equal mode-line-format nil)
-                      (default-value 'mode-line-format)) )
-            (redraw-display))
+       "toggles the modeline on and off"
+       (interactive) 
+       (setq mode-line-format
+             (if (equal mode-line-format nil)
+                 (default-value 'mode-line-format)) )
+       (redraw-display))
 
      (global-set-key [C-f11] 'toggle-mode-line)
      (global-set-key (kbd "<f8>") 'tool-bar-mode)
@@ -165,47 +207,71 @@ The following code changes the welcoming message displayed by Emacs in the
 #+END_SRC
 ** Mixed settings
 #+BEGIN_SRC emacs-lisp
-;; Bookmarks directory
-(setq bookmark-default-file (concat user-emacs-directory "bookmarks")
-      bookmark-save-flag 1)
+    ;; Bookmarks directory
+    (setq bookmark-default-file (concat user-emacs-directory "bookmarks")
+          bookmark-save-flag 1)
 
-;; Autosave
-(setq auto-save-interval 100
-         auto-save-timeout 60)
+    ;; Autosave
+    (setq auto-save-interval 100
+             auto-save-timeout 60)
 
-;; CUSTOM directory
-(setq custom-file (expand-file-name "custom_settings.el" user-emacs-directory))
-(load custom-file t)
+    ;; CUSTOM directory
+    (setq custom-file (expand-file-name "custom_settings.el" user-emacs-directory))
+    (load custom-file t)
 
-;; Remove yes-no EMACS inconsistency
-(fset 'yes-or-no-p 'y-or-n-p)
+    ;; Remove yes-no EMACS inconsistency
+    (fset 'yes-or-no-p 'y-or-n-p)
 
-;; Git gutter thingy
-(setq fringes-outside-margins nil)
+    ;; Git gutter thingy
+      (defvar doom-fringe-size '3 "Default fringe width.")
+;; (defconst doom-fringe-size '3 "Default fringe width")
+    ;; ;; ;; (setq-default fringes-outside-margins t)
+       (fringe-mode doom-fringe-size)
+(if (fboundp 'fringe-mode) (fringe-mode doom-fringe-size))
+      ;;(push `(left-fringe  . ,doom-fringe-size) default-frame-alist)
+      ;;(push `(right-fringe . ,doom-fringe-size) default-frame-alist)
 
-;; Force UTF-8 encoding
+      ;;(if (fboundp 'fringe-mode) (fringe-mode doom-fringe-size))
+    ;;  (fringe-mode '(3 . 0))
+  ;;    (if (fboundp 'fringe-mode) (fringe-mode '(3 . 0)))
 
-;; disable CJK coding/encoding (Chinese/Japanese/Korean characters)
-;; (setq utf-translate-cjk-mode nil)
-(set-language-environment 'utf-8)
-;; backwards compatibility as default-buffer-file-coding-system
-;; is deprecated in 23.2.
-;; (if (boundp buffer-file-coding-system)
-;;    (setq buffer-file-coding-system 'utf-8)
-;; (setq default-buffer-file-coding-system 'utf-8))
+  ;; margins fonction
+  ;;(defun sync0-fringes ()
+   ;;"Set margins in current buffer."
+ ;;        (setq-default left-fringe-width 3)
+;;         (setq-default right-fringe-width 0))
 
-;; set the default encoding system
-(setq default-file-name-coding-system 'utf-8)
-(set-default-coding-systems 'utf-8)
-(setq locale-coding-system 'utf-8)
-(set-terminal-coding-system 'utf-8)
-(set-keyboard-coding-system 'utf-8)
-(set-selection-coding-system 'utf-8)
-(prefer-coding-system 'utf-8)
-(when (display-graphic-p)
+   ;; (add-hook 'text-mode-hook 'sync0-fringes)
 
-;; Treat clipboard input as UTF-8 string first; compound text next, etc.
-   (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
+     (defun doom|no-fringes-in-minibuffer ()
+       "Disable fringes in the minibuffer window."
+       (set-window-fringes (minibuffer-window) 0 0 nil))
+     (add-hook! '(after-init-hook minibuffer-setup-hook)
+       #'doom|no-fringes-in-minibuffer)
+
+    ;; Force UTF-8 encoding
+
+    ;; disable CJK coding/encoding (Chinese/Japanese/Korean characters)
+    ;; (setq utf-translate-cjk-mode nil)
+    (set-language-environment 'utf-8)
+    ;; backwards compatibility as default-buffer-file-coding-system
+    ;; is deprecated in 23.2.
+    ;; (if (boundp buffer-file-coding-system)
+    ;;    (setq buffer-file-coding-system 'utf-8)
+    ;; (setq default-buffer-file-coding-system 'utf-8))
+
+    ;; set the default encoding system
+    (setq default-file-name-coding-system 'utf-8)
+    (set-default-coding-systems 'utf-8)
+    (setq locale-coding-system 'utf-8)
+    (set-terminal-coding-system 'utf-8)
+    (set-keyboard-coding-system 'utf-8)
+    (set-selection-coding-system 'utf-8)
+    (prefer-coding-system 'utf-8)
+    (when (display-graphic-p)
+
+    ;; Treat clipboard input as UTF-8 string first; compound text next, etc.
+       (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
 #+END_SRC
 ** List of recent files
 #+BEGIN_SRC emacs-lisp
@@ -241,59 +307,135 @@ The following code changes the welcoming message displayed by Emacs in the
 (global-set-key [C-f9] 'my-toggle-margins)
 ** Text settings
 #+BEGIN_SRC emacs-lisp
-  ;; Monospaced faces 
-  ;; define default faces
-  (set-face-attribute 'default nil :font "Fira Mono")
-  (set-face-attribute 'default nil :height 130)
+      ;; Monospaced faces 
+      ;; define default faces
+      (set-face-attribute 'default nil :font "Fira Mono")
+      ;;(set-face-attribute 'default nil :height 120) 
+      (set-face-attribute 'default nil :height 140)  ;; external monitor
+      ;;(set-face-attribute 'default nil :height 100)
+      ;;(set-face-attribute 'default nil :height 110) ;; laptop
 
-  (defun my-buffer-face-mode-fixed ()
-    "Sets a fixed width (monospace) font in current buffer"
-    (interactive)
-    (setq buffer-face-mode-face '(:family "Fira Mono" :height 130 :spacing monospace))
-    (buffer-face-mode))
+      (defun my-buffer-face-mode-fixed ()
+        "Sets a fixed width (monospace) font in current buffer"
+        (interactive)
+        (setq buffer-face-mode-face '(:family "Fira Mono" :height 140 :spacing monospace)) ;; external monitor
+        ;;(setq buffer-face-mode-face '(:family "Fira Mono" :height 120 :spacing monospace))
+        ;;(setq buffer-face-mode-face '(:family "Fira Mono" :height 100 :spacing monospace))
+       ;; (setq buffer-face-mode-face '(:family "Fira Mono" :height 110 :spacing monospace)) ;; laptop
+        (buffer-face-mode))
 
-  ;; Variable-width faces 
-  (defun my-buffer-face-mode-variable ()
-    "Set font to a variable width (proportional) fonts in current buffer"
-    (interactive)
-    (setq buffer-face-mode-face '(:family "Linux Libertine" :height 160))
-    ;;(setq buffer-face-mode-face '(:family "Linux Libertine Display" :height 160))
-    ;;(setq buffer-face-mode-face '(:family "Linux Libertine Display" :height 160 :width expanded))
-    (buffer-face-mode))
+      ;; Variable-width faces 
+      (defun my-buffer-face-mode-variable ()
+        "Set font to a variable width (proportional) fonts in current buffer"
+        (interactive)
+        (setq buffer-face-mode-face '(:family "Linux Libertine" :height 170)) ;; external monitor
+        ;;(setq buffer-face-mode-face '(:family "Linux Libertine" :height 160))
+        ;;(setq buffer-face-mode-face '(:family "Linux Libertine" :height 150))
+        ;;(setq buffer-face-mode-face '(:family "Linux Libertine" :height 140)) ;; laptop
+        ;;(setq buffer-face-mode-face '(:family "Linux Libertine" :height 120))
+        ;;(setq buffer-face-mode-face '(:family "Linux Libertine Display" :height 160))
+        ;;(setq buffer-face-mode-face '(:family "Linux Libertine Display" :height 160 :width expanded))
+        (buffer-face-mode))
 
-  ;; Set default font faces for Info, ERC, and Org
-  (add-hook 'erc-mode-hook 'my-buffer-face-mode-variable)
-  (add-hook 'Info-mode-hook 'my-buffer-face-mode-variable)
-  (add-hook 'org-mode-hook 'my-buffer-face-mode-variable)
+      ;; Set default font faces for Info, ERC, and Org
+      (add-hook 'erc-mode-hook 'my-buffer-face-mode-variable)
+      (add-hook 'Info-mode-hook 'my-buffer-face-mode-variable)
+      (add-hook 'org-mode-hook 'my-buffer-face-mode-variable)
 
-  ;; Allow narrowing
-  (put 'narrow-to-region 'disabled nil)
+      ;; Allow narrowing
+      (put 'narrow-to-region 'disabled nil)
 
-  ;; Word wrap
-  (setq org-startup-truncated t)
-
-  ;; Auto-fill settings
-  (setq-default fill-column 75)
-  (add-hook 'text-mode-hook 'turn-on-visual-line-mode)
-  ;; (add-hook 'text-mode-hook 'turn-off-auto-fill)
-  (add-hook 'org-mode-hook 'turn-on-auto-fill)
-  ;; respect de la typographie française par fill
-  ;;(setq fill-nobreak-predicate '(fill-french-nobreak-p))
-
-  (defun sync0-is-this-a-csquote ()
-    "Find wheter current line begins with a LaTeX csquote"
-    (or 
-        (looking-back "blockquote.+" (line-beginning-position))
-        (looking-back "blockcquote.+" (line-beginning-position))
-        (looking-back "foreignblockquote.+" (line-beginning-position))
-        (looking-back "foreignblockcquote.+" (line-beginning-position))
-  ))
-
-  ;;(setq fill-nobreak-predicate '(sync0-is-this-a-csquote))
-  (add-hook 'fill-nobreak-predicate #'sync0-is-this-a-csquote)
-  ;;(add-to-list 'fill-nobreak-predicate
-  ;;     'sync0-is-this-a-csquote)
+      ;; Word wrap
+      (setq org-startup-truncated t)
  #+END_SRC
+*** Auto-fill settings
+ #+BEGIN_SRC emacs-lisp
+      (setq-default fill-column 75)
+      (add-hook 'text-mode-hook 'turn-on-visual-line-mode)
+      ;; (add-hook 'text-mode-hook 'turn-off-auto-fill)
+      (add-hook 'org-mode-hook 'turn-on-auto-fill)
+      ;; respect de la typographie française par fill
+      ;;(setq fill-nobreak-predicate '(fill-french-nobreak-p))
+
+      (defun sync0-is-this-a-csquote ()
+        "Find wheter current line begins with a LaTeX csquote"
+        (or 
+         (looking-back "blockquote.+" (line-beginning-position))
+         (looking-back "blockcquote.+" (line-beginning-position))
+         (looking-back "foreignblockquote.+" (line-beginning-position))
+         (looking-back "foreignblockcquote.+" (line-beginning-position))
+         ))
+
+      (add-hook 'fill-nobreak-predicate #'sync0-is-this-a-csquote)
+
+      ;; (looking-at ".*}"))
+
+   (defun sync0-fill-nobreak-predicate ()
+     (save-match-data                 
+       (or (looking-at "[ \t]*[])}»!?;:]")
+           (looking-at "[ \t]*\\.\\.\\.")
+           (save-excursion
+             (skip-chars-backward " \t")
+             (backward-char 1)
+             (looking-at "[([{«]")))))
+
+      (add-hook 'fill-nobreak-predicate #'sync0-fill-nobreak-predicate)
+
+      ;; (defun sync0-foreign-language-nobreak-p ()
+      ;;   (or    (looking-at "[[[:space:]]\|[[:print:]]].*}")
+      ;;          (save-excursion 
+      ;;            (skip-chars-backward " \t")
+      ;;            (unless (bolp)
+      ;;              (backward-char 1)
+      ;;              (looking-at ".*\\text")))))
+
+      ;; (add-hook 'fill-nobreak-predicate #'sync0-foreign-language-nobreak-p)
+
+
+      ;; (defun sync0-foreign-language-nobreak-p ()
+      ;;   "Return nil if French style allows breaking the line at point.
+      ;; This is used in `fill-nobreak-predicate' to prevent breaking lines just
+      ;; after an opening paren or just before a closing paren or a punctuation
+      ;; mark such as `?' or `:'.  It is common in French writing to put a space
+      ;; at such places, which would normally allow breaking the line at those
+      ;; places."
+      ;;   (or (looking-at "[ \t]*}")
+      ;;       (save-excursion
+      ;;         (skip-chars-backward " \t")
+      ;;         (unless (bolp)
+      ;;           (backward-char 1)
+      ;;           (or (looking-at "{")
+      ;;               ;; Don't cut right after a single-letter word.
+      ;;               ;; and, memq: tests to see whether object is a member of list. ?\t: tab character. ?\s: espace character
+      ;;               (and (memq (preceding-char) '(?\t ?\s))
+      ;;                    (eq (char-syntax (following-char)) ?w)))))))
+
+      ;;    (add-hook 'fill-nobreak-predicate #'sync0-foreign-language-nobreak-p)
+
+      ;; (save-excursion 
+      ;;  (search-forward "}"
+      ;;    (line-end-position)
+      ;;     nil
+      ;;      1)
+      ;; (defun sync0-nobreak-p ()
+      ;;   (and (looking-at ".+}")
+      ;;        (looking-back "\\text.+" (line-beginning-position))))
+
+      ;; (add-hook 'fill-nobreak-predicate #'sync0-nobreak-p)
+
+
+      ;; (defun sync0-nobreak-p ()
+      ;;   (and (looking-at ".+}")
+      ;;        (looking-back "\\text.+" (line-beginning-position))))
+
+      ;; (add-hook 'fill-nobreak-predicate #'sync0-nobreak-p)
+
+
+      ;;(setq fill-nobreak-predicate '(sync0-is-this-a-csquote))
+      ;;      (add-hook 'fill-nobreak-predicate #'sync0-is-this-a-csquote)
+      ;;(add-to-list 'fill-nobreak-predicate
+      ;;     'sync0-is-this-a-csquote)
+  #+END_SRC
 *** Autofill improvement
   (defun sync0-is-this-a-csquote ()
     "Find wheter current line begins with a LaTeX csquote"
@@ -459,7 +601,219 @@ that I’ve copied from the web.
   ;; Have org-mode indent elips sections by default
   (setq org-src-tab-acts-natively t) 
 #+END_SRC 
+** Doom macros
+*** after!
+#+BEGIN_SRC emacs-lisp
+(eval-and-compile
+  (defmacro after! (feature &rest forms)
+  "A smart wrapper around `with-eval-after-load'. Supresses warnings during
+compilation."
+  (declare (indent defun) (debug t))
+  `(,(if (or (not (bound-and-true-p byte-compile-current-file))
+             (if (symbolp feature)
+                 (require feature nil :no-error)
+               (load feature :no-message :no-error)))
+         #'progn
+       #'with-no-warnings)
+    (with-eval-after-load ',feature ,@forms))))
+  #+END_SRC 
+*** add-hook!
+    #+BEGIN_SRC emacs-lisp
+(eval-and-compile 
+(defun doom-enlist (exp)
+  "Return EXP wrapped in a list, or as-is if already a list."
+  (if (listp exp) exp (list exp)))
+
+(defun doom-unquote (exp)
+  "Return EXP unquoted."
+  (while (memq (car-safe exp) '(quote function))
+    (setq exp (cadr exp)))
+  exp)
+
+
+(defun doom--resolve-hook-forms (hooks)
+  (cl-loop with quoted-p = (eq (car-safe hooks) 'quote)
+           for hook in (doom-enlist (doom-unquote hooks))
+           if (eq (car-safe hook) 'quote)
+            collect (cadr hook)
+           else if quoted-p
+            collect hook
+           else collect (intern (format "%s-hook" (symbol-name hook)))))
+
+(defvar doom--transient-counter 0)
+
+(defmacro add-transient-hook! (hook &rest forms)
+  "Attaches transient forms to a HOOK.
+HOOK can be a quoted hook or a sharp-quoted function (which will be advised).
+These forms will be evaluated once when that function/hook is first invoked,
+then it detaches itself."
+  (declare (indent 1))
+  (let ((append (eq (car forms) :after))
+        (fn (intern (format "doom-transient-hook-%s" (cl-incf doom--transient-counter)))))
+    `(when ,hook
+       (fset ',fn
+             (lambda (&rest _)
+               ,@forms
+               (cond ((functionp ,hook) (advice-remove ,hook #',fn))
+                     ((symbolp ,hook)   (remove-hook ,hook #',fn)))
+               (unintern ',fn nil)))
+       (cond ((functionp ,hook)
+              (advice-add ,hook ,(if append :after :before) #',fn))
+             ((symbolp ,hook)
+              (add-hook ,hook #',fn ,append))))))
+
+      (defmacro add-hook! (&rest args)
+  "A convenience macro for `add-hook'. Takes, in order:
+  1. Optional properties :local and/or :append, which will make the hook
+     buffer-local or append to the list of hooks (respectively),
+  2. The hooks: either an unquoted major mode, an unquoted list of major-modes,
+     a quoted hook variable or a quoted list of hook variables. If unquoted, the
+     hooks will be resolved by appending -hook to each symbol.
+  3. A function, list of functions, or body forms to be wrapped in a lambda.
+Examples:
+    (add-hook! 'some-mode-hook 'enable-something)
+    (add-hook! some-mode '(enable-something and-another))
+    (add-hook! '(one-mode-hook second-mode-hook) 'enable-something)
+    (add-hook! (one-mode second-mode) 'enable-something)
+    (add-hook! :append (one-mode second-mode) 'enable-something)
+    (add-hook! :local (one-mode second-mode) 'enable-something)
+    (add-hook! (one-mode second-mode) (setq v 5) (setq a 2))
+    (add-hook! :append :local (one-mode second-mode) (setq v 5) (setq a 2))
+Body forms can access the hook's arguments through the let-bound variable
+`args'."
+  (declare (indent defun) (debug t))
+  (let ((hook-fn 'add-hook)
+        append-p local-p)
+    (while (keywordp (car args))
+      (pcase (pop args)
+        (:append (setq append-p t))
+        (:local  (setq local-p t))
+        (:remove (setq hook-fn 'remove-hook))))
+    (let ((hooks (doom--resolve-hook-forms (pop args)))
+          (funcs
+           (let ((val (car args)))
+             (if (memq (car-safe val) '(quote function))
+                 (if (cdr-safe (cadr val))
+                     (cadr val)
+                   (list (cadr val)))
+               (list args))))
+          forms)
+      (dolist (fn funcs)
+        (setq fn (if (symbolp fn)
+                     `(function ,fn)
+                   `(lambda (&rest _) ,@args)))
+        (dolist (hook hooks)
+          (push (if (eq hook-fn 'remove-hook)
+                    `(remove-hook ',hook ,fn ,local-p)
+                  `(add-hook ',hook ,fn ,append-p ,local-p))
+                forms)))
+      `(progn ,@(nreverse forms))))))
+      #+END_SRC 
+*** def-setting!
+#+BEGIN_SRC emacs-lisp
+(eval-and-compile
+(defvar doom-settings nil)
+  (defmacro def-setting! (keyword arglist &optional docstring &rest forms)
+  "Define a setting. Like `defmacro', this should return a form to be executed
+when called with `set!'. FORMS are not evaluated until `set!' calls it.
+See `doom/describe-setting' for a list of available settings.
+Do not use this for configuring Doom core."
+  (declare (indent defun) (doc-string 3))
+  (unless (keywordp keyword)
+    (error "Not a valid property name: %s" keyword))
+  (let ((fn (intern (format "doom--set%s" keyword))))
+    `(progn
+       (defun ,fn ,arglist
+         ,docstring
+         ,@forms)
+       (cl-pushnew ',(cons keyword fn) doom-settings :test #'eq :key #'car)))))
+  #+END_SRC 
+*** set!
+#+BEGIN_SRC emacs-lisp
+(eval-and-compile 
+(defvar doom-debug-mode (or (getenv "DEBUG") init-file-debug)
+  "If non-nil, all doom functions will be verbose. Set DEBUG=1 in the command
+line or use --debug-init to enable this.")
+
+(defmacro set! (keyword &rest values)
+  "Set an option defined by `def-setting!'. Skip if doesn't exist. See
+`doom/describe-setting' for a list of available settings."
+  (declare (indent defun))
+  (unless values
+    (error "Empty set! for %s" keyword))
+  (let ((fn (cdr (assq keyword doom-settings))))
+    (if fn
+        (apply fn values)
+      (when doom-debug-mode
+        (message "No setting found for %s" keyword)
+        nil)))))
+  #+END_SRC 
 * Packages 
+** Highlight indentation
+#+BEGIN_SRC emacs-lisp
+  ;; (use-package highlight-indentation
+  ;;   :commands (highlight-indentation-mode highlight-indentation-current-column-mode)
+  ;;   :config
+  ;;   (defun doom|inject-trailing-whitespace (&optional start end)
+  ;;     "The opposite of `delete-trailing-whitespace'. Injects whitespace into
+  ;; buffer so that `highlight-indentation-mode' will display uninterrupted indent
+  ;; markers. This whitespace is stripped out on save, as not to affect the resulting
+  ;; file."
+  ;;     (interactive (progn (barf-if-buffer-read-only)
+  ;;                         (if (use-region-p)
+  ;;                             (list (region-beginning) (region-end))
+  ;;                           (list nil nil))))
+  ;;     (unless indent-tabs-mode
+  ;;       (save-match-data
+  ;;         (save-excursion
+  ;;           (let ((end-marker (copy-marker (or end (point-max))))
+  ;;                 (start (or start (point-min))))
+  ;;             (goto-char start)
+  ;;             (while (and (re-search-forward "^$" end-marker t) (< (point) end-marker))
+  ;;               (let (line-start line-end next-start next-end)
+  ;;                 (save-excursion
+  ;;                   ;; Check previous line indent
+  ;;                   (forward-line -1)
+  ;;                   (setq line-start (point)
+  ;;                         line-end (save-excursion (back-to-indentation) (point)))
+  ;;                   ;; Check next line indent
+  ;;                   (forward-line 2)
+  ;;                   (setq next-start (point)
+  ;;                         next-end (save-excursion (back-to-indentation) (point)))
+  ;;                   ;; Back to origin
+  ;;                   (forward-line -1)
+  ;;                   ;; Adjust indent
+  ;;                   (let* ((line-indent (- line-end line-start))
+  ;;                          (next-indent (- next-end next-start))
+  ;;                          (indent (min line-indent next-indent)))
+  ;;                     (insert (make-string (if (zerop indent) 0 (1+ indent)) ? )))))
+  ;;               (forward-line 1)))))
+  ;;       (set-buffer-modified-p nil))
+  ;;   nil)
+
+    ;; (defun highlight-indentation-handle-whitespace ()
+    ;;   (if (or highlight-indentation-mode highlight-indentation-current-column-mode)
+    ;;       (progn
+    ;;         (doom|inject-trailing-whitespace)
+    ;;         (add-hook 'before-save-hook #'delete-trailing-whitespace nil t)
+    ;;         (add-hook 'after-save-hook #'doom|inject-trailing-whitespace nil t))
+    ;;     (remove-hook 'before-save-hook #'delete-trailing-whitespace t)
+    ;;     (remove-hook 'after-save-hook #'doom|inject-trailing-whitespace t)
+    ;;     (delete-trailing-whitespace)))
+    ;; (add-hook 'highlight-indentation-mode-hook 'highlight-indentation-handle-whitespace)
+    ;; (add-hook 'highlight-indentation-current-column-mode-hook 'highlight-indentation-handle-whitespace)
+
+     (use-package highlight-indentation
+     :commands (highlight-indentation-mode highlight-indentation-current-column-mode))
+
+  ;; ;; For modes with sub-par number fontification
+  ;; (use-package highlight-numbers :commands highlight-numbers-mode)
+
+  ;; languages like Lisp.
+  (use-package rainbow-delimiters
+    :hook (lisp-mode . rainbow-delimiters-mode)
+    :config (setq rainbow-delimiters-max-face-count 3))
+  #+END_SRC 
 ** All the icons
 #+BEGIN_SRC emacs-lisp
 (use-package all-the-icons :after ivy
@@ -472,42 +826,43 @@ that I’ve copied from the web.
 #+END_SRC 
 ** Doom theme
 #+BEGIN_SRC emacs-lisp
-  (use-package doom-themes  :defer t 
-:init
-(progn
-    ;;(load-theme 'doom-one-vibrant t)
-    ;;(load-theme 'doom-molokai t)
-    ;;(load-theme 'doom-peacock t)
-    ;;(load-theme 'doom-tomorrow-night t)
-    (load-theme 'doom-spacegrey t)
-    ;;(load-theme 'doom-one-light t)
-    ;;(load-theme 'doom-tomorrow-day t)
-    ;;(load-theme 'doom-one t)
-    ;;(load-theme 'doom-nova t)
-    ;;(load-theme 'doom-nord t)
-    (load-theme 'doom-solarized-light t))
-    :config
-(progn
-    (setq spaceline-all-the-icons-separator-type 'none)
-    (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-          doom-themes-enable-italic t) ; if nil, italics is universally disabled
-    ;; Enable flashing mode-line on errors
-    (doom-themes-visual-bell-config)
-    ;; Enable custom neotree thème
-;;    (doom-themes-neotree-config)  ; all-the-icons fonts must be installed!
-    ;; Corrects (and improves) org-mode's native fontification.
-    (doom-themes-org-config)))
+      (use-package doom-themes  
+    :init
+    ;;(progn
+        ;;(load-theme 'doom-one-vibrant t)
+        ;;(load-theme 'doom-molokai t)
+        ;;(load-theme 'doom-peacock t)
+        ;;(load-theme 'doom-tomorrow-night t)
+        ;;(load-theme 'doom-spacegrey t)    
+        ;;(load-theme 'doom-one-light t)
+        ;;(load-theme 'doom-tomorrow-day t)
+        ;;(load-theme 'doom-one t)
+  ;;      (load-theme 'doom-nova t)
+   ;;     (load-theme 'doom-nord t)
+        ;;(load-theme 'doom-solarized-light t))
+        (load-theme 'doom-solarized-light t)
+        :config
+        ;; (setq spaceline-all-the-icons-separator-type 'none)
+        (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+              doom-themes-enable-italic t) ; if nil, italics is universally disabled
+        ;; Enable flashing mode-line on errors
+        (doom-themes-visual-bell-config)
+        ;; Enable custom neotree thème
+    ;;    (doom-themes-neotree-config)  ; all-the-icons fonts must be installed!
+        ;; Corrects (and improves) org-mode's native fontification.
+        (doom-themes-org-config))
 
-  ;; Cycley between thèmes
-(use-package cycle-themes :load-path "~/.emacs.d/sync0_git/cycle-themes.el/" 
-:after doom-themes
-  :init (setq cycle-themes-theme-list
-        '(doom-spacegrey doom-solarized-light))
-  :config (cycle-themes-mode))
+      ;; Cycley between thèmes
+    ;; (use-package cycle-themes :load-path "~/.emacs.d/sync0_git/cycle-themes.el/" 
+    ;; :after doom-themes
+    ;;   :init (setq cycle-themes-theme-list
+    ;;         ;;'(doom-spacegrey doom-solarized-light))
+    ;;         '(doom-spacegrey doom-nova doom-nord doom-solarized-light))
+    ;;   :config (cycle-themes-mode))
 
-  ;;'(doom-spacegrey doom-one-light doom-one doom-nova doom-nord doom-tomorrow-day doom-solarized-light))
+      ;;'(doom-spacegrey doom-one-light doom-one doom-nova doom-nord doom-tomorrow-day doom-solarized-light))
 
-  (cycle-themes-mode)
+      ;(cycle-themes-mode)
 #+END_SRC 
 ** Spellchecking
  #+BEGIN_SRC emacs-lisp
@@ -527,7 +882,7 @@ that I’ve copied from the web.
      ("german" "[[:alpha:]ÄÖÜéäöüß]" "[^[:alpha:]ÄÖÜéäöüß]" "[']" t ("-d" "de_DE") nil utf-8)
      ("spanish" "[[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "[^[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "[']" t ("-d" "es_ES") nil utf-8)
      ("italian" "[[:alpha:]AEÉIOUàèéìòù]" "[^[:alpha:]AEÉIOUàèéìòù]" "[---']" t ("-d" "it_IT") "~tex" nil utf-8)
-     ("french" "[[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[^[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[']" t ("-d" "fr_FR") nil  utf-8))))
+     ("french" "[[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[^[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[-'^`\".@]" t ("-d" "fr_FR")  nil "~tex" utf-8))))
 
   ((executable-find "aspell")
    (setq ispell-program-name "aspell")
@@ -591,170 +946,191 @@ that I’ve copied from the web.
 #+END_SRC
 ** EVIL mode 
    #+BEGIN_SRC emacs-lisp
-     ;; initializing
-     (use-package evil  :after org
-       :bind (
-              ;; ESC quits almost anything
-              :map evil-normal-state-map
-              ;;     ("ESC" . keyboard-quit)
-                   ;; quickly switch buffers
-                   ("C-j" . next-buffer)
-                   ("C-k" . previous-buffer)
-                   ("C-S-h" . evil-window-left)
-                   ("C-S-j" . evil-window-down)
-                   ("C-S-k" . evil-window-up)
-                   ("C-S-l" . evil-window-right))
-               ;;    :map evil-visual-state-map
-                ;;   ("ESC" . keyboard-quit))
-                  ;; :map minibuffer-local-map
-                   ;;("ESC" . minibuffer-keyboard-quit)
-                  ;; :map minibuffer-local-ns-map
-                   ;;("ESC" . minibuffer-keyboard-quit)
-                   ;;:map minibuffer-local-completion-map
-                  ;; ("ESC" . minibuffer-keyboard-quit)
-                   ;;:map minibuffer-local-must-match-map
-                  ;; ("ESC" . minibuffer-keyboard-quit)
-                   ;;:map minibuffer-local-isearch-map
-                   ;;("ESC" . minibuffer-keyboard-quit))
-:init
-         (evil-mode 1)
-       :config
-  
+          ;; initializing
+          (use-package evil  :after org
+            :bind (
+                   ;; ESC quits almost anything
+                   :map evil-normal-state-map
+                   ;;     ("ESC" . keyboard-quit)
+                        ;; quickly switch buffers
+                        ("C-j" . next-buffer)
+                        ("C-k" . previous-buffer)
+                        ("C-S-h" . evil-window-left)
+                        ("C-S-j" . evil-window-down)
+                        ("C-S-k" . evil-window-up)
+                        ("C-S-l" . evil-window-right))
+                    ;;    :map evil-visual-state-map
+                     ;;   ("ESC" . keyboard-quit))
+                       ;; :map minibuffer-local-map
+                        ;;("ESC" . minibuffer-keyboard-quit)
+                       ;; :map minibuffer-local-ns-map
+                        ;;("ESC" . minibuffer-keyboard-quit)
+                        ;;:map minibuffer-local-completion-map
+                       ;; ("ESC" . minibuffer-keyboard-quit)
+                        ;;:map minibuffer-local-must-match-map
+                       ;; ("ESC" . minibuffer-keyboard-quit)
+                        ;;:map minibuffer-local-isearch-map
+                        ;;("ESC" . minibuffer-keyboard-quit))
+     :init
+              (evil-mode 1)
+            :config
 
-         ;;(add-hook 'org-mode-hook (lambda () (evil-mode 1)))
-         ;;(add-hook 'after-init-hook '#evil-mode) 
-         (add-to-list 'evil-emacs-state-modes 'cfw:details-mode)
 
-       ;; input methods 
-       ;; set default input method
-       ;; (setq default-input-method "TeX")
-       ;; no input method for evil normal state
-       (add-hook 'evil-normal-state-entry-hook
-                 (lambda () (set-input-method 'nil)))
-       ;; Spanish
+              ;;(add-hook 'org-mode-hook (lambda () (evil-mode 1)))
+              ;;(add-hook 'after-init-hook '#evil-mode) 
+              (add-to-list 'evil-emacs-state-modes 'cfw:details-mode)
 
-       ;; spanish-postfix for evil insert mode
-       ;;(add-hook 'evil-insert-state-entry-hook
-       ;; (lambda () (set-input-method "spanish-postfix")))
+            ;; input methods 
+            ;; set default input method
+            ;; (setq default-input-method "TeX")
+            ;; no input method for evil normal state
+            (add-hook 'evil-normal-state-entry-hook
+                      (lambda () (set-input-method 'nil)))
+            ;; Spanish
 
-       ;; spanish-postfix for evil insert mode
-       ;;(add-hook 'evil-insert-state-entry-hook
-       ;; (lambda () (set-input-method "spanish-postfix")))
-       ;; Latin
+            ;; spanish-postfix for evil insert mode
+            ;;(add-hook 'evil-insert-state-entry-hook
+            ;; (lambda () (set-input-method "spanish-postfix")))
 
-       ;; latin-1-postfix for evil replace mode
-       ;;(add-hook 'evil-replace-state-entry-hook
-       ;; (lambda () (set-input-method "latin-1-postfix")))
+            ;; spanish-postfix for evil insert mode
+            ;;(add-hook 'evil-insert-state-entry-hook
+            ;; (lambda () (set-input-method "spanish-postfix")))
+            ;; Latin
 
-       ;; latin-1-postfix for evil replace mode
-       ;;(add-hook 'evil-replace-state-entry-hook
-       ;; (lambda () (set-input-method "latin-1-postfix")))
-       ;; French 
+            ;; latin-1-postfix for evil replace mode
+            ;;(add-hook 'evil-replace-state-entry-hook
+            ;; (lambda () (set-input-method "latin-1-postfix")))
 
-       ;; french-postfix for evil insert mode 
-       (add-hook 'evil-insert-state-entry-hook 
-                 (lambda () (set-input-method "french-postfix")))
+            ;; latin-1-postfix for evil replace mode
+            ;;(add-hook 'evil-replace-state-entry-hook
+            ;; (lambda () (set-input-method "latin-1-postfix")))
+            ;; French 
 
-       ;; french-postfix for evil replace mode
-       (add-hook 'evil-replace-state-entry-hook
-                 (lambda () (set-input-method "french-postfix")))
-       ;; German 
+            ;; french-postfix for evil insert mode 
+            (add-hook 'evil-insert-state-entry-hook 
+                      (lambda () (set-input-method "french-postfix")))
 
-       ;; german-postfix for evil insert mode
-       ;;(add-hook 'evil-insert-state-entry-hook
-       ;;(lambda () (set-input-method "german-postfix")))
+            ;; french-postfix for evil replace mode
+            (add-hook 'evil-replace-state-entry-hook
+                      (lambda () (set-input-method "french-postfix")))
+            ;; German 
 
-       ;; german-postfix for evil replace mode
-       ;;(add-hook 'evil-replace-state-entry-hook
-       ;;(lambda () (set-input-method "german-postfix")))
+            ;; german-postfix for evil insert mode
+            ;;(add-hook 'evil-insert-state-entry-hook
+            ;;(lambda () (set-input-method "german-postfix")))
 
-         ;; EVIL org
-         ;; setup functions
-         (defun clever-insert-item ()
-           "Clever insertion of org item."
-           (if (not (org-in-item-p))
-               (insert "\n")
-             (org-insert-item)))
+            ;; german-postfix for evil replace mode
+            ;;(add-hook 'evil-replace-state-entry-hook
+            ;;(lambda () (set-input-method "german-postfix")))
 
-         (defun evil-org-eol-call (fun)
-           "Go to end of line and call provided function.
-       FUN function callback"
-           (end-of-line)
-           (funcall fun)
-           (evil-append nil))
+              ;; EVIL org
+              ;; setup functions
+              (defun clever-insert-item ()
+                "Clever insertion of org item."
+                (if (not (org-in-item-p))
+                    (insert "\n")
+                  (org-insert-item)))
 
-         ;; key bindings
-         ;; redefinition evils visual mode map
-         (evil-define-key 'normal org-mode-map
-           ;; "<" 'outline-previous-visible-heading
-           ">"   'org-forward-heading-same-level
-           "<"  'org-backward-heading-same-level
-           ;; ">" 'outline-next-visible-heading
-           "H" 'org-metaleft
-           "L" 'org-metaright
-           "K" 'org-metaup
-           "J" 'org-metadown
-           ;; "K" 'outline-previous-visible-heading
-           ;;"J" 'outline-next-visible-heading
-           ;; "H" (if (fboundp 'org-backward-same-level)
-           ;;   'org-backward-same-level
-           ;;'org-backward-heading-same-level)
-           ;;  "L" (if (fboundp 'org-forward-same-level) ;to be backward compatible with older org version
-           ;;   'org-forward-same-level
-           ;;'org-forward-heading-same-level)
-           ;;  "<" 'org-metaleft
-           ;; ">" 'org-metaright
-           "k" 'previous-line
-           "j" 'next-line
-           ;;  "m" 'set-mark-command
-           "q" 'fill-paragraph
-           "o" '(lambda () (interactive) (evil-org-eol-call 'clever-insert-item))
-           "O" '(lambda () (interactive) (evil-org-eol-call 'org-insert-heading))
-           "$" 'org-end-of-line
-           "^" 'org-beginning-of-line
-           "[" 'backward-sentence
-           "]" 'forward-sentence
-           "{" 'org-backward-paragraph
-           "}" 'org-forward-paragraph
-           "-" 'org-cycle-list-bullet
-           (kbd "<tab>") 'org-cycle)
+              (defun evil-org-eol-call (fun)
+                "Go to end of line and call provided function.
+            FUN function callback"
+                (end-of-line)
+                (funcall fun)
+                (evil-append nil))
 
-         (evil-define-key 'visual org-mode-map
-           "e" 'org-emphasize)
-         (setq evil-mode-line-format nil
-         ;; turn off auto-indent 
-          evil-auto-indent nil
-         ;; Change color of evil cursor
-               evil-insert-state-cursor '(bar "#dc322f")
-               evil-normal-state-cursor '(box "#268bd2")
-               evil-visual-state-cursor '(box "#d33682"))
-         ;; Improve EVIL behavior with visual lines
-         ;; Make movement keys work like they should
-         (define-key evil-normal-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
-         (define-key evil-normal-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line)
-         (define-key evil-motion-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
-         (define-key evil-motion-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line)
-         ;; Make horizontal movement cross lines                                    
-         (setq-default evil-cross-lines t))
+              ;; key bindings
+              ;; redefinition evils visual mode map
+              (evil-define-key 'normal org-mode-map
+                ;; "<" 'outline-previous-visible-heading
+                ">"   'org-forward-heading-same-level
+                "<"  'org-backward-heading-same-level
+                ;; ">" 'outline-next-visible-heading
+                "H" 'org-metaleft
+                "L" 'org-metaright
+                "K" 'org-metaup
+                "J" 'org-metadown
+                ;; "K" 'outline-previous-visible-heading
+                ;;"J" 'outline-next-visible-heading
+                ;; "H" (if (fboundp 'org-backward-same-level)
+                ;;   'org-backward-same-level
+                ;;'org-backward-heading-same-level)
+                ;;  "L" (if (fboundp 'org-forward-same-level) ;to be backward compatible with older org version
+                ;;   'org-forward-same-level
+                ;;'org-forward-heading-same-level)
+                ;;  "<" 'org-metaleft
+                ;; ">" 'org-metaright
+                "k" 'previous-line
+                "j" 'next-line
+                ;;  "m" 'set-mark-command
+                "q" 'fill-paragraph
+                "o" '(lambda () (interactive) (evil-org-eol-call 'clever-insert-item))
+                "O" '(lambda () (interactive) (evil-org-eol-call 'org-insert-heading))
+                "$" 'org-end-of-line
+                "^" 'org-beginning-of-line
+                "[" 'backward-sentence
+                "]" 'forward-sentence
+                "{" 'org-backward-paragraph
+                "}" 'org-forward-paragraph
+                "-" 'org-cycle-list-bullet
+                (kbd "<tab>") 'org-cycle)
+
+              (evil-define-key 'visual org-mode-map
+                "q" 'highlight-changes-remove-highlight
+                "e" 'org-emphasize)
+              (setq evil-mode-line-format nil
+              ;; turn off auto-indent 
+               evil-auto-indent nil
+              ;; Change color of evil cursor
+                    evil-insert-state-cursor '(bar "#dc322f")
+                    evil-normal-state-cursor '(box "#268bd2")
+                    evil-visual-state-cursor '(box "#d33682"))
+              ;; Improve EVIL behavior with visual lines
+              ;; Make movement keys work like they should
+              (define-key evil-normal-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
+              (define-key evil-normal-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line)
+              (define-key evil-motion-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
+              (define-key evil-motion-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line)
+
+
+     (defvar +evil-esc-hook '(t)
+         "A hook run after ESC is pressed in normal mode (invoked by
+     `evil-force-normal-state'). If any hook returns non-nil, all hooks after it are
+     ignored.")
+
+       (defun +evil*attach-escape-hook ()
+         "Run the `+evil-esc-hook'."
+         (cond ((minibuffer-window-active-p (minibuffer-window))
+                ;; quit the minibuffer if open.
+                (abort-recursive-edit))
+               ((evil-ex-hl-active-p 'evil-ex-search)
+                ;; disable ex search buffer highlights.
+                (evil-ex-nohighlight))
+               (t
+                ;; Run all escape hooks. If any returns non-nil, then stop there.
+                (run-hook-with-args-until-success '+evil-esc-hook))))
+       (advice-add #'evil-force-normal-state :after #'+evil*attach-escape-hook)
+
+              ;; Make horizontal movement cross lines                                    
+              (setq-default evil-cross-lines t))
    #+END_SRC 
 *** evil-snipe
 #+BEGIN_SRC emacs-lisp
-         ;; evil-escape
-(use-package evil-snipe :after evil
-  :commands (evil-snipe-mode evil-snipe-override-mode
-             evil-snipe-local-mode evil-snipe-override-local-mode)
-  :init
-  (setq evil-snipe-smart-case t
-        evil-snipe-scope 'line
-        evil-snipe-repeat-scope 'whole-line
-        evil-snipe-char-fold t
-       ;; evil-snipe-disabled-modes 'magit-mode
-        evil-snipe-aliases '((?\[ "[[{(]")
-                             (?\] "[]})]")
-                             (?\; "[;:]")))
-  (add-hook 'after-init-hook 'evil-snipe-mode)
- (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode)
- (add-hook 'after-init-hook 'evil-snipe-override-mode))
+  ;; (use-package evil-snipe :after evil
+  ;;   :commands (evil-snipe-mode evil-snipe-override-mode
+  ;;              evil-snipe-local-mode evil-snipe-override-local-mode)
+  ;;   :init
+  ;;   (setq evil-snipe-smart-case t
+  ;;         evil-snipe-scope 'visible
+  ;;         ;;evil-snipe-scope 'line
+  ;;         evil-snipe-repeat-scope 'whole-line
+  ;;         evil-snipe-char-fold t
+  ;;        ;; evil-snipe-disabled-modes 'magit-mode
+  ;;         evil-snipe-aliases '((?\[ "[[{(]")
+  ;;                              (?\] "[]})]")
+  ;;                              (?\; "[;:]")))
+  ;;   (add-hook 'after-init-hook 'evil-snipe-mode))
+   ;;(add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode)
+   ;;(add-hook 'after-init-hook 'evil-snipe-override-mode))
   #+END_SRC 
 *** evil-escape
 #+BEGIN_SRC emacs-lisp
@@ -766,14 +1142,14 @@ that I’ve copied from the web.
         evil-escape-key-sequence "fd"
 evil-escape-unordered-key-sequence t
         evil-escape-delay 0.25)
-  (add-hook 'after-init-hook 'evil-escape-mode)
+  (add-hook 'after-init-hook #'evil-escape-mode)
   :config
   ;; no `evil-escape' in minibuffer
-  (cl-pushnew #'minibufferp evil-escape-inhibit-functions :test #'eq))
-  ;;(define-key evil-insert-state-map  (kbd "C-g") #'evil-escape)
-  ;;(define-key evil-replace-state-map (kbd "C-g") #'evil-escape)
-  ;;(define-key evil-visual-state-map  (kbd "C-g") #'evil-escape)
-  ;;(define-key evil-operator-state-map (kbd "C-g") #'evil-escape))
+  (push #'minibufferp evil-escape-inhibit-functions)
+  (define-key evil-insert-state-map  (kbd "C-g") #'evil-escape)
+ (define-key evil-replace-state-map (kbd "C-g") #'evil-escape)
+  (define-key evil-visual-state-map  (kbd "C-g") #'evil-escape)
+  (define-key evil-operator-state-map (kbd "C-g") #'evil-escape))
   #+END_SRC 
 *** evil-multiedit
 #+BEGIN_SRC emacs-lisp
@@ -1081,7 +1457,7 @@ idea
   (setq org-agenda-compact-blocks nil)
 
   ;; Make agenda the only window by default
-  (setq org-agenda-window-setup  'only-window)
+  ;;(setq org-agenda-window-setup  'only-window)
 
   ;; build composite agenda view
   (setq org-agenda-custom-commands
@@ -1414,6 +1790,7 @@ There is a strange inconsistency when habits are enabled. See [[https://emacs.st
   ;; :init
   ;; (progn
   ;; (setq org-bullets-bullet-list '("一" "二" "三" "四" "五" "六" "七" "八" "七" "九" "十"))
+  ;; (setq org-bullets-bullet-list '("一" "二" "三" "四" "五"))
   ;; (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))))
 #+END_SRC 
 *** hook flyspell into org-mode
@@ -1775,21 +2152,65 @@ from the `before-change-functions' in the current buffer."
 (setq org-mobile-inbox-for-pull "~/Dropbox/org/moborg_notes.org")
 ;; Set to <your Dropbox root directory>/MobileOrg.
 (setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
-*** Org-ref 
+*** Change default apps 
 #+BEGIN_SRC emacs-lisp
-(setq reftex-default-bibliography '("/home/sync0/Documents/mendeley/library.bib"))
+(add-hook 'org-mode-hook
+           '(lambda ()
+            (delete '("\\.pdf\\'" . default) org-file-apps)
+            (add-to-list 'org-file-apps '("\\.pdf\\'" . "mendeleydesktop %s"))))
+#+END_SRC   
+*** Editing source code
+#+BEGIN_SRC emacs-lisp
+;; color embeded source code
+(setq org-src-fontify-natively t)
 
-;; see org-ref for use of these variables
-(setq org-ref-bibliography-notes "/home/sync0/Dropbox/org/master.org"
-          org-ref-default-bibliography '("/home/sync0/Documents/mendeley/library.bib")
-          org-ref-pdf-directory "/home/sync0/Documents/mendeley/"
-          bibtex-completion-bibliography 'org-ref-default-bibliography
+;; stop emacs asking for confirmation
+(setq org-confirm-babel-evaluate nil)
+
+;; export colored code blocks
+(setq org-latex-listings 'minted)
+
+;; set word wrap for code blocks
+(setq org-latex-minted-options '(("breaklines" "true")
+                                 ("breakanywhere" "true")))
+#+END_SRC 
+*** Code  export
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'org-export-exclude-tags "取")
+#+END_SRC 
+** Ivy-bibtex
+         bibtex-completion-library-path '("~/Documents/mendeley/")
+         bibtex-completion-pdf-field "file"
+#+BEGIN_SRC emacs-lisp
+  (use-package ivy-bibtex :after (org ivy)
+    :config
+    (setq ivy-bibtex-bibliography "~/Documents/mendeley/master.bib" ;; where your references are stored
+          ivy-bibtex-library-path "~/Documents/mendeley/" ;; where your pdfs etc are stored
+          ivy-bibtex-notes-path "~/Dropbox/org/master.org" ;; where your notes are stored
+          bibtex-completion-bibliography 'org-ref-default-bibliography ;; writing completion
+          bibtex-completion-notes-path "~/Documents/org/master.org")
+        (define-key org-mode-map  (kbd "C-c 8") 'ivy-bibtex))
+  #+END_SRC 
+** Org-ref 
+#+BEGIN_SRC emacs-lisp
+  (use-package org-ref :after (org ivy)
+    :init 
+    (setq reftex-default-bibliography '("~/Documents/mendeley/library.bib")
+          ;; see org-ref for use of these variables
+          org-ref-bibliography-notes "~/Dropbox/org/master.org"
+          org-ref-default-bibliography '("~/Documents/mendeley/library.bib")
+          org-ref-pdf-directory "~/Documents/mendeley/"
           org-ref-open-pdf-function 'org-ref-get-mendeley-filename
-)
-
-;; set ivy for completion
-(setq org-ref-completion-library 'org-ref-ivy-cite)
-(require 'org-ref)
+          ;; set ivy for completion
+          org-ref-completion-library 'org-ref-ivy-cite)
+:config 
+            (define-key org-mode-map (kbd "C-c [") 'org-ref-ivy-insert-cite-link)
+            (define-key org-mode-map  (kbd "C-c 0") 'org-ref-open-bibtex-notes)
+            (define-key org-mode-map  (kbd "C-c 9") 'org-ref-open-notes-from-reftex)
+;; open in different viewer
+(setq bibtex-completion-pdf-open-function
+  (lambda (fpath)
+    (call-process "mendeleydesktop" nil 0 nil fpath))))
 #+END_SRC 
 **** Fix open-pdf issue
 ##+BEGIN_SRC emacs-lisp
@@ -1817,23 +2238,6 @@ from the `before-change-functions' in the current buffer."
          bibtex-completion-notes-path "~/Dropbox/org/master.org"
          bibtex-completion-pdf-symbol "在文"
          bibtex-completion-notes-symbol "筆錄")
-**** Open pdfs
-#+BEGIN_SRC emacs-lisp
-(defun my/org-ref-open-pdf-at-point ()
-  "Open the pdf for bibtex key under point if it exists."
-  (interactive)
-  (let* ((results (org-ref-get-bibtex-key-and-file))
-         (key (car results))
-     (pdf-file (car (bibtex-completion-find-pdf key))))
-    (if (file-exists-p pdf-file)
-    (funcall bibtex-completion-pdf-open-function pdf-file)
-      (message "No PDF found for %s" key))))
-
-;; open in different viewer
-(setq bibtex-completion-pdf-open-function
-  (lambda (fpath)
-    (call-process "mendeleydesktop" nil 0 nil fpath)))
-#+END_SRC 
 ****  custom template function
 (setq bibtex-completion-notes-template-one-file
       (format
@@ -1856,45 +2260,6 @@ from the `before-change-functions' in the current buffer."
   :FILE: [[file:%F][%f]]
   :Custom_ID: %k
 :END:")
-**** Useful keybindings
-#+BEGIN_SRC emacs-lisp
-(add-hook 'org-mode-hook
-          (lambda ()
-            (define-key org-mode-map  (kbd "C-c 0") 'org-ref-open-bibtex-notes)))
-(add-hook 'org-mode-hook
-          (lambda ()
-            (define-key org-mode-map  (kbd "C-c 8") 'ivy-bibtex)))
-(add-hook 'org-mode-hook
-          (lambda ()
-            (define-key org-mode-map  (kbd "C-c 9") 'org-ref-open-notes-from-reftex)))
-(define-key org-mode-map (kbd "C-c [") 'org-ref-ivy-insert-cite-link)
-#+END_SRC 
-*** Change default apps 
-#+BEGIN_SRC emacs-lisp
-(add-hook 'org-mode-hook
-           '(lambda ()
-            (delete '("\\.pdf\\'" . default) org-file-apps)
-            (add-to-list 'org-file-apps '("\\.pdf\\'" . "mendeleydesktop %s"))))
-#+END_SRC   
-*** Editing source code
-#+BEGIN_SRC emacs-lisp
-;; color embeded source code
-(setq org-src-fontify-natively t)
-
-;; stop emacs asking for confirmation
-(setq org-confirm-babel-evaluate nil)
-
-;; export colored code blocks
-(setq org-latex-listings 'minted)
-
-;; set word wrap for code blocks
-(setq org-latex-minted-options '(("breaklines" "true")
-                                 ("breakanywhere" "true")))
-#+END_SRC 
-*** Code  export
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'org-export-exclude-tags "取")
-#+END_SRC 
 ** Yasnippets
 #+BEGIN_SRC emacs-lisp
 (use-package yasnippet :defer t 
@@ -1903,15 +2268,14 @@ from the `before-change-functions' in the current buffer."
                                         ; Feel free to add more commands to this
                                         ; list to suit your needs.
   :init ; stuff to do before requiring the package
-  (progn
-    (add-hook 'org-mode-hook #'yas-minor-mode)
+(add-hook 'org-mode-hook #'yas-minor-mode)
 (add-hook 'latex-mode-hook #'yas-minor-mode)
-(add-hook 'bibtex-mode-hook #'yas-minor-mode))
+(add-hook 'bibtex-mode-hook #'yas-minor-mode)
   :config ; stuff to do after requiring the package
-  (progn
-    (yas-reload-all)
+;;(progn
+    (yas-reload-all))
 ;; annoying warning
-(add-to-list 'warning-suppress-types '(yasnippet backquote-change))))
+;;(add-to-list 'warning-suppress-types '(yasnippet backquote-change))))
 #+END_SRC
 ** Neotree
 (require 'neotree)
@@ -2074,28 +2438,200 @@ from the `before-change-functions' in the current buffer."
 #+END_SRC 
 ** Nlinum
 #+BEGIN_SRC emacs-lisp
-(use-package nlinum  
-:config 
-(progn
-(setq nlinum-highlight-current-line t)
-(setq nlinum-format "%d ")
-(add-hook 'org-mode-hook '(lambda () (nlinum-mode t)))))
+  ;;   (defvar doom-line-numbers-style t
+  ;;     "The style to use for the line number display.
+  ;;   Accepts the same arguments as `display-line-numbers', which are:
+  ;;   nil         No line numbers
+  ;;   t           Ordinary line numbers
+  ;;   'relative   Relative line numbers")
+
+  ;;   (defun doom|enable-line-numbers (&optional arg)
+  ;;     "Enables the display of line numbers, using `display-line-numbers' (in Emacs
+  ;;   26+) or `nlinum-mode'.
+  ;;   See `doom-line-numbers-style' to control the style of line numbers to display."
+  ;;     (cond ((boundp 'display-line-numbers)
+  ;;            (setq display-line-numbers
+  ;;                  (pcase arg
+  ;;                    (+1 doom-line-numbers-style)
+  ;;                    (-1 nil)
+  ;;                    (_ doom-line-numbers-style))))
+  ;;           ((eq doom-line-numbers-style 'relative)
+  ;;            (if (= arg -1)
+  ;;                (nlinum-relative-off)
+  ;;              (nlinum-relative-on)))
+  ;;           ((not (null doom-line-numbers-style))
+  ;;            (nlinum-mode (or arg +1)))))
+
+  ;;   (defun doom|disable-line-numbers ()
+  ;;     "Disable the display of line numbers."
+  ;;     (doom|enable-line-numbers -1))
+
+  ;;   (add-hook! (prog-mode text-mode conf-mode) #'doom|enable-line-numbers)
+
+  ;;   ;; Emacs 26+ has native line number support.
+  ;;   ;; Line number column. A faster (or equivalent, in the worst case) line number
+  ;;   ;; plugin than `linum-mode'.
+  ;;   (use-package nlinum
+  ;;     :unless (boundp 'display-line-numbers)
+  ;;     :commands nlinum-mode
+  ;;     :init
+  ;;     (defvar doom-line-number-lpad 4
+  ;;       "How much padding to place before line numbers.")
+  ;;     (defvar doom-line-number-rpad 1
+  ;;       "How much padding to place after line numbers.")
+  ;;     (defvar doom-line-number-pad-char 32
+  ;;       "Character to use for padding line numbers.
+  ;;   By default, this is a space character. If you use `whitespace-mode' with
+  ;;   `space-mark', the whitespace in line numbers will be affected (this can look
+  ;;   ugly). In this case, you can change this to ?\u2002, which is a unicode
+  ;;   character that looks like a space that `whitespace-mode' won't affect.")
+  ;;     :config
+  ;;     (setq nlinum-highlight-current-line t)
+
+  ;;     ;; Fix lingering hl-line overlays (caused by nlinum)
+  ;;     (add-hook! 'hl-line-mode-hook
+  ;;       (remove-overlays (point-min) (point-max) 'face 'hl-line))
+
+  ;;     (defun doom-nlinum-format-fn (line _width)
+  ;;       "A more customizable `nlinum-format-function'. See `doom-line-number-lpad',
+  ;;   `doom-line-number-rpad' and `doom-line-number-pad-char'. Allows a fix for
+  ;;   `whitespace-mode' space-marks appearing inside the line number."
+  ;;       (let ((str (number-to-string line)))
+  ;;         (setq str (concat (make-string (max 0 (- doom-line-number-lpad (length str)))
+  ;;                                        doom-line-number-pad-char)
+  ;;                           str
+  ;;                           (make-string doom-line-number-rpad doom-line-number-pad-char)))
+  ;;         (put-text-property 0 (length str) 'face
+  ;;                            (if (and nlinum-highlight-current-line
+  ;;                                     (= line nlinum--current-line))
+  ;;                                'nlinum-current-line
+  ;;                              'linum)
+  ;;                            str)
+  ;;         str))
+  ;;     (setq nlinum-format-function #'doom-nlinum-format-fn)
+
+  ;; (defun doom*nlinum-flush (_ &optional norecord)
+  ;;   ;; norecord check is necessary to prevent infinite recursion
+  ;;   (when (and nlinum-mode (not norecord))
+  ;;     (nlinum--flush)))
+  ;; ;; refresh when switching windows
+  ;; (advice-add #'select-window :after #'doom*nlinum-flush)
+  ;; ;; when pressing esc in normal mode (if you're an evil user)
+  ;; (advice-add #'evil-force-normal-state :after #'nlinum--flush)
+
+  ;;     (defun doom|init-nlinum-width ()
+  ;;       "Calculate line number column width beforehand (optimization)."
+  ;;       (setq nlinum--width
+  ;;             (length (save-excursion (goto-char (point-max))
+  ;;                                     (format-mode-line "%l")))))
+  ;;     (add-hook 'nlinum-mode-hook #'doom|init-nlinum-width))
+
+  ;;   ;; (use-package nlinum  
+  ;;   ;; :config 
+  ;;   ;; (progn
+  ;;   ;; (setq nlinum-highlight-current-line t)
+  ;;   ;; (setq nlinum-format "%d  ")
+  ;;   ;; (add-hook 'org-mode-hook '(lambda () (nlinum-mode t)))))
 #+END_SRC 
 ** Nlinum hl 
 #+BEGIN_SRC emacs-lisp
-(use-package nlinum-hl  :after nlinum
-:config
-;; Changing fonts can leave nlinum line numbers in their original size; this
-;; forces them to resize.
-(advice-add #'set-frame-font :after #'nlinum-hl-flush-all-windows))
-#+END_SRC 
+  ;; (use-package nlinum-hl  :after nlinum
+  ;; :config
+  ;; ;; Changing fonts can leave nlinum line numbers in their original size; this
+  ;; ;; forces them to resize.
+  ;; (advice-add #'set-frame-font :after #'nlinum-hl-flush-all-windows))
+ #+END_SRC 
 ** Hl-line mode
 #+BEGIN_SRC emacs-lisp
-(use-package hl-line-mode  :after nlinum
-:commands global-hl-line-mode
-:config
-(global-hl-line-mode 1))
+    ;; (use-package hl-line-mode  :after nlinum
+    ;; :commands global-hl-line-mode
+    ;; :config
+    ;; (global-hl-line-mode 1))
+
+  (use-package hl-line ; built-in
+    :hook ((text-mode conf-mode) . hl-line-mode)
+    :config
+    ;; I don't need hl-line showing in other windows. This also offers a small
+    ;; speed boost when buffer is displayed in multiple windows.
+    (setq hl-line-sticky-flag nil
+          global-hl-line-sticky-flag nil)
+
+    ;; On Emacs 26+, when point is on the last line, hl-line highlights bleed into
+    ;; the rest of the window after eob. This is the fix.
+    ;; (when (boundp 'display-line-numbers)
+    ;;   (defun doom--line-range ()
+    ;;     (cons (line-beginning-position)
+    ;;           (cond ((save-excursion
+    ;;                    (goto-char (line-end-position))
+    ;;                    (and (eobp) (not (bolp))))
+    ;;                  (1- (line-end-position)))
+    ;;                 ((or (eobp) (save-excursion (forward-line) (eobp)))
+    ;;                  (line-end-position))
+    ;;                 (t
+    ;;                  (line-beginning-position 2)))))
+    ;;   (setq hl-line-range-function #'doom--line-range))
+
+    (after! evil
+      (defvar-local doom-buffer-hl-line-mode nil)
+
+      ;; Disable `hl-line' in evil-visual mode (temporarily). `hl-line' can make
+      ;; the selection region harder to see while in evil visual mode.
+      (defun doom|disable-hl-line ()
+        (when hl-line-mode
+          (setq doom-buffer-hl-line-mode t)
+          (hl-line-mode -1)))
+      (defun doom|enable-hl-line-maybe ()
+        (if doom-buffer-hl-line-mode (hl-line-mode +1)))
+
+      (add-hook 'evil-visual-state-entry-hook #'doom|disable-hl-line)
+      (add-hook 'evil-visual-state-exit-hook  #'doom|enable-hl-line-maybe)))
 #+END_SRC 
+** Smartparens 
+#+BEGIN_SRC emacs-lisp
+    ;; Auto-close delimiters and blocks as you type
+  (use-package smartparens
+    :hook (emacs-startup . smartparens-global-mode)
+    :config
+    (require 'smartparens-config)
+
+    (setq sp-autowrap-region nil ; let evil-surround handle this
+          sp-highlight-pair-overlay nil
+          sp-cancel-autoskip-on-backward-movement nil
+          sp-show-pair-delay 0
+          sp-max-pair-length 3)
+
+    ;; disable smartparens in evil-mode's replace state (they conflict)
+    (add-hook 'evil-replace-state-entry-hook #'turn-off-smartparens-mode)
+    (add-hook 'evil-replace-state-exit-hook  #'turn-on-smartparens-mode)
+  )
+    ;; (sp-local-pair '(xml-mode nxml-mode php-mode) "<!--" "-->"
+    ;;                :post-handlers '(("| " "SPC"))))
+  #+END_SRC 
+** Highlight changes mode
+#+BEGIN_SRC emacs-lisp
+  ;; higlight changes in documents
+(global-highlight-changes-mode t)
+(setq highlight-changes-visibility-initial-state nil); initially hide
+; toggle visibility
+(global-set-key (kbd "<f7>")      'highlight-changes-visible-mode) ;; changes
+;; remove the change-highlight in region
+;;(global-set-key (kbd "S-<f7>")    'highlight-changes-remove-highlight)
+
+;; alt-pgup/pgdown jump to the previous/next change
+
+;; if you're not already using it for something else...
+(global-set-key (kbd "M->") 'highlight-changes-next-change)
+(global-set-key (kbd "M-<")  'highlight-changes-previous-change)
+
+;;(set-face-foreground 'highlight-changes nil)
+(set-face-foreground 'highlight-changes "#268bd2")
+;;(set-face-background 'highlight-changes "#382f2f")
+(set-face-background 'highlight-changes nil)
+;;(set-face-foreground 'highlight-changes-delete nil)
+(set-face-foreground 'highlight-changes-delete "#dc322f")
+;;(set-face-background 'highlight-changes-delete "#916868")
+(set-face-background 'highlight-changes-delete nil)
+  #+END_SRC 
 ** Magit
 #+BEGIN_SRC emacs-lisp
   (use-package magit
@@ -2103,7 +2639,7 @@ from the `before-change-functions' in the current buffer."
     :bind
   ;; bind a quick and dirty shortcut to 
    (("C-x g" . magit-status)
-  ;; bind the popup of popus
+;;  bind the popup of popus
    ("C-x M-g" . magit-dispatch-popup)))
   #+END_SRC 
 ** Org-gcal
@@ -2170,7 +2706,7 @@ from the `before-change-functions' in the current buffer."
          :view 'week))))
 
 ;; keybinding
- (global-set-key (kbd "<f7>") 'my-open-calendar)
+ ;;(global-set-key (kbd "<f7>") 'my-open-calendar)
  (define-key cfw:details-mode-map (kbd "SPC") 'cfw:details-kill-buffer-command)
 
  ;;(global-set-key (kbd "<f7>") 'cfw:open-org-calendar)
@@ -2188,20 +2724,6 @@ from the `before-change-functions' in the current buffer."
 #+BEGIN_SRC emacs-lisp
 (use-package alert :load-path "~/.emacs.d/sync0_git/alert" :defer t)
 #+END_SRC 
-** Dim
-  ;; (when (require 'dim nil t)
-  ;; (dim-major-names
-  ;;  '((emacs-lisp-mode           "EL")
-  ;;    (org-mode  "Org")
-  ;;    (text-mode             "Txt")))
-  ;; (dim-minor-names
-  ;;  '((abbrev-mode   "")
-  ;;    (snipe-mode       "" )))
-  ;; )
-** 阻 Diminish
-;; This package implements hiding or abbreviation of the mode line displays (lighters) of minor-modes.
-(require 'diminish)
-(eval-after-load "abbrev-mode" '(diminish 'abbrev-mode))
 ** Powerline
 #+BEGIN_SRC emacs-lisp
   (use-package powerline
@@ -2236,7 +2758,353 @@ from the `before-change-functions' in the current buffer."
   ;;  (spaceline-all-the-icons--setup-neotree)
     (spaceline-all-the-icons-theme)))
   #+END_SRC 
+** Hydra
+#+BEGIN_SRC emacs-lisp
+(use-package hydra
+  ;; In case I later need to wrap defhydra in any special functionality.
+  :config
+  (setq lv-use-seperator t))
+#+END_SRC 
+** Diff-hl
+#+BEGIN_SRC emacs-lisp
+  ;;   (use-package diff-hl
+  ;;   :init
+  ;;   (progn
+  ;;     (setq diff-hl-side 'left
+  ;;           diff-hl-margin-symbols-alist
+  ;;           '((insert . "+") (delete . "-") (change . "~")
+  ;;             (unknown . "?") (ignored . "i")))
+  ;; ;; Better looking colours for diff indicators /w spacemacs-light theme
+  ;;   ;; (custom-set-faces
+  ;;   ;; '(diff-hl-change ((t (:background "#3a81c3"))))
+  ;;   ;; '(diff-hl-insert ((t (:background "#7ccd7c"))))
+  ;;   ;; '(diff-hl-delete ((t (:background "#ee6363")))))
+  ;;     (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh)
+  ;;     ;;(diff-hl-flydiff-mode)
+  ;;   ;;  (diff-hl-margin-mode)
+  ;;     (global-diff-hl-mode)))
+  #+END_SRC 
+** Avy
+#+BEGIN_SRC emacs-lisp
+  (use-package avy
+    :after evil
+    :commands (avy-goto-char-2 avy-goto-line avy-org-goto-heading-timer)
+    :init
+    (evil-define-key 'normal org-mode-map
+      "gl" 'avy-goto-line
+      "gc" 'avy-goto-char-2
+      "go" 'avy-org-goto-heading-timer
+      "gr" 'avy-org-refile-as-child)
+    :config
+    (setq avy-all-windows nil
+          avy-background t))
+  #+END_SRC 
+** 取 Gît-gutter 
+#+BEGIN_SRC emacs-lisp
+  ;;   (use-package git-gutter-fringe
+  ;;  :commands git-gutter-mode
+  ;;   :init
+  ;;   (defun +version-control|git-gutter-maybe ()
+  ;;     "Enable `git-gutter-mode' in non-remote buffers."
+  ;;     (when (and (buffer-file-name)
+  ;;                (not (file-remote-p (buffer-file-name))))
+  ;;   (git-gutter-mode +1)))
+  ;;   (add-hook! (text-mode prog-mode conf-mode) #'+version-control|git-gutter-maybe)
+  ;;   :config
+  ;;   (set! :popup "^\\*git-gutter.+\\*$" :regexp t :size 15 :noselect t)
+
+  ;;   ;; Update git-gutter on focus (in case I was using git externally)
+  ;;   (add-hook 'focus-in-hook #'git-gutter:update-all-windows)
+
+  ;;  (after!  evil
+  ;;     (defun +version-control|update-git-gutter ()
+  ;;       "Refresh git-gutter on ESC. Return nil to prevent shadowing other
+  ;; `+evil-esc-hook' hooks."
+  ;;       (when git-gutter-mode
+  ;;         (ignore (git-gutter))))
+  ;;     (add-hook '+evil-esc-hook #'+version-control|update-git-gutter t))
+
+  ;; (def-hydra +version-control@git-gutter
+  ;;     (:body-pre (git-gutter-mode 1) :hint nil)
+  ;;     "
+  ;;                                      ╭─────────────────┐
+  ;;   Movement   Hunk Actions     Misc.  │ gg: +%-4s(car (git-gutter:statistic))/ -%-3s(cdr (git-gutter:statistic)) │
+  ;;   ╭──────────────────────────────────┴─────────────────╯
+  ;;      ^_g_^       [_s_] stage        [_R_] set start Rev
+  ;;      ^_k_^       [_r_] revert
+  ;;      ^↑ ^      [_m_] mark
+  ;;      ^↓ ^      [_p_] popup          ╭──────────────────────
+  ;;      ^_j_^                          │[_q_] quit
+  ;;      ^_G_^                          │[_Q_] Quit and disable"
+  ;;     ("j" (progn (git-gutter:next-hunk 1) (recenter)))
+  ;;     ("k" (progn (git-gutter:previous-hunk 1) (recenter)))
+  ;;     ("g" (progn (goto-char (point-min)) (git-gutter:next-hunk 1)))
+  ;;     ("G" (progn (goto-char (point-min)) (git-gutter:previous-hunk 1)))
+  ;;     ("s" git-gutter:stage-hunk)
+  ;;     ("r" git-gutter:revert-hunk)
+  ;;     ("m" git-gutter:mark-hunk)
+  ;;     ("p" git-gutter:popup-hunk)
+  ;;     ("R" git-gutter:set-start-revision)
+  ;;     ("q" nil :color blue)
+  ;;     ("Q" (git-gutter-mode -1) :color blue)))
+
+  ;; (after! git-gutter
+  ;;   ;; places the git gutter outside the margins.
+  ;;   (setq-default fringes-outside-margins t)
+  ;;   ;; thin fringe bitmaps
+  ;;   (fringe-helper-define 'git-gutter-fr:added '(center repeated)
+  ;;     "XXX.....")
+  ;;   (fringe-helper-define 'git-gutter-fr:modified '(center repeated)
+  ;;     "XXX.....")
+  ;;   (fringe-helper-define 'git-gutter-fr:deleted 'bottom
+  ;;     "X......."
+  ;;     "XX......"
+  ;;     "XXX....."
+  ;;     "XXXX...."))
+  #+END_SRC 
+** 取 Gît-gutter 
+#+BEGIN_SRC emacs-lisp
+  ;;         (use-package git-gutter    
+  ;; :after hydra
+  ;;        :commands git-gutter-mode
+  ;;         :init
+  ;; (progn
+  ;;         (defun +version-control|git-gutter-maybe ()
+  ;;           "Enable `git-gutter-mode' in non-remote buffers."
+  ;;           (when (and (buffer-file-name)
+  ;;                      (not (file-remote-p (buffer-file-name))))
+  ;;         (git-gutter-mode +1)))
+  ;;         (add-hook! (text-mode prog-mode conf-mode) #'+version-control|git-gutter-maybe)
+  ;;         :config
+  ;;         (set! :popup "^\\*git-gutter.+\\*$" :regexp t :size 15 :noselect t)
+
+
+  ;; ;; (set-face-foreground 'git-gutter:modified "#3a81c3")
+  ;; ;;     (set-face-foreground 'git-gutter:added "7ccd7c")
+  ;; ;;     (set-face-foreground 'git-gutter:deleted "#ee6363")
+
+  ;;   ;; (fringe-helper-define 'git-gutter-fr:added nil
+  ;;   ;;   "...XX..."
+  ;;   ;;   "...XX..."
+  ;;   ;;   "...XX..."
+  ;;   ;;   "XXXXXXXX"
+  ;;   ;;   "XXXXXXXX"
+  ;;   ;;   "...XX..."
+  ;;   ;;   "...XX..."
+  ;;   ;;   "...XX...")
+
+  ;;   ;; (fringe-helper-define 'git-gutter-fr:deleted nil
+  ;;   ;;   "........"
+  ;;   ;;   "........"
+  ;;   ;;   "........"
+  ;;   ;;   "XXXXXXXX"
+  ;;   ;;   "XXXXXXXX"
+  ;;   ;;   "........"
+  ;;   ;;   "........"
+  ;;   ;;   "........")
+
+  ;;   ;; (fringe-helper-define 'git-gutter-fr:modified nil
+  ;;   ;;   "........"
+  ;;   ;;   "..XXXX.."
+  ;;   ;;   "..XXXX.."
+  ;;   ;;   "..XXXX.."
+  ;;   ;;   "..XXXX.."
+  ;;   ;;   "..XXXX.."
+  ;;   ;;   "..XXXX.."
+  ;;   ;;   "........")
+  ;; (setq git-gutter:window-width 3)
+  ;;   (setq 
+  ;;   git-gutter:modified-sign "~" ;; two space
+  ;;    git-gutter:added-sign "+"    ;; multiple character is OK
+  ;;    git-gutter:deleted-sign "-")
+
+
+  ;;         ;; Update git-gutter on focus (in case I was using git externally)
+  ;;         (add-hook 'focus-in-hook #'git-gutter:update-all-windows)
+
+  ;;        (after!  evil
+  ;;           (defun +version-control|update-git-gutter ()
+  ;;             "Refresh git-gutter on ESC. Return nil to prevent shadowing other
+  ;;       `+evil-esc-hook' hooks."
+  ;;             (when git-gutter-mode
+  ;;               (ignore (git-gutter))))
+  ;;           (add-hook '+evil-esc-hook #'+version-control|update-git-gutter t))
+
+  ;;       (defhydra hydra-git-gutter
+  ;;           (:body-pre (git-gutter-mode 1) :hint nil)
+  ;;           "
+  ;;                                            ╭─────────────────┐
+  ;;         Movement   Hunk Actions     Misc.  │ gg: +%-4s(car (git-gutter:statistic))/ -%-3s(cdr (git-gutter:statistic)) │
+  ;;         ╭──────────────────────────────────┴─────────────────╯
+  ;;            ^_g_^       [_s_] stage        [_R_] set start Rev
+  ;;            ^_k_^       [_r_] revert
+  ;;            ^↑ ^      [_m_] mark
+  ;;            ^↓ ^      [_p_] popup          ╭──────────────────────
+  ;;            ^_j_^                          │[_q_] quit
+  ;;            ^_G_^                          │[_Q_] Quit and disable"
+  ;;           ("j" (progn (git-gutter:next-hunk 1) (recenter)))
+  ;;           ("k" (progn (git-gutter:previous-hunk 1) (recenter)))
+  ;;           ("g" (progn (goto-char (point-min)) (git-gutter:next-hunk 1)))
+  ;;           ("G" (progn (goto-char (point-min)) (git-gutter:previous-hunk 1)))
+  ;;           ("s" git-gutter:stage-hunk)
+  ;;           ("r" git-gutter:revert-hunk)
+  ;;           ("m" git-gutter:mark-hunk)
+  ;;           ("p" git-gutter:popup-hunk)
+  ;;           ("R" git-gutter:set-start-revision)
+  ;;           ("q" nil :color blue)
+  ;;           ("Q" (git-gutter-mode -1) :color blue)))
+
+  ;;   (fringe-helper-define 'git-gutter-fr:added '(center repeated)
+  ;;     "XXX.....")
+  ;;   (fringe-helper-define 'git-gutter-fr:modified '(center repeated)
+  ;;     "XXX.....")
+  ;;   (fringe-helper-define 'git-gutter-fr:deleted 'bottom
+  ;;     "X......."
+  ;;     "XX......"
+  ;;     "XXX....."
+  ;;     "XXXX...."))
+  #+END_SRC 
+** 取 Gît-gutter 
+#+BEGIN_SRC emacs-lisp
+
+  ;;         (use-package git-gutter-fringe
+  ;; :after hydra 
+  ;;        :commands git-gutter-mode
+  ;;         :init
+  ;; (progn
+  ;;         (defun +version-control|git-gutter-maybe ()
+  ;;           "Enable `git-gutter-mode' in non-remote buffers."
+  ;;           (when (and (buffer-file-name)
+  ;;                      (not (file-remote-p (buffer-file-name))))
+  ;;         (git-gutter-mode +1)))
+  ;;         (add-hook! (text-mode prog-mode conf-mode) #'+version-control|git-gutter-maybe)
+  ;;         :config
+  ;;         (set! :popup "^\\*git-gutter.+\\*$" :regexp t :size 15 :noselect t)
+
+  ;; ;; (setq git-gutter:window-width 3)
+  ;; ;;   (setq 
+  ;; ;;   git-gutter:modified-sign "~" ;; two space
+  ;; ;;    git-gutter:added-sign "+"    ;; multiple character is OK
+  ;; ;;    git-gutter:deleted-sign "-")
+
+
+  ;;         ;; Update git-gutter on focus (in case I was using git externally)
+  ;;         ;;(add-hook 'focus-in-hook #'git-gutter:update-all-windows)
+
+  ;;        (after!  evil
+  ;;           (defun +version-control|update-git-gutter ()
+  ;;             "Refresh git-gutter on ESC. Return nil to prevent shadowing other
+  ;;       `+evil-esc-hook' hooks."
+  ;;             (when git-gutter-mode
+  ;;               (ignore (git-gutter))))
+  ;;           (add-hook '+evil-esc-hook #'+version-control|update-git-gutter t))
+
+  ;;       (defhydra hydra-git-gutter
+  ;;           (:body-pre (git-gutter-mode 1) :hint nil)
+  ;;           "
+  ;;                                            ╭─────────────────┐
+  ;;         Movement   Hunk Actions     Misc.  │ gg: +%-4s(car (git-gutter:statistic))/ -%-3s(cdr (git-gutter:statistic)) │
+  ;;         ╭──────────────────────────────────┴─────────────────╯
+  ;;            ^_g_^       [_s_] stage        [_R_] set start Rev
+  ;;            ^_k_^       [_r_] revert
+  ;;            ^↑ ^      [_m_] mark
+  ;;            ^↓ ^      [_p_] popup          ╭──────────────────────
+  ;;            ^_j_^                          │[_q_] quit
+  ;;            ^_G_^                          │[_Q_] Quit and disable"
+  ;;           ("j" (progn (git-gutter:next-hunk 1) (recenter)))
+  ;;           ("k" (progn (git-gutter:previous-hunk 1) (recenter)))
+  ;;           ("g" (progn (goto-char (point-min)) (git-gutter:next-hunk 1)))
+  ;;           ("G" (progn (goto-char (point-min)) (git-gutter:previous-hunk 1)))
+  ;;           ("s" git-gutter:stage-hunk)
+  ;;           ("r" git-gutter:revert-hunk)
+  ;;           ("m" git-gutter:mark-hunk)
+  ;;           ("p" git-gutter:popup-hunk)
+  ;;           ("R" git-gutter:set-start-revision)
+  ;;           ("q" nil :color blue)
+  ;;           ("Q" (git-gutter-mode -1) :color blue))))
+
+
+  ;; ;; places the git gutter outside the margins.
+  ;; (setq-default fringes-outside-margins t)
+  ;; ;; thin fringe bitmaps
+  ;; (fringe-helper-define 'git-gutter-fr:added '(center repeated)
+  ;;   "XXX.....")
+  ;; (fringe-helper-define 'git-gutter-fr:modified '(center repeated)
+  ;;   "XXX.....")
+  ;; (fringe-helper-define 'git-gutter-fr:deleted 'bottom
+  ;;   "X......."
+  ;;   "XX......"
+  ;;   "XXX....."
+  ;;   "XXXX....")
+
+  #+END_SRC 
+** Gît-gutter 
+#+BEGIN_SRC emacs-lisp
+          (use-package git-gutter
+            :after hydra 
+            :commands git-gutter-mode
+            :hook (text-mode . git-gutter-mode)
+            :config
+      ;; (setq-default left-fringe-width  10)
+      ;; (setq-default right-fringe-width 10)
+              (setq 
+             ;  git-gutter:window-width 1
+               git-gutter:modified-sign " " ;; two space
+                git-gutter:added-sign " "    ;; multiple character is OK
+                git-gutter:deleted-sign " ")
+
+
+    ;;(set-face-background 'git-gutter:modified "orange") ;; background color
+    (set-face-background 'git-gutter:modified "#3a81c3") ;; background color
+    ;;(set-face-background 'git-gutter:added "green")
+    (set-face-background 'git-gutter:added "#7ccd7c")
+   ;; (set-face-attribute  'git-gutter:added nil :foreground "black")
+    ;;(set-face-background 'git-gutter:deleted "red")
+    (set-face-background 'git-gutter:deleted "ee6363")
+  ;;  (set-face-attribute  'git-gutter:deleted nil :foreground "black")
+
+     (after!  evil
+        (defun +version-control|update-git-gutter ()
+          "Refresh git-gutter on ESC. Return nil to prevent shadowing other
+    `+evil-esc-hook' hooks."
+          (when git-gutter-mode
+            (ignore (git-gutter))))
+        (add-hook '+evil-esc-hook #'+version-control|update-git-gutter t))
+
+            (defhydra hydra-git-gutter
+              (:body-pre (git-gutter-mode 1) :hint nil)
+              "
+                                                         ╭─────────────────┐
+                      Movement   Hunk Actions     Misc.  │ gg: +%-4s(car (git-gutter:statistic))/ -%-3s(cdr (git-gutter:statistic)) │
+                      ╭──────────────────────────────────┴─────────────────╯
+                         ^_g_^       [_s_] stage        [_R_] set start Rev
+                         ^_k_^       [_r_] revert
+                         ^↑ ^      [_m_] mark
+                         ^↓ ^      [_p_] popup          ╭──────────────────────
+                         ^_j_^                          │[_q_] quit
+                         ^_G_^                          │[_Q_] Quit and disable"
+              ("j" (progn (git-gutter:next-hunk 1) (recenter)))
+              ("k" (progn (git-gutter:previous-hunk 1) (recenter)))
+              ("g" (progn (goto-char (point-min)) (git-gutter:next-hunk 1)))
+              ("G" (progn (goto-char (point-min)) (git-gutter:previous-hunk 1)))
+              ("s" git-gutter:stage-hunk)
+              ("r" git-gutter:revert-hunk)
+              ("m" git-gutter:mark-hunk)
+              ("p" git-gutter:popup-hunk)
+              ("R" git-gutter:set-start-revision)
+              ("q" nil :color blue)
+              ("Q" (git-gutter-mode -1) :color blue)))
+  #+END_SRC 
+
 * Custom Functions
+** Sentence highlight
+#+BEGIN_SRC emacs-lisp
+     (use-package sentence-highlight :load-path "~/.emacs.d/sync0/" 
+       :commands sentence-highlight-mode
+:config 
+(set-face-foreground 'sentence-highlight-face "#002b36")
+)
+  #+END_SRC 
 ** Date
 #+BEGIN_SRC emacs-lisp
   (defun insert-current-day () 

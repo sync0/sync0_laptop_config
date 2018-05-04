@@ -1,3 +1,18 @@
-2018/04/10-23:20:13.988 2301 Reusing MANIFEST /home/sync0/.config/google-chrome/Default/Session Storage/MANIFEST-000001
-2018/04/10-23:20:13.989 2301 Recovering log #3701
-2018/04/10-23:20:13.998 2301 Reusing old log /home/sync0/.config/google-chrome/Default/Session Storage/003701.log 
+2018/05/04-19:03:24.475 2166 Reusing MANIFEST /home/sync0/.config/google-chrome/Default/Session Storage/MANIFEST-000001
+2018/05/04-19:03:24.476 2166 Recovering log #4093
+2018/05/04-19:03:24.479 2166 Reusing old log /home/sync0/.config/google-chrome/Default/Session Storage/004093.log 
+2018/05/04-19:13:21.156 2844 Compacting 1@1 + 1@2 files
+2018/05/04-19:13:21.162 2844 Generated table #4096@1: 109 keys, 21282 bytes
+2018/05/04-19:13:21.162 2844 Compacted 1@1 + 1@2 files => 21282 bytes
+2018/05/04-19:13:21.164 2844 compacted to: files[ 0 0 1 0 0 0 0 ]
+2018/05/04-19:13:21.165 2844 Delete type=2 #4094
+2018/05/04-19:13:21.165 2844 Delete type=2 #4091
+2018/05/04-19:42:06.410 2844 Level-0 table #4098: started
+2018/05/04-19:42:06.416 2844 Level-0 table #4098: 15772 bytes OK
+2018/05/04-19:42:06.419 2844 Delete type=0 #4093
+2018/05/04-20:33:25.200 2844 Compacting 1@1 + 1@2 files
+2018/05/04-20:33:25.209 2844 Generated table #4099@1: 103 keys, 19221 bytes
+2018/05/04-20:33:25.209 2844 Compacted 1@1 + 1@2 files => 19221 bytes
+2018/05/04-20:33:25.210 2844 compacted to: files[ 0 0 1 0 0 0 0 ]
+2018/05/04-20:33:25.210 2844 Delete type=2 #4098
+2018/05/04-20:33:25.211 2844 Delete type=2 #4096

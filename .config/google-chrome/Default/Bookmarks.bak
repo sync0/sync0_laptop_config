@@ -1,5 +1,5 @@
 {
-   "checksum": "9948d72d801644eb6fa78a086771f1ab",
+   "checksum": "0778fbda7e7b1788ff8805c541f8bc1a",
    "roots": {
       "bookmark_bar": {
          "children": [ {
@@ -13,10 +13,10 @@
             "date_added": "13009870980226868",
             "id": "662",
             "meta_info": {
-               "last_visited_desktop": "13156436307782587"
+               "last_visited_desktop": "13169607172211063"
             },
             "name": "Merriam-Webster",
-            "sync_transaction_version": "856",
+            "sync_transaction_version": "2128",
             "type": "url",
             "url": "http://www.merriam-webster.com/"
          }, {
@@ -48,27 +48,30 @@
                "date_added": "13146100484253196",
                "id": "709",
                "meta_info": {
-                  "last_visited_desktop": "13166559376478248"
+                  "last_visited_desktop": "13169866485228848"
                },
                "name": "Mail :: Welcome to Horde",
-               "sync_transaction_version": "1735",
+               "sync_transaction_version": "2159",
                "type": "url",
                "url": "https://courrier-etu.univ-paris1.fr/imp/login.php"
             }, {
                "date_added": "13146100391905340",
                "id": "707",
                "meta_info": {
-                  "last_visited_desktop": "13166872345376088"
+                  "last_visited_desktop": "13169908867392997"
                },
                "name": "Service central d'authentification de l'Université de Paris 1",
-               "sync_transaction_version": "1758",
+               "sync_transaction_version": "2167",
                "type": "url",
                "url": "https://cas.univ-paris1.fr/cas/login?service=https%3A%2F%2Fent.univ-paris1.fr%2FEsupUserApps%2Flogin%3Ftarget%3Dhttps%253A%252F%252Fent.univ-paris1.fr%252Faccueil%252F"
             }, {
                "date_added": "13134707107243744",
                "id": "72",
+               "meta_info": {
+                  "last_visited_desktop": "13169683520712385"
+               },
                "name": "UNIVERSITE PARIS 1 PANTHEON-SORBONNE, Master 1 Sciences Economiques et Sociales",
-               "sync_transaction_version": "841",
+               "sync_transaction_version": "2133",
                "type": "url",
                "url": "https://www.univ-paris1.fr/ws/ws.php?_cmd=getFormation&_oid=UP1-PROG47806&_redirect=voir_presentation_diplome&_lang=fr-FR"
             }, {
@@ -81,11 +84,8 @@
             }, {
                "date_added": "13134708913877821",
                "id": "74",
-               "meta_info": {
-                  "last_visited_desktop": "13158084380222878"
-               },
                "name": "eCandidat",
-               "sync_transaction_version": "872",
+               "sync_transaction_version": "2124",
                "type": "url",
                "url": "https://ecandidat.univ-paris1.fr/ecandidat/#!candidatInfoPersoView"
             }, {
@@ -119,91 +119,73 @@
             }, {
                "date_added": "13159662110365900",
                "id": "849",
-               "meta_info": {
-                  "last_visited_desktop": "13159662110366440"
-               },
                "name": "Outre-espace-et-Out-Fn/OutreEspace.pdf at master · pjox/Outre-espace-et-Out-Fn · GitHub",
-               "sync_transaction_version": "979",
+               "sync_transaction_version": "2124",
                "type": "url",
                "url": "https://github.com/pjox/Outre-espace-et-Out-Fn/blob/master/OutreEspace.pdf"
             }, {
                "date_added": "13160213321255008",
                "id": "867",
-               "meta_info": {
-                  "last_visited_desktop": "13160487027806199"
-               },
                "name": "Inscription pédagogique en ligne : Informations",
-               "sync_transaction_version": "1052",
+               "sync_transaction_version": "2124",
                "type": "url",
                "url": "https://ipweb.univ-paris1.fr/"
             }, {
                "date_added": "13161610677603350",
                "id": "889",
-               "meta_info": {
-                  "last_visited_desktop": "13161610677603798"
-               },
                "name": "Bibliothèques numériques | Association Charles Gide",
-               "sync_transaction_version": "1172",
+               "sync_transaction_version": "2124",
                "type": "url",
                "url": "http://www.charlesgide.fr/bibliotheques-numeriques"
             }, {
                "date_added": "13161611264385731",
                "id": "890",
-               "meta_info": {
-                  "last_visited_desktop": "13161611264386241"
-               },
                "name": "P.H.A.R.E.: Textes fondateurs",
-               "sync_transaction_version": "1176",
+               "sync_transaction_version": "2124",
                "type": "url",
                "url": "https://phare.univ-paris1.fr/seminaires/textes-fondateurs/"
             }, {
                "date_added": "13161612021657809",
                "id": "891",
-               "meta_info": {
-                  "last_visited_desktop": "13161612021658325"
-               },
                "name": "Université Paris 1 Panthéon-Sorbonne: Économie (ED 465)",
-               "sync_transaction_version": "1180",
+               "sync_transaction_version": "2124",
                "type": "url",
                "url": "http://www.univ-paris1.fr/ecoles-doctorales/economie-ed-465/"
             }, {
                "date_added": "13161655837095879",
                "id": "899",
-               "meta_info": {
-                  "last_visited_desktop": "13161974748565531"
-               },
                "name": "Master d’Economie THEME",
-               "sync_transaction_version": "1313",
+               "sync_transaction_version": "2124",
                "type": "url",
                "url": "http://theme.univ-paris1.fr/coursM1.html"
             }, {
                "date_added": "13163117993148811",
                "id": "933",
                "meta_info": {
-                  "last_visited_desktop": "13167352026166806"
+                  "last_visited_desktop": "13169438397428064"
                },
                "name": "Bibliothèque Sainte-Barbe",
-               "sync_transaction_version": "1799",
+               "sync_transaction_version": "2123",
                "type": "url",
                "url": "http://saone.univ-paris3.fr/primo_library/libweb/action/myAccountMenu.do?vid=BSB&fromLink=gotoMyAccountUI&institute=&dscnt=0&dstmp=1518644352453&initializeIndex=true&fromLogin=true"
             }, {
                "date_added": "13165877182399400",
                "id": "946",
                "meta_info": {
-                  "last_visited_desktop": "13165877182399963"
+                  "last_visited_desktop": "13169603558064763"
                },
                "name": "Master d’Economie THEME",
-               "sync_transaction_version": "1678",
+               "sync_transaction_version": "2125",
                "type": "url",
                "url": "http://theme.univ-paris1.fr/index.html"
             }, {
                "date_added": "13165877566233428",
                "id": "947",
                "meta_info": {
-                  "last_visited_desktop": "13165877566234094"
+                  "last_visited_desktop": "13169603793993576"
                },
                "name": "REhPERE | Doctorat",
-               "sync_transaction_version": "1682",
+               "sync_transaction_version": "2127",
                "type": "url",
                "url": "https://www.epistemoecoparis1.com/rehpere-doctorat"
             }, {
@@ -228,7 +210,7 @@
                "url": "https://enligne.upmc.fr/scolarite/!candCont.candNationalite"
             } ],
             "date_added": "13146100408053166",
-            "date_modified": "13166466547303106",
+            "date_modified": "13169605019108517",
             "id": "708",
             "name": "Paris I",
             "sync_transaction_version": "332",
@@ -309,11 +291,8 @@
                }, {
                   "date_added": "13028973029303290",
                   "id": "639",
-                  "meta_info": {
-                     "last_visited_desktop": "13160624606517802"
-                  },
                   "name": "Library Genesis",
-                  "sync_transaction_version": "1083",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "http://libgen.org/search.php?req=bubble+and+beyond&open=0&view=simple&column%5B%5D=title"
                }, {
@@ -392,11 +371,8 @@
                }, {
                   "date_added": "13104473682005508",
                   "id": "650",
-                  "meta_info": {
-                     "last_visited_desktop": "13160624115695105"
-                  },
                   "name": "Libgen Online Library: Welcome",
-                  "sync_transaction_version": "1078",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "http://golibgen.io/"
                }, {
@@ -432,7 +408,7 @@
                   "url": "http://jr0cket.co.uk/2016/07/spacemacs-adding-your-own-yasnippets.html"
                } ],
                "date_added": "13144043130431035",
-               "date_modified": "13156364958557033",
+               "date_modified": "13169605019108518",
                "id": "561",
                "name": "Free eBooks",
                "sync_transaction_version": "1",
@@ -931,8 +907,11 @@
             }, {
                "date_added": "13079556974107058",
                "id": "572",
+               "meta_info": {
+                  "last_visited_desktop": "13169720494462955"
+               },
                "name": "Intelectuales, tecnócratas y reformas neoliberales en América Latina | U. Nacional de Colombia | Varios autores | Comprar Libro | Libreriadelau.com",
-               "sync_transaction_version": "1",
+               "sync_transaction_version": "2145",
                "type": "url",
                "url": "http://www.libreriadelau.com/intelectuales-44-tecnocratas-y-reformas-neoliberales-en-america-latina-politica-comparada-1.html#.VYmibBOqqkp"
             }, {
@@ -1145,7 +1124,7 @@
                "date_added": "13144043130422085",
                "id": "501",
                "name": "Korean romanizer - Tom Kerrigan's Home Page",
-               "sync_transaction_version": "1",
+               "sync_transaction_version": "1827",
                "type": "url",
                "url": "http://www.tckerrigan.com/Misc/Korean+romanizer"
             }, {
@@ -1188,11 +1167,8 @@
                }, {
                   "date_added": "13022672879881763",
                   "id": "520",
-                  "meta_info": {
-                     "last_visited_desktop": "13156723439306475"
-                  },
                   "name": "고대 수강",
-                  "sync_transaction_version": "857",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "http://sugang.korea.ac.kr:7080/"
                }, {
@@ -1246,7 +1222,7 @@
                   "url": "https://kulms.korea.ac.kr/"
                } ],
                "date_added": "13144043130422441",
-               "date_modified": "13156728040618346",
+               "date_modified": "13169605019108495",
                "id": "504",
                "name": "고려대학교",
                "sync_transaction_version": "1",
@@ -1347,7 +1323,7 @@
                "date_added": "13075814355696000",
                "id": "489",
                "name": "\"En Colombia se roban las elecciones\": Carlos Ariel Sánchez - Archivo - Archivo Digital de Noticias de Colombia y el Mundo desde 1.990 - eltiempo.com",
-               "sync_transaction_version": "1",
+               "sync_transaction_version": "2111",
                "type": "url",
                "url": "http://www.eltiempo.com/archivo/documento/CMS-3836361"
             }, {
@@ -1967,26 +1943,30 @@
                }, {
                   "date_added": "13158114738492158",
                   "id": "824",
-                  "meta_info": {
-                     "last_visited_desktop": "13158114738492650"
-                  },
                   "name": "titles - How to customize my titlepage? - TeX - LaTeX Stack Exchange",
-                  "sync_transaction_version": "883",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "https://tex.stackexchange.com/questions/209993/how-to-customize-my-titlepage/210280#210280"
                }, {
                   "date_added": "13159729840448677",
                   "id": "852",
-                  "meta_info": {
-                     "last_visited_desktop": "13159729840449251"
-                  },
                   "name": "LaTeX italics and bold",
-                  "sync_transaction_version": "985",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "http://www.sascha-frank.com/latex-italics.html"
+               }, {
+                  "date_added": "13168469806951077",
+                  "id": "979",
+                  "meta_info": {
+                     "last_visited_desktop": "13168601554218932"
+                  },
+                  "name": "Latex tweaks (auto-fill, breaking, align-environment, escaping underscores)",
+                  "sync_transaction_version": "1930",
+                  "type": "url",
+                  "url": "https://thenybble.de/projects/inhibit-auto-fill.html"
                } ],
                "date_added": "13144043130381364",
-               "date_modified": "13159754504378227",
+               "date_modified": "13169605019108535",
                "id": "205",
                "name": "LaTex",
                "sync_transaction_version": "1",
@@ -2073,11 +2053,8 @@
                   }, {
                      "date_added": "13115940103179178",
                      "id": "391",
-                     "meta_info": {
-                        "last_visited_desktop": "13161626671060211"
-                     },
                      "name": "Setting ispell-dictionary-alist in .emacs · GitHub",
-                     "sync_transaction_version": "1218",
+                     "sync_transaction_version": "2124",
                      "type": "url",
                      "url": "https://gist.github.com/vibrog/752198"
                   }, {
@@ -2118,11 +2095,8 @@
                   }, {
                      "date_added": "13126817461220998",
                      "id": "397",
-                     "meta_info": {
-                        "last_visited_desktop": "13162498035549968"
-                     },
                      "name": "An Agenda for Life With Org Mode",
-                     "sync_transaction_version": "1389",
+                     "sync_transaction_version": "2124",
                      "type": "url",
                      "url": "http://blog.aaronbieber.com/2016/09/24/an-agenda-for-life-with-org-mode.html"
                   }, {
@@ -2191,8 +2165,11 @@
                   }, {
                      "date_added": "13133240640556538",
                      "id": "407",
+                     "meta_info": {
+                        "last_visited_desktop": "13169872268734152"
+                     },
                      "name": "org-ref/org-ref.org at master · jkitchin/org-ref · GitHub",
-                     "sync_transaction_version": "841",
+                     "sync_transaction_version": "2163",
                      "type": "url",
                      "url": "https://github.com/jkitchin/org-ref/blob/master/org-ref.org"
                   }, {
@@ -2239,7 +2216,7 @@
                      "url": "http://stackoverflow.com/questions/18291114/emacs-org-mode-how-to-automatically-process-to-pdf-on-save"
                   } ],
                   "date_added": "13144043130395566",
-                  "date_modified": "13156364958557059",
+                  "date_modified": "13169605019108519",
                   "id": "307",
                   "name": "Org-mode",
                   "sync_transaction_version": "1",
@@ -2303,11 +2280,8 @@
                }, {
                   "date_added": "13104835146371809",
                   "id": "316",
-                  "meta_info": {
-                     "last_visited_desktop": "13163813095459689"
-                  },
                   "name": "EmacsWiki: Line Wrap",
-                  "sync_transaction_version": "1559",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "https://www.emacswiki.org/emacs/LineWrap"
                }, {
@@ -2320,8 +2294,11 @@
                }, {
                   "date_added": "13107238603876409",
                   "id": "318",
+                  "meta_info": {
+                     "last_visited_desktop": "13168997450531084"
+                  },
                   "name": "My Emacs Writing Setup",
-                  "sync_transaction_version": "126",
+                  "sync_transaction_version": "2008",
                   "type": "url",
                   "url": "http://www.tonyballantyne.com/EmacsWritingTips.html"
                }, {
@@ -2369,11 +2346,8 @@
                }, {
                   "date_added": "13115760092028844",
                   "id": "325",
-                  "meta_info": {
-                     "last_visited_desktop": "13162941431174426"
-                  },
                   "name": "EmacsWiki: Fly Spell",
-                  "sync_transaction_version": "1411",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "https://www.emacswiki.org/emacs/FlySpell"
                }, {
@@ -2442,11 +2416,8 @@
                }, {
                   "date_added": "13115796519767536",
                   "id": "335",
-                  "meta_info": {
-                     "last_visited_desktop": "13158108473150418"
-                  },
                   "name": "Pimp Up Your Org-mode Files – thraxys",
-                  "sync_transaction_version": "877",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "https://thraxys.wordpress.com/2016/01/14/pimp-up-your-org-agenda/"
                }, {
@@ -2466,11 +2437,8 @@
                }, {
                   "date_added": "13115834784302352",
                   "id": "338",
-                  "meta_info": {
-                     "last_visited_desktop": "13158594290317823"
-                  },
                   "name": "What's the best spell check setup in emacs | Chen's blog",
-                  "sync_transaction_version": "912",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "http://blog.binchen.org/posts/what-s-the-best-spell-check-set-up-in-emacs.html"
                }, {
@@ -2532,11 +2500,8 @@
                }, {
                   "date_added": "13116187406564436",
                   "id": "347",
-                  "meta_info": {
-                     "last_visited_desktop": "13158594730633553"
-                  },
                   "name": "Améliorer la correction orthographique et grammaticale sous Emacs - LinuxFr.org",
-                  "sync_transaction_version": "914",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "http://linuxfr.org/users/jn/journaux/ameliorer-la-correction-orthographique-et-grammaticale-sous-emacs"
                }, {
@@ -2592,11 +2557,8 @@
                }, {
                   "date_added": "13118532505321361",
                   "id": "354",
-                  "meta_info": {
-                     "last_visited_desktop": "13162511202066663"
-                  },
                   "name": "EmacsWiki: Abbrev Mode",
-                  "sync_transaction_version": "1404",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "https://www.emacswiki.org/emacs/AbbrevMode"
                }, {
@@ -2640,11 +2602,8 @@
                }, {
                   "date_added": "13119931907501070",
                   "id": "360",
-                  "meta_info": {
-                     "last_visited_desktop": "13162264802205036"
-                  },
                   "name": "Yet Another Org-Mode Configuration",
-                  "sync_transaction_version": "1340",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "http://www.i3s.unice.fr/~malapert/org/tips/emacs_orgmode.html"
                }, {
@@ -2695,8 +2654,11 @@
                }, {
                   "date_added": "13125630580809856",
                   "id": "367",
+                  "meta_info": {
+                     "last_visited_desktop": "13169143668363641"
+                  },
                   "name": "Emacs, naked.",
-                  "sync_transaction_version": "1",
+                  "sync_transaction_version": "2105",
                   "type": "url",
                   "url": "https://emacs-doctor.com/emacs-strip-tease.html"
                }, {
@@ -2755,10 +2717,10 @@
                   "date_added": "13134769015250135",
                   "id": "375",
                   "meta_info": {
-                     "last_visited_desktop": "13167067463829833"
+                     "last_visited_desktop": "13169026593247644"
                   },
                   "name": "EmacsWiki: Regular Expression",
-                  "sync_transaction_version": "1766",
+                  "sync_transaction_version": "2049",
                   "type": "url",
                   "url": "https://www.emacswiki.org/emacs/RegularExpression"
                }, {
@@ -2835,61 +2797,46 @@
                }, {
                   "date_added": "13158212565481478",
                   "id": "827",
-                  "meta_info": {
-                     "last_visited_desktop": "13161893373237997"
-                  },
                   "name": "Emacs, Ispell and Abbrev, the Perfect Auto-Correct · Endless Parentheses",
-                  "sync_transaction_version": "1248",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "http://endlessparentheses.com/ispell-and-abbrev-the-perfect-auto-correct.html"
                }, {
                   "date_added": "13158530261750894",
                   "id": "830",
-                  "meta_info": {
-                     "last_visited_desktop": "13158530261751266"
-                  },
                   "name": "EmacsWiki: autocorrection abbrev defs",
-                  "sync_transaction_version": "906",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "https://www.emacswiki.org/emacs/autocorrection_abbrev_defs"
                }, {
                   "date_added": "13158712453655561",
                   "id": "833",
-                  "meta_info": {
-                     "last_visited_desktop": "13158712453656123"
-                  },
                   "name": "flyspell-lazy/README.markdown at master · rolandwalker/flyspell-lazy",
-                  "sync_transaction_version": "918",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "https://github.com/rolandwalker/flyspell-lazy/blob/master/README.markdown"
                }, {
                   "date_added": "13158890455366269",
                   "id": "836",
                   "meta_info": {
-                     "last_visited_desktop": "13167065033291267"
+                     "last_visited_desktop": "13169139007412234"
                   },
                   "name": "hlissner/doom-emacs at screenshots",
-                  "sync_transaction_version": "1762",
+                  "sync_transaction_version": "2095",
                   "type": "url",
                   "url": "https://github.com/hlissner/doom-emacs/tree/screenshots"
                }, {
                   "date_added": "13158891520971969",
                   "id": "837",
-                  "meta_info": {
-                     "last_visited_desktop": "13158891520972470"
-                  },
                   "name": "rakanalh/dotemacs: My Emacs Configs",
-                  "sync_transaction_version": "931",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "https://github.com/rakanalh/dotemacs/"
                }, {
                   "date_added": "13158896169726998",
                   "id": "838",
-                  "meta_info": {
-                     "last_visited_desktop": "13160069700545450"
-                  },
                   "name": "Making modern emacs themes ? : emacs",
-                  "sync_transaction_version": "1020",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "https://www.reddit.com/r/emacs/comments/51jvai/making_modern_emacs_themes/"
                }, {
@@ -2905,51 +2852,36 @@
                }, {
                   "date_added": "13159042820252690",
                   "id": "842",
-                  "meta_info": {
-                     "last_visited_desktop": "13159397202252191"
-                  },
                   "name": "Emacs tips and best plugins to use with evil mode",
-                  "sync_transaction_version": "970",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "http://nadeemkhedr.com/emacs-tips-and-best-plugins-to-use-with-evil-mode/"
                }, {
                   "date_added": "13159128726525582",
                   "id": "843",
-                  "meta_info": {
-                     "last_visited_desktop": "13159457054821595"
-                  },
                   "name": "How to add company-ispell to company-backends for latex and org layers? · Issue #4878 · syl20bnr/spacemacs",
-                  "sync_transaction_version": "972",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "https://github.com/syl20bnr/spacemacs/issues/4878"
                }, {
                   "date_added": "13159460192331633",
                   "id": "846",
-                  "meta_info": {
-                     "last_visited_desktop": "13159460192332025"
-                  },
                   "name": "duenenhof-wilhelm.de/dotemacs",
-                  "sync_transaction_version": "976",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "http://duenenhof-wilhelm.de/dotemacs"
                }, {
                   "date_added": "13159754504378227",
                   "id": "855",
-                  "meta_info": {
-                     "last_visited_desktop": "13159754504378906"
-                  },
                   "name": "Add last mistake to dictionary with flyspell and ispell - Emacs Stack Exchange",
-                  "sync_transaction_version": "991",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "https://emacs.stackexchange.com/questions/16837/add-last-mistake-to-dictionary-with-flyspell-and-ispell"
                }, {
                   "date_added": "13159799176569484",
                   "id": "858",
-                  "meta_info": {
-                     "last_visited_desktop": "13159799176569908"
-                  },
                   "name": "More emacs configuration tweaks (multiple-cursor on click, minimap, code folding, ensime eval overlays)",
-                  "sync_transaction_version": "996",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "http://www.mostlymaths.net/2016/09/more-emacs-configuration-tweaks.html"
                }, {
@@ -2965,91 +2897,70 @@
                }, {
                   "date_added": "13160540651323181",
                   "id": "872",
-                  "meta_info": {
-                     "last_visited_desktop": "13160578278644089"
-                  },
                   "name": "Clocking time with Org-mode",
-                  "sync_transaction_version": "1071",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "https://writequit.org/denver-emacs/presentations/2017-04-11-time-clocking-with-org.html#clock-reports"
                }, {
                   "date_added": "13160541157562334",
                   "id": "873",
-                  "meta_info": {
-                     "last_visited_desktop": "13162959408413611"
-                  },
                   "name": "emacs.d/gs-org.el at master · gjstein/emacs.d",
-                  "sync_transaction_version": "1432",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "https://github.com/gjstein/emacs.d/blob/master/config/gs-org.el"
                }, {
                   "date_added": "13160541617387554",
                   "id": "874",
-                  "meta_info": {
-                     "last_visited_desktop": "13161903119581721"
-                  },
                   "name": "Projects in Emacs Org –",
-                  "sync_transaction_version": "1309",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "http://sachachua.com/blog/2008/01/projects-in-emacs-org/"
                }, {
                   "date_added": "13160578808785141",
                   "id": "875",
-                  "meta_info": {
-                     "last_visited_desktop": "13161630703431692"
-                  },
                   "name": "dengste/org-caldav: Caldav sync for Emacs orgmode",
-                  "sync_transaction_version": "1222",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "https://github.com/dengste/org-caldav"
                }, {
                   "date_added": "13160642775599044",
                   "id": "877",
-                  "meta_info": {
-                     "last_visited_desktop": "13160642800760774"
-                  },
                   "name": "GNU ELPA - adaptive-wrap",
-                  "sync_transaction_version": "1089",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "http://elpa.gnu.org/packages/adaptive-wrap.html"
                }, {
                   "date_added": "13160643046815778",
                   "id": "878",
-                  "meta_info": {
-                     "last_visited_desktop": "13160690766114509"
-                  },
                   "name": "Emacs: How to keep the indentation level of a very long wrapped line - Stack Overflow",
-                  "sync_transaction_version": "1094",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "https://stackoverflow.com/questions/13559061/emacs-how-to-keep-the-indentation-level-of-a-very-long-wrapped-line"
                }, {
                   "date_added": "13160877255079756",
                   "id": "880",
-                  "meta_info": {
-                     "last_visited_desktop": "13160939432965001"
-                  },
                   "name": "Emacs Horrors - longlines-mode",
-                  "sync_transaction_version": "1100",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "http://emacshorrors.com/posts/longlines-mode.html"
                }, {
                   "date_added": "13160955034719116",
                   "id": "882",
                   "meta_info": {
-                     "last_visited_desktop": "13167339506696626"
+                     "last_visited_desktop": "13167932334505458"
                   },
                   "name": "hlissner/evil-snipe: 2-char searching ala vim-sneak & vim-seek, for evil-mode",
-                  "sync_transaction_version": "1791",
+                  "sync_transaction_version": "1826",
                   "type": "url",
                   "url": "https://github.com/hlissner/evil-snipe"
                }, {
                   "date_added": "13160963721104797",
                   "id": "883",
                   "meta_info": {
-                     "last_visited_desktop": "13165281251991790"
+                     "last_visited_desktop": "13168619730955136"
                   },
                   "name": "hlissner/emacs-nlinum-hl: Fix disappearing line numbers in nlinum",
-                  "sync_transaction_version": "1645",
+                  "sync_transaction_version": "1942",
                   "type": "url",
                   "url": "https://github.com/hlissner/emacs-nlinum-hl"
                }, {
@@ -3065,21 +2976,15 @@
                }, {
                   "date_added": "13160964505355434",
                   "id": "885",
-                  "meta_info": {
-                     "last_visited_desktop": "13162498035875821"
-                  },
                   "name": "An Agenda for Life With Org Mode",
-                  "sync_transaction_version": "1390",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "https://blog.aaronbieber.com/2016/09/24/an-agenda-for-life-with-org-mode.html"
                }, {
                   "date_added": "13161433996063781",
                   "id": "887",
-                  "meta_info": {
-                     "last_visited_desktop": "13161433996064274"
-                  },
                   "name": "Emacs org mode: how can I filter on tags and todo status simultaneously? - Stack Overflow",
-                  "sync_transaction_version": "1149",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "https://stackoverflow.com/questions/31639086/emacs-org-mode-how-can-i-filter-on-tags-and-todo-status-simultaneously"
                }, {
@@ -3095,31 +3000,22 @@
                }, {
                   "date_added": "13161617061932875",
                   "id": "893",
-                  "meta_info": {
-                     "last_visited_desktop": "13162947701354113"
-                  },
                   "name": "Taming Google Calendar With Org-Mode",
-                  "sync_transaction_version": "1427",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html"
                }, {
                   "date_added": "13161617067465847",
                   "id": "894",
-                  "meta_info": {
-                     "last_visited_desktop": "13161617067466301"
-                  },
                   "name": "Using Emacs - 26 - Google Calendar, Org Agenda | C'est la Z",
-                  "sync_transaction_version": "1196",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "http://cestlaz.github.io/posts/using-emacs-26-gcal/#.Wm2-UHWnHVN"
                }, {
                   "date_added": "13161617072760920",
                   "id": "895",
-                  "meta_info": {
-                     "last_visited_desktop": "13161617072761264"
-                  },
                   "name": "Best method for orgmode Google calendar integration? : emacs",
-                  "sync_transaction_version": "1200",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "https://www.reddit.com/r/emacs/comments/5qd8co/best_method_for_orgmode_google_calendar/"
                }, {
@@ -3135,91 +3031,64 @@
                }, {
                   "date_added": "13161652557646663",
                   "id": "897",
-                  "meta_info": {
-                     "last_visited_desktop": "13161652557647067"
-                  },
                   "name": "Using Emacs - 26 - Google Calendar, Org Agenda | C'est la Z",
-                  "sync_transaction_version": "1235",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "http://cestlaz.github.io/posts/using-emacs-26-gcal/#.Wm3-InWnHVM"
                }, {
                   "date_added": "13161654183893831",
                   "id": "898",
-                  "meta_info": {
-                     "last_visited_desktop": "13161897532644039"
-                  },
                   "name": "gjstein/emacs.d: Emacs configuration files",
-                  "sync_transaction_version": "1279",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "https://github.com/gjstein/emacs.d"
                }, {
                   "date_added": "13161893758526991",
                   "id": "901",
-                  "meta_info": {
-                     "last_visited_desktop": "13162941925989515"
-                  },
                   "name": "Re: flyspell: local abbrev in different languages",
-                  "sync_transaction_version": "1412",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "https://lists.gnu.org/archive/html/help-gnu-emacs/2007-09/msg00842.html"
                }, {
                   "date_added": "13161893831850735",
                   "id": "902",
-                  "meta_info": {
-                     "last_visited_desktop": "13162419824635828"
-                  },
                   "name": "ispell - how to keep my abbrevs table files separate? - Emacs Stack Exchange",
-                  "sync_transaction_version": "1356",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "https://emacs.stackexchange.com/questions/13145/how-to-keep-my-abbrevs-table-files-separate"
                }, {
                   "date_added": "13161893846224439",
                   "id": "903",
-                  "meta_info": {
-                     "last_visited_desktop": "13162942248333826"
-                  },
                   "name": "Per-language rather than per-major-mode local tables for abbrev : emacs",
-                  "sync_transaction_version": "1417",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "https://www.reddit.com/r/emacs/comments/5injjm/perlanguage_rather_than_permajormode_local_tables/"
                }, {
                   "date_added": "13161893935922980",
                   "id": "904",
-                  "meta_info": {
-                     "last_visited_desktop": "13162421975810147"
-                  },
                   "name": "flyspell - How to cycle between language specific abbrev tables in a buffer? - Emacs Stack Exchange",
-                  "sync_transaction_version": "1362",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "https://emacs.stackexchange.com/questions/29702/how-to-cycle-between-language-specific-abbrev-tables-in-a-buffer"
                }, {
                   "date_added": "13161894168352016",
                   "id": "905",
-                  "meta_info": {
-                     "last_visited_desktop": "13161894168352612"
-                  },
                   "name": "How can I change the language in Emacs when using ispell? - Stack Overflow",
-                  "sync_transaction_version": "1270",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "https://stackoverflow.com/questions/218512/how-can-i-change-the-language-in-emacs-when-using-ispell/27044941"
                }, {
                   "date_added": "13161897763213828",
                   "id": "906",
-                  "meta_info": {
-                     "last_visited_desktop": "13161897763214507"
-                  },
                   "name": "The Org Manual: Special properties",
-                  "sync_transaction_version": "1283",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "https://orgmode.org/manual/Special-properties.html#Special-properties"
                }, {
                   "date_added": "13161898031672733",
                   "id": "907",
-                  "meta_info": {
-                     "last_visited_desktop": "13162265145888079"
-                  },
                   "name": "Documentation for Org hooks, commands and options",
-                  "sync_transaction_version": "1342",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "https://orgmode.org/worg/doc.html"
                }, {
@@ -3245,141 +3114,99 @@
                }, {
                   "date_added": "13161899139899697",
                   "id": "910",
-                  "meta_info": {
-                     "last_visited_desktop": "13161899139900093"
-                  },
                   "name": "Emacs Org's Column View",
-                  "sync_transaction_version": "1299",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "https://orgmode.org/worg/org-tutorials/org-column-view-tutorial.html"
                }, {
                   "date_added": "13161899143307339",
                   "id": "911",
-                  "meta_info": {
-                     "last_visited_desktop": "13161899143307692"
-                  },
                   "name": "org mode - Show Timestamp for each TODO in Org Agenda Global Todo List? - Emacs Stack Exchange",
-                  "sync_transaction_version": "1303",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "https://emacs.stackexchange.com/questions/12364/show-timestamp-for-each-todo-in-org-agenda-global-todo-list"
                }, {
                   "date_added": "13161899148321560",
                   "id": "912",
-                  "meta_info": {
-                     "last_visited_desktop": "13161899148321991"
-                  },
                   "name": "org mode - org agenda: how to show only todo's with deadline? - Emacs Stack Exchange",
-                  "sync_transaction_version": "1307",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "https://emacs.stackexchange.com/questions/22077/org-agenda-how-to-show-only-todos-with-deadline"
                }, {
                   "date_added": "13161998597468841",
                   "id": "914",
-                  "meta_info": {
-                     "last_visited_desktop": "13161998597469266"
-                  },
                   "name": "org mode - Show only today's tasks in org-agenda - Emacs Stack Exchange",
-                  "sync_transaction_version": "1318",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "https://emacs.stackexchange.com/questions/30188/show-only-todays-tasks-in-org-agenda"
                }, {
                   "date_added": "13162272707490877",
                   "id": "918",
-                  "meta_info": {
-                     "last_visited_desktop": "13162272707491313"
-                  },
                   "name": "fniessen/dotfiles: Dotfiles which are generic enough so that you can use them as well",
-                  "sync_transaction_version": "1348",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "https://github.com/fniessen/dotfiles"
                }, {
                   "date_added": "13162420086382437",
                   "id": "920",
-                  "meta_info": {
-                     "last_visited_desktop": "13162420086383258"
-                  },
                   "name": "Emacs-Settings/shared-functions.org at master · incandescentman/Emacs-Settings",
-                  "sync_transaction_version": "1360",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "https://github.com/incandescentman/Emacs-Settings/blob/master/shared-functions.org"
                }, {
                   "date_added": "13162422595165569",
                   "id": "921",
-                  "meta_info": {
-                     "last_visited_desktop": "13162941223560840"
-                  },
                   "name": "tmalsburg/guess-language.el: Emacs mode that detects the language you're typing in. Automatically switches spell checker. Supports multiple languages per document.",
-                  "sync_transaction_version": "1410",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "https://github.com/tmalsburg/guess-language.el"
                }, {
                   "date_added": "13162422976242830",
                   "id": "922",
-                  "meta_info": {
-                     "last_visited_desktop": "13162942017902078"
-                  },
                   "name": "Abbrev Table Properties - GNU Emacs Lisp Reference Manual",
-                  "sync_transaction_version": "1414",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "https://www.gnu.org/software/emacs/manual/html_node/elisp/Abbrev-Table-Properties.html"
                }, {
                   "date_added": "13162423558992437",
                   "id": "923",
-                  "meta_info": {
-                     "last_visited_desktop": "13162423558993389"
-                  },
                   "name": "emacs-leuven",
-                  "sync_transaction_version": "1375",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "http://emacs-leuven.readthedocs.io/en/stable/"
                }, {
                   "date_added": "13162423578272564",
                   "id": "924",
-                  "meta_info": {
-                     "last_visited_desktop": "13162942006048640"
-                  },
                   "name": "Alternative to abbrev-mode that supports special characters in abbreviations? - Emacs Stack Exchange",
-                  "sync_transaction_version": "1413",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "https://emacs.stackexchange.com/questions/36890/alternative-to-abbrev-mode-that-supports-special-characters-in-abbreviations"
                }, {
                   "date_added": "13162499549851289",
                   "id": "926",
-                  "meta_info": {
-                     "last_visited_desktop": "13162945641993276"
-                  },
                   "name": "dotfiles/calfw-org.el at master · purzelrakete/dotfiles",
-                  "sync_transaction_version": "1423",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "https://github.com/purzelrakete/dotfiles/blob/master/.emacs.d/emacs-calfw/calfw-org.el"
                }, {
                   "date_added": "13162499702390309",
                   "id": "927",
-                  "meta_info": {
-                     "last_visited_desktop": "13162942045941582"
-                  },
                   "name": "vallog: Emacs: 自分用かるふわ face （calfw.el, calfw-ical.el）",
-                  "sync_transaction_version": "1416",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "http://valvallow.blogspot.fr/2011/01/emacs-face.html"
                }, {
                   "date_added": "13163117673590321",
                   "id": "932",
-                  "meta_info": {
-                     "last_visited_desktop": "13163117673590986"
-                  },
                   "name": "Using Emacs - 26 - Google Calendar, Org Agenda | C'est la Z",
-                  "sync_transaction_version": "1514",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "http://cestlaz.github.io/posts/using-emacs-26-gcal/#.WoSrOnWnHVM"
                }, {
                   "date_added": "13163698140646528",
                   "id": "935",
-                  "meta_info": {
-                     "last_visited_desktop": "13163698140647338"
-                  },
                   "name": "emacs - Indent code in org-babel src blocks - Stack Overflow",
-                  "sync_transaction_version": "1536",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "https://stackoverflow.com/questions/15773354/indent-code-in-org-babel-src-blocks"
                }, {
@@ -3395,26 +3222,188 @@
                }, {
                   "date_added": "13163707268362868",
                   "id": "937",
-                  "meta_info": {
-                     "last_visited_desktop": "13163810155327588"
-                  },
                   "name": "Tool Time: org-mode and Beamer",
-                  "sync_transaction_version": "1555",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "http://lmjohns3.com/2013/08/tool-time-org-mode-and-beamer.html"
                }, {
                   "date_added": "13163815855277370",
                   "id": "940",
-                  "meta_info": {
-                     "last_visited_desktop": "13163815855278406"
-                  },
                   "name": "Elisp: Regex Tutorial",
-                  "sync_transaction_version": "1566",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "http://ergoemacs.org/emacs/elisp_regex.html"
+               }, {
+                  "date_added": "13168547750517852",
+                  "id": "981",
+                  "meta_info": {
+                     "last_visited_desktop": "13169775034269118"
+                  },
+                  "name": "emacs-fu: tracking changes",
+                  "sync_transaction_version": "2152",
+                  "type": "url",
+                  "url": "http://emacs-fu.blogspot.fr/2009/05/tracking-changes.html"
+               }, {
+                  "date_added": "13168548010025816",
+                  "id": "982",
+                  "meta_info": {
+                     "last_visited_desktop": "13168965635741569"
+                  },
+                  "name": "joostkremers/criticmarkup-emacs: Emacs minor mode for handling CriticMarkup.",
+                  "sync_transaction_version": "1957",
+                  "type": "url",
+                  "url": "https://github.com/joostkremers/criticmarkup-emacs"
+               }, {
+                  "date_added": "13168549249189204",
+                  "id": "983",
+                  "meta_info": {
+                     "last_visited_desktop": "13169140609142621"
+                  },
+                  "name": "syohex/emacs-git-gutter-fringe: Fringe version of git-gutter.el",
+                  "sync_transaction_version": "2098",
+                  "type": "url",
+                  "url": "https://github.com/syohex/emacs-git-gutter-fringe"
+               }, {
+                  "date_added": "13168616351569851",
+                  "id": "984",
+                  "meta_info": {
+                     "last_visited_desktop": "13168616351570675"
+                  },
+                  "name": "bmacs/bmacs.org at master · gilbertw1/bmacs",
+                  "sync_transaction_version": "1939",
+                  "type": "url",
+                  "url": "https://github.com/gilbertw1/bmacs/blob/master/bmacs.org#configuration"
+               }, {
+                  "date_added": "13168965915807232",
+                  "id": "987",
+                  "meta_info": {
+                     "last_visited_desktop": "13169126013610504"
+                  },
+                  "name": "Is there a simplified version control system appropriate for non-coders writing in Emacs? - Emacs Stack Exchange",
+                  "sync_transaction_version": "2079",
+                  "type": "url",
+                  "url": "https://emacs.stackexchange.com/questions/7826/is-there-a-simplified-version-control-system-appropriate-for-non-coders-writing?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa"
+               }, {
+                  "date_added": "13168966210870642",
+                  "id": "988",
+                  "meta_info": {
+                     "last_visited_desktop": "13168966210871081"
+                  },
+                  "name": "defunkt/gist.el: Yet another Emacs paste mode, this one for Gist.",
+                  "sync_transaction_version": "1966",
+                  "type": "url",
+                  "url": "https://github.com/defunkt/gist.el"
+               }, {
+                  "date_added": "13168966214298708",
+                  "id": "989",
+                  "meta_info": {
+                     "last_visited_desktop": "13168966214299493"
+                  },
+                  "name": "An Emacs Diff (Ediff) tutorial | Tech Rants",
+                  "sync_transaction_version": "1970",
+                  "type": "url",
+                  "url": "https://mytechrants.wordpress.com/2008/12/12/an-emacs-diff-ediff-tutorial/"
+               }, {
+                  "date_added": "13168966742818750",
+                  "id": "990",
+                  "meta_info": {
+                     "last_visited_desktop": "13169131119094341"
+                  },
+                  "name": "dgutov/diff-hl: Emacs package for highlighting uncommitted changes",
+                  "sync_transaction_version": "2085",
+                  "type": "url",
+                  "url": "https://github.com/dgutov/diff-hl"
+               }, {
+                  "children": [ {
+                     "date_added": "13168967782637028",
+                     "id": "991",
+                     "meta_info": {
+                        "last_visited_desktop": "13168967782638039"
+                     },
+                     "name": "mastering-emacs-in-one-year-guide/guide-en.org at master · redguardtoo/mastering-emacs-in-one-year-guide",
+                     "sync_transaction_version": "1984",
+                     "type": "url",
+                     "url": "https://github.com/redguardtoo/mastering-emacs-in-one-year-guide/blob/master/guide-en.org"
+                  } ],
+                  "date_added": "13168967795033102",
+                  "date_modified": "13168967799250917",
+                  "id": "992",
+                  "name": "Tutorials",
+                  "sync_transaction_version": "1985",
+                  "type": "folder"
+               }, {
+                  "date_added": "13168997169757088",
+                  "id": "996",
+                  "meta_info": {
+                     "last_visited_desktop": "13169028691856123"
+                  },
+                  "name": "dotfiles/emacs.org at master · sondr3/dotfiles",
+                  "sync_transaction_version": "2054",
+                  "type": "url",
+                  "url": "https://github.com/sondr3/dotfiles/blob/master/emacs.org"
+               }, {
+                  "date_added": "13168997537268559",
+                  "id": "997",
+                  "meta_info": {
+                     "last_visited_desktop": "13169021961491095"
+                  },
+                  "name": "copyedit/copyedit-ja.el at master · hisashim/copyedit",
+                  "sync_transaction_version": "2028",
+                  "type": "url",
+                  "url": "https://github.com/hisashim/copyedit/blob/master/copyedit-ja.el"
+               }, {
+                  "date_added": "13168997605056387",
+                  "id": "998",
+                  "meta_info": {
+                     "last_visited_desktop": "13169126015604966"
+                  },
+                  "name": "EmacsWiki: Sentence Highlight",
+                  "sync_transaction_version": "2081",
+                  "type": "url",
+                  "url": "https://www.emacswiki.org/emacs/SentenceHighlight"
+               }, {
+                  "date_added": "13169022262713607",
+                  "id": "1000",
+                  "meta_info": {
+                     "last_visited_desktop": "13169022262714694"
+                  },
+                  "name": "sarabander/sicp-pdf: SICP PDF with Texinfo and LaTeX source",
+                  "sync_transaction_version": "2040",
+                  "type": "url",
+                  "url": "https://github.com/sarabander/sicp-pdf"
+               }, {
+                  "date_added": "13169135495294271",
+                  "id": "1007",
+                  "meta_info": {
+                     "last_visited_desktop": "13169135657396812"
+                  },
+                  "name": "using-emacs/myinit.org at master · zamansky/using-emacs",
+                  "sync_transaction_version": "2092",
+                  "type": "url",
+                  "url": "https://github.com/zamansky/using-emacs/blob/master/myinit.org"
+               }, {
+                  "date_added": "13169143354881573",
+                  "id": "1008",
+                  "meta_info": {
+                     "last_visited_desktop": "13169145123257296"
+                  },
+                  "name": "Customizing the Fringes - Emacs Redux",
+                  "sync_transaction_version": "2108",
+                  "type": "url",
+                  "url": "http://emacsredux.com/blog/2015/01/18/customizing-the-fringes/"
+               }, {
+                  "date_added": "13169719754476216",
+                  "id": "1010",
+                  "meta_info": {
+                     "last_visited_desktop": "13169719850355226"
+                  },
+                  "name": "EmacsWiki: Track Changes",
+                  "sync_transaction_version": "2139",
+                  "type": "url",
+                  "url": "https://www.emacswiki.org/emacs/TrackChanges"
                } ],
                "date_added": "13144043130381618",
-               "date_modified": "13164157859579391",
+               "date_modified": "13169721376798077",
                "id": "207",
                "name": "Emacs",
                "sync_transaction_version": "1",
@@ -3613,11 +3602,8 @@
                }, {
                   "date_added": "13097626428285951",
                   "id": "304",
-                  "meta_info": {
-                     "last_visited_desktop": "13161442370538572"
-                  },
                   "name": "Search and replace - Vim Tips Wiki - Wikia",
-                  "sync_transaction_version": "1167",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "http://vim.wikia.com/wiki/Search_and_replace"
                }, {
@@ -3629,7 +3615,7 @@
                   "url": "http://vim.rtorr.com/"
                } ],
                "date_added": "13144043130386263",
-               "date_modified": "13144043130386263",
+               "date_modified": "13169605019108496",
                "id": "235",
                "name": "Vim",
                "sync_transaction_version": "1",
@@ -3731,11 +3717,8 @@
                }, {
                   "date_added": "13103492405265614",
                   "id": "254",
-                  "meta_info": {
-                     "last_visited_desktop": "13160095614806636"
-                  },
                   "name": "GRUB/Tips and tricks - ArchWiki",
-                  "sync_transaction_version": "1028",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "https://wiki.archlinux.org/index.php/GRUB/Tips_and_tricks"
                }, {
@@ -4287,36 +4270,87 @@
                }, {
                   "date_added": "13159826262651293",
                   "id": "859",
-                  "meta_info": {
-                     "last_visited_desktop": "13159826262651660"
-                  },
                   "name": "rsnapshot | rsnapshot",
-                  "sync_transaction_version": "1002",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "http://rsnapshot.org/"
                }, {
                   "date_added": "13159826315039345",
                   "id": "860",
-                  "meta_info": {
-                     "last_visited_desktop": "13159826315039888"
-                  },
                   "name": "Turn your old Raspberry Pi into an automatic backup server | Opensource.com",
-                  "sync_transaction_version": "1006",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "https://opensource.com/life/16/3/turn-your-old-raspberry-pi-automatic-backup-server"
                }, {
                   "date_added": "13163793738005281",
                   "id": "939",
-                  "meta_info": {
-                     "last_visited_desktop": "13163793738005697"
-                  },
                   "name": "How to Change the Theme of the XFCE Terminal | Simply Ian",
-                  "sync_transaction_version": "1553",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "https://simplyian.com/2014/03/29/how-to-change-the-theme-of-the-xfce-terminal/"
+               }, {
+                  "date_added": "13167508842280573",
+                  "id": "956",
+                  "meta_info": {
+                     "last_visited_desktop": "13167508842281309"
+                  },
+                  "name": "Redshift configuration for Paris",
+                  "sync_transaction_version": "1808",
+                  "type": "url",
+                  "url": "https://gist.github.com/nemunaire/9763691"
+               }, {
+                  "date_added": "13167872666074049",
+                  "id": "959",
+                  "meta_info": {
+                     "last_visited_desktop": "13167872666074576"
+                  },
+                  "name": "Kakaotalk on Linux - Success : korea",
+                  "sync_transaction_version": "1817",
+                  "type": "url",
+                  "url": "https://www.reddit.com/r/korea/comments/3jx3m8/kakaotalk_on_linux_success/"
+               }, {
+                  "date_added": "13168091013711778",
+                  "id": "973",
+                  "meta_info": {
+                     "last_visited_desktop": "13168091013712439"
+                  },
+                  "name": "emacs.d/emacs-init.org at master · bixuanzju/emacs.d",
+                  "sync_transaction_version": "1877",
+                  "type": "url",
+                  "url": "https://github.com/bixuanzju/emacs.d/blob/master/emacs-init.org"
+               }, {
+                  "date_added": "13168439086057967",
+                  "id": "977",
+                  "meta_info": {
+                     "last_visited_desktop": "13168546424402884"
+                  },
+                  "name": "Setting up Dual Monitors on XFCE Arch Linux | Ian Armour",
+                  "sync_transaction_version": "1911",
+                  "type": "url",
+                  "url": "https://ianmarmour.com/2012/01/22/setting-up-dual-monitors-on-xfce-arch-linux/"
+               }, {
+                  "date_added": "13168711545572079",
+                  "id": "985",
+                  "meta_info": {
+                     "last_visited_desktop": "13168711545573296"
+                  },
+                  "name": "[SOLVED] take a screenshot under XFCE [Archive] - Ubuntu Forums",
+                  "sync_transaction_version": "1951",
+                  "type": "url",
+                  "url": "https://ubuntuforums.org/archive/index.php/t-1716649.html"
+               }, {
+                  "date_added": "13169022762120827",
+                  "id": "1001",
+                  "meta_info": {
+                     "last_visited_desktop": "13169022762121664"
+                  },
+                  "name": "arch linux - Setting dual monitor with different resolutions using ati open source driver - Unix & Linux Stack Exchange",
+                  "sync_transaction_version": "2045",
+                  "type": "url",
+                  "url": "https://unix.stackexchange.com/questions/15434/setting-dual-monitor-with-different-resolutions-using-ati-open-source-driver"
                } ],
                "date_added": "13144043130386503",
-               "date_modified": "13166465559678597",
+               "date_modified": "13169605019108556",
                "id": "238",
                "name": "Linux",
                "sync_transaction_version": "1",
@@ -4353,22 +4387,16 @@
             }, {
                "date_added": "13150101982038368",
                "id": "754",
-               "meta_info": {
-                  "last_visited_desktop": "13157403744824764"
-               },
                "name": "Bbox | Gestion",
-               "sync_transaction_version": "863",
+               "sync_transaction_version": "2124",
                "type": "url",
                "url": "http://192.168.1.254/index.html"
             }, {
                "children": [ {
                   "date_added": "13155825801194058",
                   "id": "812",
-                  "meta_info": {
-                     "last_visited_desktop": "13162999948119513"
-                  },
                   "name": "Adding an existing project to GitHub using the command line - User Documentation",
-                  "sync_transaction_version": "1497",
+                  "sync_transaction_version": "2124",
                   "type": "url",
                   "url": "https://help.github.com/articles/adding-an-existing-project-to-github-using-the-command-line/"
                }, {
@@ -4407,7 +4435,7 @@
                   "url": "https://github.com/arialdomartini/oh-my-git"
                } ],
                "date_added": "13155825811625581",
-               "date_modified": "13166466113231881",
+               "date_modified": "13169605019108493",
                "id": "813",
                "name": "Git",
                "sync_transaction_version": "778",
@@ -4415,16 +4443,13 @@
             }, {
                "date_added": "13159826857290425",
                "id": "861",
-               "meta_info": {
-                  "last_visited_desktop": "13159826857290851"
-               },
                "name": "Upgrading X220/X230 to FHD 1080p - Thinkpads Forum",
-               "sync_transaction_version": "1011",
+               "sync_transaction_version": "2124",
                "type": "url",
                "url": "https://forum.thinkpads.com/viewtopic.php?t=122640"
             } ],
             "date_added": "13144043130343211",
-            "date_modified": "13160070003168127",
+            "date_modified": "13169605019108531",
             "id": "47",
             "name": "Computers",
             "sync_transaction_version": "1",
@@ -4482,11 +4507,8 @@
             }, {
                "date_added": "13076093546163000",
                "id": "180",
-               "meta_info": {
-                  "last_visited_desktop": "13161195658321748"
-               },
                "name": "reason.com/archives/2007/05/30/wikipedia-and-beyond",
-               "sync_transaction_version": "1134",
+               "sync_transaction_version": "2124",
                "type": "url",
                "url": "http://reason.com/archives/2007/05/30/wikipedia-and-beyond"
             }, {
@@ -4652,7 +4674,7 @@
                "url": "http://www.motherjones.com/politics/2005/05/put-tiger-your-think-tank/"
             } ],
             "date_added": "13144043130343443",
-            "date_modified": "13155955837751310",
+            "date_modified": "13169605019108502",
             "id": "49",
             "name": "Neoliberalism",
             "sync_transaction_version": "1",
@@ -4784,9 +4806,69 @@
                "sync_transaction_version": "1",
                "type": "url",
                "url": "http://www.paecon.net/PAEReview/issue75/Poll2016-75.pdf"
+            }, {
+               "date_added": "13168022519423586",
+               "id": "965",
+               "meta_info": {
+                  "last_visited_desktop": "13168034957063420"
+               },
+               "name": "About Beatrice Cherrier | The Undercover Historian",
+               "sync_transaction_version": "1845",
+               "type": "url",
+               "url": "https://beatricecherrier.wordpress.com/about/"
+            }, {
+               "date_added": "13168083978468456",
+               "id": "968",
+               "meta_info": {
+                  "last_visited_desktop": "13168084027715903"
+               },
+               "name": "Ecole de Lille en Méthodes Quantitatives des Sciences Sociales-Quantilille",
+               "sync_transaction_version": "1854",
+               "type": "url",
+               "url": "http://quantilille.free.fr/"
+            }, {
+               "date_added": "13168084277006570",
+               "id": "969",
+               "meta_info": {
+                  "last_visited_desktop": "13168084293734721"
+               },
+               "name": "École d’été Initiation à l’analyse de réseaux - progedo",
+               "sync_transaction_version": "1858",
+               "type": "url",
+               "url": "http://www.progedo.fr/evenements/ecole-dete-initiation-a-lanalyse-de-reseaux/"
+            }, {
+               "date_added": "13168084862962605",
+               "id": "970",
+               "meta_info": {
+                  "last_visited_desktop": "13168084862963290"
+               },
+               "name": "Homepage - progedo",
+               "sync_transaction_version": "1861",
+               "type": "url",
+               "url": "http://www.progedo.fr/"
+            }, {
+               "date_added": "13168085128473383",
+               "id": "971",
+               "meta_info": {
+                  "last_visited_desktop": "13168085128474094"
+               },
+               "name": "Appel à propositions 2018 : journées d’études pluri-disciplinaires en analyse de réseaux | GDR Analyse de réseaux en sciences humaines et sociales",
+               "sync_transaction_version": "1865",
+               "type": "url",
+               "url": "https://arshs.hypotheses.org/558"
+            }, {
+               "date_added": "13168085227695776",
+               "id": "972",
+               "meta_info": {
+                  "last_visited_desktop": "13168085236192956"
+               },
+               "name": "Sociologie des réseaux sociaux 2017-18 | Data Big and Small",
+               "sync_transaction_version": "1870",
+               "type": "url",
+               "url": "https://databigandsmall.com/courses/reseaux/"
             } ],
             "date_added": "13144043130351542",
-            "date_modified": "13144043130351543",
+            "date_modified": "13168091013711778",
             "id": "52",
             "name": "Economics",
             "sync_transaction_version": "1",
@@ -4794,11 +4876,8 @@
          }, {
             "date_added": "13083164217329214",
             "id": "53",
-            "meta_info": {
-               "last_visited_desktop": "13162990255574725"
-            },
             "name": "Razonpublica.com | Para saber en serio lo que pasa en Colombia",
-            "sync_transaction_version": "1441",
+            "sync_transaction_version": "2124",
             "type": "url",
             "url": "http://www.razonpublica.com/index.php"
          }, {
@@ -4813,8 +4892,11 @@
                }, {
                   "date_added": "13142912978859484",
                   "id": "68",
+                  "meta_info": {
+                     "last_visited_desktop": "13168381991657072"
+                  },
                   "name": "Deutsch perfekt 6/2017 | Deutsch Perfekt online",
-                  "sync_transaction_version": "286",
+                  "sync_transaction_version": "1886",
                   "type": "url",
                   "url": "http://www.deutsch-perfekt.com/produkte/zeitschrift/archiv/deutsch-perfekt-62017"
                }, {
@@ -5399,11 +5481,8 @@
             }, {
                "date_added": "13151559586596622",
                "id": "765",
-               "meta_info": {
-                  "last_visited_desktop": "13157403784681794"
-               },
                "name": "Bbox | Diagnostic",
-               "sync_transaction_version": "864",
+               "sync_transaction_version": "2124",
                "type": "url",
                "url": "http://192.168.1.254/diagnostic.html"
             }, {
@@ -5444,7 +5523,7 @@
                "url": "http://www.techradar.com/news/audio/best-in-ear-headphones-1276925"
             } ],
             "date_added": "13144043130352429",
-            "date_modified": "13156364958557063",
+            "date_modified": "13169605019108528",
             "id": "59",
             "name": "France",
             "sync_transaction_version": "1",
@@ -5452,11 +5531,8 @@
          }, {
             "date_added": "13118727766816749",
             "id": "60",
-            "meta_info": {
-               "last_visited_desktop": "13162990443195744"
-            },
             "name": "(2) How should I plan my preparation for GRE? - Quora",
-            "sync_transaction_version": "1496",
+            "sync_transaction_version": "2124",
             "type": "url",
             "url": "https://www.quora.com/How-should-I-plan-my-preparation-for-GRE"
          }, {
@@ -5514,31 +5590,25 @@
          }, {
             "date_added": "13160451801642659",
             "id": "869",
-            "meta_info": {
-               "last_visited_desktop": "13160451801643306"
-            },
             "name": "History of the word \"tea\": How the word \"tea\" spread over land and sea — Quartz",
-            "sync_transaction_version": "1042",
+            "sync_transaction_version": "2124",
             "type": "url",
             "url": "https://qz.com/1176962/map-how-the-word-tea-spread-over-land-and-sea-to-conquer-the-world/"
          }, {
             "date_added": "13162004659976739",
             "id": "915",
             "meta_info": {
-               "last_visited_desktop": "13162125019712043"
+               "last_visited_desktop": "13169720511221658"
             },
             "name": "\"Uribe es el único político con capacidad de coordinar los intereses de las élites legales e ilegales\" | La Silla Vacía",
-            "sync_transaction_version": "1329",
+            "sync_transaction_version": "2144",
             "type": "url",
             "url": "http://lasillavacia.com/silla-academica/uribe-es-el-unico-politico-con-capacidad-de-coordinar-los-intereses-de-las-elites"
          }, {
             "date_added": "13162264233418656",
             "id": "917",
-            "meta_info": {
-               "last_visited_desktop": "13162264233419192"
-            },
             "name": "Emacs Org: Task-related keyboard shortcuts for the agenda –",
-            "sync_transaction_version": "1339",
+            "sync_transaction_version": "2124",
             "type": "url",
             "url": "http://sachachua.com/blog/2013/01/emacs-org-task-related-keyboard-shortcuts-agenda/"
          }, {
@@ -5552,9 +5622,29 @@
                "sync_transaction_version": "1621",
                "type": "url",
                "url": "https://www.notariosyregistradores.com/doctrina/resumenes/2012-reforma-laboral-ley.htm"
+            }, {
+               "date_added": "13167904120024609",
+               "id": "961",
+               "meta_info": {
+                  "last_visited_desktop": "13167904175877410"
+               },
+               "name": "BOE.es - Agencia Estatal Boletín Oficial del Estado",
+               "sync_transaction_version": "1824",
+               "type": "url",
+               "url": "https://www.boe.es/"
+            }, {
+               "date_added": "13167957437206497",
+               "id": "963",
+               "meta_info": {
+                  "last_visited_desktop": "13167957437207205"
+               },
+               "name": "deutsch perfekt paris - Google Search",
+               "sync_transaction_version": "1833",
+               "type": "url",
+               "url": "https://www.google.fr/search?q=deutsch+perfekt+paris&safe=off&ei=5IPOWvzJK8i1UezYurgC&start=20&sa=N&biw=1517&bih=745"
             } ],
             "date_added": "13163043816483902",
-            "date_modified": "13163117673590321",
+            "date_modified": "13168022519423586",
             "id": "930",
             "name": "Spain",
             "sync_transaction_version": "1507",
@@ -5579,20 +5669,129 @@
             "sync_transaction_version": "1617",
             "type": "url",
             "url": "https://manuferpi.wordpress.com/"
+         }, {
+            "date_added": "13167505298084732",
+            "id": "955",
+            "meta_info": {
+               "last_visited_desktop": "13167505298085435"
+            },
+            "name": "OE Hand Grinders",
+            "sync_transaction_version": "1803",
+            "type": "url",
+            "url": "http://www.oehandgrinders.com/"
+         }, {
+            "date_added": "13167871901866874",
+            "id": "958",
+            "meta_info": {
+               "last_visited_desktop": "13167871901867516"
+            },
+            "name": "Recherche - Yggtorrent",
+            "sync_transaction_version": "1812",
+            "type": "url",
+            "url": "https://yggtorrent.is/engine/search?name=pierre+bourdieu&do=search"
+         }, {
+            "children": [  ],
+            "date_added": "13168022558763643",
+            "date_modified": "13168022558763643",
+            "id": "966",
+            "name": "E",
+            "sync_transaction_version": "1841",
+            "type": "folder"
+         }, {
+            "date_added": "13168426373140619",
+            "id": "975",
+            "meta_info": {
+               "last_visited_desktop": "13168426373141624"
+            },
+            "name": "Amazon.com: The Editor's Companion: An Indispensable Guide to Editing Books, Magazines, Online Publications, and More eBook: Steve Dunham: Kindle Store",
+            "sync_transaction_version": "1891",
+            "type": "url",
+            "url": "https://www.amazon.com/Editors-Companion-Indispensable-Magazines-Publications-ebook/dp/B00TIY31UK/ref=sr_1_4?ie=UTF8&qid=1523951497&sr=8-4&keywords=editing&dpID=51nV0CMTSiL&preST=_SY445_QL70_&dpSrc=srch"
+         }, {
+            "date_added": "13168426501673949",
+            "id": "976",
+            "meta_info": {
+               "last_visited_desktop": "13168426501674705"
+            },
+            "name": "What Editors Do: The Art, Craft, and Business of Book Editing (Chicago Guides to Writing, Editing, and Publishing): Peter Ginna: 9780226299976: Amazon.com: Books",
+            "sync_transaction_version": "1895",
+            "type": "url",
+            "url": "https://www.amazon.com/What-Editors-Do-Business-Publishing/dp/022629997X/ref=sr_1_7?ie=UTF8&qid=1523951497&sr=8-7&keywords=editing&dpID=41cmlcSSz1L&preST=_SY291_BO1,204,203,200_QL40_&dpSrc=srch"
+         }, {
+            "children": [ {
+               "date_added": "13168967799250917",
+               "id": "993",
+               "meta_info": {
+                  "last_visited_desktop": "13168967799251690"
+               },
+               "name": "What’s Up With That: Why It’s So Hard to Catch Your Own Typos | WIRED",
+               "sync_transaction_version": "1991",
+               "type": "url",
+               "url": "https://www.wired.com/2014/08/wuwt-typos/"
+            }, {
+               "date_added": "13169040103316686",
+               "id": "1003",
+               "meta_info": {
+                  "last_visited_desktop": "13169164026859985"
+               },
+               "name": "simoneditor.se",
+               "sync_transaction_version": "2109",
+               "type": "url",
+               "url": "http://www.simoneditor.se/victorojas.html"
+            }, {
+               "date_added": "13169041196922672",
+               "id": "1004",
+               "meta_info": {
+                  "last_visited_desktop": "13169041196923431"
+               },
+               "name": "El asesinato de Gloria Lara: una historia de un falso positivo judicial - Las2orillas",
+               "sync_transaction_version": "2065",
+               "type": "url",
+               "url": "https://www.las2orillas.co/el-asesinato-de-gloria-lara-una-historia-de-falso-positivo-judicial/"
+            }, {
+               "date_added": "13169041203476227",
+               "id": "1005",
+               "meta_info": {
+                  "last_visited_desktop": "13169041203476549"
+               },
+               "name": "Contacto/Kontakt",
+               "sync_transaction_version": "2067",
+               "type": "url",
+               "url": "http://simoneditor.se/contact.html"
+            } ],
+            "date_added": "13168967809937774",
+            "date_modified": "13169135495294271",
+            "id": "994",
+            "name": "Writing",
+            "sync_transaction_version": "1992",
+            "type": "folder"
+         }, {
+            "date_added": "13169721376798077",
+            "id": "1011",
+            "meta_info": {
+               "last_visited_desktop": "13169721376798755"
+            },
+            "name": "Amazon.com: The Decision Book: 50 Models for Strategic Thinking eBook: Mikael Krogerus, Roman Tschäppeler, Philip Earnhart, Jenny Piening: Kindle Store",
+            "sync_transaction_version": "2150",
+            "type": "url",
+            "url": "https://www.amazon.com/Decision-Book-Models-Strategic-Thinking-ebook/dp/B00C57C392/ref=sr_1_1?s=digital-text&ie=UTF8&qid=1525247639&sr=1-1&keywords=strategic+decision+making"
          } ],
          "date_added": "13144043067726660",
-         "date_modified": "13165877182399400",
+         "date_modified": "13169839846420242",
          "id": "2",
          "name": "Other bookmarks",
          "type": "folder"
       },
-      "sync_transaction_version": "1799",
+      "sync_transaction_version": "2167",
       "synced": {
          "children": [ {
             "date_added": "13097746972879126",
             "id": "6",
+            "meta_info": {
+               "last_visited_desktop": "13168604029246426"
+            },
             "name": "Grep a log file with current date - Stack Overflow",
-            "sync_transaction_version": "1",
+            "sync_transaction_version": "1933",
             "type": "url",
             "url": "http://stackoverflow.com/questions/17238908/grep-a-log-file-with-current-date"
          }, {
@@ -5633,11 +5832,8 @@
          }, {
             "date_added": "13006868768864760",
             "id": "12",
-            "meta_info": {
-               "last_visited_desktop": "13158363053319177"
-            },
             "name": "고대 수강",
-            "sync_transaction_version": "901",
+            "sync_transaction_version": "2124",
             "type": "url",
             "url": "http://sugang.korea.ac.kr/"
          }, {
@@ -5824,7 +6020,7 @@
             "url": "http://www.philosophie.ens.fr/-Diplome-de-l-ENS-.html?lang=fr"
          } ],
          "date_added": "13144043067726661",
-         "date_modified": "13158530261750894",
+         "date_modified": "13169605019108501",
          "id": "3",
          "name": "Mobile bookmarks",
          "type": "folder"

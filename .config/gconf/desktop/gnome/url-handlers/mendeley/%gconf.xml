@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <gconf>
-	<entry name="enabled" mtime="1523275742" type="bool" value="true"/>
-	<entry name="command" mtime="1523275742" type="string">
+	<entry name="enabled" mtime="1525455235" type="bool" value="true"/>
+	<entry name="command" mtime="1525455235" type="string">
 		<stringvalue>/home/sync0/.local/share/mendeleydesktop %s</stringvalue>
 	</entry>
 </gconf>
