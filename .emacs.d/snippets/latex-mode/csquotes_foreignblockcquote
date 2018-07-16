@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: csquotes_foreignblockcquote
+# key: fcquote 
+# --
+\foreignblockcquote{${1:english}}{${2:Cicero45}}{${3:Lorem ipsum dolor sit amet}}$0

@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: latex_csquotes_enquote
+# key: enquote 
+# --
+\\enquote{${1:Lorem ipsum dolor sit amet}}$0

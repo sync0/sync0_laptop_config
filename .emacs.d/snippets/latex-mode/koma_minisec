@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: latex_koma_minisec
+# key: minisec
+# --
+\minisec{${1:Titre}}$0

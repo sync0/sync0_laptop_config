@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: latex_quotation_marks
+# key: lquote 
+# --
+\`\`${1:Lorem ipsum dolor sit amet}''$0

@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: margin_note
+# key: note 
+# --
+\annotation{${1:add margin annotation}} $0

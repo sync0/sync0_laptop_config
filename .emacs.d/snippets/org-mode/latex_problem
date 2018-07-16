@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: latex_problem_environment
+# key: problem
+# --
+\begin{problem*}
+$1 
+\end{problem*} $0

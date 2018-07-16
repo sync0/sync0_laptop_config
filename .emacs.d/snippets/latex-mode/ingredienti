@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: ingredienti
+# key: ing
+# --
+\begin{ingredienti}
+$0 \\
+\end{ingredienti}
+

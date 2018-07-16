@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: master_author 
+# key: author 
+# --
+** ${1:title}
+:PROPERTIES:
+:YEAR: 
+:JOURNAL: 
+:PAGES: 133-145
+:ADDED: [(insert ((format-time-string "%Y-%m-%d")))]
+:END:
+$0

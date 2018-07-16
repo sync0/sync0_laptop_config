@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: csquotes_blockcquote
+# key: cquote 
+# --
+\blockcquote{${1:Cicero45}}{${2:Lorem ipsum dolor sit amet}}$0

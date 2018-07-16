@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: latex_bar
+# key: bar
+# --
+\bar{${1:X}} $0 

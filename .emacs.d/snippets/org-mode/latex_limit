@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: latex_limit
+# key: lim
+# --
+\lim_{${1:x\to\infty}} $0 

@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: french_ne
+# key: ne 
+# --
+ne $1pas $0

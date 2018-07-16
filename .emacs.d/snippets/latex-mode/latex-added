@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: latex-changes-added 
+# key: add 
+# --
+\added{${1:my_added_text}}$0

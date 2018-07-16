@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: programming function
+# key: func
+# --
+*${1:function_name}:* ${2:function_definition}
+/example:/ ~${3:code}~
+/output:/ ${4:output}
+$0

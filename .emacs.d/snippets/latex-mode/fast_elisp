@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: org_fast_elisp 
+# key: elisp
+# --
+#+BEGIN_SRC emacs-lisp
+${1}
+#+END_SRC $0

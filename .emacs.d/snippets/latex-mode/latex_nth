@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: latex_nth
+# key: nth 
+# --
+\nth{${1:20}}$0

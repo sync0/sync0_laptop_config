@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: latex_sum
+# key: sum
+# --
+\sum_{${1:i=1}}^{${2:\infty}} $0 

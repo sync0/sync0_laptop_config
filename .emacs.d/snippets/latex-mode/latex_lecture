@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: latex_lecture_environment
+# key: lecture
+# --
+\begin{lecture*}
+$1 
+\end{lecture*} $0

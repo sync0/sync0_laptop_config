@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: koma_textquote
+# key: kquote 
+# --
+\begin{quote}
+\textquote[${1:Marcus Tullius Cicero}][${2:.}]{${3:Lorem ipsum dolor sit amet}}
+\end{quote} $0

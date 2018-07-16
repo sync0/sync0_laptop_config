@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: alert_block_beamer 
+# key: beamer
+# --
+    :PROPERTIES:
+    :BEAMER_env: alertblock
+    :END:
+    #+BEGIN_EXAMPLE
+    \begin{alertblock}{${1:Lorem ipsum dolor}}
+    $2
+    \end{alertblock}
+    #+END_EXAMPLE
+    $0

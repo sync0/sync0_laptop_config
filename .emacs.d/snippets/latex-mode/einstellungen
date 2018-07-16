@@ -1,0 +1,55 @@
+# -*- mode: snippet -*-
+# name: latex_export_settings 
+# key: einstellungen 
+# --
+Einstellungen :noexport:ARCHIVE:
+#+LATEX_CMD: xelatex
+#+TITLE: ${1}
+#+SUBTITLE: ${2}
+#+AUTHOR: ${3}
+#+EMAIL: ${4:cantorlunae@gmail.com}
+#+DATE: ${5}
+#+LANGUAGE: ${6:en} 
+#+OPTIONS: num:nil toc:nil \n:nil @:t ::t |:t ^:t f:t *:t timestamp:nil ':t email:nil
+#+OPTIONS: TeX:t LaTeX:t d:nil pri:nil tags:not-in-toc
+#+LATEX_CLASS: ${7:scrartcl}
+#+BIBLIOGRAPHY: library chicagoa
+#+LATEX_CLASS_OPTIONS: [fontsize=${8:12pt}, koma, paper=${9:letter}, pagesize=pdftex]
+#+LATEX_HEADER: \newlength{\alphabet}
+#+LATEX_HEADER: \settowidth{\alphabet}{\normalfont abcdefghijklmnopqrstuvwxyz}
+#+LATEX_HEADER: \usepackage[letterpaper, textwidth=2.3\alphabet, hmarginratio={1:1}, top=2.5cm, bottom=2.5cm]{geometry}
+#+LATEX_HEADER: \usepackage[${10:french}]{babel} 
+#+LATEX_HEADER: \usepackage[backend=biber,style=authoryear-icomp,doi=false,isbn=false,url=false,block=space,mergedate=basic,labeldateparts=true]{biblatex}
+#+LATEX_HEADER: \addbibresource{library.bib}
+#+LATEX_HEADER: \renewbibmacro*{date}{\iffieldundef{origyear}{}{\setunit*{\addspace}\printtext[brackets]{\printorigdate}}}
+#+LATEX_HEADER: \usepackage[autostyle, english=american]{csquotes}
+#+LATEX_HEADER: \usepackage[super]{nth}
+#+LATEX_HEADER: \usepackage{xunicode}
+#+LATEX_HEADER: \usepackage{microtype}
+#+LATEX_HEADER: \usepackage{hyperref}
+#+LATEX_HEADER: \hypersetup{colorlinks,urlcolor=blue,linkcolor=red,citecolor=red,filecolor=black}
+#+LATEX_HEADER: \usepackage{ragged2e}
+#+LATEX_HEADER: \usepackage{setspace}
+#+LATEX_HEADER: ${11:\singlespacing}
+${12:#+LATEX_HEADER: \frenchspacing}
+#+LATEX_HEADER: \setlength{\JustifyingParindent}{0pt}
+#+LATEX_HEADER: \usepackage{titlesec}
+#+LATEX_HEADER: \usepackage[extramarks]{titleps}
+#+LATEX_HEADER: \usepackage{fontspec}
+#+LATEX_HEADER: \setmainfont{Linux Libertine}[SmallCapsFont={Linux Libertine Capitals}, SmallCapsFeatures={Letters=SmallCaps, LetterSpace=8.0}]
+#+LATEX_HEADER: \defaultfontfeatures[Linux Libertine]{Ligatures=TeX}
+#+LATEX_HEADER: \newfontfamily\sectionheadfont{Linux Libertine Capitals}[WordSpace=3, SmallCapsFeatures={LetterSpace=6.0}]
+#+LATEX_HEADER: \newfontfamily\subsectionheadfont{Linux Libertine Capitals}[WordSpace=2, SmallCapsFeatures={LetterSpace=6.0}]
+#+LATEX_HEADER: \newfontfamily\subsubsectionheadfont{Linux Libertine}[SmallCapsFeatures={LetterSpace=6.0}]
+#+LATEX_HEADER: \newcommand{\sectionheadstyle}{\flushleft\sectionheadfont\Huge\textsc}
+#+LATEX_HEADER: \newcommand{\subsectionheadstyle}{\flushleft\subsectionheadfont\Large\textsc}
+#+LATEX_HEADER: \newcommand{\subsubsectionheadstyle}{\flushright\subsubsectionheadfont\large\textit}
+#+LATEX_HEADER: \titleformat{\section}[display]{}{}{0pt}{\sectionheadstyle}[\vspace{1ex}\titlerule] 
+#+LATEX_HEADER: \titleformat{\subsection}[block]{}{}{0pt}{\subsectionheadstyle}[\vspace{1ex}] 
+#+LATEX_HEADER: \titleformat{\subsubsection}[display]{}{}{0pt}{\subsubsectionheadstyle}[\vspace{-1.5ex}] 
+#+LATEX_HEADER: \titlespacing*{\section}{0pt}{*1}{*4} 
+#+LATEX_HEADER: \titlespacing*{\subsection}{0pt}{*1}{*1} 
+#+TAGS: vocabulary(v) noexport
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+STARTUP: noindent hidestars content

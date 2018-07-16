@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: spanish_text
+# key: spanish
+# --
+\textspanish{\itshape ${1:Hola!}}$0

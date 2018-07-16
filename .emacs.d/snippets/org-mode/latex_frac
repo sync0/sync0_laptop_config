@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: latex_frac
+# key: frac
+# --
+\frac{${1:\partial^2 \sin x}}{${2:\partial x^2}} $0 

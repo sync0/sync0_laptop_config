@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: latex_changes_remark
+# key: remark
+# --
+remark={${1:my_remark}}$0

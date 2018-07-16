@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: latex_csquotes_foreignquote
+# key: lfquote 
+# --
+\\foreignquote{${1:Lorem ipsum dolor sit amet}}$0

@@ -1,0 +1,14 @@
+# -*- mode: snippet -*-
+# name: master_text 
+# key: newtext 
+# --
+** ${1:title}
+:PROPERTIES:
+:YEAR: ${2:1929} 
+:JOURNAL: 
+:VOLUME: 
+:ISSUE:
+:PAGES: 
+:ADDED: [`(insert (format-time-string "%Y-%m-%d"))`]
+:END:
+$0

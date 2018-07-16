@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: lecon_snip
+# key: lec
+# --
+** Leçon du `(insert (shell-command-to-string "echo -n $(date +%d)"))` `(insert (shell-command-to-string "echo -n $(date +%B)"))`
+*** $0

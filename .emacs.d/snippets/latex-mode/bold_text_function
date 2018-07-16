@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: boldface_text
+# key: bf
+# --
+\textbf{$1}$0

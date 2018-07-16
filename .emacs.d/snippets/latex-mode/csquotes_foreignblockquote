@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: csquotes_foreignblockquote
+# key: fquote 
+# --
+\foreignblockquote{${1:english}}[${2:Marcus Tullius Cicero}]{${3:Lorem ipsum dolor sit amet}}$0

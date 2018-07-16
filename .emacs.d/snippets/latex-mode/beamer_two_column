@@ -1,0 +1,21 @@
+# -*- mode: snippet -*-
+# name: two_column_beamer 
+# key: beamer
+# --
+*** ${1:Première colonne}
+    :PROPERTIES:
+    :BEAMER_col: 0.4
+    :BEAMER_env: alertblock
+    :END:
+${2:Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco
+laboris nisi ut aliquip ex ea commodo consequat.}     
+***  ${3:Deuxième colonne}
+    :PROPERTIES:
+    :BEAMER_col: 0.6
+    :BEAMER_env: alertblock
+    :END:
+    #+ATTR_LaTeX: :width 0.8\textwidth :float t :placement [H] 
+    [[./images/${4:image.png}]]
+    $0

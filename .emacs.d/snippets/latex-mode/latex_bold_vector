@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: latex_bold_vector
+# key: bold
+# --
+\mathbf{${1:X}}_${2:i} $0 

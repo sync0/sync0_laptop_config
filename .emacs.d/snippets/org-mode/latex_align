@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: latex_align_environment
+# key: align
+# --
+\begin{align*}
+$1 &= $2 \\\
+$3 &= $4
+\end{align*} $0

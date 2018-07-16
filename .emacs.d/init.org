@@ -1,13 +1,29 @@
+#   This program is free software: you can redistribute it and/or modify it
+#   under the terms of the GNU General Public License as published by the
+#   Free Software Foundation, either version 3 of the License, or (at your
+#   option) any later version.
+
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+#   GNU General Public License for more details.
+
+#   You should have received a copy of the GNU General Public License
+#   along with this program. If not, see <http://www.gnu.org/licenses/>.
+
 #+TITLE: Emacs Settings
 #+AUTHOR: Carlos Alberto Rivera Carreño
 #+EMAIL: cantorlunae@gmail.com
+# Visualization settings.
 #+STARTUP: noindent  showall showstars
+# Necessary to tangle this file.
 #+PROPERTY: header-args :tangle yes
-* Reminders
-- Remember that <s + tab creates a code block for adding more entries.
-  - Remember to include the line "emacs-lisp". 
+# Necessary to use org-crypt.el.
+# -*- buffer-auto-save-file-name: nil; -*-
+* Comments
+- Remember that ~<s + tab~ creates a code block for adding more entries.
+- Remember to include the words ~emacs-lisp~ on org code blocks. 
 - Remember the location for hunspell dictionaries should be in /usr/share/hunspell.
-- (PROPERTY: header-args :tangle yes)
 * Initialization
 ** Scratch Message
 The following code changes the welcoming message displayed by Emacs in the
@@ -2071,6 +2087,27 @@ There is a strange inconsistency when habits are enabled. See [[https://emacs.st
   ;; (setq org-bullets-bullet-list '("一" "二" "三" "四" "五"))
   ;; (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))))
 #+END_SRC 
+*** Org-crypt
+    #+BEGIN_SRC emacs-lisp
+      (use-package org-crypt :after org
+        :config
+        (org-crypt-use-before-save-magic)
+        (setq org-tags-exclude-from-inheritance (quote ("crypt"))
+              org-crypt-key nil)
+        ;; GPG key to use for encryption
+        ;; Either the Key ID or set to nil to use symmetric encryption.
+        )
+      ;; (setq auto-save-default nil)
+      ;; Auto-saving does not cooperate with org-crypt.el: so you need
+      ;; to turn it off if you plan to use org-crypt.el quite often.
+      ;; Otherwise, you'll get an (annoying) message each time you
+      ;; start Org.
+
+      ;; To turn it off only locally, you can insert this:
+      ;;
+      ;; # -*- buffer-auto-save-file-name: nil; -*-
+
+      #+END_SRC 
 *** hook flyspell into org-mode
 #+BEGIN_SRC emacs-lisp
 (add-hook 'org-mode-hook 'flyspell-mode)
@@ -2236,36 +2273,23 @@ from the `before-change-functions' in the current buffer."
 (define-key org-mode-map "\C-c\C-w" 'org-word-count)
 ;; enable word count mode
 ; (add-hook 'org-mode-hook 'wc-mode)
-*** org2blog 
-#+BEGIN_SRC emacs-lisp
-  (use-package org2blog :after org 
-    :config
-;; initial config
-    (setq load-path (cons "~/.emacs.d/org2blog/" load-path))
-    (require 'org2blog-autoloads)
-    (setq org-list-allow-alphabetical t)
+*** Org2blog                                                                    :crypt:
+-----BEGIN PGP MESSAGE-----
 
-  ;; blog setup
-    (setq org2blog/wp-blog-alist
-          '(("cahiers"
-             :url "https://cyberneticrevolutionary.wordpress.com/xmlrpc.php"
-             :username "cyberneticrevolutionary"
-             :password "kosmos666"
-             :default-title "Penseé"
-             :tags-as-categories nil))))
-#+END_SRC
-**** default template
-(setq org2blog/wp-buffer-template
-      "-----------------------
-#+TITLE: %s
-#+DATE: %s
------------------------\n")
-(defun my-format-function (format-string)
-  (format format-string
-          org2blog/wp-default-title
-          (format-time-string "%Y-%m-%d" (current-time)))))
-          (setq org2blog/wp-buffer-format-function
-'my-format-function)
+jA0EBwMCbUbCX4kHL/3s0ukBmcLQ2FYQsaUohjnQf6Takh8FGa0brYMqn6ulcwCe
+DUY0S/HEwNoS7jf+gLyD/rgnHpndUTKaTYL6fRmRGJUbLZk+IaOXOG+ykdwzu9T9
+Yq/tlIrfWXiy3/DnGKbf/ywrnK2tcKpkLEu0SgGZ8fPG6uet7fLhX9FQT398CyOu
+nnqrMxdb3FSiL+1W9a0DvQMKgx8uWukhjWNqLfMBEv/diDrRr/R0nzfe5FngFH6V
+pgNIIS3OnaJB2Ye/7AvjwRNC8nyh++agc2w51YCoRzav2sucfOAymnoeY8gOLpVv
+6MbhB4UbaFyE8zptct6L8Asje3Tg1keqh8+ut0pJGd1wX5qiK2WX6Vi98QGXmbY8
+smm+LHB1Gfuft7sP8KnLV0fcsmVILMiLRydWxby0WVGB4J1cb0qM5uIYTO13GUkK
+U0+P4EXn2oNes8oCoieMzWW+0Ry5wNODoU7nWM+peAaCktPjoWkM2BUY7rexS2GK
+iMlT3j4gXuOG79LiebXb9tqQUT1gg01+R1dCuOl2VXOGxrWw45gtu7neiLl2i+RM
+5aKGC0WFAMJXAqCHhTXfm/nmiKpvmZ+mTAZ/x81Xbg7GA6M62augvT06Q5a+8pQO
+8iWYtAdO7AIBKVi0orVjCKRdW6usiAH4IJAu6DcFfMNQggCTPkPq6TQeiuDtEL59
+Fh4Auyq1rp/XETast9twJUDPRwstOxrKq4Mp029iVYc=
+=B1Lk
+-----END PGP MESSAGE-----
 *** keybindings
 #+BEGIN_SRC emacs-lisp
 ;; fast insert drawer
