@@ -39,6 +39,153 @@ The following code changes the welcoming message displayed by Emacs in the
 ;; und den Mährchen vom Gespenst des Kommunismus 
 ;; ein Manifest der Partei selbst entgegenstellen.")
   #+END_SRC 
+** Doom macros
+*** after!
+#+BEGIN_SRC emacs-lisp
+(eval-and-compile
+  (defmacro after! (feature &rest forms)
+  "A smart wrapper around `with-eval-after-load'. Supresses warnings during
+compilation."
+  (declare (indent defun) (debug t))
+  `(,(if (or (not (bound-and-true-p byte-compile-current-file))
+             (if (symbolp feature)
+                 (require feature nil :no-error)
+               (load feature :no-message :no-error)))
+         #'progn
+       #'with-no-warnings)
+    (with-eval-after-load ',feature ,@forms))))
+  #+END_SRC 
+*** add-hook!
+    #+BEGIN_SRC emacs-lisp
+(eval-and-compile 
+(defun doom-enlist (exp)
+  "Return EXP wrapped in a list, or as-is if already a list."
+  (if (listp exp) exp (list exp)))
+
+(defun doom-unquote (exp)
+  "Return EXP unquoted."
+  (while (memq (car-safe exp) '(quote function))
+    (setq exp (cadr exp)))
+  exp)
+
+
+(defun doom--resolve-hook-forms (hooks)
+  (cl-loop with quoted-p = (eq (car-safe hooks) 'quote)
+           for hook in (doom-enlist (doom-unquote hooks))
+           if (eq (car-safe hook) 'quote)
+            collect (cadr hook)
+           else if quoted-p
+            collect hook
+           else collect (intern (format "%s-hook" (symbol-name hook)))))
+
+(defvar doom--transient-counter 0)
+
+(defmacro add-transient-hook! (hook &rest forms)
+  "Attaches transient forms to a HOOK.
+HOOK can be a quoted hook or a sharp-quoted function (which will be advised).
+These forms will be evaluated once when that function/hook is first invoked,
+then it detaches itself."
+  (declare (indent 1))
+  (let ((append (eq (car forms) :after))
+        (fn (intern (format "doom-transient-hook-%s" (cl-incf doom--transient-counter)))))
+    `(when ,hook
+       (fset ',fn
+             (lambda (&rest _)
+               ,@forms
+               (cond ((functionp ,hook) (advice-remove ,hook #',fn))
+                     ((symbolp ,hook)   (remove-hook ,hook #',fn)))
+               (unintern ',fn nil)))
+       (cond ((functionp ,hook)
+              (advice-add ,hook ,(if append :after :before) #',fn))
+             ((symbolp ,hook)
+              (add-hook ,hook #',fn ,append))))))
+
+      (defmacro add-hook! (&rest args)
+  "A convenience macro for `add-hook'. Takes, in order:
+  1. Optional properties :local and/or :append, which will make the hook
+     buffer-local or append to the list of hooks (respectively),
+  2. The hooks: either an unquoted major mode, an unquoted list of major-modes,
+     a quoted hook variable or a quoted list of hook variables. If unquoted, the
+     hooks will be resolved by appending -hook to each symbol.
+  3. A function, list of functions, or body forms to be wrapped in a lambda.
+Examples:
+    (add-hook! 'some-mode-hook 'enable-something)
+    (add-hook! some-mode '(enable-something and-another))
+    (add-hook! '(one-mode-hook second-mode-hook) 'enable-something)
+    (add-hook! (one-mode second-mode) 'enable-something)
+    (add-hook! :append (one-mode second-mode) 'enable-something)
+    (add-hook! :local (one-mode second-mode) 'enable-something)
+    (add-hook! (one-mode second-mode) (setq v 5) (setq a 2))
+    (add-hook! :append :local (one-mode second-mode) (setq v 5) (setq a 2))
+Body forms can access the hook's arguments through the let-bound variable
+`args'."
+  (declare (indent defun) (debug t))
+  (let ((hook-fn 'add-hook)
+        append-p local-p)
+    (while (keywordp (car args))
+      (pcase (pop args)
+        (:append (setq append-p t))
+        (:local  (setq local-p t))
+        (:remove (setq hook-fn 'remove-hook))))
+    (let ((hooks (doom--resolve-hook-forms (pop args)))
+          (funcs
+           (let ((val (car args)))
+             (if (memq (car-safe val) '(quote function))
+                 (if (cdr-safe (cadr val))
+                     (cadr val)
+                   (list (cadr val)))
+               (list args))))
+          forms)
+      (dolist (fn funcs)
+        (setq fn (if (symbolp fn)
+                     `(function ,fn)
+                   `(lambda (&rest _) ,@args)))
+        (dolist (hook hooks)
+          (push (if (eq hook-fn 'remove-hook)
+                    `(remove-hook ',hook ,fn ,local-p)
+                  `(add-hook ',hook ,fn ,append-p ,local-p))
+                forms)))
+      `(progn ,@(nreverse forms))))))
+      #+END_SRC 
+*** def-setting!
+#+BEGIN_SRC emacs-lisp
+(eval-and-compile
+(defvar doom-settings nil)
+  (defmacro def-setting! (keyword arglist &optional docstring &rest forms)
+  "Define a setting. Like `defmacro', this should return a form to be executed
+when called with `set!'. FORMS are not evaluated until `set!' calls it.
+See `doom/describe-setting' for a list of available settings.
+Do not use this for configuring Doom core."
+  (declare (indent defun) (doc-string 3))
+  (unless (keywordp keyword)
+    (error "Not a valid property name: %s" keyword))
+  (let ((fn (intern (format "doom--set%s" keyword))))
+    `(progn
+       (defun ,fn ,arglist
+         ,docstring
+         ,@forms)
+       (cl-pushnew ',(cons keyword fn) doom-settings :test #'eq :key #'car)))))
+  #+END_SRC 
+*** set!
+#+BEGIN_SRC emacs-lisp
+(eval-and-compile 
+(defvar doom-debug-mode (or (getenv "DEBUG") init-file-debug)
+  "If non-nil, all doom functions will be verbose. Set DEBUG=1 in the command
+line or use --debug-init to enable this.")
+
+(defmacro set! (keyword &rest values)
+  "Set an option defined by `def-setting!'. Skip if doesn't exist. See
+`doom/describe-setting' for a list of available settings."
+  (declare (indent defun))
+  (unless values
+    (error "Empty set! for %s" keyword))
+  (let ((fn (cdr (assq keyword doom-settings))))
+    (if fn
+        (apply fn values)
+      (when doom-debug-mode
+        (message "No setting found for %s" keyword)
+        nil)))))
+  #+END_SRC 
 ** User info
 #+BEGIN_SRC emacs-lisp
   (setq user-full-name "Carlos Alberto Rivera Carreño"
@@ -63,15 +210,16 @@ The following code changes the welcoming message displayed by Emacs in the
    #+END_SRC 
 ** Packages
    #+BEGIN_SRC emacs-lisp
-;;     (require 'cl)
-;;     (require 'package)
+     ;;     (require 'cl)
+     ;;     (require 'package)
+
      ;; Initialize Emac's package manager
      (package-initialize)
 
      ;; Set up the package repositories 
      (add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/"))
      (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
-;;     (add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/"))
+     ;;     (add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/"))
      (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
 
      (setq package-check-signature nil)
@@ -84,8 +232,8 @@ The following code changes the welcoming message displayed by Emacs in the
   (setq use-package-verbose t)
   ;;(setq use-package-always-ensure t)
   (require 'use-package)
-;;  (eval-when-compile
- ;;  (require 'use-package))
+  ;;  (eval-when-compile
+  ;;  (require 'use-package))
   ;;(use-package diminish )
   (require 'bind-key)
 #+END_SRC 
@@ -109,101 +257,97 @@ The following code changes the welcoming message displayed by Emacs in the
 #+END_SRC 
 ** Line numbers
 #+BEGIN_SRC emacs-lisp
-  ;;   (setq-default display-line-numbers 'visual
-  ;;                 display-line-numbers-current-absolute t
-  ;;                 display-line-numbers-width 4
-  ;;                 display-line-numbers-widen nil)
-     (setq-default line-spacing 0.15)
-  ;; (when (version<= "26.0.50" emacs-version )
-  ;;   (global-display-line-numbers-mode))
+  ;; Use the following with emacs-version > 26 
+     ;;(setq-default ;; display-line-numbers-type 'visual
+    ;;               display-line-numbers-current-absolute t
+    ;;               display-line-numbers-width 4
+     ;;              display-line-numbers-widen nil)
+  (when (version<= "26.0.50" emacs-version )
+    (global-display-line-numbers-mode))
 
   #+END_SRC 
 ** Fancy Battery 
 #+BEGIN_SRC emacs-lisp
-(use-package fancy-battery
-:init 
-  (add-hook 'after-init-hook #'fancy-battery-mode))
+  (use-package fancy-battery
+    :init 
+    (add-hook 'after-init-hook #'fancy-battery-mode))
   #+END_SRC 
-** Text settings
-#+BEGIN_SRC emacs-lisp
-;; Sentences end with single espace
-(setq sentence-end-double-space nil)
-#+END_SRC 
 ** Workspace settings 
    #+BEGIN_SRC emacs-lisp
-     (tool-bar-mode -1) ; introduced in emacs 21
-     (menu-bar-mode -1)
-     (scroll-bar-mode -1)
-     ;;(menu-bar-showhide-fringe-menu-customize-disable)
-     (add-to-list 'default-frame-alist '(fullscreen . maximized))
+          (tool-bar-mode -1) 
+          (menu-bar-mode -1)
+          (scroll-bar-mode -1)
+          ;;(menu-bar-showhide-fringe-menu-customize-disable)
+          ;; begin maxmized
+          (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
-     (setq mode-line-format nil
-           inhibit-splash-screen t
-           echo-keystrokes 0.1
-           auto-revert-interval 1
-           ;;(setq-default truncate-lines 1)
-           ;;(setq-default word-wrap nil)
+          (setq mode-line-format nil
+                inhibit-splash-screen t
+                echo-keystrokes 0.1
+                auto-revert-interval 1
+                )
+
+          (setq-default                    
+           ;; Use spaces instead of tabs
+           indent-tabs-mode nil              
+           ;; Split verticly by default
+           split-width-threshold 160         
+           ;; Split verticly by default
+           split-height-threshold nil        
+           ;; disable bidirectional text for tiny performance boost
+           bidi-display-reordering nil 
+           ;; don't blink--too distracting
+           blink-matching-paren nil    
+           ;; hide cursors in other windows
+           cursor-in-non-selected-windows nil  
+           frame-inhibit-implied-resize t
+           ;; avoid ugly problèmes with gît-gutter 
+           fringes-outside-margins t
+           ;; left-margin-width 3
+           ;; right-margin-width 7
+           left-fringe-width 3
+           right-fringe-width 0
+           ;; remove continuation arrow on right fringe
+           fringe-indicator-alist (delq (assq 'continuation fringe-indicator-alist)
+                                        fringe-indicator-alist)
+           highlight-nonselected-windows nil
+           image-animate-loop t
+           indicate-buffer-boundaries nil
+           indicate-empty-lines nil
+           max-mini-window-height 0.3
            )
-     ;; (add-hook 'emacs-startup-hook 'toggle-frame-maximized)
 
-     (setq-default                    ; Maximum line width
-                                             ;truncate-lines t                  ; Don't fold lines
-      indent-tabs-mode nil              ; Use spaces instead of tabs
-      split-width-threshold 160         ; Split verticly by default
-      split-height-threshold nil        ; Split verticly by default
-      bidi-display-reordering nil ; disable bidirectional text for tiny performance boost
-      blink-matching-paren nil    ; don't blink--too distracting
-      cursor-in-non-selected-windows nil  ; hide cursors in other windows
-      frame-inhibit-implied-resize t
-      ;; avoid ugly problèmes with gît-gutter 
-      fringes-outside-margins t
-      left-fringe-width 3
-      right-fringe-width 0
-      ;; remove continuation arrow on right fringe
-      fringe-indicator-alist (delq (assq 'continuation fringe-indicator-alist)
-                                   fringe-indicator-alist)
-      highlight-nonselected-windows nil
-      image-animate-loop t
-      indicate-buffer-boundaries nil
-      indicate-empty-lines nil
-      max-mini-window-height 0.3
-                                             ;; auto-fill-function 'do-auto-fill) ; Auto-fill-mode everywhere
-      ;; left-margin-width 3
-                                             ;; right-margin-width 7
-      )
+          ;; highlight matching delimiters
+          (setq show-paren-delay 0.1
+                show-paren-highlight-openparen t
+                show-paren-when-point-inside-paren t)
+          (show-paren-mode 1)
 
+     ;; On graphical displays, you can use window dividers in order to separate
+     ;; windows visually.
+          (setq-default window-divider-default-places t
+                        window-divider-default-bottom-width 0
+                        window-divider-default-right-width 1)
+          (add-hook 'emacs-startup-hook #'window-divider-mode)
 
-     ;; highlight matching delimiters
-     (setq show-paren-delay 0.1
-           show-paren-highlight-openparen t
-           show-paren-when-point-inside-paren t)
-     (show-paren-mode 1)
+          ;; (use-package fringe-helper :load-path "~/.emacs.d/sync0_git/fringe-helper.el/" 
+          ;;   :commands (fringe-helper-define fringe-helper-convert))
 
-     (setq-default window-divider-default-places t
-                   window-divider-default-bottom-width 0
-                   window-divider-default-right-width 1)
-     (add-hook 'emacs-startup-hook #'window-divider-mode)
+          ;; make navigation easy
+          ;; (setq frame-title-format "%b")
 
+          ;;Workspace keybindgs
+          (defun toggle-mode-line () 
+            "toggles the modeline on and off"
+            (interactive) 
+            (setq mode-line-format
+                  (if (equal mode-line-format nil)
+                      (default-value 'mode-line-format)) )
+            (redraw-display))
 
-     ;; (use-package fringe-helper :load-path "~/.emacs.d/sync0_git/fringe-helper.el/" 
-     ;;   :commands (fringe-helper-define fringe-helper-convert))
-
-
-     ;; make navigation easy
-     (setq frame-title-format "%b")
-
-     ;;Workspace keybindgs
-     (defun toggle-mode-line () 
-       "toggles the modeline on and off"
-       (interactive) 
-       (setq mode-line-format
-             (if (equal mode-line-format nil)
-                 (default-value 'mode-line-format)) )
-       (redraw-display))
-
-     (global-set-key [C-f11] 'toggle-mode-line)
-     (global-set-key (kbd "<f8>") 'tool-bar-mode)
-     (global-set-key (kbd "<f9>") 'menu-bar-mode)
+          (global-set-key [C-f11] 'toggle-mode-line)
+          (global-set-key (kbd "<f8>") 'tool-bar-mode)
+          (global-set-key (kbd "<f9>") 'menu-bar-mode)
 #+END_SRC
 ** Mixed settings
 #+BEGIN_SRC emacs-lisp
@@ -275,15 +419,13 @@ The following code changes the welcoming message displayed by Emacs in the
 #+END_SRC
 ** List of recent files
 #+BEGIN_SRC emacs-lisp
-(require 'recentf)
-(setq recentf-max-saved-items 50
-      recentf-max-menu-items 50)
-(recentf-mode +1)
-
-;;(global-set-key (kbd "<f5>") 'recentf-open-files)
-
-(define-key recentf-dialog-mode-map (kbd "j") 'next-line)
-(define-key recentf-dialog-mode-map (kbd "k") 'previous-line)
+  (use-package recentf
+    :config
+    (setq recentf-max-saved-items 100
+     recentf-max-menu-items 10)
+    (recentf-mode +1)
+  (define-key recentf-dialog-mode-map (kbd "j") 'next-line)
+  (define-key recentf-dialog-mode-map (kbd "k") 'previous-line))
 #+END_SRC
 ** 取 Margins to buffer
 ;; setting margins at start up
@@ -306,54 +448,105 @@ The following code changes the welcoming message displayed by Emacs in the
 ;; set key binding
 (global-set-key [C-f9] 'my-toggle-margins)
 ** Text settings
+*** Set default faces
+ #+BEGIN_SRC emacs-lisp
+     ;; select default faces
+     (set-face-attribute 'default nil :font "Fira Mono")
+   ;; adjust font size according to screen resolution (when I use dual monitor setup)
+     (if window-system
+         (progn
+           (if (> (x-display-pixel-width) 2000)
+               ;; dual monitor font size
+               (progn
+                 ;; interline spacing
+                 (setq line-spacing 0.14)
+                 (set-face-attribute 'default nil :height 140) )
+             (progn
+               ;; interline spacing
+               (setq line-spacing 0.12)
+               ;; laptop font size
+               (set-face-attribute 'default nil :height 120)))))
+
+       (defun my-buffer-face-mode-fixed ()
+         "Sets a fixed width (monospace) font in current buffer"
+         (interactive)
+         (if window-system
+             (progn
+               (if (> (x-display-pixel-width) 1500)
+                   ;; dual monitor
+                   (setq buffer-face-mode-face '(:family "Fira Mono" :height 140 :spacing monospace)) 
+                 ;; laptop
+                 (setq buffer-face-mode-face '(:family "Fira Mono" :height 120 :spacing monospace)))))
+         (buffer-face-mode))
+
+       ;; Variable-width faces 
+       (defun my-buffer-face-mode-variable ()
+         "Set font to a variable width (proportional) fonts in current buffer"
+         (interactive)
+         (if window-system
+             (progn
+               (if (> (x-display-pixel-width) 1500)
+                   ;; external monitor
+                   (setq buffer-face-mode-face '(:family "Linux Libertine" :height 170)) 
+                 ;; laptop
+                 (setq buffer-face-mode-face '(:family "Linux Libertine" :height 140)))))
+         (buffer-face-mode))
+
+       ;; Set default font faces for Info, ERC, and Org
+       (add-hook 'erc-mode-hook 'my-buffer-face-mode-variable)
+       (add-hook 'Info-mode-hook 'my-buffer-face-mode-variable)
+       (add-hook 'text-mode-hook 'my-buffer-face-mode-variable)
+
+
+
+
+       ;;   (defun fontify-frame (frame)
+       ;; (interactive)
+       ;; (if window-system
+       ;; (progn 
+       ;; (if (> (x-display-pixel-width) 2000) 
+       ;; (text-scale-set 0) 
+       ;;              (text-scale-set 0.8)))))
+
+       ;; ;; Fontify current frame
+       ;; (fontify-frame nil)
+
+       ;; ;; Fontify any future frames
+       ;; (push 'fontify-frame after-make-frame-functions)
+
+       ;; Allow narrowing
+       (put 'narrow-to-region 'disabled nil)
+
+       ;; Sentences end with single espace
+       (setq sentence-end-double-space nil)
+
+       ;; Word wrap
+       (setq org-startup-truncated t)
+  #+END_SRC
+*** Add blank lines
 #+BEGIN_SRC emacs-lisp
-      ;; Monospaced faces 
-      ;; define default faces
-      (set-face-attribute 'default nil :font "Fira Mono")
-      ;;(set-face-attribute 'default nil :height 120) 
-      (set-face-attribute 'default nil :height 140)  ;; external monitor
-      ;;(set-face-attribute 'default nil :height 100)
-      ;;(set-face-attribute 'default nil :height 110) ;; laptop
+  (defun sync0-insert-line-below ()
+  "Insert an empty line below the current line."
+  (interactive)
+  (save-excursion
+    (end-of-line)
+    (open-line 1)))
 
-      (defun my-buffer-face-mode-fixed ()
-        "Sets a fixed width (monospace) font in current buffer"
-        (interactive)
-        (setq buffer-face-mode-face '(:family "Fira Mono" :height 140 :spacing monospace)) ;; external monitor
-        ;;(setq buffer-face-mode-face '(:family "Fira Mono" :height 120 :spacing monospace))
-        ;;(setq buffer-face-mode-face '(:family "Fira Mono" :height 100 :spacing monospace))
-       ;; (setq buffer-face-mode-face '(:family "Fira Mono" :height 110 :spacing monospace)) ;; laptop
-        (buffer-face-mode))
-
-      ;; Variable-width faces 
-      (defun my-buffer-face-mode-variable ()
-        "Set font to a variable width (proportional) fonts in current buffer"
-        (interactive)
-        (setq buffer-face-mode-face '(:family "Linux Libertine" :height 170)) ;; external monitor
-        ;;(setq buffer-face-mode-face '(:family "Linux Libertine" :height 160))
-        ;;(setq buffer-face-mode-face '(:family "Linux Libertine" :height 150))
-        ;;(setq buffer-face-mode-face '(:family "Linux Libertine" :height 140)) ;; laptop
-        ;;(setq buffer-face-mode-face '(:family "Linux Libertine" :height 120))
-        ;;(setq buffer-face-mode-face '(:family "Linux Libertine Display" :height 160))
-        ;;(setq buffer-face-mode-face '(:family "Linux Libertine Display" :height 160 :width expanded))
-        (buffer-face-mode))
-
-      ;; Set default font faces for Info, ERC, and Org
-      (add-hook 'erc-mode-hook 'my-buffer-face-mode-variable)
-      (add-hook 'Info-mode-hook 'my-buffer-face-mode-variable)
-      (add-hook 'org-mode-hook 'my-buffer-face-mode-variable)
-
-      ;; Allow narrowing
-      (put 'narrow-to-region 'disabled nil)
-
-      ;; Word wrap
-      (setq org-startup-truncated t)
- #+END_SRC
+(defun sync0-insert-line-above ()
+  "Insert an empty line above the current line."
+  (interactive)
+  (save-excursion
+    (end-of-line 0)
+    (open-line 1)))
+  #+END_SRC 
 *** Auto-fill settings
  #+BEGIN_SRC emacs-lisp
       (setq-default fill-column 75)
       (add-hook 'text-mode-hook 'turn-on-visual-line-mode)
+      (add-hook 'LaTeX-mode-hook 'turn-on-visual-line-mode)
       ;; (add-hook 'text-mode-hook 'turn-off-auto-fill)
       (add-hook 'org-mode-hook 'turn-on-auto-fill)
+      ;; (add-hook 'LaTeX-mode-hook 'turn-on-auto-fill)
       ;; respect de la typographie française par fill
       ;;(setq fill-nobreak-predicate '(fill-french-nobreak-p))
 
@@ -364,6 +557,12 @@ The following code changes the welcoming message displayed by Emacs in the
          (looking-back "blockcquote.+" (line-beginning-position))
          (looking-back "foreignblockquote.+" (line-beginning-position))
          (looking-back "foreignblockcquote.+" (line-beginning-position))
+         (looking-back "annotation{.+" (line-beginning-position))
+         ;; (looking-back "replaced{.+" (line-beginning-position))
+         ;; (looking-back "added{.+" (line-beginning-position))
+         ;; (looking-back "deleted{.+" (line-beginning-position))
+         (looking-back "textbf{.+" (line-beginning-position))
+         (looking-back "textit{.+" (line-beginning-position))
          ))
 
       (add-hook 'fill-nobreak-predicate #'sync0-is-this-a-csquote)
@@ -578,7 +777,7 @@ that I’ve copied from the web.
       (quietly-read-abbrev-file))
 
   ;; automatically turn on abbrev-mode for the following modes
-  (dolist (hook '(org-mode-hook
+  (dolist (hook '(
                   emacs-lisp-mode-hook
                   text-mode-hook))
     (add-hook hook (lambda () (abbrev-mode 1))))
@@ -601,152 +800,108 @@ that I’ve copied from the web.
   ;; Have org-mode indent elips sections by default
   (setq org-src-tab-acts-natively t) 
 #+END_SRC 
-** Doom macros
-*** after!
+** LaTeX 
 #+BEGIN_SRC emacs-lisp
-(eval-and-compile
-  (defmacro after! (feature &rest forms)
-  "A smart wrapper around `with-eval-after-load'. Supresses warnings during
-compilation."
-  (declare (indent defun) (debug t))
-  `(,(if (or (not (bound-and-true-p byte-compile-current-file))
-             (if (symbolp feature)
-                 (require feature nil :no-error)
-               (load feature :no-message :no-error)))
-         #'progn
-       #'with-no-warnings)
-    (with-eval-after-load ',feature ,@forms))))
+  ;; (defun sync0-latex-compile-after-save ()
+  ;; ""
+  ;;     (when (bound-and-true-p LaTeX-mode) 
+  ;; (sync0-latex-compile)
+  ;; )
+
+  (defun sync0-latex-fast-compile ()
+    "Fast compile current file"
+        (TeX-command "LaTeX" 'TeX-master-file))
+
+  (defun sync0-after-save-actions ()
+    "Used in `after-save-hook'."
+    (when (equal this-command 'save-buffer)
+      (when (equal major-mode 'latex-mode) 
+        (sync0-latex-fast-compile)))
+    )
+
+  (add-hook 'after-save-hook 'sync0-after-save-actions)
   #+END_SRC 
-*** add-hook!
-    #+BEGIN_SRC emacs-lisp
-(eval-and-compile 
-(defun doom-enlist (exp)
-  "Return EXP wrapped in a list, or as-is if already a list."
-  (if (listp exp) exp (list exp)))
+** LaTeX changes package
+(defvar sync0-tex-changes-id "sync0")
 
-(defun doom-unquote (exp)
-  "Return EXP unquoted."
-  (while (memq (car-safe exp) '(quote function))
-    (setq exp (cadr exp)))
-  exp)
+(defun sync0-tex-changes-add ()
+"Inserts an \added command to a LaTeX document using the 'changes' package"
+  (interactive)
+    (insert (concat "\\added[id=" sync0-tex-changes-id  "]{}"))
+    (goto-char (- (point) 2))
+(evil-insert-state)
+)
+
+(defun sync0-tex-changes-delete ()
+  "Inserts an \delete command to a LaTeX document using the 'changes' package"
+  (interactive)
+  (if (use-region-p)
+      (save-excursion
+        (let ((low (region-beginning))
+              (high (region-end))
+               (command (concat "\\deleted[id=" sync0-tex-changes-id  "]{")))
+        (goto-char high)
+        (insert "}")
+        (goto-char low)
+        (insert command)))
+    (message "This command can only act on an active region")))
 
 
-(defun doom--resolve-hook-forms (hooks)
-  (cl-loop with quoted-p = (eq (car-safe hooks) 'quote)
-           for hook in (doom-enlist (doom-unquote hooks))
-           if (eq (car-safe hook) 'quote)
-            collect (cadr hook)
-           else if quoted-p
-            collect hook
-           else collect (intern (format "%s-hook" (symbol-name hook)))))
-
-(defvar doom--transient-counter 0)
-
-(defmacro add-transient-hook! (hook &rest forms)
-  "Attaches transient forms to a HOOK.
-HOOK can be a quoted hook or a sharp-quoted function (which will be advised).
-These forms will be evaluated once when that function/hook is first invoked,
-then it detaches itself."
-  (declare (indent 1))
-  (let ((append (eq (car forms) :after))
-        (fn (intern (format "doom-transient-hook-%s" (cl-incf doom--transient-counter)))))
-    `(when ,hook
-       (fset ',fn
-             (lambda (&rest _)
-               ,@forms
-               (cond ((functionp ,hook) (advice-remove ,hook #',fn))
-                     ((symbolp ,hook)   (remove-hook ,hook #',fn)))
-               (unintern ',fn nil)))
-       (cond ((functionp ,hook)
-              (advice-add ,hook ,(if append :after :before) #',fn))
-             ((symbolp ,hook)
-              (add-hook ,hook #',fn ,append))))))
-
-      (defmacro add-hook! (&rest args)
-  "A convenience macro for `add-hook'. Takes, in order:
-  1. Optional properties :local and/or :append, which will make the hook
-     buffer-local or append to the list of hooks (respectively),
-  2. The hooks: either an unquoted major mode, an unquoted list of major-modes,
-     a quoted hook variable or a quoted list of hook variables. If unquoted, the
-     hooks will be resolved by appending -hook to each symbol.
-  3. A function, list of functions, or body forms to be wrapped in a lambda.
-Examples:
-    (add-hook! 'some-mode-hook 'enable-something)
-    (add-hook! some-mode '(enable-something and-another))
-    (add-hook! '(one-mode-hook second-mode-hook) 'enable-something)
-    (add-hook! (one-mode second-mode) 'enable-something)
-    (add-hook! :append (one-mode second-mode) 'enable-something)
-    (add-hook! :local (one-mode second-mode) 'enable-something)
-    (add-hook! (one-mode second-mode) (setq v 5) (setq a 2))
-    (add-hook! :append :local (one-mode second-mode) (setq v 5) (setq a 2))
-Body forms can access the hook's arguments through the let-bound variable
-`args'."
-  (declare (indent defun) (debug t))
-  (let ((hook-fn 'add-hook)
-        append-p local-p)
-    (while (keywordp (car args))
-      (pcase (pop args)
-        (:append (setq append-p t))
-        (:local  (setq local-p t))
-        (:remove (setq hook-fn 'remove-hook))))
-    (let ((hooks (doom--resolve-hook-forms (pop args)))
-          (funcs
-           (let ((val (car args)))
-             (if (memq (car-safe val) '(quote function))
-                 (if (cdr-safe (cadr val))
-                     (cadr val)
-                   (list (cadr val)))
-               (list args))))
-          forms)
-      (dolist (fn funcs)
-        (setq fn (if (symbolp fn)
-                     `(function ,fn)
-                   `(lambda (&rest _) ,@args)))
-        (dolist (hook hooks)
-          (push (if (eq hook-fn 'remove-hook)
-                    `(remove-hook ',hook ,fn ,local-p)
-                  `(add-hook ',hook ,fn ,append-p ,local-p))
-                forms)))
-      `(progn ,@(nreverse forms))))))
-      #+END_SRC 
-*** def-setting!
+(defun sync0-tex-changes-replace ()
+  "Inserts an \replace command to a LaTeX document using the     'changes' package"
+  (interactive)
+  (if (use-region-p)
+      (let ((low (region-beginning))
+            (high (region-end))
+            (command (concat "\\replaced[id=" sync0-tex-changes-id  "]{}{")))
+        (goto-char high)
+        (insert "}")
+        (goto-char low)
+        (insert command)
+        (goto-char (- (point) 2))
+(evil-insert-state)
+)
+    (message "This command can only act on an active region")))
+** LaTeX changes package
 #+BEGIN_SRC emacs-lisp
-(eval-and-compile
-(defvar doom-settings nil)
-  (defmacro def-setting! (keyword arglist &optional docstring &rest forms)
-  "Define a setting. Like `defmacro', this should return a form to be executed
-when called with `set!'. FORMS are not evaluated until `set!' calls it.
-See `doom/describe-setting' for a list of available settings.
-Do not use this for configuring Doom core."
-  (declare (indent defun) (doc-string 3))
-  (unless (keywordp keyword)
-    (error "Not a valid property name: %s" keyword))
-  (let ((fn (intern (format "doom--set%s" keyword))))
-    `(progn
-       (defun ,fn ,arglist
-         ,docstring
-         ,@forms)
-       (cl-pushnew ',(cons keyword fn) doom-settings :test #'eq :key #'car)))))
-  #+END_SRC 
-*** set!
-#+BEGIN_SRC emacs-lisp
-(eval-and-compile 
-(defvar doom-debug-mode (or (getenv "DEBUG") init-file-debug)
-  "If non-nil, all doom functions will be verbose. Set DEBUG=1 in the command
-line or use --debug-init to enable this.")
+  ;; (defvar sync0-tex-changes-id "sync0")
 
-(defmacro set! (keyword &rest values)
-  "Set an option defined by `def-setting!'. Skip if doesn't exist. See
-`doom/describe-setting' for a list of available settings."
-  (declare (indent defun))
-  (unless values
-    (error "Empty set! for %s" keyword))
-  (let ((fn (cdr (assq keyword doom-settings))))
-    (if fn
-        (apply fn values)
-      (when doom-debug-mode
-        (message "No setting found for %s" keyword)
-        nil)))))
+  (defun sync0-tex-changes-add ()
+    "Inserts an \added command to a LaTeX document using the 'changes' package"
+    (interactive)
+    (insert "\\added{}")
+    (goto-char (- (point) 2))
+    (evil-insert-state)
+    )
+
+  (defun sync0-tex-changes-delete ()
+    "Inserts an \delete command to a LaTeX document using the 'changes' package"
+    (interactive)
+    (if (use-region-p)
+        (save-excursion
+          (let ((low (region-beginning))
+                (high (region-end))
+                (command "\\deleted{"))
+            (goto-char high)
+            (insert "}")
+            (goto-char low)
+            (insert command)))
+      (message "This command can only act on an active region")))
+
+  (defun sync0-tex-changes-replace ()
+    "Inserts an \replace command to a LaTeX document using the 'changes' package"
+    (interactive)
+    (if (use-region-p)
+        (let ((low (region-beginning))
+              (high (region-end))
+              (command "\\replaced{}{"))
+          (goto-char high)
+          (insert "}")
+          (goto-char low)
+          (insert command)
+          (goto-char (- (point) 2))
+          (evil-insert-state))
+      (message "This command can only act on an active region")))
   #+END_SRC 
 * Packages 
 ** Highlight indentation
@@ -828,19 +983,19 @@ line or use --debug-init to enable this.")
 #+BEGIN_SRC emacs-lisp
       (use-package doom-themes  
     :init
-    ;;(progn
+    (progn
         ;;(load-theme 'doom-one-vibrant t)
         ;;(load-theme 'doom-molokai t)
         ;;(load-theme 'doom-peacock t)
         ;;(load-theme 'doom-tomorrow-night t)
-        ;;(load-theme 'doom-spacegrey t)    
+      (load-theme 'doom-spacegrey t)    
         ;;(load-theme 'doom-one-light t)
         ;;(load-theme 'doom-tomorrow-day t)
         ;;(load-theme 'doom-one t)
-  ;;      (load-theme 'doom-nova t)
-   ;;     (load-theme 'doom-nord t)
-        ;;(load-theme 'doom-solarized-light t))
-        (load-theme 'doom-solarized-light t)
+        ;(load-theme 'doom-nova t)
+       ;; (load-theme 'doom-nord t)
+        (load-theme 'doom-solarized-light t))
+    ;;    (load-theme 'doom-solarized-light t)
         :config
         ;; (setq spaceline-all-the-icons-separator-type 'none)
         (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
@@ -853,16 +1008,13 @@ line or use --debug-init to enable this.")
         (doom-themes-org-config))
 
       ;; Cycley between thèmes
-    ;; (use-package cycle-themes :load-path "~/.emacs.d/sync0_git/cycle-themes.el/" 
-    ;; :after doom-themes
-    ;;   :init (setq cycle-themes-theme-list
-    ;;         ;;'(doom-spacegrey doom-solarized-light))
-    ;;         '(doom-spacegrey doom-nova doom-nord doom-solarized-light))
-    ;;   :config (cycle-themes-mode))
-
-      ;;'(doom-spacegrey doom-one-light doom-one doom-nova doom-nord doom-tomorrow-day doom-solarized-light))
-
-      ;(cycle-themes-mode)
+     (use-package cycle-themes :load-path "~/.emacs.d/sync0_git/cycle-themes.el/" 
+     :after doom-themes
+       :init (setq cycle-themes-theme-list
+           ;;  '(doom-spacegrey doom-nova doom-nord doom-solarized-light))
+           ;;  '(doom-spacegrey doom-nova doom-solarized-light))
+             '(doom-spacegrey doom-solarized-light))
+       :config (cycle-themes-mode))
 #+END_SRC 
 ** Spellchecking
  #+BEGIN_SRC emacs-lisp
@@ -921,7 +1073,8 @@ line or use --debug-init to enable this.")
  (add-to-list 'ispell-skip-region-alist '("\\begin{equation\*}" . "\\end{equation\*}"))
  (add-to-list 'ispell-skip-region-alist '("\\begin{align}" . "\\end{align}"))
  (add-to-list 'ispell-skip-region-alist '("\\begin{align\*}" . "\\end{align\*}"))
- (add-to-list 'ispell-skip-region-alist '("\*Einstellungen+"))
+ ;; (add-to-list 'ispell-skip-region-alist '("\*Einstellungen+"))
+ (add-to-list 'ispell-skip-region-alist '("\*Settings .+" . "\*\*Etc"))
 ;; (add-to-list 'ispell-skip-region-alist '("^\\*\sEinstellungen" . "^\\*\\*\sEnde"))
 
 ;; Flyspell
@@ -936,7 +1089,7 @@ line or use --debug-init to enable this.")
 
  (flyspell-mode 1)      ; or (flyspell-prog-mode)
  #+END_SRC 
-** Auc-Tex
+** Tex
 #+BEGIN_SRC emacs-lisp
 (use-package tex
 :defer t
@@ -944,158 +1097,198 @@ line or use --debug-init to enable this.")
 :config
 (setq Tex-PDF-mode t))
 #+END_SRC
+** No Break Predicate
+#+BEGIN_SRC emacs-lisp
+(use-package nobreak-fade :load-path "~/.emacs.d/sync0/nobreak-fade.el" 
+:after tex
+;; :command nobreak-fade
+:config
+     (autoload 'nobreak-fade-single-letter-p "nobreak-fade")
+     (add-hook 'fill-nobreak-predicate 'nobreak-fade-single-letter-p)
+;; (add-hook 'tex-mode-hook 'nobreak-fade)
+)
+#+END_SRC
 ** EVIL mode 
    #+BEGIN_SRC emacs-lisp
-          ;; initializing
-          (use-package evil  :after org
-            :bind (
-                   ;; ESC quits almost anything
-                   :map evil-normal-state-map
+     ;; initializing
+     (use-package evil  :after org
+       :bind (
+              ;; ESC quits almost anything
+              :map evil-normal-state-map
                    ;;     ("ESC" . keyboard-quit)
-                        ;; quickly switch buffers
-                        ("C-j" . next-buffer)
-                        ("C-k" . previous-buffer)
-                        ("C-S-h" . evil-window-left)
-                        ("C-S-j" . evil-window-down)
-                        ("C-S-k" . evil-window-up)
-                        ("C-S-l" . evil-window-right))
-                    ;;    :map evil-visual-state-map
-                     ;;   ("ESC" . keyboard-quit))
-                       ;; :map minibuffer-local-map
-                        ;;("ESC" . minibuffer-keyboard-quit)
-                       ;; :map minibuffer-local-ns-map
-                        ;;("ESC" . minibuffer-keyboard-quit)
-                        ;;:map minibuffer-local-completion-map
-                       ;; ("ESC" . minibuffer-keyboard-quit)
-                        ;;:map minibuffer-local-must-match-map
-                       ;; ("ESC" . minibuffer-keyboard-quit)
-                        ;;:map minibuffer-local-isearch-map
-                        ;;("ESC" . minibuffer-keyboard-quit))
-     :init
-              (evil-mode 1)
-            :config
+                   ;; quickly switch buffers
+                   ("C-j" . next-buffer)
+                   ("C-k" . previous-buffer)
+                   ("C-S-h" . evil-window-left)
+                   ("C-S-j" . evil-window-down)
+                   ("C-S-k" . evil-window-up)
+                   ("C-S-l" . evil-window-right))
+       ;;    :map evil-visual-state-map
+       ;;   ("ESC" . keyboard-quit))
+       ;; :map minibuffer-local-map
+       ;;("ESC" . minibuffer-keyboard-quit)
+       ;; :map minibuffer-local-ns-map
+       ;;("ESC" . minibuffer-keyboard-quit)
+       ;;:map minibuffer-local-completion-map
+       ;; ("ESC" . minibuffer-keyboard-quit)
+       ;;:map minibuffer-local-must-match-map
+       ;; ("ESC" . minibuffer-keyboard-quit)
+       ;;:map minibuffer-local-isearch-map
+       ;;("ESC" . minibuffer-keyboard-quit))
+       :init
+       (evil-mode 1)
+       :config
 
 
-              ;;(add-hook 'org-mode-hook (lambda () (evil-mode 1)))
-              ;;(add-hook 'after-init-hook '#evil-mode) 
-              (add-to-list 'evil-emacs-state-modes 'cfw:details-mode)
+       ;;(add-hook 'org-mode-hook (lambda () (evil-mode 1)))
+       ;;(add-hook 'after-init-hook '#evil-mode) 
+       (add-to-list 'evil-emacs-state-modes 'cfw:details-mode)
 
-            ;; input methods 
-            ;; set default input method
-            ;; (setq default-input-method "TeX")
-            ;; no input method for evil normal state
-            (add-hook 'evil-normal-state-entry-hook
-                      (lambda () (set-input-method 'nil)))
-            ;; Spanish
+       ;; input methods 
+       ;; set default input method
+       ;; (setq default-input-method "TeX")
+       ;; no input method for evil normal state
+       (add-hook 'evil-normal-state-entry-hook
+                 (lambda () (set-input-method 'nil)))
+       ;; Spanish
 
-            ;; spanish-postfix for evil insert mode
-            ;;(add-hook 'evil-insert-state-entry-hook
-            ;; (lambda () (set-input-method "spanish-postfix")))
+       ;; spanish-postfix for evil insert mode
+       ;;(add-hook 'evil-insert-state-entry-hook
+       ;; (lambda () (set-input-method "spanish-postfix")))
 
-            ;; spanish-postfix for evil insert mode
-            ;;(add-hook 'evil-insert-state-entry-hook
-            ;; (lambda () (set-input-method "spanish-postfix")))
-            ;; Latin
+       ;; spanish-postfix for evil insert mode
+       ;;(add-hook 'evil-insert-state-entry-hook
+       ;; (lambda () (set-input-method "spanish-postfix")))
+       ;; Latin
 
-            ;; latin-1-postfix for evil replace mode
-            ;;(add-hook 'evil-replace-state-entry-hook
-            ;; (lambda () (set-input-method "latin-1-postfix")))
+       ;; latin-1-postfix for evil replace mode
+       ;;(add-hook 'evil-replace-state-entry-hook
+       ;; (lambda () (set-input-method "latin-1-postfix")))
 
-            ;; latin-1-postfix for evil replace mode
-            ;;(add-hook 'evil-replace-state-entry-hook
-            ;; (lambda () (set-input-method "latin-1-postfix")))
-            ;; French 
+       ;; latin-1-postfix for evil replace mode
+       ;;(add-hook 'evil-replace-state-entry-hook
+       ;; (lambda () (set-input-method "latin-1-postfix")))
 
-            ;; french-postfix for evil insert mode 
-            (add-hook 'evil-insert-state-entry-hook 
-                      (lambda () (set-input-method "french-postfix")))
+       ;; French 
 
-            ;; french-postfix for evil replace mode
-            (add-hook 'evil-replace-state-entry-hook
-                      (lambda () (set-input-method "french-postfix")))
-            ;; German 
+       ;; french-postfix for evil insert mode 
+       ;; (add-hook 'evil-insert-state-entry-hook 
+       ;;           (lambda () (set-input-method "french-postfix")))
 
-            ;; german-postfix for evil insert mode
-            ;;(add-hook 'evil-insert-state-entry-hook
-            ;;(lambda () (set-input-method "german-postfix")))
+       ;; french-postfix for evil replace mode
+       ;; (add-hook 'evil-replace-state-entry-hook
+       ;;           (lambda () (set-input-method "french-postfix")))
+       ;; German 
 
-            ;; german-postfix for evil replace mode
-            ;;(add-hook 'evil-replace-state-entry-hook
-            ;;(lambda () (set-input-method "german-postfix")))
+       ;; german-postfix for evil insert mode
+       ;;(add-hook 'evil-insert-state-entry-hook
+       ;;(lambda () (set-input-method "german-postfix")))
 
-              ;; EVIL org
-              ;; setup functions
-              (defun clever-insert-item ()
-                "Clever insertion of org item."
-                (if (not (org-in-item-p))
-                    (insert "\n")
-                  (org-insert-item)))
+       ;; german-postfix for evil replace mode
+       ;;(add-hook 'evil-replace-state-entry-hook
+       ;;(lambda () (set-input-method "german-postfix")))
 
-              (defun evil-org-eol-call (fun)
-                "Go to end of line and call provided function.
-            FUN function callback"
-                (end-of-line)
-                (funcall fun)
-                (evil-append nil))
+       ;; EVIL org
+       ;; setup functions
+       (defun clever-insert-item ()
+         "Clever insertion of org item."
+         (if (not (org-in-item-p))
+             (insert "\n")
+           (org-insert-item)))
 
-              ;; key bindings
-              ;; redefinition evils visual mode map
-              (evil-define-key 'normal org-mode-map
-                ;; "<" 'outline-previous-visible-heading
-                ">"   'org-forward-heading-same-level
-                "<"  'org-backward-heading-same-level
-                ;; ">" 'outline-next-visible-heading
-                "H" 'org-metaleft
-                "L" 'org-metaright
-                "K" 'org-metaup
-                "J" 'org-metadown
-                ;; "K" 'outline-previous-visible-heading
-                ;;"J" 'outline-next-visible-heading
-                ;; "H" (if (fboundp 'org-backward-same-level)
-                ;;   'org-backward-same-level
-                ;;'org-backward-heading-same-level)
-                ;;  "L" (if (fboundp 'org-forward-same-level) ;to be backward compatible with older org version
-                ;;   'org-forward-same-level
-                ;;'org-forward-heading-same-level)
-                ;;  "<" 'org-metaleft
-                ;; ">" 'org-metaright
-                "k" 'previous-line
-                "j" 'next-line
-                ;;  "m" 'set-mark-command
-                "q" 'fill-paragraph
-                "o" '(lambda () (interactive) (evil-org-eol-call 'clever-insert-item))
-                "O" '(lambda () (interactive) (evil-org-eol-call 'org-insert-heading))
-                "$" 'org-end-of-line
-                "^" 'org-beginning-of-line
-                "[" 'backward-sentence
-                "]" 'forward-sentence
-                "{" 'org-backward-paragraph
-                "}" 'org-forward-paragraph
-                "-" 'org-cycle-list-bullet
-                (kbd "<tab>") 'org-cycle)
+       (defun evil-org-eol-call (fun)
+         "Go to end of line and call provided function.
+                 FUN function callback"
+         (end-of-line)
+         (funcall fun)
+         (evil-append nil))
 
-              (evil-define-key 'visual org-mode-map
-                "q" 'highlight-changes-remove-highlight
-                "e" 'org-emphasize)
-              (setq evil-mode-line-format nil
-              ;; turn off auto-indent 
-               evil-auto-indent nil
-              ;; Change color of evil cursor
-                    evil-insert-state-cursor '(bar "#dc322f")
-                    evil-normal-state-cursor '(box "#268bd2")
-                    evil-visual-state-cursor '(box "#d33682"))
-              ;; Improve EVIL behavior with visual lines
-              ;; Make movement keys work like they should
-              (define-key evil-normal-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
-              (define-key evil-normal-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line)
-              (define-key evil-motion-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
-              (define-key evil-motion-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line)
+       ;; insert whitespace
+       (defun sync0-insert-whitespace ()
+         " Add a whitespace"
+         (interactive)
+         (insert " ")
+         )
+       ;; key bindings
+       ;; redefinition evils visual mode map
+       (evil-define-key 'normal org-mode-map
+         ;; "<" 'outline-previous-visible-heading
+         ">"   'org-forward-heading-same-level
+         "<"  'org-backward-heading-same-level
+         ;; ">" 'outline-next-visible-heading
+         "H" 'org-metaleft
+         "L" 'org-metaright
+         "K" 'org-metaup
+         "J" 'org-metadown
+         ;; "K" 'outline-previous-visible-heading
+         ;;"J" 'outline-next-visible-heading
+         ;; "H" (if (fboundp 'org-backward-same-level)
+         ;;   'org-backward-same-level
+         ;;'org-backward-heading-same-level)
+         ;;  "L" (if (fboundp 'org-forward-same-level) ;to be backward compatible with older org version
+         ;;   'org-forward-same-level
+         ;;'org-forward-heading-same-level)
+         ;;  "<" 'org-metaleft
+         ;; ">" 'org-metaright
+         "k" 'previous-line
+         "j" 'next-line
+         ;;  "m" 'set-mark-command
+         "q" 'fill-paragraph
+         "Q" 'sync0-insert-line-below
+         (kbd "SPC") 'sync0-insert-whitespace
+         "o" '(lambda () (interactive) (evil-org-eol-call 'clever-insert-item))
+         "O" '(lambda () (interactive) (evil-org-eol-call 'org-insert-heading))
+         "$" 'org-end-of-line
+         "^" 'org-beginning-of-line
+         "[" 'backward-sentence
+         "]" 'forward-sentence
+         "{" 'org-backward-paragraph
+         "}" 'org-forward-paragraph
+         "-" 'org-cycle-list-bullet
+         (kbd "<tab>") 'org-cycle)
+
+       (evil-define-key 'normal LaTeX-mode-map
+         "k" 'previous-line
+         "j" 'next-line
+         ;;  "m" 'set-mark-command
+         "q" 'fill-paragraph
+         "Q" 'sync0-insert-line-below
+         (kbd "SPC") 'sync0-insert-whitespace
+         "[" 'backward-sentence
+         "]" 'forward-sentence)
+
+       (evil-define-key 'visual LaTeX-mode-map
+         "q" 'highlight-changes-remove-highlight
+         "ma" 'sync0-tex-changes-add
+         "md" 'sync0-tex-changes-delete
+         "mr" 'sync0-tex-changes-replace)
+
+       (evil-define-key 'visual org-mode-map
+         "q" 'highlight-changes-remove-highlight
+         "ma" 'sync0-tex-changes-add
+         "md" 'sync0-tex-changes-delete
+         "mr" 'sync0-tex-changes-replace
+         "e" 'org-emphasize)
+
+       (setq ;; evil-mode-line-format nil
+             ;; turn off auto-indent 
+             evil-auto-indent nil
+             ;; Change color of evil cursor
+             evil-insert-state-cursor '(bar "#dc322f")
+             evil-normal-state-cursor '(box "#268bd2")
+             evil-visual-state-cursor '(box "#d33682"))
+       ;; Improve EVIL behavior with visual lines
+       ;; Make movement keys work like they should
+       (define-key evil-normal-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
+       (define-key evil-normal-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line)
+       (define-key evil-motion-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
+       (define-key evil-motion-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line)
 
 
-     (defvar +evil-esc-hook '(t)
+       (defvar +evil-esc-hook '(t)
          "A hook run after ESC is pressed in normal mode (invoked by
-     `evil-force-normal-state'). If any hook returns non-nil, all hooks after it are
-     ignored.")
+          `evil-force-normal-state'). If any hook returns non-nil, all hooks after it are
+          ignored.")
 
        (defun +evil*attach-escape-hook ()
          "Run the `+evil-esc-hook'."
@@ -1110,8 +1303,8 @@ line or use --debug-init to enable this.")
                 (run-hook-with-args-until-success '+evil-esc-hook))))
        (advice-add #'evil-force-normal-state :after #'+evil*attach-escape-hook)
 
-              ;; Make horizontal movement cross lines                                    
-              (setq-default evil-cross-lines t))
+       ;; Make horizontal movement cross lines                                    
+       (setq-default evil-cross-lines t))
    #+END_SRC 
 *** evil-snipe
 #+BEGIN_SRC emacs-lisp
@@ -1294,28 +1487,33 @@ evil-escape-unordered-key-sequence t
 
   (defvar org-capture-templates '(
                                   ("t" "Tache" entry
-                                   (file "~/Dropbox/projects/paris_1/m1_2/m1_2_notes.org")
-                                   "*** 無 %^{Tache} \nCreated: %u")
+                                   (file+olp "~/Dropbox/org/todo.org" "Tasks" "Indéfini")
+                                   "*** 無 %^{Tache} \n:PROPERTIES:\n:ADDED: %<[%Y-%m-%d]>\n:END:" :prepend t)
                                   ("s" "Tache d'etude" entry
-                                   (file "~/Dropbox/projects/paris_1/m1_2/m1_2_notes.org")
-                                   "*** 無 %^{Tache d'etude} %^g \nCreated: %u")
+                                   (file+olp "~/Dropbox/org/todo.org" "Tasks" "Études" "Indéfini")
+                                   "**** 無 %^{Tache d'etude} %^g \n:PROPERTIES:\n:ADDED: %<[%Y-%m-%d]>\n:END:" :prepend t)
                                           ;("r" "Tache de révision" entry
                                           ; (file+headline "~/Dropbox/projects/paris_1/m1_2_notes.org" "Undefiniert")
-                                          ; "*** 無 %^{Tache de révision} %^{Type de tâche|:review:|:reading:|:project:|:exam:} \nCreated: %u")
+                                          ; "*** 無 %^{Tache de révision} %^{Type de tâche|:review:|:reading:|:project:|:exam:} \nCreated: %<[%Y-%m-%d]>")
                                   ("i" "Idée" entry
                                    (file+headline "~/Dropbox/org/todo.org" "Ideas")
-                                   "** %^{idea_title} \nCreated: %u in %a")
+                                   "** %^{idea_title} \n:PROPERTIES:\n:ADDED: %<[%Y-%m-%d]>\n:TRACE: %a\n:END:" :prepend t)
                                   ("e" "Idée d'Emacs" entry
                                    (file+headline "~/Dropbox/org/todo.org" "Emacs")
-                                   "** %^{Idée} :idea:emacs: \nCreated: %u in %a")
+                                   "** %^{idea_title} \n:PROPERTIES:\n:ADDED: %<[%Y-%m-%d]>\n:TRACE: %a\n:END:" :prepend t)
                                   ("q" "Question" entry
                                    (file+headline "~/Dropbox/org/todo.org" "Questions")
-                                   "** %^{question_title} \nCreated: %u in %a")
-                                  ("b" "Book" entry
+                                   "** %^{question} \n:PROPERTIES:\n:ADDED: %<[%Y-%m-%d]>\n:TRACE: %a\n:END:" :prepend t)
+                                  ("a" "Auteur" entry
+                                   (file "~/Dropbox/org/master.org")
+                                   "* %^{last_name,first_name} :lecture: \n:ORIGIN:\n%^{Where?}\n:END:\n:PROPERTIES:\n:ADDED: %<[%Y-%m-%d]>\n:END:" :prepend t)
+                                  ("b" "Book (todo)" entry
                                    (file+headline "~/Dropbox/org/todo.org" "Books")
-                                   "** %^{book_title} \nCreated: %u in %a")
+                                   "** %^{book_title}\n:ORIGIN:\n%^{Where?}\n:END:\n:PROPERTIES:\n:ADDED: %<[%Y-%m-%d]>\n:TRACE: %a\n:END:\n" :prepend t)
+                                  ("r" "New Reading (master)" entry
+                                   (file "~/Dropbox/org/master.org")
+                                   "* %^{reading_title}\n:ORIGIN:\n%^{Where?}\n:END:\n:PROPERTIES:\n:YEAR:\n:JOURNAL:\n:VOLUME:\n:ISSUE:\n:PAGES:\n:ADDED: %<[%Y-%m-%d]>\n:TRACE: %a\n:END:\n" :prepend t)
                                   )) 
-
 #+END_SRC 
 **** Another settings
 (defvar org-capture-templates
@@ -1408,7 +1606,8 @@ idea
                         ("chores" . ?c)
                         ("today" . ?h)
                         ("idea" . ?i)
-                        ("important" . ?m)
+                        ("memoire" . ?m)
+                        ("thesis" . ?t)
                         ("question" . ?q)
                         ("noexport" . ?n)
                         ("university" . ?u)
@@ -1420,210 +1619,284 @@ idea
 #+END_SRC 
 *** Agenda
 #+BEGIN_SRC emacs-lisp
-  ;; specify agenda files
-  (setq org-agenda-files (list "~/Dropbox/org/gcal.org"
-                               "~/Dropbox/org/unterrichte.org"
-                               "~/Dropbox/org/ereignisse.org"
-                               ;;                                    "~/Dropbox/org/gewohnheiten.org"
-                               "~/Dropbox/projects/paris_1/m1_2"
-                               "~/Dropbox/org/jahrestage.org"
-                               "~/Dropbox/org/todo.org"))
+    ;; specify agenda files
+    (setq org-agenda-files (list "~/Dropbox/org/gcal.org"
+                                 "~/Dropbox/org/unterrichte.org"
+                                 "~/Dropbox/org/refile-beorg.org"
+                                 "~/Dropbox/org/ereignisse.org"
+                                 ;;                                    "~/Dropbox/org/gewohnheiten.org"
+                                 "~/Dropbox/projects/paris_1/m2_1"
+                                 "~/Dropbox/projects/paris_1/memoire"
+                                 "~/Dropbox/org/jahrestage.org"
+                                 "~/Dropbox/org/master.org"
+                                 "~/Dropbox/org/todo.org"))
 
-  (setq org-use-fast-todo-selection t) 
-  ;; Include the todo keywords
-  (setq org-fast-tag-selection-include-todo t)
-  (setq org-fast-tag-selection-single-key t)
+    ;; necessary function 1
+    (defun air-org-skip-subtree-if-priority (priority)
+      "Skip an agenda subtree if it has a priority of PRIORITY.
+        PRIORITY may be one of the characters ?A, ?B, or ?C."
+      (let ((subtree-end (save-excursion (org-end-of-subtree t)))
+            (pri-value (* 1000 (- org-lowest-priority priority)))
+            (pri-current (org-get-priority (thing-at-point 'line t))))
+        (if (= pri-value pri-current)
+            subtree-end
+          nil)))
 
-  ;; necessary function 1
-  (defun air-org-skip-subtree-if-priority (priority)
-    "Skip an agenda subtree if it has a priority of PRIORITY.
-  PRIORITY may be one of the characters ?A, ?B, or ?C."
-    (let ((subtree-end (save-excursion (org-end-of-subtree t)))
-          (pri-value (* 1000 (- org-lowest-priority priority)))
-          (pri-current (org-get-priority (thing-at-point 'line t))))
-      (if (= pri-value pri-current)
-          subtree-end
-        nil)))
+    ;; necessary function 2
+    (defun air-org-skip-subtree-if-habit ()
+      "Skip an agenda entry if it has a STYLE property equal to \"habit\"."
+      (let ((subtree-end (save-excursion (org-end-of-subtree t))))
+        (if (string= (org-entry-get nil "STYLE") "habit")
+            subtree-end
+          nil)))
 
-  ;; necessary function 2
-  (defun air-org-skip-subtree-if-habit ()
-    "Skip an agenda entry if it has a STYLE property equal to \"habit\"."
-    (let ((subtree-end (save-excursion (org-end-of-subtree t))))
-      (if (string= (org-entry-get nil "STYLE") "habit")
-          subtree-end
-        nil)))
+    ;; build composite agenda view
+    (setq org-agenda-custom-commands
+          '(
+            ;;("n" "power agenda" ((agenda  "") (alltodo))
+            ;;                ((org-agenda-ndays 10)
+            ;;	                   (org-agenda-start-on-weekday nil)
+            ;;	                   (org-agenda-start-day "-1d")))
+            ("d" "Deux semaines" (
+                                  (agenda "" ((org-agenda-overriding-header "Today's Schedule:")
+                                              (org-agenda-span 'day)
+                                              (org-agenda-start-day "+0d")
+                                              (org-agenda-prefix-format " %s [%?-45b] ")
+                                              (org-agenda-start-on-weekday nil)))
+                                  ;; (org-agenda-todo-ignore-deadlines nil)))
+                                  (agenda "" ((org-agenda-overriding-header "Prochains 7 jours:")
+                                              (org-agenda-span 'week)
+                                              (org-agenda-start-day "+1d")
+                                              (org-agenda-start-on-weekday nil)
+                                              ;; (org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled))
+                                              (org-agenda-prefix-format " %s [%?-45b] ")))
+                                  (agenda "" ((org-agenda-overriding-header "Prochains 14 jours:")
+                                              (org-agenda-span 'week)
+                                              (org-agenda-start-day "+8d")
+                                              (org-agenda-start-on-weekday nil)
+                                              ;; (org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled))
+                                              (org-agenda-prefix-format " %s [%?-45b] "))))
+             ;; list options for block display
+             ((org-agenda-compact-blocks nil)
+             (org-agenda-view-columns-initially t)))
+            ;; ("H" "A user's setup" (
+            ;;                              (agenda "" ((org-agenda-overriding-header "Today's Schedule:")
+            ;;                                          (org-agenda-span 'day)
+            ;;                                          (org-agenda-ndays 14)
+            ;;                                          (org-agenda-start-on-weekday nil)
+            ;;                                          (org-agenda-start-day "+0d")
+            ;;                                          (org-agenda-todo-ignore-deadlines nil)))
+            ;;                              (tags-todo "university/!+次|+待|+中"
+            ;;                                         ((org-agenda-overriding-header "Current University Tasks:")
+            ;;                                          ))
+            ;;                              (tags-todo "university/!+無"
+            ;;                                         ((org-agenda-overriding-header "Undone University Tasks:")
+            ;;                                          ))
+            ;;                              (agenda "" ((org-agenda-overriding-header "Week At A Glance:")
+            ;;                                          (org-agenda-ndays 7)
+            ;;                                          (org-agenda-start-day "+1d")
+            ;;                                          (org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled))
+            ;;                                          (org-agenda-prefix-format '((agenda . "  %-12:c%?-12t %s [%b] ")))))
+            ;;                              ))
 
-  ;; Compact the block agenda view (disabled)
-  (setq org-agenda-compact-blocks nil)
+            ;; ("d" "Daily agenda and all TODOs"
+            ;;  ((tags "PRIORITY=\"A\""
+            ;;         ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+            ;;          (org-agenda-overriding-header "High-priority unfinished tasks:")))
+            ;;   (agenda "" ((org-agenda-ndays 1)))
+            ;;   (alltodo ""
+            ;;            ((org-agenda-skip-function '(or (air-org-skip-subtree-if-habit)
+            ;;                                            (air-org-skip-subtree-if-priority ?A)
+            ;;                                            (org-agenda-skip-if nil '(scheduled deadline))))
+            ;;             (org-agenda-overriding-header "ALL normal priority tasks:"))))
+            ;;  ;; list of crazy options
+            ;;  ((org-agenda-compact-blocks t)))
 
-  ;; Make agenda the only window by default
-  ;;(setq org-agenda-window-setup  'only-window)
+            ("w" "Study Planner" (
+                                  (tags-todo "review/!+次|+待|+中|+無|+阻"
+                                             ((org-agenda-overriding-header "Revisions:")))
+                                  (tags-todo "reading/!+次|+待|+中|+無|+阻"
+                                             ((org-agenda-overriding-header "Lectures:")))
+                                  (tags-todo "project/!+次|+待|+中|+無|+阻"
+                                             ((org-agenda-overriding-header "Projects:")))
+                                  (tags-todo "exam/!+次|+待|+中|+無|+阻"
+                                             ((org-agenda-overriding-header "Examens:"))))
+             ;; list options for block display
+             ((org-agenda-compact-blocks t)
+              (org-agenda-view-columns-initially t)))
 
-  ;; build composite agenda view
-  (setq org-agenda-custom-commands
-        '(("x" agenda)
-          ;;("n" "power agenda" ((agenda  "") (alltodo))
-          ;;                ((org-agenda-ndays 10)
-          ;;	                   (org-agenda-start-on-weekday nil)
-          ;;	                   (org-agenda-start-day "-1d")))
-          ("H" "Horaire hebdomadaire" (
-                                       (agenda "" ((org-agenda-overriding-header "Today's Schedule:")
-                                                   (org-agenda-span 'day)
-                                                   (org-agenda-ndays 14)
-                                                   (org-agenda-start-on-weekday nil)
-                                                   (org-agenda-start-day "+0d")
-                                                   (org-agenda-todo-ignore-deadlines nil)))
-                                       (tags-todo "university/!+次|+待|+中"
-                                                  ((org-agenda-overriding-header "Current University Tasks:")
-                                                   ))
-                                       (tags-todo "university/!+無"
-                                                  ((org-agenda-overriding-header "Undone University Tasks:")
-                                                   ))
-                                       (agenda "" ((org-agenda-overriding-header "Week At A Glance:")
-                                                   (org-agenda-ndays 7)
-                                                   (org-agenda-start-day "+1d")
-                                                   (org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled))
-                                                   (org-agenda-prefix-format '((agenda . "  %-12:c%?-12t %s [%b] ")))))
-                                       ))
-          ("d" "Daily agenda and all TODOs"
-           ((tags "PRIORITY=\"A\""
-                  ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-                   (org-agenda-overriding-header "High-priority unfinished tasks:")))
-            (agenda "" ((org-agenda-ndays 1)))
-            (alltodo ""
-                     ((org-agenda-skip-function '(or (air-org-skip-subtree-if-habit)
-                                                     (air-org-skip-subtree-if-priority ?A)
-                                                     (org-agenda-skip-if nil '(scheduled deadline))))
-                      (org-agenda-overriding-header "ALL normal priority tasks:"))))
-           ;; list of crazy options
-           ((org-agenda-compact-blocks t)))
-          ;;("N" todo-tree "無")
-          ;;("w" todo "待")
-          ("s" "Study Planner" (
-                                (tags-todo "review/!+次|+待|+中|+無|+阻"
-                                           ((org-agenda-overriding-header "Revisions:")))
-                                (tags-todo "reading/!+次|+待|+中|+無|+阻"
-                                           ((org-agenda-overriding-header "Lectures:")))
-                                (tags-todo "project/!+次|+待|+中|+無|+阻"
-                                           ((org-agenda-overriding-header "Projects:")))
-                                (tags-todo "exam/!+次|+待|+中|+無|+阻"
-                                           ((org-agenda-overriding-header "Examens:"))))
-           ;; list options for block display
-           ((org-agenda-compact-blocks t)
-            (org-agenda-view-columns-initially t)))
+            ;;("h" "Aujourd'hui" (
+            ;;         (tags-todo "review&today/!+次|+待|+中|+無"
+            ;;                                                           ((org-agenda-overriding-header "Révisions:")))
+            ;;       (tags-todo "reading&today/!+次|+待|+中|+無"
+            ;;                                                         ((org-agenda-overriding-header "Lectures:")))
+            ;;     (tags-todo "project&today/!+次|+待|+中|+無"
+            ;;                                                      ((org-agenda-overriding-header "Projects:")))
+            ;; (tags-todo "exam&today/!+次|+待|+中|+無"
+            ;;                                                  ((org-agenda-overriding-header "Examens:"))))
+            ;; list options for block display
+            ;;  ((org-agenda-compact-blocks t)
+            ;; (org-agenda-view-columns-initially t)))
 
-          ;;("h" "Aujourd'hui" (
-          ;;         (tags-todo "review&today/!+次|+待|+中|+無"
-          ;;                                                           ((org-agenda-overriding-header "Révisions:")))
-          ;;       (tags-todo "reading&today/!+次|+待|+中|+無"
-          ;;                                                         ((org-agenda-overriding-header "Lectures:")))
-          ;;     (tags-todo "project&today/!+次|+待|+中|+無"
-          ;;                                                      ((org-agenda-overriding-header "Projects:")))
-          ;; (tags-todo "exam&today/!+次|+待|+中|+無"
-          ;;                                                  ((org-agenda-overriding-header "Examens:"))))
-          ;; list options for block display
-          ;;  ((org-agenda-compact-blocks t)
-          ;; (org-agenda-view-columns-initially t)))
+            ("x" "Tâches: Toutes" (
+                                   (tags "PRIORITY=\"A\""
+                                         ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取"))
+                                                                         (air-org-skip-subtree-if-habit)))
+                                               (org-agenda-prefix-format " %s [%?-45b] ")
+                                          (org-agenda-overriding-header "Tâches prioritaires:")))
+                                   (alltodo ""
+                                            ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("中" "次"))
+                                                                            ;; (air-org-skip-subtree-if-habit)
+                                                                            (air-org-skip-subtree-if-priority ?A)))
+                                               (org-agenda-prefix-format " %s [%?-45b] ")
+                                             ;;(org-agenda-skip-if nil '(scheduled deadline))
+                                             (org-agenda-overriding-header "Tâches en cours:")))
+                                   (alltodo ""
+                                            ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("無"))
+                                                                            ;; (air-org-skip-subtree-if-habit)
+                                                                            ;;(org-agenda-skip-if nil '(scheduled deadline))
+                                                                            (air-org-skip-subtree-if-priority ?A)))
+                                               (org-agenda-prefix-format " %s [%?-45b] ")
+                                             (org-agenda-overriding-header "Tâches à faire:")))
+                                   (alltodo ""
+                                            ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("待"))
+                                                                            ;; (air-org-skip-subtree-if-habit)
+                                                                            (air-org-skip-subtree-if-priority ?A)))
+                                             ;;(org-agenda-skip-if nil '(scheduled deadline))))
+                                               (org-agenda-prefix-format " %s [%?-45b] ")
+                                             (org-agenda-overriding-header "Tâches en attente:")))
+                                   (alltodo ""
+                                            ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("阻"))
+                                                                            ;; (air-org-skip-subtree-if-habit)
+                                                                            (air-org-skip-subtree-if-priority ?A)))
+                                               (org-agenda-prefix-format " %s [%?-45b] ")
+                                             (org-agenda-overriding-header "Tâches coincées:"))))
+             ;; list options for block display
+             ((org-agenda-compact-blocks t)))
 
-          ("h" "Révision des Tâches" (
-                                      (tags "PRIORITY=\"A\""
-                                            ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取"))
-                                                                       (air-org-skip-subtree-if-habit)))
-                                             (org-agenda-overriding-header "Tâches prioritaires:")))
-                                      (alltodo ""
-                                               ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("中" "次"))
-                                                                               (air-org-skip-subtree-if-habit)
-                                                                               (air-org-skip-subtree-if-priority ?A)))
-                                                ;;(org-agenda-skip-if nil '(scheduled deadline))
-                                                (org-agenda-overriding-header "Tâches en cours:")))
+            ("y" "Tâches: Université" (
+                                       (tags-todo "+lecture+PRIORITY=\"A\"|+university+PRIORITY=\"A\"|+work+PRIORITY=\"A\""
+                                                  ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取"))
+                                                                                  (air-org-skip-subtree-if-habit)))
+                                               (org-agenda-prefix-format " %s [%?-45b] ")
+                                                   (org-agenda-overriding-header "Tâches prioritaires:")))
+                                       (tags-todo "+lecture|+university|+work"
+                                                  ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("中" "次"))
+                                                                                  (air-org-skip-subtree-if-habit)
+                                                                                  (air-org-skip-subtree-if-priority ?A)))
+                                               (org-agenda-prefix-format " %s [%?-45b] ")
+                                                   ;;(org-agenda-skip-if nil '(scheduled deadline))
+                                                   (org-agenda-overriding-header "Tâches en cours:")))
+                                       (tags-todo "+lecture|+university|+work"
+                                                  ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("無"))
+                                                                                  (air-org-skip-subtree-if-habit)
+                                                                                  ;;(org-agenda-skip-if nil '(scheduled deadline))
+                                                                                  (air-org-skip-subtree-if-priority ?A)))
+                                               (org-agenda-prefix-format " %s [%?-45b] ")
+                                                   (org-agenda-overriding-header "Tâches à faire:")))
+                                       (tags-todo "+lecture|+university|+work"
+                                                  ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("待"))
+                                                                                  (air-org-skip-subtree-if-habit)
+                                                                                  (air-org-skip-subtree-if-priority ?A)))
+                                                   ;;(org-agenda-skip-if nil '(scheduled deadline))))
+                                               (org-agenda-prefix-format " %s [%?-45b] ")
+                                                   (org-agenda-overriding-header "Tâches en attente:")))
+                                       (tags-todo "+lecture|+university|+work"
+                                                  ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("阻"))
+                                                                                  (air-org-skip-subtree-if-habit)
+                                                                                  (air-org-skip-subtree-if-priority ?A)))
+                                               (org-agenda-prefix-format " %s [%?-45b] ")
+                                                   (org-agenda-overriding-header "Tâches coincées:"))))
+             ;; list options for block display
+             ((org-agenda-compact-blocks t)
+  (org-agenda-view-columns-initially t)))
+  ;; End of custom
+            ))
 
-                                      (alltodo ""
-                                               ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("無"))
-                                                                               (air-org-skip-subtree-if-habit)
-                                                                               ;;(org-agenda-skip-if nil '(scheduled deadline))
-                                                                               (air-org-skip-subtree-if-priority ?A)))
-                                                (org-agenda-overriding-header "Tâches à faire:")))
-                                      (alltodo ""
-                                               ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("待"))
-                                                                               (air-org-skip-subtree-if-habit)
-                                                                               (air-org-skip-subtree-if-priority ?A)))
-                                                ;;(org-agenda-skip-if nil '(scheduled deadline))))
-                                                (org-agenda-overriding-header "Tâches en attente:")))
-                                      (alltodo ""
-                                               ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("阻"))
-                                                                               (air-org-skip-subtree-if-habit)
-                                                                               (air-org-skip-subtree-if-priority ?A)))
-                                                ;;(org-agenda-skip-if nil '(scheduled deadline))))
-                                                (org-agenda-overriding-header "Tâches coincées:")))
-                                      )
-           ;; list options for block display
-           ((org-agenda-compact-blocks t)))))
+    ;; Display properties
+    (setq org-cycle-separator-lines 0
+          ;; Choose the placement of org tags in org files.
+          org-tags-column 80
+          ;; Place org agenda tags in the same place as org tags.
+          org-agenda-tags-column org-tags-column
+          ;; Make org-agenda the only window by default.
+          org-agenda-window-setup 'only-window 
+          ;; Build agenda manually (to update press "r").
+          org-agenda-sticky t
+          ;; Compact the block agenda view. This deletes the section separators.
+          org-agenda-compact-blocks nil
+          ;; Allow one-key todo selection.
+          org-use-fast-todo-selection t 
+          ;; Include the todo keywords in fast tag selection buffer.
+          org-fast-tag-selection-include-todo t
+          ;; Allow one-key tag selection.
+         org-fast-tag-selection-single-key t
+;; each habit to show up when it is next scheduled, but no further repetitions
+  org-agenda-repeating-timestamp-show-all nil
+  ;; Add appointments duration to column view's effort estimates.
+   org-agenda-columns-add-appointments-to-effort-sum t)
 
-  ;; Display properties
-  (setq org-cycle-separator-lines 0)
-  (setq org-tags-column 80)
-  (setq org-agenda-tags-column org-tags-column)
-  (setq org-agenda-sticky t)
 
-  ;; function to have evil bindings in org-agenda
-  (defun air-org-agenda-next-header ()
-    "Jump to the next header in an agenda series."
-    (interactive)
-    (air--org-agenda-goto-header))
+    ;; Set of functions to have evil bindings in org-agenda.
 
-  (defun air-org-agenda-previous-header ()
-    "Jump to the previous header in an agenda series."
-    (interactive)
-    (air--org-agenda-goto-header t))
+    (defun air-org-agenda-next-header ()
+      "Jump to the next header in an agenda series."
+      (interactive)
+      (air--org-agenda-goto-header))
 
-(defun air--org-agenda-goto-header (&optional backwards)
-  "Find the next agenda series header forwards or BACKWARDS."
-  (let ((pos (save-excursion
-               (goto-char (if backwards
-                              (line-beginning-position)
-                            (line-end-position)))
-               (let* ((find-func (if backwards
-                                     'previous-single-property-change
-                                   'next-single-property-change))
-                      (end-func (if backwards
-                                    'max
-                                  'min))
-                      (all-pos-raw (list (funcall find-func (point) 'org-agenda-structural-header)
-                                         (funcall find-func (point) 'org-agenda-date-header)))
-                      (all-pos (cl-remove-if-not 'numberp all-pos-raw))
-                      (prop-pos (if all-pos (apply end-func all-pos) nil)))
-                 prop-pos))))
-    (if pos (goto-char pos))
-    (if backwards (goto-char (line-beginning-position)))))
+    (defun air-org-agenda-previous-header ()
+      "Jump to the previous header in an agenda series."
+      (interactive)
+      (air--org-agenda-goto-header t))
 
-  ;; fast access agenda view
-  (defun air-pop-to-org-agenda (&optional split)
-    "Visit the org agenda, in the current window or a SPLIT."
-    (interactive "P")
-    (org-agenda nil "h") ;; the h corresponds to the agenda view that will be displayed once this command is called
-    (when (not split)
-      (delete-other-windows)))
+    (defun air--org-agenda-goto-header (&optional backwards)
+      "Find the next agenda series header forwards or BACKWARDS."
+      (let ((pos (save-excursion
+                   (goto-char (if backwards
+                                  (line-beginning-position)
+                                (line-end-position)))
+                   (let* ((find-func (if backwards
+                                         'previous-single-property-change
+                                       'next-single-property-change))
+                          (end-func (if backwards
+                                        'max
+                                      'min))
+                          (all-pos-raw (list (funcall find-func (point) 'org-agenda-structural-header)
+                                             (funcall find-func (point) 'org-agenda-date-header)))
+                          (all-pos (cl-remove-if-not 'numberp all-pos-raw))
+                          (prop-pos (if all-pos (apply end-func all-pos) nil)))
+                     prop-pos))))
+        (if pos (goto-char pos))
+        (if backwards (goto-char (line-beginning-position)))))
 
-  ;;(define-key evil-normal-state-map (kbd "S-SPC") 'air-pop-to-org-agenda)
-  (global-set-key [f6] 'air-pop-to-org-agenda)
+    ;; fast access agenda view
+    (defun air-pop-to-org-agenda (&optional split)
+      "Visit the org agenda, in the current window or a SPLIT."
+      (interactive "P")
+      (org-agenda nil "d") ;; the h corresponds to the agenda view that will be displayed once this command is called
+      (when (not split)
+        (delete-other-windows)))
 
-  ;; sacha's configuration 
-  (defun sacha/org-agenda-new ()
-    "Create a new note or task at the current agenda item.
-  Creates it at the same level as the previous task, so it's better to use
-  this with to-do items than with projects or headings."
-    (interactive)
-    (org-agenda-switch-to)
-    (org-capture 0))
+    ;;(define-key evil-normal-state-map (kbd "S-SPC") 'air-pop-to-org-agenda)
+    (global-set-key [f6] 'air-pop-to-org-agenda)
 
-  (defun sacha/org-agenda-mark-done-and-add-followup ()
-    "Mark the current TODO as done and add another task after it.
-  Creates it at the same level as the previous task, so it's better to use
-  this with to-do items than with projects or headings."
-    (interactive)
-    (org-agenda-todo "DONE")
-    (org-agenda-switch-to)
-    (org-capture 0 "t"))
+    ;; sacha's configuration 
+    (defun sacha/org-agenda-new ()
+      "Create a new note or task at the current agenda item.
+        Creates it at the same level as the previous task, so it's better to use
+        this with to-do items than with projects or headings."
+      (interactive)
+      (org-agenda-switch-to)
+      (org-capture 0))
+
+    (defun sacha/org-agenda-mark-done-and-add-followup ()
+      "Mark the current TODO as done and add another task after it.
+        Creates it at the same level as the previous task, so it's better to use
+        this with to-do items than with projects or headings."
+      (interactive)
+      (org-agenda-todo "DONE")
+      (org-agenda-switch-to)
+      (org-capture 0 "t"))
  #+END_SRC
 ****   Movement in agenda buffer
 #+BEGIN_SRC emacs-lisp
@@ -1643,14 +1916,18 @@ idea
 This allow to hide certain tags in the agenda display, but include them in
 the processing of agenda commands
 #+BEGIN_SRC emacs-lisp
-(setq org-agenda-hide-tags-regexp "noexport\\|university\\|today")
+(setq org-agenda-hide-tags-regexp "noexport\\|today")
+;;(setq org-agenda-hide-tags-regexp "noexport\\|university\\|today")
   #+END_SRC 
 **** Habits
 There is a strange inconsistency when habits are enabled. See [[https://emacs.stackexchange.com/questions/26291/not-allowed-in-tags-type-agenda-using-custom-agenda]]
 #+BEGIN_SRC emacs-lisp
-  ;;(require 'org-habit)
-  ;;(setq org-habit-graph-column 80) 
-  ;;(setq org-habit-show-habits-only-for-today nil)
+  (use-package org-habit :after org
+  ;; :commands org-bullets-mode
+  :config
+  (setq org-habit-graph-column 80) 
+  (setq org-habit-show-habits-only-for-today nil)
+       (define-key org-agenda-mode-map "K" 'air-org-agenda-previous-header))
   #+END_SRC 
 **** Visualization
 #+BEGIN_SRC emacs-lisp
@@ -1663,7 +1940,7 @@ There is a strange inconsistency when habits are enabled. See [[https://emacs.st
 #+BEGIN_SRC emacs-lisp
   (setq org-refile-targets (quote ( 
                                    (nil :maxlevel . 9)                ;; set default 
-                                   ("m1_2_notes.org" :maxlevel . 3)
+                                   ("m2_1_notes.org" :maxlevel . 3)
                                    ("todo.org" :maxlevel . 2)
                                    ;;(org-agenda-files :maxlevel . 9) ;; set for all agenda files
                                    )))
@@ -1679,61 +1956,62 @@ There is a strange inconsistency when habits are enabled. See [[https://emacs.st
   #+END_SRC 
 *** Clocking
 #+BEGIN_SRC emacs-lisp
-;; Agenda clock report parameters
-(setq org-agenda-clockreport-parameter-plist
-      '(:link t :maxlevel 6 :fileskip0 t :compact t :narrow 60 :score 0))
+ ;; Agenda clock report parameters
+  (setq org-agenda-clockreport-parameter-plist
+        '(:link t :maxlevel 6 :fileskip0 t :compact t :narrow 60 :score 0))
 
-;; If idle for more than 15 minutes, resolve the things by asking what to do
-;; with the clock time
-(setq org-clock-idle-time 15)
+  ;; If idle for more than 15 minutes, resolve the things by asking what to do
+  ;; with the clock time
+  (setq org-clock-idle-time 15)
 
-;; global Effort estimate values
-(setq org-global-properties
-      '(("Effort_ALL" .
-         "0:15 0:30 0:45 1:00 2:00 3:00 4:00 5:00 6:00 0:00")))
-;;        1    2    3    4    5    6    7    8    9    0
-;; These are the hotkeys ^
+  ;; global Effort estimate values
+  (setq org-global-properties
+        '(("Effort_ALL" .
+           "0:15 0:30 0:45 1:00 2:00 3:00 4:00 5:00 6:00 0:00")))
+  ;;        1    2    3    4    5    6    7    8    9    0
+  ;; These are the hotkeys ^
 
-;; Set default column view headings: Task Priority Effort Clock_Summary
-(setq org-columns-default-format "%TAGS %ITEM(Task) %1PRIORITY %DEADLINE %SCHEDULED %10CLOCKSUM")
-;;(setq org-columns-default-format "%50ITEM(Task) %10Effort(Effort){:} %10CLOCKSUM %16TIMESTAMP_IA")
-;;(setq org-columns-default-format "%50ITEM(Task) %2PRIORITY %10Effort(Effort){:} %10CLOCKSUM")
+  ;; Set default column view headings: Task Priority Effort Clock_Summary
+  (setq org-columns-default-format "%1PRIORITY %ITEM(Task)  %DEADLINE %10EFFORT(Effort){:} %10CLOCKSUM")
+  ;; (setq org-columns-default-format "%TAGS %ITEM(Task) %1PRIORITY %DEADLINE %SCHEDULED %10CLOCKSUM")
+  ;;(setq org-columns-default-format "%50ITEM(Task) %10Effort(Effort){:} %10CLOCKSUM %16TIMESTAMP_IA")
+  ;;(setq org-columns-default-format "%50ITEM(Task) %2PRIORITY %10Effort(Effort){:} %10CLOCKSUM")
 
-;; Show lot of clocking history so it's easy to pick items off the `C-c I` list
-(setq org-clock-history-length 23)
+  ;; Show lot of clocking history so it's easy to pick items off the `C-c I` list
+  (setq org-clock-history-length 23)
 
-(defun eos/org-clock-in ()
-  (interactive)
-  (org-clock-in '(4)))
+  (defun eos/org-clock-in ()
+    (interactive)
+    (org-clock-in '(4)))
 
-(global-set-key (kbd "C-c I") #'eos/org-clock-in)
-(global-set-key (kbd "C-c O") #'org-clock-out)
+  (global-set-key (kbd "C-c I") #'eos/org-clock-in)
+  (global-set-key (kbd "C-c O") #'org-clock-out)
 
-;; Resume clocking task when emacs is restarted
-(org-clock-persistence-insinuate)
-;; Save the running clock and all clock history when exiting Emacs, load it on startup
-(setq org-clock-persist 'history)
-;;(setq org-clock-persist t)
-;; Resume clocking task on clock-in if the clock is open
-(setq org-clock-in-resume t)
-;; Do not prompt to resume an active clock, just resume it
-(setq org-clock-persist-query-resume nil)
+  ;; Resume clocking task when emacs is restarted
+  (org-clock-persistence-insinuate)
+  ;; Save the running clock and all clock history when exiting Emacs, load it on startup
+  (setq org-clock-persist 'history)
+  ;;(setq org-clock-persist t)
+  ;; Resume clocking task on clock-in if the clock is open
+  (setq org-clock-in-resume t)
+  ;; Do not prompt to resume an active clock, just resume it
+  (setq org-clock-persist-query-resume nil)
 
-;; Change tasks to whatever when clocking in
-(setq org-clock-in-switch-to-state "中")
-;; Save clock data and state changes and notes in the LOGBOOK drawer
-(setq org-clock-into-drawer t)
-;; Sometimes I change tasks I'm clocking quickly - this removes clocked tasks
-;; with 0:00 duration
-(setq org-clock-out-remove-zero-time-clocks t)
-;; Clock out when moving task to a done state
-(setq org-clock-out-when-done t)
-;; Enable auto clock resolution for finding open clocks
-(setq org-clock-auto-clock-resolution (quote when-no-clock-is-running))
-;; Include current clocking task in clock reports
-(setq org-clock-report-include-clocking-task t)
-;; use pretty things for the clocktable
-(setq org-pretty-entities t)
+  ;; Change tasks to whatever when clocking in
+  (setq org-clock-in-switch-to-state "中")
+  ;; Save clock data and state changes and notes in the LOGBOOK drawer
+  (setq org-clock-into-drawer t)
+  ;; Sometimes I change tasks I'm clocking quickly - this removes clocked tasks
+  ;; with 0:00 duration
+  (setq org-clock-out-remove-zero-time-clocks t)
+  ;; Clock out when moving task to a done state
+  (setq org-clock-out-when-done t)
+  ;; Enable auto clock resolution for finding open clocks
+  (setq org-clock-auto-clock-resolution (quote when-no-clock-is-running))
+  ;; Include current clocking task in clock reports
+  (setq org-clock-report-include-clocking-task t)
+  ;; use pretty things for the clocktable
+  (setq org-pretty-entities t)
 #+END_SRC 
 *** Initial visualization
 #+BEGIN_SRC emacs-lisp 
@@ -1750,7 +2028,7 @@ There is a strange inconsistency when habits are enabled. See [[https://emacs.st
 #+BEGIN_SRC emacs-lisp
 (setq org-use-fast-todo-selection nil)
 (setq org-todo-keywords 
-          '((sequence "無(t)" "次" "中" "待" "完(d)")
+          '((sequence "無" "次" "中" "待" "完")
             (sequence "阻" "取(c)")))
             ;;(sequence "疑(q)" "|" "答(a)")))
 ;; (sequence "待(w)" "次" "取(c)")
@@ -1960,18 +2238,21 @@ from the `before-change-functions' in the current buffer."
 ; (add-hook 'org-mode-hook 'wc-mode)
 *** org2blog 
 #+BEGIN_SRC emacs-lisp
-;; (setq load-path (cons "~/.emacs.d/org2blog/" load-path))
-;; (require 'org2blog-autoloads)
-;; (setq org-list-allow-alphabetical t)
+  (use-package org2blog :after org 
+    :config
+;; initial config
+    (setq load-path (cons "~/.emacs.d/org2blog/" load-path))
+    (require 'org2blog-autoloads)
+    (setq org-list-allow-alphabetical t)
 
-;; blog setup
-;; (setq org2blog/wp-blog-alist
-;;       '(("cahiers"
-;;          :url "https://cyberneticrevolutionary.wordpress.com/xmlrpc.php"
-;;          :username "cyberneticrevolutionary"
-;;          :password "kosmos666"
-;;          :default-title "Penseé"
-;;          :tags-as-categories nil)))
+  ;; blog setup
+    (setq org2blog/wp-blog-alist
+          '(("cahiers"
+             :url "https://cyberneticrevolutionary.wordpress.com/xmlrpc.php"
+             :username "cyberneticrevolutionary"
+             :password "kosmos666"
+             :default-title "Penseé"
+             :tags-as-categories nil))))
 #+END_SRC
 **** default template
 (setq org2blog/wp-buffer-template
@@ -2003,13 +2284,18 @@ from the `before-change-functions' in the current buffer."
   ;; select tasks (i.e., TODOs) for export
   (setq org-export-with-tasks '("次" "完" "無" "中" "待" "疑"))
 
+(defun sync0-latex-compile ()
+    (save-buffer)
+    (TeX-command "LaTeX" 'TeX-master-file))
 
   (defun sync0-latex-and-beamer-export ()
-  "Export current org file with beamer if it has beamer as latex class."
-  (interactive)
-      (if (string-match "LATEX_CLASS: beamer" (buffer-string))
-          (org-beamer-export-to-pdf)
-        (org-latex-export-to-pdf)))
+    "Export current org file with beamer if it has beamer as latex class."
+    (interactive)
+    (when (equal major-mode 'org-mode) 
+        (if (string-match "LATEX_CLASS: beamer" (buffer-string))
+            (org-beamer-export-to-pdf)
+          (org-latex-export-to-pdf))
+      ))
 
   ;; speed keybinding for latex pdf export
   ;;(global-set-key "\M-p" 'org-latex-export-to-pdf)
@@ -2017,64 +2303,64 @@ from the `before-change-functions' in the current buffer."
 
                                           ;(add-hook 'org-mode-hook
                                           ;     (lambda () (define-key global-map "\M-p" 'org-latex-export-to-pdf)))
-        ;;(lambda () (define-key org-mode-map "\M-p" 'org-latex-export-to-pdf)))
+  ;;(lambda () (define-key org-mode-map "\M-p" 'org-latex-export-to-pdf)))
 
-        ;; Default packages included in every tex file, pdflatex or xelatex
-        ;;(setq org-latex-packages-alist
-        ;;      '(("" "graphicx" t)
-        ;;        ("" "longtable" nil)
-        ;;        ("" "float" nil)))
+  ;; Default packages included in every tex file, pdflatex or xelatex
+  ;;(setq org-latex-packages-alist
+  ;;      '(("" "graphicx" t)
+  ;;        ("" "longtable" nil)
+  ;;        ("" "float" nil)))
 
-        ;; source: https://lists.gnu.org/archive/html/emacs-orgmode/2013-06/msg00240.html
-        (defun my-auto-tex-cmd (backend)
-          "When exporting from .org with latex,
-    automatically run latex, pdflatex, or xelatex as appropriate,
-    using latexmk."
-          (let ((texcmd))
-            (setq texcmd "latexmk -pdf %f")
-            (if (string-match "LATEX_CMD: pdflatex" (buffer-string))
-                (progn
-                  (setq texcmd "latexmk -pdf -pdflatex='pdflatex -file-line-error --shell-escape -synctex=1' %f")
-                  (setq org-latex-default-packages-alist
-                        '(("AUTO" "inputenc" t)
-                          ("T1"   "fontenc"   t)
-                          (""     "fixltx2e"  nil)
-                          (""     "wrapfig"   nil)
-                          (""     "soul"      t)
-                          (""     "textcomp"  t)
-                          (""     "marvosym"  t)
-                          (""     "wasysym"   t)
-                          (""     "latexsym"  t)
-                          (""     "amssymb"   t)
-                          (""     "hyperref"  nil)))))
-            (if (string-match "LATEX_CMD: xelatex" (buffer-string))
-                (progn
-                  (setq texcmd "latexmk -pdflatex='xelatex -file-line-error --shell-escape -synctex=1' -pdf %f")
-                  (setq org-latex-default-packages-alist
-                        '(("" "fontspec" t)
-                          ("" "xunicode" t)
-                          ("" "url" t)
-                          ;; ("" "rotating" t)
-                          ;; ("" "memoir-article-styles" t)
-                          ;; ("american" "babel" t)
-                          ;; ("babel" "csquotes" t)
-                          ;; ("" "listings" nil)
-                          ;; ("svgnames" "xcolor" t)
-                          ("" "soul" t)
-                          ;;("xetex, colorlinks=true, urlcolor=FireBrick, plainpages=false, pdfpagelabels, bookmarksnumbered" "hyperref" nil)
-                          ))
-                  (setq org-latex-classes
-                        (cons '("memarticle"
-                                "\\documentclass[12pt,oneside,article]{memoir}"
-                                ("\\section{%s}" . "\\section*{%s}")
-                                ("\\subsection{%s}" . "\\subsection*{%s}")
-                                ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                                ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                                ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
-                              org-latex-classes))))
+  ;; source: https://lists.gnu.org/archive/html/emacs-orgmode/2013-06/msg00240.html
+  (defun my-auto-tex-cmd (backend)
+    "When exporting from .org with latex,
+      automatically run latex, pdflatex, or xelatex as appropriate,
+      using latexmk."
+    (let ((texcmd))
+      (setq texcmd "latexmk -pdf %f")
+      (if (string-match "LATEX_CMD: pdflatex" (buffer-string))
+          (progn
+            (setq texcmd "latexmk -pdf -pdflatex='pdflatex -file-line-error --shell-escape -synctex=1' %f")
+            (setq org-latex-default-packages-alist
+                  '(("AUTO" "inputenc" t)
+                    ("T1"   "fontenc"   t)
+                    (""     "fixltx2e"  nil)
+                    (""     "wrapfig"   nil)
+                    (""     "soul"      t)
+                    (""     "textcomp"  t)
+                    (""     "marvosym"  t)
+                    (""     "wasysym"   t)
+                    (""     "latexsym"  t)
+                    (""     "amssymb"   t)
+                    (""     "hyperref"  nil)))))
+      (if (string-match "LATEX_CMD: xelatex" (buffer-string))
+          (progn
+            (setq texcmd "latexmk -pdflatex='xelatex -file-line-error --shell-escape -synctex=1' -pdf %f")
+            (setq org-latex-default-packages-alist
+                  '(("" "fontspec" t)
+                    ("" "xunicode" t)
+                    ("" "url" t)
+                    ;; ("" "rotating" t)
+                    ;; ("" "memoir-article-styles" t)
+                    ;; ("american" "babel" t)
+                    ;; ("babel" "csquotes" t)
+                    ;; ("" "listings" nil)
+                    ;; ("svgnames" "xcolor" t)
+                    ("" "soul" t)
+                    ;;("xetex, colorlinks=true, urlcolor=FireBrick, plainpages=false, pdfpagelabels, bookmarksnumbered" "hyperref" nil)
+                    ))
+            (setq org-latex-classes
+                  (cons '("memarticle"
+                          "\\documentclass[12pt,oneside,article]{memoir}"
+                          ("\\section{%s}" . "\\section*{%s}")
+                          ("\\subsection{%s}" . "\\subsection*{%s}")
+                          ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                          ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                          ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
+                        org-latex-classes))))
 
-            (setq org-latex-pdf-process (list texcmd))))
-      (add-hook 'org-export-before-parsing-hook 'my-auto-tex-cmd)
+      (setq org-latex-pdf-process (list texcmd))))
+  (add-hook 'org-export-before-parsing-hook 'my-auto-tex-cmd)
 #+END_SRC
 *** Export to Word (doc)
 #+BEGIN_SRC emacs-lisp
@@ -2207,6 +2493,21 @@ from the `before-change-functions' in the current buffer."
             (define-key org-mode-map (kbd "C-c [") 'org-ref-ivy-insert-cite-link)
             (define-key org-mode-map  (kbd "C-c 0") 'org-ref-open-bibtex-notes)
             (define-key org-mode-map  (kbd "C-c 9") 'org-ref-open-notes-from-reftex)
+;; define notes template
+(defvar org-ref-note-title-fortmat 
+  "** %t
+[[file:master.org::%t]]
+ :PROPERTIES: 
+  :Custom_ID: %k
+  :AUTHOR: %a
+  :JOURNAL: %j
+  :YEAR: %y
+  :VOLUME: %v 
+  :PAGES: %p
+  :DOI: %D
+  :URL: %U 
+  :ADDED:    
+:END:")
 ;; open in different viewer
 (setq bibtex-completion-pdf-open-function
   (lambda (fpath)
@@ -2251,15 +2552,7 @@ from the `before-change-functions' in the current buffer."
           (lambda ()
             (define-key org-mode-map  (kbd "C-c 9") 'org-ref-open-notes-at-point)))
 **** 疑 custom notes function
-(defvar org-ref-note-title-fortmat 
-  "** 未 %t
- :PROPERTIES: 
-  :AUTHOR: %9a
-  :YEAR: %y
-  :JOURNAL: %j
-  :FILE: [[file:%F][%f]]
-  :Custom_ID: %k
-:END:")
+
 ** Yasnippets
 #+BEGIN_SRC emacs-lisp
 (use-package yasnippet :defer t 
@@ -2268,14 +2561,14 @@ from the `before-change-functions' in the current buffer."
                                         ; Feel free to add more commands to this
                                         ; list to suit your needs.
   :init ; stuff to do before requiring the package
+(add-hook 'LaTeX-mode-hook #'yas-minor-mode)
 (add-hook 'org-mode-hook #'yas-minor-mode)
-(add-hook 'latex-mode-hook #'yas-minor-mode)
 (add-hook 'bibtex-mode-hook #'yas-minor-mode)
   :config ; stuff to do after requiring the package
-;;(progn
-    (yas-reload-all))
+(progn
+    (yas-reload-all)
 ;; annoying warning
-;;(add-to-list 'warning-suppress-types '(yasnippet backquote-change))))
+(add-to-list 'warning-suppress-types '(yasnippet backquote-change))))
 #+END_SRC
 ** Neotree
 (require 'neotree)
@@ -2333,15 +2626,15 @@ from the `before-change-functions' in the current buffer."
 #+END_SRC 
 ** Smooth scrolling
 #+BEGIN_SRC emacs-lisp
-(use-package smooth-scrolling :defer t
-:config
-(progn
-(smooth-scrolling-mode 1)
-(setq smooth-scroll-margin 5)))
+  (use-package smooth-scrolling :defer t
+  :config
+  (progn
+  (smooth-scrolling-mode 1)
+  (setq smooth-scroll-margin 5)))
 #+END_SRC      
 *** change behavior of org movent
 #+BEGIN_SRC emacs-lisp
-(setq org-special-ctrl-a/e t)
+;(setq org-special-ctrl-a/e t)
 #+END_SRC 
 *** useful scrolling things
 #+BEGIN_SRC emacs-lisp
@@ -2635,7 +2928,6 @@ from the `before-change-functions' in the current buffer."
 ** Magit
 #+BEGIN_SRC emacs-lisp
   (use-package magit
-    :defer t
     :bind
   ;; bind a quick and dirty shortcut to 
    (("C-x g" . magit-status)
@@ -2730,33 +3022,135 @@ from the `before-change-functions' in the current buffer."
   :if window-system
   :config (setq-default powerline-default-separator 'nil))
   #+END_SRC 
+** Foreign languages
+*** Foreign language setup
+**** English
+#+BEGIN_SRC emacs-lisp
+  ;; (defun sync0-toggle-off-input-method ()
+  ;;   (interactive)
+  ;;   (if current-input-method (deactivate-input-method)))
+
+    (defun sync0-english-keyboard-setup ()
+      "Set input methods for EVIL mode suitable for French"
+      ;; check whether EVIL mode is active
+      (when (bound-and-true-p evil-mode) 
+        ;; TeX for evil insert mode 
+        (add-hook 'evil-insert-state-entry-hook 
+                  (lambda () (set-input-method nil)))
+        ;; TeX for evil replace mode
+        (add-hook 'evil-replace-state-entry-hook
+                  (lambda () (set-input-method nil)))))
+  #+END_SRC 
+**** French
+#+BEGIN_SRC emacs-lisp
+  (defun sync0-french-keyboard-setup ()
+    "Set input methods for EVIL mode suitable for French"
+    ;; check whether EVIL mode is active
+    (when (bound-and-true-p evil-mode) 
+      ;; french-postfix for evil insert mode 
+      (add-hook 'evil-insert-state-entry-hook 
+                (lambda () (set-input-method "french-postfix")))
+      ;; french-postfix for evil replace mode
+      (add-hook 'evil-replace-state-entry-hook
+                (lambda () (set-input-method "french-postfix")))))
+  #+END_SRC 
+*** Rabelais-mode
+#+BEGIN_SRC emacs-lisp
+  (defvar sync0-language-active 0
+    "Is a human language minor mode enabled?")
+
+  (define-minor-mode rabelais-mode
+    "Get your foos in the right places."
+;; The initial value.
+ :init-value nil
+;; The indicator for the mode line.
+    :lighter " rabelais"
+;; Make it a global minor mode. 
+    :global  t
+    (when (bound-and-true-p orwell-mode) 
+      (add-hook 'text-mode-hook (lambda () (orwell-mode -1))))
+    (setq sync0-language-active 1
+          local-abbrev-table rabelais-mode-abbrev-table)
+    (sync0-french-keyboard-setup)
+    (ispell-change-dictionary "fr_FR")
+     (add-to-list 'minor-mode-alist '(rabelais-mode " rabelais"))
+    (abbrev-mode 1))
+  #+END_SRC 
+*** Orwell-mode
+#+BEGIN_SRC emacs-lisp
+  (define-minor-mode orwell-mode
+    "Get your foos in the right places."
+;; The initial value.
+ :init-value nil
+;; The indicator for the mode line.
+    :lighter " orwell"
+;; Make it a global minor mode. 
+    :global  t
+    (when (bound-and-true-p rabelais-mode) 
+      (add-hook 'text-mode-hook (lambda () (rabelais-mode -1))))
+    (setq sync0-language-active 1
+          local-abbrev-table orwell-mode-abbrev-table)
+    (sync0-english-keyboard-setup)
+    (ispell-change-dictionary "en_US")
+     (add-to-list 'minor-mode-alist '(orwell-mode " orwell"))
+    (abbrev-mode 1))
+  #+END_SRC 
+*** Marquez-mode
+  (defun marquez-mode ()
+  "Major mode for editing englisch written for humans to read.
+In this mode, paragraphs are delimited only by blank or white lines.
+You can thus get the full benefit of adaptive filling
+ (see the variable `adaptive-fill-mode').
+\\{englisch-mode-map}
+Turning on Text mode runs the normal hook `englisch-mode-hook'."
+  (interactive)
+  (setq local-abbrev-table marquez-mode-abbrev-table)
+  (setq mode-name "Marquez")
+  (setq minor-mode 'marquez-mode)
+  (ispell-change-dictionary "es_CO")
+  ;;(setq common-abbrevs-list 'common-english-abbrevs)
+  (abbrev-mode 1)
+  (run-hooks 'marquez-mode-hook))
+
 ** Spaceline
 #+BEGIN_SRC emacs-lisp
-  (use-package spaceline :after powerline 
-    :config (setq spaceline-responsive nil))
-  ;; (use-package spaceline-colors :after spaceline-all-the-icons :load-path "init/spaceline-colors"
-  ;;   :config (advice-add 'load-theme :after 'spaceline-update-faces))
+    (use-package spaceline :after powerline)
+ ;;     :config 
+  ;; (setq spaceline-responsive nil))
+    ;; (use-package spaceline-colors :after spaceline-all-the-icons :load-path "init/spaceline-colors"
+    ;;   :config (advice-add 'load-theme :after 'spaceline-update-faces))
 
-  (use-package spaceline-all-the-icons
-    :after spaceline
-    :config
-(progn
-    (setq spaceline-all-the-icons-icon-set-bookmark 'heart
-          spaceline-all-the-icons-icon-set-modified 'toggle
-          spaceline-all-the-icons-icon-set-dedicated 'pin
-  ;;        spaceline-all-the-icons-icon-set-flycheck-slim 'dots
- ;;         spaceline-all-the-icons-flycheck-alternate t
-          spaceline-all-the-icons-highlight-file-name t
-          spaceline-all-the-icons-hide-long-buffer-path t)
-    (spaceline-toggle-all-the-icons-bookmark-on)
-    (spaceline-toggle-all-the-icons-dedicated-on)
-    (spaceline-toggle-all-the-icons-fullscreen-on)
-    ;;(spaceline-toggle-all-the-icons-buffer-position-on)
-    (spaceline-all-the-icons--setup-anzu)
-;;    (spaceline-all-the-icons--setup-package-updates)
-    ;;(spaceline-all-the-icons--setup-paradox)
-  ;;  (spaceline-all-the-icons--setup-neotree)
-    (spaceline-all-the-icons-theme)))
+    ;; (spaceline-define-segment sync0-language-segment
+    ;;   "Inform wheter a human language mode is on"
+    ;;   (if (equal 'sync0-language-active 1)
+    ;;       (progn
+    ;;         (when (and active (bound-and-true-p orwell-mode)
+    ;;                    (propertize "Orwell" 'face 'bold)))
+    ;;         (when (and active (bound-and-true-p rabelais-mode)
+    ;;                    (propertize "Rabelais" 'face 'bold))))
+    ;;     (propertize "無語" 'face 'bold))))
+
+    (use-package spaceline-all-the-icons
+      :after spaceline
+      :config
+      (progn
+        (setq spaceline-all-the-icons-icon-set-bookmark 'heart
+              spaceline-all-the-icons-icon-set-modified 'toggle
+              spaceline-all-the-icons-icon-set-dedicated 'pin
+              ;;        spaceline-all-the-icons-icon-set-flycheck-slim 'dots
+              ;;         spaceline-all-the-icons-flycheck-alternate t
+              spaceline-all-the-icons-highlight-file-name t
+              spaceline-all-the-icons-hide-long-buffer-path t)
+        (spaceline-toggle-all-the-icons-bookmark-on)
+        (spaceline-toggle-all-the-icons-dedicated-on)
+        (spaceline-toggle-all-the-icons-fullscreen-on)
+        ;;(spaceline-toggle-all-the-icons-buffer-position-on)
+        (spaceline-all-the-icons--setup-anzu)
+        ;;    (spaceline-all-the-icons--setup-package-updates)
+        ;;(spaceline-all-the-icons--setup-paradox)
+        ;;  (spaceline-all-the-icons--setup-neotree)
+        ;;(spaceline-all-the-icons-theme 'sync0-language-segment)
+        (spaceline-all-the-icons-theme)))
   #+END_SRC 
 ** Hydra
 #+BEGIN_SRC emacs-lisp
@@ -3095,15 +3489,60 @@ from the `before-change-functions' in the current buffer."
               ("q" nil :color blue)
               ("Q" (git-gutter-mode -1) :color blue)))
   #+END_SRC 
-
+** EasyPG
+#+BEGIN_SRC emacs-lisp
+  (require 'epa-file)
+(epa-file-enable)
+  #+END_SRC 
 * Custom Functions
 ** Sentence highlight
 #+BEGIN_SRC emacs-lisp
-     (use-package sentence-highlight :load-path "~/.emacs.d/sync0/" 
-       :commands sentence-highlight-mode
-:config 
-(set-face-foreground 'sentence-highlight-face "#002b36")
-)
+  (use-package sentence-highlight :load-path "~/.emacs.d/sync0/" 
+    :after cycle-themes
+    :commands sentence-highlight-mode
+    :config 
+    (progn
+     (set-face-foreground 'sentence-highlight-face "#002b36")
+      (defun sync0-change-sentence-highlight-color ()
+        "Change the sentence hightlight color based on the doom-theme enabled." 
+        (when (boundp 'cycle-themes-last-theme-set)
+          (if (equal cycle-themes-last-theme-set 'doom-spacegrey)
+            ;; solarized-light
+            (set-face-foreground 'sentence-highlight-face "#ECBE7B")
+            ;; space-grey
+            (set-face-foreground 'sentence-highlight-face "#b48ead"))))
+
+        (add-hook 'cycle-themes-after-cycle-hook #'sync0-change-sentence-highlight-color)))
+
+  ;; (use-package sentence-highlight :load-path "~/.emacs.d/sync0/" 
+  ;;   :after cycle-themes
+  ;;   :commands sentence-highlight-mode
+  ;;   :config 
+  ;;   (progn
+  ;;     (defun sync0-change-sentence-highlight-color ()
+  ;;       "Change the sentence hightlight color based on the doom-theme enabled." 
+  ;;       (when (boundp 'cycle-themes-last-theme-set)
+  ;;         (when (equal cycle-themes-last-theme-set 'doom-spacegrey)
+  ;;           ;; solarized-light
+  ;;           (set-face-foreground 'sentence-highlight-face "#002b36")
+  ;;           (equal cycle-themes-last-theme-set 'doom-solarized-light')
+  ;;           ;; space-grey
+  ;;           (set-face-foreground 'sentence-highlight-face "#c0c5ce"))))
+  ;;       (add-hook 'cycle-themes-after-cycle-hook 'sync0-change-sentence-highlight-color)))
+
+    ;; (base8      '("#DFDFDF" "#dfdfdf" "white"        ))
+    ;; (fg         '("#c0c5ce" "#c0c5ce" "brightwhite"  ))
+    ;; (red        '("#BF616A" "#BF616A" "red"          ))
+    ;; (orange     '("#D08770" "#D08770" "brightred"    ))
+    ;; (green      '("#A3BE8C" "#A3BE8C" "green"        ))
+    ;; (blue       '("#8FA1B3" "#8FA1B3" "brightblue"   ))
+    ;; (violet     '("#b48ead" "#b48ead" "brightmagenta"))
+    ;; (teal       '("#4db5bd" "#44b9b1" "brightgreen"  ))
+    ;; (yellow     '("#ECBE7B" "#ECBE7B" "yellow"       ))
+    ;; (dark-blue  '("#2257A0" "#2257A0" "blue"         ))
+    ;; (magenta    '("#c678dd" "#c678dd" "magenta"      ))
+    ;; (cyan       '("#46D9FF" "#46D9FF" "brightcyan"   ))
+    ;; (dark-cyan  '("#5699AF" "#5699AF" "cyan"         ))
   #+END_SRC 
 ** Date
 #+BEGIN_SRC emacs-lisp
@@ -3112,9 +3551,27 @@ from the `before-change-functions' in the current buffer."
 
   (defun insert-current-month () 
     (insert (shell-command-to-string "echo -n $(date +%B)")))
+
+(defun sync0-insert-dates ()
+  "insert a bunch of dates"
+  (interactive)
+  (let* ((month 4)
+         (day 1)
+         (time (encode-time 1 1 0 day month 2019)))
+    (while (= (nth 4 (decode-time time)) month)
+      (insert (concat "*** " (format-time-string "%d/%m/%Y \n" time)))
+      (setq day (1+ day))
+      (setq time (encode-time 1 1 0 day month 2019)))))
+
+(defun sync0-insert-weeks ()
+  "insert a bunch of weeks"
+  (interactive)
+  (let* ((weeky 1))
+    (while (< weeky 32)
+      (insert (format  "** \ordinalnum{%s} Week \n" weeky))
+      (setq weeky (1+ weeky)))))
 #+END_SRC
-** Automatic abbrevs integration with ispell
-#+BEGIN_SRC emacs-lisp
+** 取 Automatic abbrevs integration with ispell
 ;;(define-key ctl-x-map "\C-i"
   ;;#'endless/ispell-word-then-abbrev)
 
@@ -3159,7 +3616,101 @@ abort completely with `C-g'."
 
 ;; set a faster shortcut
 (define-key global-map (kbd "M-i") 'endless/ispell-word-then-abbrev)
+** Automatic abbrevs integration with ispell
+#+BEGIN_SRC emacs-lisp
+;;(define-key ctl-x-map "\C-i"
+  ;;#'endless/ispell-word-then-abbrev)
+
+(defun endless/simple-get-word ()
+  (car-safe (save-excursion (ispell-get-word nil))))
+
+(defun endless/ispell-word-then-abbrev ()
+  "Call `ispell-word', then create an abbrev for it.
+With prefix P, create local abbrev. Otherwise it will
+be global.
+If there's nothing wrong with the word at point, keep
+looking for a typo until the beginning of buffer. You can
+skip typos you don't want to fix with `SPC', and you can
+abort completely with `C-g'."
+  (interactive)
+  (let (bef aft)
+    (save-excursion
+      (while (if (setq bef (endless/simple-get-word))
+                 ;; Word was corrected or used quit.
+                 (if (ispell-word nil 'quiet)
+                     nil ; End the loop.
+                   ;; Also end if we reach `bob'.
+                   (not (bobp)))
+               ;; If there's no word at point, keep looking
+               ;; until `bob'.
+               (not (bobp)))
+        (backward-word)
+        (backward-char))
+      (setq aft (endless/simple-get-word)))
+    (if (and aft bef (not (equal aft bef)))
+        (let ((aft (downcase aft))
+              (bef (downcase bef)))
+          (define-abbrev local-abbrev-table bef aft)
+          (message "\"%s\" now expands to \"%s\" %sally"
+                   bef aft "loc"))
+      (user-error "No typo at or before point"))))
+
+(setq save-abbrevs 'silently)
+(setq-default abbrev-mode t)
+
+;; set a faster shortcut
+(define-key global-map (kbd "M-i") 'endless/ispell-word-then-abbrev)
 #+END_SRC 
+** Latex changes mode
+  (defvar sync0-language-active 0
+    "Is a human language minor mode enabled?")
+
+
+(evil-define-operator sync0-latex-changes-evil-delete (beg end type register yank-handler)
+  "Delete text from BEG to END with TYPE.
+Save in REGISTER or in the kill-ring with YANK-HANDLER."
+  (interactive "<R><x><y>")
+  (unless register
+    (let ((text (filter-buffer-substring beg end)))
+      (unless (string-match-p "\n" text)
+        ;; set the small delete register
+        (evil-set-register ?- text))))
+  (let ((evil-was-yanked-without-register nil))
+    (evil-yank beg end type register yank-handler))
+  (cond
+   ((eq type 'block)
+    (evil-apply-on-block #'delete-region beg end nil))
+   ((and (eq type 'line)
+         (= end (point-max))
+         (or (= beg end)
+             (/= (char-before end) ?\n))
+         (/= beg (point-min))
+         (=  (char-before beg) ?\n))
+    (delete-region (1- beg) end))
+   (t
+    (delete-region beg end)))
+  ;; place cursor on beginning of line
+  (when (and (called-interactively-p 'any)
+             (eq type 'line))
+    (evil-first-non-blank)))
+
+
+  (define-minor-mode sync0-latex-changes-mode
+    "Get your foos in the right places."
+;; The initial value.
+ :init-value nil
+;; The indicator for the mode line.
+    :lighter " rabelais"
+;; Make it a global minor mode. 
+    :global  t
+    (when (bound-and-true-p orwell-mode) 
+      (add-hook 'text-mode-hook (lambda () (orwell-mode -1))))
+    (setq sync0-language-active 1
+          local-abbrev-table rabelais-mode-abbrev-table)
+    (sync0-french-keyboard-setup)
+    (ispell-change-dictionary "fr_FR")
+     (add-to-list 'minor-mode-alist '(rabelais-mode " rabelais"))
+    (abbrev-mode 1))
 * Useful Key Bindings
 ** Font size change
 #+BEGIN_SRC emacs-lisp

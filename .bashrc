@@ -8,7 +8,7 @@
 alias ls='ls --color=auto --group-directories-first'
 PS1='\$ \[\e[4m\]\W\[\e[m\] \[\e[1;31m\]必緩\[\e[m\] '
 
-alias cp="cp -i"                          # confirm before overwriting something
+# alias cp="cp -i"                          # confirm before overwriting something
 alias df='df -h'                          # human-readable sizes
 alias free='free -m'                      # show sizes in MB
 #alias np='nano -w PKGBUILD'
@@ -32,8 +32,8 @@ alias pacout="sudo pacman -Syu --noconfirm && shutdown +1"
 alias pacaup="pacaur -Syua" 
 # alias paclean="sudo pacman -Rsn $(pacman -Qdtq)"
 alias bashrc="emacs ~/.bashrc && source ~/.bashrc"
-alias mynotes="emacs ~/Dropbox/projects/paris_1/m1_2/m1_2_notes.org"
-alias mypdf="zathura ~/Dropbox/projects/paris_1/m1_2/m1_2_notes.pdf"
+alias mynotes="emacs ~/Dropbox/projects/paris_1/m1_2/m2_1_notes_petit.org"
+alias mypdf="zathura ~/Dropbox/projects/paris_1/m1_2/m2_1_notes_petit.pdf"
 alias gom1="cd ~/Dropbox/projects/paris_1/M1_1/"
 alias configinitcpio="sudo emacs /etc/mkinitcpio.conf"
 alias initrams="sudo mkinitcpio -p linux-lts"
@@ -45,6 +45,9 @@ alias grubup="sudo grub-mkconfig -o /boot/grub/grub.cfg"
 alias less="less -M"
 alias off="shutdown now"
 alias m1="cd ~/Dropbox/projects/paris_1/m1_2/"
+alias m2="cd ~/Dropbox/projects/paris_1/m2_1/"
+alias stage="cd ~/Dropbox/projects/paris_1/stage/"
+alias memoire="cd ~/Dropbox/projects/paris_1/memoire/"
 alias certificates="cd ~/Dropbox/certificates/"
 alias rmhidden="rm -i .[^.]*"
 alias grep="grep -i -n --color=always"
@@ -67,7 +70,7 @@ alias pdf_compress="gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=
 -r150"
 alias pdf_shrink='bash $HOME/Scripts/shell/shrinkpdf.sh'
 screenfetch
-
+alias setscreen='xrandr --newmode "1920x1080_60.00"  173.00  1920 2048 2248 2576  1080 1083 1088 1120 -hsync +vsync && xrandr --addmode HDMI-1 1920x1080_60.00'
 # keep the prompt on top
 #prompt_on_top() {
 #  tput cup 0 0

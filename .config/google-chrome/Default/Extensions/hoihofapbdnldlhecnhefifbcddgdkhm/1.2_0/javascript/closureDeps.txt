@@ -1,5 +1,0 @@
-goog.require('goog.dom');
-goog.require('goog.ui.DatePicker');
-goog.require('goog.date');
-goog.require('goog.locale');
-goog.require('goog.ui.AutoComplete');

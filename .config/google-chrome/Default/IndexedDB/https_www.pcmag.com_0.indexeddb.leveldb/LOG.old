@@ -1,9 +1,0 @@
-2017/09/17-07:50:24.998 2465 Reusing MANIFEST /home/sync0/.config/google-chrome/Default/IndexedDB/https_www.pcmag.com_0.indexeddb.leveldb/MANIFEST-000001
-2017/09/17-07:50:35.131 2466 Current memtable full; waiting...
-2017/09/17-07:50:35.131 2602 Level-0 table #5: started
-2017/09/17-07:50:35.136 2602 Level-0 table #5: 363 bytes OK
-2017/09/17-07:50:35.138 2602 Delete type=0 #3
-2017/09/17-07:50:35.139 2602 Level-0 table #7: started
-2017/09/17-07:50:35.139 2602 Level-0 table #7: 0 bytes OK
-2017/09/17-07:50:35.141 2602 Delete type=0 #4
-2017/09/17-07:50:35.141 2602 Manual compaction at level-0 from '\x00\x01\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x02\x00\x00\x00' @ 0 : 0; will stop at (end)
