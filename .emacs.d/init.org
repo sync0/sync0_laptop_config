@@ -16,11 +16,10 @@
 #+EMAIL: cantorlunae@gmail.com
 # Visualization settings.
 #+STARTUP: noindent  showall showstars
-# Local Variables:
-# eval: (orwell-mode) 
-# End:
 # Necessary to tangle this file.
 #+PROPERTY: header-args :tangle yes
+* Introduction
+This is my Emacs configuration file.
 * Reminders
 - In Org mode, ~<s + tab~ creates a code block. To make it executable,
   add the words ~emacs-lisp~.
@@ -923,58 +922,6 @@ that I’ve copied from the web.
 * Packages 
 ** Highlight indentation
 #+BEGIN_SRC emacs-lisp
-  ;; (use-package highlight-indentation
-  ;;   :commands (highlight-indentation-mode highlight-indentation-current-column-mode)
-  ;;   :config
-  ;;   (defun doom|inject-trailing-whitespace (&optional start end)
-  ;;     "The opposite of `delete-trailing-whitespace'. Injects whitespace into
-  ;; buffer so that `highlight-indentation-mode' will display uninterrupted indent
-  ;; markers. This whitespace is stripped out on save, as not to affect the resulting
-  ;; file."
-  ;;     (interactive (progn (barf-if-buffer-read-only)
-  ;;                         (if (use-region-p)
-  ;;                             (list (region-beginning) (region-end))
-  ;;                           (list nil nil))))
-  ;;     (unless indent-tabs-mode
-  ;;       (save-match-data
-  ;;         (save-excursion
-  ;;           (let ((end-marker (copy-marker (or end (point-max))))
-  ;;                 (start (or start (point-min))))
-  ;;             (goto-char start)
-  ;;             (while (and (re-search-forward "^$" end-marker t) (< (point) end-marker))
-  ;;               (let (line-start line-end next-start next-end)
-  ;;                 (save-excursion
-  ;;                   ;; Check previous line indent
-  ;;                   (forward-line -1)
-  ;;                   (setq line-start (point)
-  ;;                         line-end (save-excursion (back-to-indentation) (point)))
-  ;;                   ;; Check next line indent
-  ;;                   (forward-line 2)
-  ;;                   (setq next-start (point)
-  ;;                         next-end (save-excursion (back-to-indentation) (point)))
-  ;;                   ;; Back to origin
-  ;;                   (forward-line -1)
-  ;;                   ;; Adjust indent
-  ;;                   (let* ((line-indent (- line-end line-start))
-  ;;                          (next-indent (- next-end next-start))
-  ;;                          (indent (min line-indent next-indent)))
-  ;;                     (insert (make-string (if (zerop indent) 0 (1+ indent)) ? )))))
-  ;;               (forward-line 1)))))
-  ;;       (set-buffer-modified-p nil))
-  ;;   nil)
-
-    ;; (defun highlight-indentation-handle-whitespace ()
-    ;;   (if (or highlight-indentation-mode highlight-indentation-current-column-mode)
-    ;;       (progn
-    ;;         (doom|inject-trailing-whitespace)
-    ;;         (add-hook 'before-save-hook #'delete-trailing-whitespace nil t)
-    ;;         (add-hook 'after-save-hook #'doom|inject-trailing-whitespace nil t))
-    ;;     (remove-hook 'before-save-hook #'delete-trailing-whitespace t)
-    ;;     (remove-hook 'after-save-hook #'doom|inject-trailing-whitespace t)
-    ;;     (delete-trailing-whitespace)))
-    ;; (add-hook 'highlight-indentation-mode-hook 'highlight-indentation-handle-whitespace)
-    ;; (add-hook 'highlight-indentation-current-column-mode-hook 'highlight-indentation-handle-whitespace)
-
      (use-package highlight-indentation
      :commands (highlight-indentation-mode highlight-indentation-current-column-mode))
 
@@ -1452,15 +1399,6 @@ evil-escape-unordered-key-sequence t
           ;; :config
            ;; Ex command that allows you to invoke evil-multiedit with a regular expression, e.g.
            ;;(evil-ex-define-cmd "ie[dit]" 'evil-multiedit-ex-match))
-*** 取 EVIL multiple cursors
-;;(require 'evil-mc)
-;;(global-evil-mc-mode  1)
-;;(define-key evil-mc-key-map (kbd "C->") 'evil-mc-make-and-goto-next-match)
-;;(define-key evil-mc-key-map (kbd "M->") 'evil-mc-skip-and-goto-next-cursor)
-;;(define-key evil-mc-key-map (kbd "M->") 'evil-mc-make-and-goto-next-cursor)
-;;(define-key evil-mc-key-map (kbd "C-<") 'evil-mc-make-and-goto-prev-match)
-;;(define-key evil-mc-key-map (kbd "M-<") 'evil-mc-skip-and-goto-prev-cursor)
-;;(define-key evil-mc-key-map (kbd "M-<") 'evil-mc-make-and-goto-prev-cursor)
 ** Projectile
 #+BEGIN_SRC emacs-lisp
 (use-package projectile :after ivy
@@ -2785,111 +2723,6 @@ This package allow org mode to interact with WordPress.
 ;; NOTE: This is necessary for themes in the doom-themes package!
 (solaire-mode-swap-bg))
 #+END_SRC 
-** Nlinum
-#+BEGIN_SRC emacs-lisp
-  ;;   (defvar doom-line-numbers-style t
-  ;;     "The style to use for the line number display.
-  ;;   Accepts the same arguments as `display-line-numbers', which are:
-  ;;   nil         No line numbers
-  ;;   t           Ordinary line numbers
-  ;;   'relative   Relative line numbers")
-
-  ;;   (defun doom|enable-line-numbers (&optional arg)
-  ;;     "Enables the display of line numbers, using `display-line-numbers' (in Emacs
-  ;;   26+) or `nlinum-mode'.
-  ;;   See `doom-line-numbers-style' to control the style of line numbers to display."
-  ;;     (cond ((boundp 'display-line-numbers)
-  ;;            (setq display-line-numbers
-  ;;                  (pcase arg
-  ;;                    (+1 doom-line-numbers-style)
-  ;;                    (-1 nil)
-  ;;                    (_ doom-line-numbers-style))))
-  ;;           ((eq doom-line-numbers-style 'relative)
-  ;;            (if (= arg -1)
-  ;;                (nlinum-relative-off)
-  ;;              (nlinum-relative-on)))
-  ;;           ((not (null doom-line-numbers-style))
-  ;;            (nlinum-mode (or arg +1)))))
-
-  ;;   (defun doom|disable-line-numbers ()
-  ;;     "Disable the display of line numbers."
-  ;;     (doom|enable-line-numbers -1))
-
-  ;;   (add-hook! (prog-mode text-mode conf-mode) #'doom|enable-line-numbers)
-
-  ;;   ;; Emacs 26+ has native line number support.
-  ;;   ;; Line number column. A faster (or equivalent, in the worst case) line number
-  ;;   ;; plugin than `linum-mode'.
-  ;;   (use-package nlinum
-  ;;     :unless (boundp 'display-line-numbers)
-  ;;     :commands nlinum-mode
-  ;;     :init
-  ;;     (defvar doom-line-number-lpad 4
-  ;;       "How much padding to place before line numbers.")
-  ;;     (defvar doom-line-number-rpad 1
-  ;;       "How much padding to place after line numbers.")
-  ;;     (defvar doom-line-number-pad-char 32
-  ;;       "Character to use for padding line numbers.
-  ;;   By default, this is a space character. If you use `whitespace-mode' with
-  ;;   `space-mark', the whitespace in line numbers will be affected (this can look
-  ;;   ugly). In this case, you can change this to ?\u2002, which is a unicode
-  ;;   character that looks like a space that `whitespace-mode' won't affect.")
-  ;;     :config
-  ;;     (setq nlinum-highlight-current-line t)
-
-  ;;     ;; Fix lingering hl-line overlays (caused by nlinum)
-  ;;     (add-hook! 'hl-line-mode-hook
-  ;;       (remove-overlays (point-min) (point-max) 'face 'hl-line))
-
-  ;;     (defun doom-nlinum-format-fn (line _width)
-  ;;       "A more customizable `nlinum-format-function'. See `doom-line-number-lpad',
-  ;;   `doom-line-number-rpad' and `doom-line-number-pad-char'. Allows a fix for
-  ;;   `whitespace-mode' space-marks appearing inside the line number."
-  ;;       (let ((str (number-to-string line)))
-  ;;         (setq str (concat (make-string (max 0 (- doom-line-number-lpad (length str)))
-  ;;                                        doom-line-number-pad-char)
-  ;;                           str
-  ;;                           (make-string doom-line-number-rpad doom-line-number-pad-char)))
-  ;;         (put-text-property 0 (length str) 'face
-  ;;                            (if (and nlinum-highlight-current-line
-  ;;                                     (= line nlinum--current-line))
-  ;;                                'nlinum-current-line
-  ;;                              'linum)
-  ;;                            str)
-  ;;         str))
-  ;;     (setq nlinum-format-function #'doom-nlinum-format-fn)
-
-  ;; (defun doom*nlinum-flush (_ &optional norecord)
-  ;;   ;; norecord check is necessary to prevent infinite recursion
-  ;;   (when (and nlinum-mode (not norecord))
-  ;;     (nlinum--flush)))
-  ;; ;; refresh when switching windows
-  ;; (advice-add #'select-window :after #'doom*nlinum-flush)
-  ;; ;; when pressing esc in normal mode (if you're an evil user)
-  ;; (advice-add #'evil-force-normal-state :after #'nlinum--flush)
-
-  ;;     (defun doom|init-nlinum-width ()
-  ;;       "Calculate line number column width beforehand (optimization)."
-  ;;       (setq nlinum--width
-  ;;             (length (save-excursion (goto-char (point-max))
-  ;;                                     (format-mode-line "%l")))))
-  ;;     (add-hook 'nlinum-mode-hook #'doom|init-nlinum-width))
-
-  ;;   ;; (use-package nlinum  
-  ;;   ;; :config 
-  ;;   ;; (progn
-  ;;   ;; (setq nlinum-highlight-current-line t)
-  ;;   ;; (setq nlinum-format "%d  ")
-  ;;   ;; (add-hook 'org-mode-hook '(lambda () (nlinum-mode t)))))
-#+END_SRC 
-** Nlinum hl 
-#+BEGIN_SRC emacs-lisp
-  ;; (use-package nlinum-hl  :after nlinum
-  ;; :config
-  ;; ;; Changing fonts can leave nlinum line numbers in their original size; this
-  ;; ;; forces them to resize.
-  ;; (advice-add #'set-frame-font :after #'nlinum-hl-flush-all-windows))
- #+END_SRC 
 ** Hl-line mode
 #+BEGIN_SRC emacs-lisp
     ;; (use-package hl-line-mode  :after nlinum
@@ -2952,9 +2785,100 @@ This package allow org mode to interact with WordPress.
     ;; disable smartparens in evil-mode's replace state (they conflict)
     (add-hook 'evil-replace-state-entry-hook #'turn-off-smartparens-mode)
     (add-hook 'evil-replace-state-exit-hook  #'turn-on-smartparens-mode)
+
+(defhydra hydra-learn-sp (:hint nil)
+  "
+  _B_ backward-sexp            -----
+  _F_ forward-sexp               _s_ splice-sexp
+  _L_ backward-down-sexp         _df_ splice-sexp-killing-forward
+  _H_ backward-up-sexp           _db_ splice-sexp-killing-backward
+^^------                         _da_ splice-sexp-killing-around
+  _k_ down-sexp                -----
+  _j_ up-sexp                    _C-s_ select-next-thing-exchange
+-^^-----                         _C-p_ select-previous-thing
+  _n_ next-sexp                  _C-n_ select-next-thing
+  _p_ previous-sexp            -----
+  _a_ beginning-of-sexp          _C-f_ forward-symbol
+  _z_ end-of-sexp                _C-b_ backward-symbol
+--^^-                          -----
+  _t_ transpose-sexp             _c_ convolute-sexp
+-^^--                            _g_ absorb-sexp
+  _x_ delete-char                _q_ emit-sexp
+  _dw_ kill-word               -----
+  _dd_ kill-sexp                 _,b_ extract-before-sexp
+-^^--                            _,a_ extract-after-sexp
+  _S_ unwrap-sexp              -----
+-^^--                            _AP_ add-to-previous-sexp
+  _C-h_ forward-slurp-sexp       _AN_ add-to-next-sexp
+  _C-l_ forward-barf-sexp      -----
+  _C-S-h_ backward-slurp-sexp    _ join-sexp
+  _C-S-l_ backward-barf-sexp     _|_ split-sexp
+"
+  ;; TODO: Use () and [] - + * | <space>
+  ("B" sp-backward-sexp );; similiar to VIM b
+  ("F" sp-forward-sexp );; similar to VIM f
+  ;;
+  ("L" sp-backward-down-sexp )
+  ("H" sp-backward-up-sexp )
+  ;;
+  ("k" sp-down-sexp ) ; root - towards the root
+  ("j" sp-up-sexp )
+  ;;
+  ("n" sp-next-sexp )
+  ("p" sp-previous-sexp )
+  ;; a..z
+  ("a" sp-beginning-of-sexp )
+  ("z" sp-end-of-sexp )
+  ;;
+  ("t" sp-transpose-sexp )
+  ;;
+  ("x" sp-delete-char )
+  ("dw" sp-kill-word )
+  ;;("ds" sp-kill-symbol ) ;; Prefer kill-sexp
+  ("dd" sp-kill-sexp )
+  ;;("yy" sp-copy-sexp ) ;; Don't like it. Pref visual selection
+  ;;
+  ("S" sp-unwrap-sexp ) ;; Strip!
+  ;;("wh" sp-backward-unwrap-sexp ) ;; Too similar to above
+  ;;
+  ("C-h" sp-forward-slurp-sexp )
+  ("C-l" sp-forward-barf-sexp )
+  ("C-S-h" sp-backward-slurp-sexp )
+  ("C-S-l" sp-backward-barf-sexp )
+  ;;
+  ;;("C-[" (bind (sp-wrap-with-pair "[")) ) ;;FIXME
+  ;;("C-(" (bind (sp-wrap-with-pair "(")) )
+  ;;
+  ("s" sp-splice-sexp )
+  ("df" sp-splice-sexp-killing-forward )
+  ("db" sp-splice-sexp-killing-backward )
+  ("da" sp-splice-sexp-killing-around )
+  ;;
+  ("C-s" sp-select-next-thing-exchange )
+  ("C-p" sp-select-previous-thing )
+  ("C-n" sp-select-next-thing )
+  ;;
+  ("C-f" sp-forward-symbol )
+  ("C-b" sp-backward-symbol )
+  ;;
+  ;;("C-t" sp-prefix-tag-object)
+  ;;("H-p" sp-prefix-pair-object)
+  ("c" sp-convolute-sexp )
+  ("g" sp-absorb-sexp )
+  ("q" sp-emit-sexp )
+  ;;
+  (",b" sp-extract-before-sexp )
+  (",a" sp-extract-after-sexp )
+  ;;
+  ("AP" sp-add-to-previous-sexp );; Difference to slurp?
+  ("AN" sp-add-to-next-sexp )
+  ;;
+  ("_" sp-join-sexp ) ;;Good
+  ("|" sp-split-sexp )) 
+
+(global-set-key (kbd "M-g M-p") 'hydra-learn-sp/body)
   )
-    ;; (sp-local-pair '(xml-mode nxml-mode php-mode) "<!--" "-->"
-    ;;                :post-handlers '(("| " "SPC"))))
+
   #+END_SRC 
 ** Highlight changes mode
 #+BEGIN_SRC emacs-lisp
@@ -3245,25 +3169,6 @@ Turning on Text mode runs the normal hook `englisch-mode-hook'."
   :config
   (setq lv-use-seperator t))
 #+END_SRC 
-** Diff-hl
-#+BEGIN_SRC emacs-lisp
-  ;;   (use-package diff-hl
-  ;;   :init
-  ;;   (progn
-  ;;     (setq diff-hl-side 'left
-  ;;           diff-hl-margin-symbols-alist
-  ;;           '((insert . "+") (delete . "-") (change . "~")
-  ;;             (unknown . "?") (ignored . "i")))
-  ;; ;; Better looking colours for diff indicators /w spacemacs-light theme
-  ;;   ;; (custom-set-faces
-  ;;   ;; '(diff-hl-change ((t (:background "#3a81c3"))))
-  ;;   ;; '(diff-hl-insert ((t (:background "#7ccd7c"))))
-  ;;   ;; '(diff-hl-delete ((t (:background "#ee6363")))))
-  ;;     (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh)
-  ;;     ;;(diff-hl-flydiff-mode)
-  ;;   ;;  (diff-hl-margin-mode)
-  ;;     (global-diff-hl-mode)))
-  #+END_SRC 
 ** Avy
 #+BEGIN_SRC emacs-lisp
   (use-package avy
@@ -3334,12 +3239,50 @@ Turning on Text mode runs the normal hook `englisch-mode-hook'."
               ("p" git-gutter:popup-hunk)
               ("R" git-gutter:set-start-revision)
               ("q" nil :color blue)
-              ("Q" (git-gutter-mode -1) :color blue)))
+              ("Q" (git-gutter-mode -1) :color blue))
+
+(global-set-key (kbd "M-g M-g") 'hydra-git-gutter/body)
+)
   #+END_SRC 
 ** EasyPG
 #+BEGIN_SRC emacs-lisp
-  (require 'epa-file)
-(epa-file-enable)
+  (use-package epa-file
+    :config
+    (epa-file-enable))
+  #+END_SRC 
+** Default Text Scale
+This package provides commands for increasing or decreasing the default
+font size in all GUI Emacs frames -- it is like an Emacs-wide version of
+~text-scale-mode~.
+
+It works by adjusting the height of the ~default~ face in the ~user~ theme,
+which is always combined with any other loaded themes.
+
+It's handy for quickly adjusting the font size for readability or impromptu
+screen-sharing.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package default-text-scale
+    :config
+    (global-set-key (kbd "C-M-=") 'default-text-scale-increase)
+    (global-set-key (kbd "C-M--") 'default-text-scale-decrease))
+  #+END_SRC 
+** Git Time Machine
+#+BEGIN_SRC emacs-lisp
+  (use-package git-timemachine
+    :commands (git-timemachine git-timemachine-toggle)
+    :config
+    (require 'magit-blame)
+
+    ;; Sometimes I forget `git-timemachine' is enabled in a buffer, so instead of
+    ;; showing revision details in the minibuffer, show them in
+    ;; `header-line-format', which has better visibility.
+    ;; (setq git-timemachine-show-minibuffer-details nil)
+    (add-hook 'git-timemachine-mode-hook #'+vcs|init-header-line)
+    (advice-add #'git-timemachine-show-revision :after #'+vcs*update-header-line)
+
+    ;; Force evil to rehash keybindings for the current state
+    (add-hook 'git-timemachine-mode-hook #'evil-force-normal-state))
   #+END_SRC 
 * Custom Functions
 ** Sentence highlight
@@ -3561,7 +3504,7 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
 * Useful Key Bindings
 ** Font size change
 #+BEGIN_SRC emacs-lisp
-(define-key global-map (kbd "C-+") 'text-scale-increase)
+(define-key global-map (kbd "C-=") 'text-scale-increase)
 (define-key global-map (kbd "C--") 'text-scale-decrease)
 #+END_SRC
 ** Cycle through buffers

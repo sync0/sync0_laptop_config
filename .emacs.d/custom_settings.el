@@ -37,7 +37,7 @@
  '(org-tags-column 80)
  '(package-selected-packages
    (quote
-    (gnuplot gnuplot-mode org2blog magit avy yasnippet diff-hl highlight-indentation highlight-numbers rainbow-delimiters smartparens git-gutter git-gutter-fringe ivy-bibtex lisp-mode hl-line-mode nlinum-mode diminish font-lock+ fancy-battery spaceline spaceline-all-the-icons dim evil-escape evil-snipe calfw-cal guess-language calfw-org calfw-gcal calfw org-gcal request nlinum-hl visual-fill-column minimap nlinum hlinum doom-themes solaire-mode eldoc-eval use-package evil-multiedit iedit anzu evil-anzu neotree powerline all-the-icons all-the-icons-ivy ess auctex org ivy smooth-scrolling org-ref solarized-theme projectile org-bullets evil counsel)))
+    (default-text-scale git-timemachine gnuplot gnuplot-mode org2blog magit avy yasnippet diff-hl highlight-indentation highlight-numbers rainbow-delimiters smartparens git-gutter git-gutter-fringe ivy-bibtex lisp-mode hl-line-mode nlinum-mode diminish font-lock+ fancy-battery spaceline spaceline-all-the-icons dim evil-escape evil-snipe calfw-cal guess-language calfw-org calfw-gcal calfw org-gcal request nlinum-hl visual-fill-column minimap nlinum hlinum doom-themes solaire-mode eldoc-eval use-package evil-multiedit iedit anzu evil-anzu neotree powerline all-the-icons all-the-icons-ivy ess auctex org ivy smooth-scrolling org-ref solarized-theme projectile org-bullets evil counsel)))
  '(vc-annotate-background "#1B2229")
  '(vc-annotate-color-map
    (list
