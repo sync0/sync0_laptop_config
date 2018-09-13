@@ -25,9 +25,11 @@ This is my Emacs configuration file.
   add the words ~emacs-lisp~.
 - The location for hunspell dictionaries should be in /usr/share/hunspell.
 * Initialization
+Some of these settings are necessary before loading any packages. Other are
+not, but I have included them here for ease of finding. 
 ** Scratch Message
 The following code changes the welcoming message displayed by Emacs in the
-/scratch/ buffer. I have the begining of Karl Marx and Friedrich Engels'
+/scratch/ buffer. I use the begining of Karl Marx and Friedrich Engels'
 /Manifest der Kommunistischen Partei/.
 #+BEGIN_SRC emacs-lisp
 (setq initial-scratch-message ";; Ein Gespenst geht um in Europa – das Gespenst des Kommunismus. 
@@ -56,6 +58,8 @@ The following code changes the welcoming message displayed by Emacs in the
 ;; ein Manifest der Partei selbst entgegenstellen.")
   #+END_SRC 
 ** Doom macros
+Since I have borrowed extensively from [[https://github.com/hlissner][hlissner's]] Emacs configuration, I
+have also included some of his macros in my configuration. 
 *** after!
 #+BEGIN_SRC emacs-lisp
 (eval-and-compile
@@ -202,7 +206,7 @@ line or use --debug-init to enable this.")
         (message "No setting found for %s" keyword)
         nil)))))
   #+END_SRC 
-** User info
+** User Info.
 #+BEGIN_SRC emacs-lisp
   (setq user-full-name "Carlos Alberto Rivera Carreño"
         user-mail-address "cantorlunae@gmail.com")
@@ -225,14 +229,12 @@ line or use --debug-init to enable this.")
      (add-hook 'after-save-hook 'tangle-init)
    #+END_SRC 
 ** Packages
+These settings configure Emacs package manager and the package repositories.
    #+BEGIN_SRC emacs-lisp
-     ;;     (require 'cl)
-     ;;     (require 'package)
-
-     ;; Initialize Emac's package manager
+     ;; Initialize Emac's package manager.
      (package-initialize)
 
-     ;; Set up the package repositories 
+     ;; Set up the package repositories.
      (add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/"))
      (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
      ;;     (add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/"))
@@ -241,16 +243,22 @@ line or use --debug-init to enable this.")
      (setq package-check-signature nil)
    #+END_SRC
 ** Use-package
+[[https://github.com/jwiegley][jwiegley's]] ~use-package~ macro simplifies package configuration in the ~.emacs~
+startup file for faster performance and organization.
+
 #+BEGIN_SRC emacs-lisp
+;; Verify that "use-package" is installed.
   (unless (package-installed-p 'use-package)
+;; Refresh contents of package list.
     (package-refresh-contents)
+;; Install "use-package."
     (package-install 'use-package))
+
   (setq use-package-verbose t)
-  ;;(setq use-package-always-ensure t)
+
+;; Activate "use-package." 
   (require 'use-package)
-  ;;  (eval-when-compile
-  ;;  (require 'use-package))
-  ;;(use-package diminish )
+;; Necessary to allow "use-package" to bind keys through ":bind".
   (require 'bind-key)
 #+END_SRC 
 ** Modeline
