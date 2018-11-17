@@ -22,7 +22,6 @@
  '(jdee-db-requested-breakpoint-face-colors (cons "#1B2229" "#A3BE8C"))
  '(jdee-db-spec-breakpoint-face-colors (cons "#1B2229" "#4f5b66"))
  '(org-agenda-sticky t)
- '(org-agenda-tags-column 80)
  '(org-fontify-done-headline t)
  '(org-fontify-quote-and-verse-blocks t)
  '(org-fontify-whole-heading-line t)
@@ -34,7 +33,6 @@
      ("review" . "#ff9933")
      ("ereignisse" . "#66ff66")
      ("unterrichte" . "#66ccff"))))
- '(org-tags-column 80)
  '(package-selected-packages
    (quote
     (default-text-scale git-timemachine gnuplot gnuplot-mode org2blog magit avy yasnippet diff-hl highlight-indentation highlight-numbers rainbow-delimiters smartparens git-gutter git-gutter-fringe ivy-bibtex lisp-mode hl-line-mode nlinum-mode diminish font-lock+ fancy-battery spaceline spaceline-all-the-icons dim evil-escape evil-snipe calfw-cal guess-language calfw-org calfw-gcal calfw org-gcal request nlinum-hl visual-fill-column minimap nlinum hlinum doom-themes solaire-mode eldoc-eval use-package evil-multiedit iedit anzu evil-anzu neotree powerline all-the-icons all-the-icons-ivy ess auctex org ivy smooth-scrolling org-ref solarized-theme projectile org-bullets evil counsel)))

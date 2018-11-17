@@ -1,7 +1,0 @@
-# -*- mode: snippet -*-
-# name: koma_foreigntextquote
-# key: kfquote 
-# --
-\begin{quote}
-\foreigntextquote{${1:english}}[${2:Marcus Tullius Cicero}][${3:.}]{${4:Lorem ipsum dolor sit amet}}
-\end{quote} $0

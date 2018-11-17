@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
 # name: csquotes_blockquote
-# key: quote 
+# key: bquote 
 # --
 \blockquote[${1:Marcus Tullius Cicero}]{${2:Lorem ipsum dolor sit amet}}$0

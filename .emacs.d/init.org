@@ -14,13 +14,19 @@
 #+TITLE: Emacs Settings
 #+AUTHOR: sync0
 #+EMAIL: cantorlunae@gmail.com
+
 # Visualization settings.
 #+STARTUP: noindent  showall showstars
 # Necessary to tangle this file.
 #+PROPERTY: header-args :tangle yes
+
 * Introduction
 This is my Emacs configuration file.
-* Reminders
+
+Excuse any sloppiness with the code, but I am not a programmer. I use Emacs
+to take notes and write research papers, so these settings reflect that
+usage.
+* Tips & Reminders
 - In Org mode, ~<s + tab~ creates a code block. To make it executable,
   add the words ~emacs-lisp~.
 - The location for hunspell dictionaries should be in /usr/share/hunspell.
@@ -261,36 +267,22 @@ startup file for faster performance and organization.
 ;; Necessary to allow "use-package" to bind keys through ":bind".
   (require 'bind-key)
 #+END_SRC 
-** Modeline
+** Mode Line
 #+BEGIN_SRC emacs-lisp
   ;; Display time in modeline.
-  (display-time-mode 1)
-  (display-battery-mode 1)
-
-  ;; (setq mode-line-format
-  ;;           (list
-  ;;            ;; value of `mode-name'
-  ;;            "%m: "
-  ;;            ;; value of current buffer name
-  ;;            "buffer %b, "
-  ;;            ;; value of current line number
-  ;;            "line %l "
-  ;;            "-- user: "
-  ;;            ;; value of user
-  ;;            (getenv "USER")))
+  ;; (display-time-mode 1)
+  ;; Display remaining battery in modeline.
+  ;; (display-battery-mode 1)
 #+END_SRC 
 ** Line numbers
+After version 26, Emacs has native support for line numbers. 
 #+BEGIN_SRC emacs-lisp
-  ;; Use the following with emacs-version > 26 
-     ;;(setq-default ;; display-line-numbers-type 'visual
-    ;;               display-line-numbers-current-absolute t
-    ;;               display-line-numbers-width 4
-     ;;              display-line-numbers-widen nil)
   (when (version<= "26.0.50" emacs-version )
     (global-display-line-numbers-mode))
-
   #+END_SRC 
 ** Fancy Battery 
+[[https://github.com/lunaryorn][lunaryorn's]] unmaintained package shows the remaining battery time with
+colors and etc.
 #+BEGIN_SRC emacs-lisp
   (use-package fancy-battery
     :init 
@@ -474,78 +466,100 @@ startup file for faster performance and organization.
 ** Text settings
 *** Set default faces
  #+BEGIN_SRC emacs-lisp
-     ;; select default faces
-     (set-face-attribute 'default nil :font "Fira Mono")
+   ;; select default faces
+   ;; (set-face-attribute 'default nil :font "Fira Mono")
+
    ;; adjust font size according to screen resolution (when I use dual monitor setup)
-     (if window-system
-         (progn
-           (if (> (x-display-pixel-width) 2000)
-               ;; dual monitor font size
-               (progn
-                 ;; interline spacing
-                 (setq line-spacing 0.14)
-                 (set-face-attribute 'default nil :height 140) )
-             (progn
-               ;; interline spacing
-               (setq line-spacing 0.12)
-               ;; laptop font size
-               (set-face-attribute 'default nil :height 120)))))
+   (if (> (display-pixel-width) 2000)
+       ;; external monitor font size
+       (progn
+         ;; interline spacing
+         (set-face-attribute 'default nil 
+                             :family "Fira Mono"
+                             :height 120)
+         (setq line-spacing 0.09))
+     ;; laptop font size
+     (progn
+       ;; interline spacing
+       (set-face-attribute 'default nil 
+                           :family "Fira Mono"
+                           :height 125)
+       (setq line-spacing 0.14)))
 
-       (defun my-buffer-face-mode-fixed ()
-         "Sets a fixed width (monospace) font in current buffer"
-         (interactive)
-         (if window-system
-             (progn
-               (if (> (x-display-pixel-width) 1500)
-                   ;; dual monitor
-                   (setq buffer-face-mode-face '(:family "Fira Mono" :height 140 :spacing monospace)) 
-                 ;; laptop
-                 (setq buffer-face-mode-face '(:family "Fira Mono" :height 120 :spacing monospace)))))
-         (buffer-face-mode))
+   ;; (defun my-buffer-face-mode-fixed ()
+   ;;   "Sets a fixed width (monospace) font in current buffer"
+   ;;   (if (> (x-display-pixel-width) 1400)
+   ;;       ;; dual monitor
+   ;;       (setq buffer-face-mode-face '(:family "Fira Mono" :height 140 :spacing monospace)) 
+   ;;     ;; laptop
+   ;;     (setq buffer-face-mode-face '(:family "Fira Mono" :height 115 :spacing monospace)))
+   ;;   (buffer-face-mode))
 
-       ;; Variable-width faces 
-       (defun my-buffer-face-mode-variable ()
-         "Set font to a variable width (proportional) fonts in current buffer"
-         (interactive)
-         (if window-system
-             (progn
-               (if (> (x-display-pixel-width) 1500)
-                   ;; external monitor
-                   (setq buffer-face-mode-face '(:family "Linux Libertine" :height 170)) 
-                 ;; laptop
-                 (setq buffer-face-mode-face '(:family "Linux Libertine" :height 140)))))
-         (buffer-face-mode))
+   ;; (defun my-buffer-face-mode-fixed ()
+   ;;   "Sets a fixed width (monospace) font in current buffer"
+   ;;   ;; (interactive)
+   ;;   (if window-system
+   ;;       (progn
+   ;;         (if (> (x-display-pixel-width) 1400)
+   ;;             ;; dual monitor
+   ;;             (setq buffer-face-mode-face '(:family "Fira Mono" :height 140 :spacing monospace)) 
+   ;;           ;; laptop
+   ;;           (setq buffer-face-mode-face '(:family "Fira Mono" :height 120 :spacing monospace)))))
+   ;;   (buffer-face-mode))
 
-       ;; Set default font faces for Info, ERC, and Org
-       (add-hook 'erc-mode-hook 'my-buffer-face-mode-variable)
-       (add-hook 'Info-mode-hook 'my-buffer-face-mode-variable)
-       (add-hook 'text-mode-hook 'my-buffer-face-mode-variable)
+   ;; ;; ;; Variable-width faces 
+   ;; (defun my-buffer-face-mode-variable ()
+   ;;   "Set font to a variable width (proportional) fonts in current buffer"
+   ;;   ;; (interactive)
+   ;;   (if window-system
+   ;;       (progn
+   ;;         (if (> (x-display-pixel-width) 1300)
+   ;;             ;; external monitor
+   ;;             (setq buffer-face-mode-face '(:family "Linux Libertine" :height 170)) 
+   ;;           ;; laptop
+   ;;           (setq buffer-face-mode-face '(:family "Linux Libertine" :height 130)))))
+   ;;   (buffer-face-mode))
+
+   ;; Variable-width faces 
+   (defun my-buffer-face-mode-variable ()
+     "Set font to a variable width (proportional) fonts in current buffer"
+     (if (> (display-pixel-width) 2000)
+         ;; external monitor
+       (setq buffer-face-mode-face '(:family "Linux Libertine" :height 140))
+       ;; laptop
+         (setq buffer-face-mode-face '(:family "Linux Libertine" :height 160)))
+     (buffer-face-mode))
+
+   ;; Set default font faces for Info, ERC, and Org
+   (add-hook 'erc-mode-hook 'my-buffer-face-mode-variable)
+   (add-hook 'Info-mode-hook 'my-buffer-face-mode-variable)
+   (add-hook 'text-mode-hook 'my-buffer-face-mode-variable)
 
 
 
 
-       ;;   (defun fontify-frame (frame)
-       ;; (interactive)
-       ;; (if window-system
-       ;; (progn 
-       ;; (if (> (x-display-pixel-width) 2000) 
-       ;; (text-scale-set 0) 
-       ;;              (text-scale-set 0.8)))))
+   ;;   (defun fontify-frame (frame)
+   ;; (interactive)
+   ;; (if window-system
+   ;; (progn 
+   ;; (if (> (x-display-pixel-width) 2000) 
+   ;; (text-scale-set 0) 
+   ;;              (text-scale-set 0.8)))))
 
-       ;; ;; Fontify current frame
-       ;; (fontify-frame nil)
+   ;; ;; Fontify current frame
+   ;; (fontify-frame nil)
 
-       ;; ;; Fontify any future frames
-       ;; (push 'fontify-frame after-make-frame-functions)
+   ;; ;; Fontify any future frames
+   ;; (push 'fontify-frame after-make-frame-functions)
 
-       ;; Allow narrowing
-       (put 'narrow-to-region 'disabled nil)
+   ;; Allow narrowing
+   (put 'narrow-to-region 'disabled nil)
 
-       ;; Sentences end with single espace
-       (setq sentence-end-double-space nil)
+   ;; Sentences end with single espace
+   (setq sentence-end-double-space nil)
 
-       ;; Word wrap
-       (setq org-startup-truncated t)
+   ;; Word wrap
+   (setq org-startup-truncated t)
   #+END_SRC
 *** Add blank lines
 #+BEGIN_SRC emacs-lisp
@@ -1009,12 +1023,12 @@ that I’ve copied from the web.
       ;; (setq ispell-local-dictionary "fr_FR")
       ;;(setq ispell-local-dictionary "en_US")
       (setq ispell-local-dictionary-alist '(  
-        (nil "[[:alpha:]]" "[^[:alpha:]]" "['’-]" nil ("-d" "en_US-large" ) nil utf-8)
-        ("en_US-large" "[[:alpha:]]" "[^[:alpha:]]" "['’-]" t ("-d" "en_US-large" ) nil utf-8)
+        (nil "[[:alpha:]]" "[^[:alpha:]]" "['-]" nil ("-d" "en_US-large" ) nil utf-8)
+        ("en_US-large" "[[:alpha:]]" "[^[:alpha:]]" "[']" t ("-d" "en_US-large" ) nil utf-8)
         ("de_DE" "[[:alpha:]ÄÖÜéäöüß]" "[^[:alpha:]ÄÖÜéäöüß]" "['’-]" t ("-d" "de_DE") nil utf-8)
         ("es_ANY" "[[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "[^[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "['’-]" t ("-d" "es_ANY") nil utf-8)
         ("it_IT" "[[:alpha:]AEÉIOUàèéìòù]" "[^[:alpha:]AEÉIOUàèéìòù]" "['’-]" t ("-d" "it_IT") "~tex" nil utf-8)
-        ("fr_FR" "[[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[^[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[-'`]" t ("-d" "fr_FR")  nil utf-8))))
+        ("fr_FR" "[[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[^[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[-']" t ("-d" "fr_FR")  nil utf-8))))
 
      ((executable-find "aspell")
       (setq ispell-program-name "aspell")
@@ -1571,18 +1585,18 @@ idea
 *** Tags
 #+BEGIN_SRC emacs-lisp
   (setq org-tag-alist '(
-                        ("exam" . ?e)
-                        ("project" . ?p)
-                        ("reading" . ?r)
-                        ("review" . ?v)
-                        ("chores" . ?c)
+                        ("Examen" . ?e)
+                        ("Project" . ?p)
+                        ("Lectures" . ?r)
+                        ("Révisions" . ?v)
+                        ("Corvées" . ?c)
                         ("today" . ?h)
-                        ("idea" . ?i)
-                        ("memoire" . ?m)
+                        ("Idée" . ?i)
+                        ("Mémoire" . ?m)
                         ("thesis" . ?t)
-                        ("question" . ?q)
+                        ("Question" . ?q)
                         ("noexport" . ?n)
-                        ("university" . ?u)
+                        ("Université" . ?u)
                         ))
 
   ;; Allow setting single tags without the menu
@@ -1591,292 +1605,411 @@ idea
 #+END_SRC 
 *** Agenda
 #+BEGIN_SRC emacs-lisp
-      ;; specify agenda files
-      (setq org-agenda-files (list "~/Dropbox/org/gcal.org"
-                                   "~/Dropbox/org/unterrichte.org"
-                                   "~/Dropbox/org/refile-beorg.org"
-                                   "~/Dropbox/org/ereignisse.org"
-                                   ;;                                    "~/Dropbox/org/gewohnheiten.org"
-                                   "~/Dropbox/paris_1/m2_1"
-                                   "~/Dropbox/paris_1/memoire"
-                                   "~/Dropbox/org/jahrestage.org"
-                                   "~/Dropbox/org/master.org"
-                                   "~/Dropbox/org/todo.org"))
+            ;; specify agenda files
+            (setq org-agenda-files (list "~/Dropbox/org/gcal.org"
+                                         "~/Dropbox/org/unterrichte.org"
+                                         "~/Dropbox/org/refile-beorg.org"
+                                         "~/Dropbox/org/ereignisse.org"
+                                         ;;                                    "~/Dropbox/org/gewohnheiten.org"
+                                         ;; "~/Dropbox/paris_1/m2_1"
+                                         "~/Dropbox/paris_1/m2_1/m2_1_notes.org"
+                                         ;; "~/Dropbox/paris_1/memoire"
+                                         "~/Dropbox/paris_1/memoire/memoire_draft_petit.org"
+                                         "~/Dropbox/paris_1/memoire/memoire.org"
+                                         "~/Dropbox/org/jahrestage.org"
+                                         "~/Dropbox/org/master.org"
+                                         "~/Dropbox/org/todo.org"))
 
-      ;; necessary function 1
-      (defun air-org-skip-subtree-if-priority (priority)
-        "Skip an agenda subtree if it has a priority of PRIORITY.
-          PRIORITY may be one of the characters ?A, ?B, or ?C."
-        (let ((subtree-end (save-excursion (org-end-of-subtree t)))
-              (pri-value (* 1000 (- org-lowest-priority priority)))
-              (pri-current (org-get-priority (thing-at-point 'line t))))
-          (if (= pri-value pri-current)
-              subtree-end
-            nil)))
+            ;; necessary function 1
+            (defun air-org-skip-subtree-if-priority (priority)
+              "Skip an agenda subtree if it has a priority of PRIORITY.
+                PRIORITY may be one of the characters ?A, ?B, or ?C."
+              (let ((subtree-end (save-excursion (org-end-of-subtree t)))
+                    (pri-value (* 1000 (- org-lowest-priority priority)))
+                    (pri-current (org-get-priority (thing-at-point 'line t))))
+                (if (= pri-value pri-current)
+                    subtree-end
+                  nil)))
 
-      ;; necessary function 2
-      (defun air-org-skip-subtree-if-habit ()
-        "Skip an agenda entry if it has a STYLE property equal to \"habit\"."
-        (let ((subtree-end (save-excursion (org-end-of-subtree t))))
-          (if (string= (org-entry-get nil "STYLE") "habit")
-              subtree-end
-            nil)))
+            ;; necessary function 2
+            (defun air-org-skip-subtree-if-habit ()
+              "Skip an agenda entry if it has a STYLE property equal to \"habit\"."
+              (let ((subtree-end (save-excursion (org-end-of-subtree t))))
+                (if (string= (org-entry-get nil "STYLE") "habit")
+                    subtree-end
+                  nil)))
 
-      ;; build composite agenda view
-      (setq org-agenda-custom-commands
-            '(
-              ;;("n" "power agenda" ((agenda  "") (alltodo))
-              ;;                ((org-agenda-ndays 10)
-              ;;	                   (org-agenda-start-on-weekday nil)
-              ;;	                   (org-agenda-start-day "-1d")))
-              ("d" "Deux semaines" (
-                                    (agenda "" ((org-agenda-overriding-header "Today's Schedule:")
-                                                (org-agenda-span 'day)
-                                                (org-agenda-start-day "+0d")
-                                                (org-agenda-prefix-format " %-12t%-12s %-30b ")
-  ;; This format calls for two consecutive 12-character fields for time (%t)
-  ;; and scheduling information(%s), followed by a 30-character field for the
-  ;; breadcrumbs (the path). The reason for using fixed fields is to improve
-  ;; readability of the colums. Otherwise, apending and ~?~ character as in
-  ;; ~%?t~, only adds the field if the category exists. While this sound like
-  ;; a smart idea to save space, its very unreadable, so I advise against
-  ;; using it. This format is applied equally to the next two sections,
-  ;; precisely to avoid illegible output.
-                                                (org-agenda-start-on-weekday nil)))
-                                    ;; (org-agenda-todo-ignore-deadlines nil)))
-                                    (agenda "" ((org-agenda-overriding-header "Prochains 7 jours:")
-                                                (org-agenda-span 'week)
-                                                (org-agenda-start-day "+1d")
-                                                (org-agenda-start-on-weekday nil)
-                                                ;; (org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled))
-                                                (org-agenda-prefix-format " %-12t%-12s %-30b ")))
-                                    (agenda "" ((org-agenda-overriding-header "Prochains 14 jours:")
-                                                (org-agenda-span 'week)
-                                                (org-agenda-start-day "+8d")
-                                                (org-agenda-start-on-weekday nil)
-                                                ;; (org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled))
-                                                (org-agenda-prefix-format " %-12t%-12s %-30b "))))
-               ;; list options for block display
-               ((org-agenda-compact-blocks nil)
-               (org-agenda-view-columns-initially t)))
-              ;; ("H" "A user's setup" (
-              ;;                              (agenda "" ((org-agenda-overriding-header "Today's Schedule:")
-              ;;                                          (org-agenda-span 'day)
-              ;;                                          (org-agenda-ndays 14)
-              ;;                                          (org-agenda-start-on-weekday nil)
-              ;;                                          (org-agenda-start-day "+0d")
-              ;;                                          (org-agenda-todo-ignore-deadlines nil)))
-              ;;                              (tags-todo "university/!+次|+待|+中"
-              ;;                                         ((org-agenda-overriding-header "Current University Tasks:")
-              ;;                                          ))
-              ;;                              (tags-todo "university/!+無"
-              ;;                                         ((org-agenda-overriding-header "Undone University Tasks:")
-              ;;                                          ))
-              ;;                              (agenda "" ((org-agenda-overriding-header "Week At A Glance:")
-              ;;                                          (org-agenda-ndays 7)
-              ;;                                          (org-agenda-start-day "+1d")
-              ;;                                          (org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled))
-              ;;                                          (org-agenda-prefix-format '((agenda . "  %-12:c%?-12t %s [%b] ")))))
-              ;;                              ))
+            ;; build composite agenda view
+            (setq org-agenda-custom-commands
+                  '(
+                    ;;("n" "power agenda" ((agenda  "") (alltodo))
+                    ;;                ((org-agenda-ndays 10)
+                    ;;	                   (org-agenda-start-on-weekday nil)
+                    ;;	                   (org-agenda-start-day "-1d")))
+                    ("d" "Deux semaines" (
+                                          (agenda "" ((org-agenda-overriding-header "Today's Schedule:")
+                                                      (org-agenda-span 'day)
+                                                      (org-agenda-start-day "+0d")
+                                                      ;; (org-agenda-prefix-format " %-12t%-12s %-15T %l ")
+                                                      (org-agenda-prefix-format " %-12t%-6s %-15T ")
+        ;; This format calls for two consecutive 12-character fields for time (%t)
+        ;; and scheduling information(%s), followed by a 30-character field for the
+        ;; breadcrumbs (the path). The reason for using fixed fields is to improve
+        ;; readability of the colums. Otherwise, apending and ~?~ character as in
+        ;; ~%?t~, only adds the field if the category exists. While this sound like
+        ;; a smart idea to save space, its very unreadable, so I advise against
+        ;; using it. This format is applied equally to the next two sections,
+        ;; precisely to avoid illegible output.
+                                                      (org-agenda-start-on-weekday nil)))
+                                          ;; (org-agenda-todo-ignore-deadlines nil)))
+                                          (agenda "" ((org-agenda-overriding-header "Prochains 7 jours:")
+                                                      (org-agenda-span 'week)
+                                                      (org-agenda-start-day "+1d")
+                                                      (org-agenda-start-on-weekday nil)
+                                                      ;; (org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled))
+                                                      (org-agenda-prefix-format " %-12t%-6s %-15T ")))
+                                          (agenda "" ((org-agenda-overriding-header "Prochains 14 jours:")
+                                                      (org-agenda-span 'week)
+                                                      (org-agenda-start-day "+8d")
+                                                      (org-agenda-start-on-weekday nil)
+                                                      ;; (org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled))
+                                                      (org-agenda-prefix-format " %-12t%-6s %-15T "))))
+                     ;; list options for block display
+                     ((org-agenda-compact-blocks nil)
+                     (org-agenda-view-columns-initially t)))
+                    ;; ("H" "A user's setup" (
+                    ;;                              (agenda "" ((org-agenda-overriding-header "Today's Schedule:")
+                    ;;                                          (org-agenda-span 'day)
+                    ;;                                          (org-agenda-ndays 14)
+                    ;;                                          (org-agenda-start-on-weekday nil)
+                    ;;                                          (org-agenda-start-day "+0d")
+                    ;;                                          (org-agenda-todo-ignore-deadlines nil)))
+                    ;;                              (tags-todo "university/!+次|+待|+中"
+                    ;;                                         ((org-agenda-overriding-header "Current University Tasks:")
+                    ;;                                          ))
+                    ;;                              (tags-todo "university/!+無"
+                    ;;                                         ((org-agenda-overriding-header "Undone University Tasks:")
+                    ;;                                          ))
+                    ;;                              (agenda "" ((org-agenda-overriding-header "Week At A Glance:")
+                    ;;                                          (org-agenda-ndays 7)
+                    ;;                                          (org-agenda-start-day "+1d")
+                    ;;                                          (org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled))
+                    ;;                                          (org-agenda-prefix-format '((agenda . "  %-12:c%?-12t %s [%b] ")))))
+                    ;;                              ))
 
-              ;; ("d" "Daily agenda and all TODOs"
-              ;;  ((tags "PRIORITY=\"A\""
-              ;;         ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-              ;;          (org-agenda-overriding-header "High-priority unfinished tasks:")))
-              ;;   (agenda "" ((org-agenda-ndays 1)))
-              ;;   (alltodo ""
-              ;;            ((org-agenda-skip-function '(or (air-org-skip-subtree-if-habit)
-              ;;                                            (air-org-skip-subtree-if-priority ?A)
-              ;;                                            (org-agenda-skip-if nil '(scheduled deadline))))
-              ;;             (org-agenda-overriding-header "ALL normal priority tasks:"))))
-              ;;  ;; list of crazy options
-              ;;  ((org-agenda-compact-blocks t)))
+                    ;; ("d" "Daily agenda and all TODOs"
+                    ;;  ((tags "PRIORITY=\"A\""
+                    ;;         ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                    ;;          (org-agenda-overriding-header "High-priority unfinished tasks:")))
+                    ;;   (agenda "" ((org-agenda-ndays 1)))
+                    ;;   (alltodo ""
+                    ;;            ((org-agenda-skip-function '(or (air-org-skip-subtree-if-habit)
+                    ;;                                            (air-org-skip-subtree-if-priority ?A)
+                    ;;                                            (org-agenda-skip-if nil '(scheduled deadline))))
+                    ;;             (org-agenda-overriding-header "ALL normal priority tasks:"))))
+                    ;;  ;; list of crazy options
+                    ;;  ((org-agenda-compact-blocks t)))
 
-              ("w" "Study Planner" (
-                                    (tags-todo "review/!+次|+待|+中|+無|+阻"
-                                               ((org-agenda-overriding-header "Revisions:")))
-                                    (tags-todo "reading/!+次|+待|+中|+無|+阻"
-                                               ((org-agenda-overriding-header "Lectures:")))
-                                    (tags-todo "project/!+次|+待|+中|+無|+阻"
-                                               ((org-agenda-overriding-header "Projects:")))
-                                    (tags-todo "exam/!+次|+待|+中|+無|+阻"
-                                               ((org-agenda-overriding-header "Examens:"))))
-               ;; list options for block display
-               ((org-agenda-compact-blocks t)
-                (org-agenda-view-columns-initially t)))
+                    ("w" "Study Planner" (
+                                          (tags-todo "review/!+次|+待|+中|+無|+阻"
+                                                     ((org-agenda-overriding-header "Revisions:")))
+                                          (tags-todo "reading/!+次|+待|+中|+無|+阻"
+                                                     ((org-agenda-overriding-header "Lectures:")))
+                                          (tags-todo "project/!+次|+待|+中|+無|+阻"
+                                                     ((org-agenda-overriding-header "Projects:")))
+                                          (tags-todo "exam/!+次|+待|+中|+無|+阻"
+                                                     ((org-agenda-overriding-header "Examens:"))))
+                     ;; list options for block display
+                     ((org-agenda-compact-blocks t)
+                      (org-agenda-view-columns-initially t)))
 
-              ;;("h" "Aujourd'hui" (
-              ;;         (tags-todo "review&today/!+次|+待|+中|+無"
-              ;;                                                           ((org-agenda-overriding-header "Révisions:")))
-              ;;       (tags-todo "reading&today/!+次|+待|+中|+無"
-              ;;                                                         ((org-agenda-overriding-header "Lectures:")))
-              ;;     (tags-todo "project&today/!+次|+待|+中|+無"
-              ;;                                                      ((org-agenda-overriding-header "Projects:")))
-              ;; (tags-todo "exam&today/!+次|+待|+中|+無"
-              ;;                                                  ((org-agenda-overriding-header "Examens:"))))
-              ;; list options for block display
-              ;;  ((org-agenda-compact-blocks t)
-              ;; (org-agenda-view-columns-initially t)))
+                    ("h" "Aujourd'hui" (
+                                           (tags-todo "today"
+                                                 ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取" "阻"))
+                                                                                 (air-org-skip-subtree-if-habit)))
+                                                      (org-agenda-prefix-format " %-12t%-6s %-15c ")
+                                                  (org-agenda-overriding-header "Tâches d'Aujourd'hui:"))))
+                     ;; list options for block display
+                     ((org-agenda-compact-blocks t)
+                     (org-agenda-view-columns-initially t)))
 
-              ("x" "Tâches: Toutes" (
-                                     (tags "PRIORITY=\"A\""
-                                           ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取"))
-                                                                           (air-org-skip-subtree-if-habit)))
-                                                 (org-agenda-prefix-format " %s [%?-45b] ")
-                                            (org-agenda-overriding-header "Tâches prioritaires:")))
-                                     (alltodo ""
-                                              ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("中" "次"))
-                                                                              ;; (air-org-skip-subtree-if-habit)
-                                                                              (air-org-skip-subtree-if-priority ?A)))
-                                                 (org-agenda-prefix-format " %s [%?-45b] ")
-                                               ;;(org-agenda-skip-if nil '(scheduled deadline))
-                                               (org-agenda-overriding-header "Tâches en cours:")))
-                                     (alltodo ""
-                                              ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("無"))
-                                                                              ;; (air-org-skip-subtree-if-habit)
-                                                                              ;;(org-agenda-skip-if nil '(scheduled deadline))
-                                                                              (air-org-skip-subtree-if-priority ?A)))
-                                                 (org-agenda-prefix-format " %s [%?-45b] ")
-                                               (org-agenda-overriding-header "Tâches à faire:")))
-                                     (alltodo ""
-                                              ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("待"))
-                                                                              ;; (air-org-skip-subtree-if-habit)
-                                                                              (air-org-skip-subtree-if-priority ?A)))
-                                               ;;(org-agenda-skip-if nil '(scheduled deadline))))
-                                                 (org-agenda-prefix-format " %s [%?-45b] ")
-                                               (org-agenda-overriding-header "Tâches en attente:")))
-                                     (alltodo ""
-                                              ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("阻"))
-                                                                              ;; (air-org-skip-subtree-if-habit)
-                                                                              (air-org-skip-subtree-if-priority ?A)))
-                                                 (org-agenda-prefix-format " %s [%?-45b] ")
-                                               (org-agenda-overriding-header "Tâches coincées:"))))
-               ;; list options for block display
-               ((org-agenda-compact-blocks t)))
+                    ;;("h" "Aujourd'hui" (
+                    ;;         (tags-todo "review&today/!+次|+待|+中|+無"
+                    ;;                                                           ((org-agenda-overriding-header "Révisions:")))
+                    ;;       (tags-todo "reading&today/!+次|+待|+中|+無"
+                    ;;                                                         ((org-agenda-overriding-header "Lectures:")))
+                    ;;     (tags-todo "project&today/!+次|+待|+中|+無"
+                    ;;                                                      ((org-agenda-overriding-header "Projects:")))
+                    ;; (tags-todo "exam&today/!+次|+待|+中|+無"
+                    ;;                                                  ((org-agenda-overriding-header "Examens:"))))
+                    ;; list options for block display
+                    ;;  ((org-agenda-compact-blocks t)
+                    ;; (org-agenda-view-columns-initially t)))
 
-              ("y" "Tâches: Université" (
-                                         (tags-todo "+lecture+PRIORITY=\"A\"|+university+PRIORITY=\"A\"|+work+PRIORITY=\"A\""
-                                                    ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取"))
-                                                                                    (air-org-skip-subtree-if-habit)))
-                                                 (org-agenda-prefix-format " %s [%?-45b] ")
-                                                     (org-agenda-overriding-header "Tâches prioritaires:")))
-                                         (tags-todo "+lecture|+university|+work"
+                    ("p" "Tâches: Projets" (
+                                           (tags "PRIORITY=\"A\""
+                                                 ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取"))
+                                                                                 (air-org-skip-subtree-if-habit)))
+                                                      ;; (org-agenda-prefix-format " %-6s %-15T ")
+                                                      (org-agenda-prefix-format " %-12t%-6s %-15c ")
+                                                  (org-agenda-overriding-header "Tâches prioritaires:")))
+                                           (alltodo ""
                                                     ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("中" "次"))
                                                                                     (air-org-skip-subtree-if-habit)
                                                                                     (air-org-skip-subtree-if-priority ?A)))
-                                                 (org-agenda-prefix-format " %s [%?-45b] ")
+                                                      ;; (org-agenda-prefix-format " %-6s %-15T ")
+                                                      (org-agenda-prefix-format " %-12t%-6s %-15c ")
                                                      ;;(org-agenda-skip-if nil '(scheduled deadline))
                                                      (org-agenda-overriding-header "Tâches en cours:")))
-                                         (tags-todo "+lecture|+university|+work"
-                                                    ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("無"))
+                                           (tags-todo "Mémoire"
+                                                    ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("中" "次"))
                                                                                     (air-org-skip-subtree-if-habit)
+                                                                                    (air-org-skip-subtree-if-priority ?A)))
+                                                      (org-agenda-prefix-format " %-12t%-6s %-15c ")
+                                                      ;; (org-agenda-prefix-format " %-6s %-15T ")
+                                                     ;;(org-agenda-skip-if nil '(scheduled deadline))
+                                                     (org-agenda-overriding-header "Mémoire")))
+                                           (tags-todo "Université-Lectures"
+                                                    ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("中" "次"))
+                                                                                    (air-org-skip-subtree-if-habit)
+                                                                                    (air-org-skip-subtree-if-priority ?A)))
+                                                      (org-agenda-prefix-format " %-12t%-6s %-15c ")
+                                                      ;; (org-agenda-prefix-format " %-6s %-15T ")
+                                                     ;;(org-agenda-skip-if nil '(scheduled deadline))
+                                                     (org-agenda-overriding-header "Université")))
+                                           (tags-todo "Métier-Lectures"
+                                                    ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("中" "次"))
+                                                                                    (air-org-skip-subtree-if-habit)
+                                                                                    (air-org-skip-subtree-if-priority ?A)))
+                                                      (org-agenda-prefix-format " %-12t%-6s %-15c ")
+                                                      ;; (org-agenda-prefix-format " %-6s %-15T ")
+                                                     ;;(org-agenda-skip-if nil '(scheduled deadline))
+                                                     (org-agenda-overriding-header "Métier")))
+                                           (tags-todo "Lectures"
+                                                    ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("中" "次"))
+                                                                                    (air-org-skip-subtree-if-habit)
+                                                                                    (air-org-skip-subtree-if-priority ?A)))
+                                                      (org-agenda-prefix-format " %-12t%-6s %-15c ")
+                                                      ;; (org-agenda-prefix-format " %-6s %-15T ")
+                                                     ;;(org-agenda-skip-if nil '(scheduled deadline))
+                                                     (org-agenda-overriding-header "Lectures"))))
+                     ;; list options for block display
+                     ((org-agenda-compact-blocks t)
+                     (org-agenda-view-columns-initially t)))
+
+                    ("x" "Tâches: Toutes" (
+                                           (tags "PRIORITY=\"A\""
+                                                 ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取"))
+                                                                                 (air-org-skip-subtree-if-habit)))
+                                                      (org-agenda-prefix-format " %-6s %-15T ")
+                                                  (org-agenda-overriding-header "Tâches prioritaires:")))
+                                           (alltodo ""
+                                                    ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("中" "次"))
+                                                                                    (air-org-skip-subtree-if-habit)
+                                                                                    (air-org-skip-subtree-if-priority ?A)))
+                                                      (org-agenda-prefix-format " %-6s %-15T ")
+                                                     ;;(org-agenda-skip-if nil '(scheduled deadline))
+                                                     (org-agenda-overriding-header "Tâches en cours:")))
+                                           (alltodo ""
+                                                    ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("無"))
+                                                                                     (air-org-skip-subtree-if-habit)
                                                                                     ;;(org-agenda-skip-if nil '(scheduled deadline))
                                                                                     (air-org-skip-subtree-if-priority ?A)))
-                                                 (org-agenda-prefix-format " %s [%?-45b] ")
+                                                      (org-agenda-prefix-format " %-6s %-15T ")
                                                      (org-agenda-overriding-header "Tâches à faire:")))
-                                         (tags-todo "+lecture|+university|+work"
+                                           (alltodo ""
                                                     ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("待"))
-                                                                                    (air-org-skip-subtree-if-habit)
+                                                                                     (air-org-skip-subtree-if-habit)
                                                                                     (air-org-skip-subtree-if-priority ?A)))
                                                      ;;(org-agenda-skip-if nil '(scheduled deadline))))
-                                                 (org-agenda-prefix-format " %s [%?-45b] ")
+                                                      (org-agenda-prefix-format " %-6s %-15T ")
                                                      (org-agenda-overriding-header "Tâches en attente:")))
-                                         (tags-todo "+lecture|+university|+work"
+                                           (alltodo ""
                                                     ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("阻"))
+                                                                                     (air-org-skip-subtree-if-habit)
+                                                                                    (air-org-skip-subtree-if-priority ?A)))
+                                                      (org-agenda-prefix-format " %-6s %-15T ")
+                                                     (org-agenda-overriding-header "Tâches coincées:"))))
+                     ;; list options for block display
+                     ((org-agenda-compact-blocks t)))
+
+          ;;           ("y" "Tâches: Université" (
+          ;;                                      (tags-todo "+lecture+PRIORITY=\"A\"|+university+PRIORITY=\"A\"|+work+PRIORITY=\"A\""
+          ;;                                                 ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取"))
+          ;;                                                                                 (air-org-skip-subtree-if-habit)))
+          ;;                                              (org-agenda-prefix-format " %s [%?-45b] ")
+          ;;                                                  (org-agenda-overriding-header "Tâches prioritaires:")))
+          ;;                                      (tags-todo "+lecture|+university|+work"
+          ;;                                                 ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("中" "次"))
+          ;;                                                                                 (air-org-skip-subtree-if-habit)
+          ;;                                                                                 (air-org-skip-subtree-if-priority ?A)))
+          ;;                                              (org-agenda-prefix-format " %s [%?-45b] ")
+          ;;                                                  ;;(org-agenda-skip-if nil '(scheduled deadline))
+          ;;                                                  (org-agenda-overriding-header "Tâches en cours:")))
+          ;;                                      (tags-todo "+lecture|+university|+work"
+          ;;                                                 ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("無"))
+          ;;                                                                                 (air-org-skip-subtree-if-habit)
+          ;;                                                                                 ;;(org-agenda-skip-if nil '(scheduled deadline))
+          ;;                                                                                 (air-org-skip-subtree-if-priority ?A)))
+          ;;                                              (org-agenda-prefix-format " %s [%?-45b] ")
+          ;;                                                  (org-agenda-overriding-header "Tâches à faire:")))
+          ;;                                      (tags-todo "+lecture|+university|+work"
+          ;;                                                 ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("待"))
+          ;;                                                                                 (air-org-skip-subtree-if-habit)
+          ;;                                                                                 (air-org-skip-subtree-if-priority ?A)))
+          ;;                                                  ;;(org-agenda-skip-if nil '(scheduled deadline))))
+          ;;                                              (org-agenda-prefix-format " %s [%?-45b] ")
+          ;;                                                  (org-agenda-overriding-header "Tâches en attente:")))
+          ;;                                      (tags-todo "+lecture|+university|+work"
+          ;;                                                 ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("阻"))
+          ;;                                                                                 (air-org-skip-subtree-if-habit)
+          ;;                                                                                 (air-org-skip-subtree-if-priority ?A)))
+          ;;                                              (org-agenda-prefix-format " %s [%?-45b] ")
+          ;;                                                  (org-agenda-overriding-header "Tâches coincées:"))))
+          ;;            ;; list options for block display
+          ;;            ((org-agenda-compact-blocks t)
+          ;; (org-agenda-view-columns-initially t)))
+
+                    ("y" "Projects" (
+                                           (tags "PRIORITY=\"A\""
+                                                 ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取" "阻"))
+                                                                                 (air-org-skip-subtree-if-habit)))
+                                                      ;; (org-agenda-prefix-format " %-6s %-15T ")
+                                                      (org-agenda-prefix-format " %-12t%-6s ")
+                                                  (org-agenda-overriding-header "Tâches prioritaires:")))
+                                           (alltodo ""
+                                                    ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("中" "次"))
                                                                                     (air-org-skip-subtree-if-habit)
                                                                                     (air-org-skip-subtree-if-priority ?A)))
-                                                 (org-agenda-prefix-format " %s [%?-45b] ")
-                                                     (org-agenda-overriding-header "Tâches coincées:"))))
-               ;; list options for block display
-               ((org-agenda-compact-blocks t)
-    (org-agenda-view-columns-initially t)))
-    ;; End of custom
-              ))
+                                                      ;; (org-agenda-prefix-format " %-6s %-15T ")
+                                                      (org-agenda-prefix-format " %-12t%-6s ")
+                                                     ;;(org-agenda-skip-if nil '(scheduled deadline))
+                                                     (org-agenda-overriding-header "Tâches en cours:")))
+                                               (tags-todo "Project"
+                                                          ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取" "阻"))
+                                                                                          (air-org-skip-subtree-if-habit)))
+                                                      (org-agenda-prefix-format " %l %-12t%-6s ")
+                                                           (org-agenda-overriding-header "Projets")))
+                                               (tags-todo "Mémoire"
+                                                          ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取" "阻"))
+                                                                                          (air-org-skip-subtree-if-habit)))
+                                                      (org-agenda-prefix-format " %l %-12t%-6s ")
+                                                           (org-agenda-overriding-header "Mémoire")))
+                                               (tags-todo "Épistémologie-Project"
+                                                          ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取" "阻"))
+                                                                                          (air-org-skip-subtree-if-habit)))
+                                                      (org-agenda-prefix-format " %l %-12t%-6s ")
+                                                           (org-agenda-overriding-header "Épistémologie")))
+                                               (tags-todo "SocioEco-Project"
+                                                          ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取" "阻"))
+                                                                                          (air-org-skip-subtree-if-habit)))
+                                                      (org-agenda-prefix-format " %l %-12t%-6s ")
+                                                           (org-agenda-overriding-header "Sociologie économique")))
+                                               (tags-todo "EcoPsycho-Project"
+                                                          ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取" "阻"))
+                                                                                          (air-org-skip-subtree-if-habit)))
+                                                      (org-agenda-prefix-format " %l %-12t%-6s ")
+                                                           (org-agenda-overriding-header "Économie et psychologie"))))
+                     ;; list options for block display
+                     ((org-agenda-compact-blocks t)
+                     (org-agenda-view-columns-initially t)))
 
-      ;; Display properties
-      (setq org-cycle-separator-lines 0
-            ;; Choose the placement of org tags in org files.
-            org-tags-column 80
-            ;; Place org agenda tags in the same place as org tags.
-            org-agenda-tags-column org-tags-column
-            ;; Make org-agenda the only window by default.
-            org-agenda-window-setup 'only-window 
-            ;; Build agenda manually (to update press "r").
-            org-agenda-sticky t
-            ;; Compact the block agenda view. This deletes the section separators.
-            org-agenda-compact-blocks nil
-            ;; Allow one-key todo selection.
-            org-use-fast-todo-selection t 
-            ;; Include the todo keywords in fast tag selection buffer.
-            org-fast-tag-selection-include-todo t
-            ;; Allow one-key tag selection.
-           org-fast-tag-selection-single-key t
-  ;; each habit to show up when it is next scheduled, but no further repetitions
-    org-agenda-repeating-timestamp-show-all nil
-    ;; Add appointments duration to column view's effort estimates.
-     org-agenda-columns-add-appointments-to-effort-sum t)
+          ;; End of custom
+                    ))
 
+            ;; Display properties
+            (setq org-cycle-separator-lines 0
+                  ;; Choose the placement of org tags in org files.
+                  org-tags-column 100
+                  ;; Place org agenda tags in the same place as org tags.
+                  org-agenda-tags-column org-tags-column
+                  ;; Make org-agenda the only window by default.
+                  org-agenda-window-setup 'only-window 
+                  ;; Build agenda manually (to update press "r").
+                  org-agenda-sticky t
+                  ;; Compact the block agenda view. This deletes the section separators.
+                  org-agenda-compact-blocks nil
+                  ;; Allow one-key todo selection.
+                  org-use-fast-todo-selection t 
+                  ;; Include the todo keywords in fast tag selection buffer.
+                  org-fast-tag-selection-include-todo t
+                  ;; Allow one-key tag selection.
+                 org-fast-tag-selection-single-key t
+        ;; each habit to show up when it is next scheduled, but no further repetitions
+          org-agenda-repeating-timestamp-show-all nil
+    ;; This variable may be set to nil, t, or a number which will then
+    ;; give the number of days before the actual deadline when the
+    ;; prewarnings should resume.
+    org-agenda-skip-deadline-prewarning-if-scheduled t
+  org-agenda-skip-scheduled-if-deadline-is-shown t
+          ;; Add appointments duration to column view's effort estimates.
+           org-agenda-columns-add-appointments-to-effort-sum t)
 
-      ;; Set of functions to have evil bindings in org-agenda.
+      (setq org-agenda-deadline-leaders (quote ("  豫定 " "%2d日後 " "%2d日前 ")))
+      ;; (setq org-agenda-deadline-leaders (quote ("  마감 " "%2d日後 " "%2d日前 ")))
+      (setq org-agenda-scheduled-leaders (quote ("  豫定 " " 再日程 ")))
+      ;; (setq org-agenda-scheduled-leaders (quote ("  豫定 " "%2d日前 ")))
 
-      (defun air-org-agenda-next-header ()
-        "Jump to the next header in an agenda series."
-        (interactive)
-        (air--org-agenda-goto-header))
+            ;; Set of functions to have evil bindings in org-agenda.
 
-      (defun air-org-agenda-previous-header ()
-        "Jump to the previous header in an agenda series."
-        (interactive)
-        (air--org-agenda-goto-header t))
+            (defun air-org-agenda-next-header ()
+              "Jump to the next header in an agenda series."
+              (interactive)
+              (air--org-agenda-goto-header))
 
-      (defun air--org-agenda-goto-header (&optional backwards)
-        "Find the next agenda series header forwards or BACKWARDS."
-        (let ((pos (save-excursion
-                     (goto-char (if backwards
-                                    (line-beginning-position)
-                                  (line-end-position)))
-                     (let* ((find-func (if backwards
-                                           'previous-single-property-change
-                                         'next-single-property-change))
-                            (end-func (if backwards
-                                          'max
-                                        'min))
-                            (all-pos-raw (list (funcall find-func (point) 'org-agenda-structural-header)
-                                               (funcall find-func (point) 'org-agenda-date-header)))
-                            (all-pos (cl-remove-if-not 'numberp all-pos-raw))
-                            (prop-pos (if all-pos (apply end-func all-pos) nil)))
-                       prop-pos))))
-          (if pos (goto-char pos))
-          (if backwards (goto-char (line-beginning-position)))))
+            (defun air-org-agenda-previous-header ()
+              "Jump to the previous header in an agenda series."
+              (interactive)
+              (air--org-agenda-goto-header t))
 
-      ;; fast access agenda view
-      (defun air-pop-to-org-agenda (&optional split)
-        "Visit the org agenda, in the current window or a SPLIT."
-        (interactive "P")
-        (org-agenda nil "d") ;; the h corresponds to the agenda view that will be displayed once this command is called
-        (when (not split)
-          (delete-other-windows)))
+            (defun air--org-agenda-goto-header (&optional backwards)
+              "Find the next agenda series header forwards or BACKWARDS."
+              (let ((pos (save-excursion
+                           (goto-char (if backwards
+                                          (line-beginning-position)
+                                        (line-end-position)))
+                           (let* ((find-func (if backwards
+                                                 'previous-single-property-change
+                                               'next-single-property-change))
+                                  (end-func (if backwards
+                                                'max
+                                              'min))
+                                  (all-pos-raw (list (funcall find-func (point) 'org-agenda-structural-header)
+                                                     (funcall find-func (point) 'org-agenda-date-header)))
+                                  (all-pos (cl-remove-if-not 'numberp all-pos-raw))
+                                  (prop-pos (if all-pos (apply end-func all-pos) nil)))
+                             prop-pos))))
+                (if pos (goto-char pos))
+                (if backwards (goto-char (line-beginning-position)))))
 
-      ;;(define-key evil-normal-state-map (kbd "S-SPC") 'air-pop-to-org-agenda)
-      (global-set-key [f6] 'air-pop-to-org-agenda)
+            ;; fast access agenda view
+            (defun air-pop-to-org-agenda (&optional split)
+              "Visit the org agenda, in the current window or a SPLIT."
+              (interactive "P")
+              (org-agenda nil "d") ;; the h corresponds to the agenda view that will be displayed once this command is called
+              (when (not split)
+                (delete-other-windows)))
 
-      ;; sacha's configuration 
-      (defun sacha/org-agenda-new ()
-        "Create a new note or task at the current agenda item.
-          Creates it at the same level as the previous task, so it's better to use
-          this with to-do items than with projects or headings."
-        (interactive)
-        (org-agenda-switch-to)
-        (org-capture 0))
+            ;;(define-key evil-normal-state-map (kbd "S-SPC") 'air-pop-to-org-agenda)
+            (global-set-key [f6] 'air-pop-to-org-agenda)
 
-      (defun sacha/org-agenda-mark-done-and-add-followup ()
-        "Mark the current TODO as done and add another task after it.
-          Creates it at the same level as the previous task, so it's better to use
-          this with to-do items than with projects or headings."
-        (interactive)
-        (org-agenda-todo "DONE")
-        (org-agenda-switch-to)
-        (org-capture 0 "t"))
+            ;; sacha's configuration 
+            (defun sacha/org-agenda-new ()
+              "Create a new note or task at the current agenda item.
+                Creates it at the same level as the previous task, so it's better to use
+                this with to-do items than with projects or headings."
+              (interactive)
+              (org-agenda-switch-to)
+              (org-capture 0))
+
+            (defun sacha/org-agenda-mark-done-and-add-followup ()
+              "Mark the current TODO as done and add another task after it.
+                Creates it at the same level as the previous task, so it's better to use
+                this with to-do items than with projects or headings."
+              (interactive)
+              (org-agenda-todo "DONE")
+              (org-agenda-switch-to)
+              (org-capture 0 "t"))
  #+END_SRC
 ****   Movement in agenda buffer
 #+BEGIN_SRC emacs-lisp
@@ -1896,7 +2029,7 @@ idea
 This allow to hide certain tags in the agenda display, but include them in
 the processing of agenda commands
 #+BEGIN_SRC emacs-lisp
-(setq org-agenda-hide-tags-regexp "noexport\\|today")
+(setq org-agenda-hide-tags-regexp "noexport\\|today\\|Lectures\\|Project\\|Mémoire\\|Administration\\|Université\\|Métier")
 ;;(setq org-agenda-hide-tags-regexp "noexport\\|university\\|today")
   #+END_SRC 
 **** Habits
@@ -1915,6 +2048,12 @@ There is a strange inconsistency when habits are enabled. See [[https://emacs.st
   ;;(setq org-agenda-show-inherited-tags nil)
   #+END_SRC 
 **** Stuck projects 
+I'm trying to setup the org-stuck-projects variable so that the "stuck
+projects" agenda will list all headlines which are TODOs (any TODO keyword
+except DONE) but those which don't have SCHEDULED or DEADLINE attributes
+set. Currently I get an empty list with this setting for the variable:
+
+     ;; (setq org-stuck-projects      '("TODO={.+}/-DONE" nil nil "SCHEDULED:\\|DEADLINE:"))
      ;; (setq org-stuck-projects      '("TODO={.+}/-DONE" nil nil "SCHEDULED:\\|DEADLINE:"))
 *** org-refile  
 #+BEGIN_SRC emacs-lisp
@@ -1952,7 +2091,7 @@ There is a strange inconsistency when habits are enabled. See [[https://emacs.st
   ;; These are the hotkeys ^
 
   ;; Set default column view headings: Task Priority Effort Clock_Summary
-  (setq org-columns-default-format "%1PRIORITY %ITEM(Task)  %DEADLINE %10EFFORT(Effort){:} %10CLOCKSUM")
+  (setq org-columns-default-format "%1PRIORITY %2TODO %DEADLINE %60ITEM(Task) %EFFORT(Effort){:} %CLOCKSUM")
   ;; (setq org-columns-default-format "%TAGS %ITEM(Task) %1PRIORITY %DEADLINE %SCHEDULED %10CLOCKSUM")
   ;;(setq org-columns-default-format "%50ITEM(Task) %10Effort(Effort){:} %10CLOCKSUM %16TIMESTAMP_IA")
   ;;(setq org-columns-default-format "%50ITEM(Task) %2PRIORITY %10Effort(Effort){:} %10CLOCKSUM")
@@ -2043,13 +2182,14 @@ There is a strange inconsistency when habits are enabled. See [[https://emacs.st
 #+END_SRC
 *** Org-bullets
 #+BEGIN_SRC emacs-lisp
-  ;; (use-package org-bullets :after org
-  ;; :commands org-bullets-mode
-  ;; :init
-  ;; (progn
+  (use-package org-bullets :after org
+  :commands org-bullets-mode
+  :init
+  (progn
   ;; (setq org-bullets-bullet-list '("一" "二" "三" "四" "五" "六" "七" "八" "七" "九" "十"))
+  (setq org-bullets-bullet-list '("一" "二" "三" "四" "五"))
   ;; (setq org-bullets-bullet-list '("一" "二" "三" "四" "五"))
-  ;; (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))))
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))))
 #+END_SRC 
 *** Org-crypt
     #+BEGIN_SRC emacs-lisp
@@ -2077,166 +2217,6 @@ There is a strange inconsistency when habits are enabled. See [[https://emacs.st
 (add-hook 'org-mode-hook 'flyspell-mode)
 ;; (add-hook 'org-mode-hook 'flyspell-buffer)
 #+END_SRC
-*** 取 word count (experimental)
-(eval-when-compile (require 'cl))
-;; (require 'org)
-(defun org-wc-in-heading-line ()
-  "Is point in a line starting with `*'?"
-  (equal (char-after (point-at-bol)) ?*))
-
-;;;###autoload
-(defun org-word-count (beg end)
-  "Report the number of words in the Org mode buffer or selected region."
-  (interactive
-   (if (use-region-p)
-       (list (region-beginning) (region-end))
-     (list (point-min) (point-max))))
-  (message (format "%d words in %s."
-                   (org-word-count-aux beg end)
-                   (if (use-region-p) "region" "buffer"))))
-
-(defun org-word-count-aux (beg end)
-  "Report the number of words in the selected region.
-Ignores: heading lines,
-         blocks,
-         comments,
-         drawers.
-LaTeX macros are counted as 1 word."
-
-  (let ((wc 0)
-        (latex-macro-regexp "\\\\[A-Za-z]+\\(\\[[^]]*\\]\\|\\){\\([^}]*\\)}"))
-    (save-excursion
-      (goto-char beg)
-      (while (< (point) end)
-        (cond
-         ;; Ignore heading lines, and sections tagged 'nowc' or 'noexport'.
-         ((org-wc-in-heading-line)
-          (let ((tags (org-get-tags-at)))
-            (if (or (member "nowc" tags)
-                    (member "noexport" tags))
-                (outline-next-heading)
-              (forward-line))))
-         ;; Ignore blocks.
-         ((org-at-block-p)
-          (goto-char (match-end 0)))
-         ;; Ignore comments.
-         ((org-at-comment-p)
-          (forward-line))
-         ;; Ignore drawers.
-         ((org-at-drawer-p)
-          (progn (goto-char (match-end 0))
-                 (re-search-forward org-property-end-re end t)
-                 (forward-line)))
-         ;; Count latex macros as 1 word, ignoring their arguments.
-         ((save-excursion
-            (if (> (point-min) (point)) (backward-char) )
-            (looking-at latex-macro-regexp))
-          (goto-char (match-end 0))
-          (setf wc (+ 2 wc)))
-         (t
-          (progn
-            (and (re-search-forward "\\w+\\W*" end 'skip)
-                 (incf wc)))))))
-    wc))
-
-;;;###autoload
-(defun org-wc-count-subtrees ()
-  "Count words in each subtree, putting result as the property :org-wc on that heading."
-  (interactive)
-  (remove-text-properties (point-min) (point-max)
-                          '(:org-wc t))
-  (save-excursion
-    (goto-char (point-max))
-    (while (outline-previous-heading)
-      (save-restriction
-        (org-narrow-to-subtree)
-        (let ((wc (org-word-count-aux (point-min) (point-max))))
-          (put-text-property (point) (point-at-eol) :org-wc wc)
-          (goto-char (point-min)))))))
-
-;;;###autoload
-(defun org-wc-display (total-only)
-  "Show subtree word counts in the entire buffer.
-With prefix argument, only show the total wordcount for the buffer or region
-in the echo area.
-
-Use \\[org-wc-remove-overlays] to remove the subtree times.
-
-Ignores: heading lines,
-         blocks,
-         comments,
-         drawers.
-LaTeX macros are counted as 1 word."
-  (interactive "P")
-  (let ((beg (if (region-active-p) (region-beginning) (point-min)))
-        (end (if (region-active-p) (region-end) (point-max))))
-  (org-wc-remove-overlays)
-  (unless total-only
-    (let ((bmp (buffer-modified-p))
-          wc
-          p)
-      (org-wc-count-subtrees)
-      (save-excursion
-        (goto-char (point-min))
-        (while (or (and (equal (setq p (point)) (point-min))
-                        (get-text-property p :org-wc))
-                   (setq p (next-single-property-change
-                            (point) :org-wc)))
-          (goto-char p)
-          (when (setq wc (get-text-property p :org-wc))
-            (org-wc-put-overlay wc (funcall outline-level))))
-        ;; Arrange to remove the overlays upon next change.
-        (when org-remove-highlights-with-change
-          (org-add-hook 'before-change-functions 'org-wc-remove-overlays
-                        nil 'local)))
-    (set-buffer-modified-p bmp)))
-  (org-word-count beg end)))
-
-(defvar org-wc-overlays nil)
-(make-variable-buffer-local 'org-wc-overlays)
-
-(defun org-wc-put-overlay (wc &optional level)
-  "Put an overlay on the current line, displaying word count.
-If LEVEL is given, prefix word count with a corresponding number of stars.
-This creates a new overlay and stores it in `org-wc-overlays', so that it
-will be easy to remove."
-  (let* ((c 60)
-         (l (if level (org-get-valid-level level 0) 0))
-         (off 0)
-         ov tx)
-    (org-move-to-column c)
-    (unless (eolp) (skip-chars-backward "^ \t"))
-    (skip-chars-backward " \t")
-    (setq ov (make-overlay (1- (point)) (point-at-eol))
-          tx (concat (buffer-substring (1- (point)) (point))
-                     (make-string (+ off (max 0 (- c (current-column)))) ?.)
-                     (org-add-props (format "%s" (number-to-string wc))
-                         (list 'face 'org-wc-overlay))
-                     ""))
-    (if (not (featurep 'xemacs))
-        (overlay-put ov 'display tx)
-      (overlay-put ov 'invisible t)
-      (overlay-put ov 'end-glyph (make-glyph tx)))
-    (push ov org-wc-overlays)))
-
-;;;###autoload
-(defun org-wc-remove-overlays (&optional beg end noremove)
-  "Remove the occur highlights from the buffer.
-BEG and END are ignored.  If NOREMOVE is nil, remove this function
-from the `before-change-functions' in the current buffer."
-  (interactive)
-  (unless org-inhibit-highlight-removal
-    (mapc 'delete-overlay org-wc-overlays)
-    (setq org-wc-overlays nil)
-    (unless noremove
-      (remove-hook 'before-change-functions
-                   'org-wc-remove-overlays 'local))))
-
-(provide 'org-wc)
-
-(define-key org-mode-map "\C-c\C-w" 'org-word-count)
-;; enable word count mode
-; (add-hook 'org-mode-hook 'wc-mode)
 *** Org2blog                                                                    
 This package allow org mode to interact with WordPress. 
 #+BEGIN_SRC emacs-lisp
@@ -2496,7 +2476,7 @@ This package allow org mode to interact with WordPress.
             (define-key org-mode-map  (kbd "C-c 0") 'org-ref-open-bibtex-notes)
             (define-key org-mode-map  (kbd "C-c 9") 'org-ref-open-notes-from-reftex)
 ;; define notes template
-(defvar org-ref-note-title-fortmat 
+(defvar org-ref-note-title-format 
   "** %t
 [[file:master.org::%t]]
  :PROPERTIES: 
@@ -2924,26 +2904,26 @@ This package allow org mode to interact with WordPress.
   #+END_SRC 
 ** Org-gcal
 #+BEGIN_SRC emacs-lisp
-(use-package org-gcal :defer t :after org 
-:init
-(setq org-gcal-client-id "478680381907-rdq488vt3kdutlt1a32sajihog95iuo2.apps.googleusercontent.com"
-	org-gcal-client-secret "EsCu2Ikaga6TIa0KVpZ9jRTS"
-	org-gcal-file-alist '(("cantorlunae@gmail.com" .  "~/Dropbox/org/gcal.org")
-("uv89i0rlnv503i17nedvmo95f8@group.calendar.google.com" . "~/Dropbox/org/unterrichte.org")
-("c83agj55j9uipbjdd2mmp7h9v8@group.calendar.google.com" . "~/Dropbox/org/ereignisse.org")
-("ekk7658f3jm5fh1mea2sdnu8vc@group.calendar.google.com" . "~/Dropbox/org/gewohnheiten.org")
-("#contacts@group.v.calendar.google.com" . "~/Dropbox/org/jahrestage.org")
-;;("#contacts@group.v.calendar.google.com" . "~/Dropbox/org/jahrestage.org")
-)))
+  (use-package org-gcal :defer t :after org 
+  :init
+  (setq org-gcal-client-id "478680381907-rdq488vt3kdutlt1a32sajihog95iuo2.apps.googleusercontent.com"
+          org-gcal-client-secret "EsCu2Ikaga6TIa0KVpZ9jRTS"
+          org-gcal-file-alist '(("cantorlunae@gmail.com" .  "~/Dropbox/org/gcal.org")
+  ("uv89i0rlnv503i17nedvmo95f8@group.calendar.google.com" . "~/Dropbox/org/unterrichte.org")
+  ("c83agj55j9uipbjdd2mmp7h9v8@group.calendar.google.com" . "~/Dropbox/org/ereignisse.org")
+  ;; ("ekk7658f3jm5fh1mea2sdnu8vc@group.calendar.google.com" . "~/Dropbox/org/gewohnheiten.org")
+  ("#contacts@group.v.calendar.google.com" . "~/Dropbox/org/jahrestage.org")
+  ;;("#contacts@group.v.calendar.google.com" . "~/Dropbox/org/jahrestage.org")
+  )))
 
-;;(add-hook 'org-agenda-mode-hook (lambda () (org-gcal-sync) ))
-;;(add-hook 'org-capture-after-finalize-hook (lambda () (org-gcal-sync) ))
+  ;;(add-hook 'org-agenda-mode-hook (lambda () (org-gcal-sync) ))
+  ;;(add-hook 'org-capture-after-finalize-hook (lambda () (org-gcal-sync) ))
 #+END_SRC 
 ** Calendar
 #+BEGIN_SRC emacs-lisp
 (setq calendar-date-style 'european ; format jour/mois/an
       european-calendar-style 't
-      calendar-week-start-day 7     ; week starts on monday
+      calendar-week-start-day 1     ; week starts on monday
       calendar-day-name-array     ["Dimanche" "Lundi" "Mardi" "Mercredi" "Jeudi" "Vendredi" "Samedi"]
       calendar-day-abbrev-array   ["dim" "lun" "mar" "mer" "jeu" "ven" "sam"]
       calendar-month-name-array   ["Janvier" "Février" "Mars" "Avril" "Mai" "Juin" "Juillet"
@@ -3540,8 +3520,8 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
 #+END_SRC  
 *** Quickly work with bookmarks
 #+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "M-m") 'bookmark-set)
-(global-set-key (kbd "M-b") 'bookmark-jump)
+  (global-set-key (kbd "M-m") 'bookmark-set)
+  (global-set-key (kbd "M-b") 'counsel-bookmark)
 #+END_SRC 
 * Backups 
 ** Store all autosave files in the tmp dir
