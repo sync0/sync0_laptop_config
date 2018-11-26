@@ -15,27 +15,25 @@
 #+AUTHOR: sync0
 #+EMAIL: cantorlunae@gmail.com
 
-# Visualization settings.
-#+STARTUP: noindent  showall showstars
-# Necessary to tangle this file.
+# Initial visualization settings.
+#+STARTUP: noindent showeverything nostars
+# Necessary to export code from org mode to elisp. 
 #+PROPERTY: header-args :tangle yes
-
-* Introduction
-This is my Emacs configuration file.
-
-Excuse any sloppiness with the code, but I am not a programmer. I use Emacs
-to take notes and write research papers, so these settings reflect that
-usage.
-* Tips & Reminders
-- In Org mode, ~<s + tab~ creates a code block. To make it executable,
-  add the words ~emacs-lisp~.
-- The location for hunspell dictionaries should be in /usr/share/hunspell.
-* Initialization
-Some of these settings are necessary before loading any packages. Other are
+* Introduction 
+This is my Emacs configuration file. As the sloppy code herein attests, I
+am not a programmer but a black magician. I use Emacs mainly to take notes
+and write research papers, so these settings reflect that usage.
+** Tips 
+ - In Org mode, ~<s + tab~ creates a code block. To make it executable,
+   add the words ~emacs-lisp~ to the first line, after ~#+BEGIN_SRC~.
+ - The location for hunspell dictionaries should be in
+   /usr/share/hunspell. Otherwise, an error arises that I was unable to solve.
+* Configuration
+  Some of these settings are necessary before loading any packages. Other are
 not, but I have included them here for ease of finding. 
 ** Scratch Message
 The following code changes the welcoming message displayed by Emacs in the
-/scratch/ buffer. I use the begining of Karl Marx and Friedrich Engels'
+/scratch/ buffer. I use the beginning of Karl Marx and Friedrich Engels'
 /Manifest der Kommunistischen Partei/.
 #+BEGIN_SRC emacs-lisp
 (setq initial-scratch-message ";; Ein Gespenst geht um in Europa – das Gespenst des Kommunismus. 
@@ -251,7 +249,6 @@ These settings configure Emacs package manager and the package repositories.
 ** Use-package
 [[https://github.com/jwiegley][jwiegley's]] ~use-package~ macro simplifies package configuration in the ~.emacs~
 startup file for faster performance and organization.
-
 #+BEGIN_SRC emacs-lisp
 ;; Verify that "use-package" is installed.
   (unless (package-installed-p 'use-package)
@@ -264,36 +261,39 @@ startup file for faster performance and organization.
 
 ;; Activate "use-package." 
   (require 'use-package)
-;; Necessary to allow "use-package" to bind keys through ":bind".
+;; Necessary to allow use-package to bind keys through ":bind".
   (require 'bind-key)
 #+END_SRC 
 ** Mode Line
-#+BEGIN_SRC emacs-lisp
-  ;; Display time in modeline.
-  ;; (display-time-mode 1)
-  ;; Display remaining battery in modeline.
-  ;; (display-battery-mode 1)
-#+END_SRC 
-** Line numbers
-After version 26, Emacs has native support for line numbers. 
-#+BEGIN_SRC emacs-lisp
-  (when (version<= "26.0.50" emacs-version )
-    (global-display-line-numbers-mode))
-  #+END_SRC 
-** Fancy Battery 
-[[https://github.com/lunaryorn][lunaryorn's]] unmaintained package shows the remaining battery time with
-colors and etc.
-#+BEGIN_SRC emacs-lisp
-  (use-package fancy-battery
-    :init 
-    (add-hook 'after-init-hook #'fancy-battery-mode))
-  #+END_SRC 
+ #+BEGIN_SRC emacs-lisp
+   ;; Display time in modeline.
+   (setq display-time-string-forms
+         '((propertize (format-time-string " %H:%M " now) 'face 'bold)))
+   ;; (setq display-time-format "%I:%M:%S")
+   (display-time-mode 1)
+
+   ;; Display battery in modeline.
+   ;; (display-battery-mode 1)
+   ;; Display battery in modeline using the Fancy Battery package
+   ;; Find at https://github.com/lunaryorn, but beware as it is unmaintained 
+   (use-package fancy-battery
+     :hook
+     (after-init . fancy-battery-mode))
+   ;; :init 
+   ;; (add-hook 'after-init-hook #'fancy-battery-mode))
+   #+END_SRC 
 ** Workspace settings 
    #+BEGIN_SRC emacs-lisp
+   ;; Line numbers
+   ;; After version 26, Emacs has native support for line numbers. 
+   (when (version<= "26.0.50" emacs-version )
+     (global-display-line-numbers-mode))
+
           (tool-bar-mode -1) 
           (menu-bar-mode -1)
           (scroll-bar-mode -1)
           ;;(menu-bar-showhide-fringe-menu-customize-disable)
+
           ;; begin maxmized
           (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
@@ -307,7 +307,7 @@ colors and etc.
            ;; Use spaces instead of tabs
            indent-tabs-mode nil              
            ;; Split verticly by default
-           split-width-threshold 160         
+           split-width-threshold 0         
            ;; Split verticly by default
            split-height-threshold nil        
            ;; disable bidirectional text for tiny performance boost
@@ -588,35 +588,35 @@ colors and etc.
       ;; respect de la typographie française par fill
       ;;(setq fill-nobreak-predicate '(fill-french-nobreak-p))
 
-      (defun sync0-is-this-a-csquote ()
-        "Find wheter current line begins with a LaTeX csquote"
-        (or 
-         (looking-back "blockquote.+" (line-beginning-position))
-         (looking-back "blockcquote.+" (line-beginning-position))
-         (looking-back "foreignblockquote.+" (line-beginning-position))
-         (looking-back "foreignblockcquote.+" (line-beginning-position))
-         (looking-back "annotation{.+" (line-beginning-position))
-         ;; (looking-back "replaced{.+" (line-beginning-position))
-         ;; (looking-back "added{.+" (line-beginning-position))
-         ;; (looking-back "deleted{.+" (line-beginning-position))
-         (looking-back "textbf{.+" (line-beginning-position))
-         (looking-back "textit{.+" (line-beginning-position))
-         ))
+      ;; (defun sync0-is-this-a-csquote ()
+      ;;   "Find wheter current line begins with a LaTeX csquote"
+      ;;   (or 
+      ;;    (looking-back "blockquote.+" (line-beginning-position))
+      ;;    (looking-back "blockcquote.+" (line-beginning-position))
+      ;;    (looking-back "foreignblockquote.+" (line-beginning-position))
+      ;;    (looking-back "foreignblockcquote.+" (line-beginning-position))
+      ;;    (looking-back "annotation{.+" (line-beginning-position))
+      ;;    ;; (looking-back "replaced{.+" (line-beginning-position))
+      ;;    ;; (looking-back "added{.+" (line-beginning-position))
+      ;;    ;; (looking-back "deleted{.+" (line-beginning-position))
+      ;;    (looking-back "textbf{.+" (line-beginning-position))
+      ;;    (looking-back "textit{.+" (line-beginning-position))
+      ;;    ))
 
-      (add-hook 'fill-nobreak-predicate #'sync0-is-this-a-csquote)
+      ;; (add-hook 'fill-nobreak-predicate #'sync0-is-this-a-csquote)
 
       ;; (looking-at ".*}"))
 
-   (defun sync0-fill-nobreak-predicate ()
-     (save-match-data                 
-       (or (looking-at "[ \t]*[])}»!?;:]")
-           (looking-at "[ \t]*\\.\\.\\.")
-           (save-excursion
-             (skip-chars-backward " \t")
-             (backward-char 1)
-             (looking-at "[([{«]")))))
+   ;; (defun sync0-fill-nobreak-predicate ()
+   ;;   (save-match-data                 
+   ;;     (or (looking-at "[ \t]*[])}»!?;:]")
+   ;;         (looking-at "[ \t]*\\.\\.\\.")
+   ;;         (save-excursion
+   ;;           (skip-chars-backward " \t")
+   ;;           (backward-char 1)
+   ;;           (looking-at "[([{«]")))))
 
-      (add-hook 'fill-nobreak-predicate #'sync0-fill-nobreak-predicate)
+      ;; (add-hook 'fill-nobreak-predicate #'sync0-fill-nobreak-predicate)
 
       ;; (defun sync0-foreign-language-nobreak-p ()
       ;;   (or    (looking-at "[[[:space:]]\|[[:print:]]].*}")
@@ -799,26 +799,27 @@ that I’ve copied from the web.
 #+END_SRC 
 ** Abbrev Mode
 #+BEGIN_SRC emacs-lisp
-  ;; avoid expansion character insertion
+  ;; Avoid expansion character insertion
   (defun dont-insert-expansion-char ()  t)    ;; this is the "hook" function
+  ;; (defun dont-insert-expansion-char ()  t)    ;; this is the "hook" function
   (put 'dont-insert-expansion-char 'no-self-insert t)   ;; the hook should have a "no-self-insert"-property set 
 
-  ;; tell emacs where to read abbrev
-  (setq abbrev-file-name             
-        "~/.emacs.d/abbrev_defs")    
-
-  ;; save abbrevs when files are saved
-  (setq save-abbrevs t)              
-
-  ;; avoid errors when reading abbrev_defs
+  ;; Tell emacs where to read abbrev
+  (setq abbrev-file-name "~/.emacs.d/abbrev_defs")    
+  ;; Avoid errors when reading abbrev_defs
   (if (file-exists-p abbrev-file-name)
       (quietly-read-abbrev-file))
 
+  (setq-default abbrev-mode t)
+  ;; save abbrevs when files are saved
+  (setq save-abbrevs t              
+        save-abbrevs 'silently)
+
   ;; automatically turn on abbrev-mode for the following modes
-  (dolist (hook '(
-                  emacs-lisp-mode-hook
-                  text-mode-hook))
-    (add-hook hook (lambda () (abbrev-mode 1))))
+  ;; (dolist (hook '(
+  ;;                 ;; emacs-lisp-mode-hook
+  ;;                 text-mode-hook))
+  ;;   (add-hook hook (lambda () (abbrev-mode 1))))
 
   ;; try emacs to accept ' as a word constituent. 
   (setq dabbrev-abbrev-char-regexp  "\\sw")
@@ -941,6 +942,25 @@ that I’ve copied from the web.
           (evil-insert-state))
       (message "This command can only act on an active region")))
   #+END_SRC 
+** Backups 
+** Store all autosave files in the tmp dir
+#+BEGIN_SRC emacs-lisp 
+(setq auto-save-file-name-transforms
+      `((".*" ,temporary-file-directory t)))
+#+END_SRC
+** Backups in backup dir
+#+BEGIN_SRC emacs-lisp 
+(setq backup-by-copying t
+      backup-directory-alist '(("." . "~/.emacs.d/backups"))
+      delete-old-versions t
+      kept-new-versions 10
+      kept-old-versions 0
+;; use versioned backups
+      version-control t)
+
+;; no lockfiles
+(setq create-lockfiles nil) 
+#+END_SRC
 * Packages 
 ** Highlight indentation
 #+BEGIN_SRC emacs-lisp
@@ -1002,86 +1022,102 @@ that I’ve copied from the web.
              '(doom-spacegrey doom-solarized-light))
        :config (cycle-themes-mode))
 #+END_SRC 
+** Doom modeline
+#+BEGIN_SRC emacs-lisp
+  (use-package doom-modeline :after doom-themes
+      ;; :ensure t
+      :defer t
+      :hook (after-init . doom-modeline-init))
+  #+END_SRC 
 ** Spellchecking
  #+BEGIN_SRC emacs-lisp
-   ;; Ispell - spell checking
-   ;; basic setup
+        ;; Ispell configuration.
+        (use-package ispell
+          :config
+          ;; Set up hunspell dictionaries
+          (setq ispell-hunspell-dict-paths-alist
+                '(("en_US-large" "/usr/share/hunspell/en_US-large.aff")
+                  ("fr_FR" "/usr/share/hunspell/fr_FR.aff")
+                  ("de_DE" "/usr/share/hunspell/de_DE.aff")
+                  ("it_IT" "/usr/share/hunspell/it_IT.aff")
+                  ("fr_FR" "/usr/share/hunspell/fr_FR.aff")
+                  ("es_ANY" "/usr/share/hunspell/es_ANY.aff")))
 
-(setq ispell-hunspell-dict-paths-alist
-      '(("en_US-large" "/usr/share/hunspell/en_US-large.aff")
-        ("fr_FR" "/usr/share/hunspell/fr_FR.aff")
-        ("de_DE" "/usr/share/hunspell/de_DE.aff")
-        ("it_IT" "/usr/share/hunspell/it_IT.aff")
-        ("fr_FR" "/usr/share/hunspell/fr_FR.aff")
-        ("es_ANY" "/usr/share/hunspell/es_ANY.aff")))
+          (cond
+           ;; try hunspell at first
+           ;; if hunspell does NOT exist, use aspell
+           ((executable-find "hunspell")
+            (setq ispell-program-name "hunspell")
+            ;;(setq ispell-local-dictionary "en_US")
+            (setq ispell-local-dictionary-alist '(  
+                                                  (nil "[[:alpha:]]" "[^[:alpha:]]" "['-]" nil ("-d" "en_US-large" ) nil utf-8)
+                                                  ("en_US-large" "[[:alpha:]]" "[^[:alpha:]]" "['-]" t ("-d" "en_US-large" ) nil utf-8)
+                                                  ("de_DE" "[[:alpha:]ÄÖÜéäöüß]" "[^[:alpha:]ÄÖÜéäöüß]" "['’-]" t ("-d" "de_DE") nil utf-8)
+                                                  ("es_ANY" "[[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "[^[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "['’-]" t ("-d" "es_ANY") nil utf-8)
+                                                  ("it_IT" "[[:alpha:]AEÉIOUàèéìòù]" "[^[:alpha:]AEÉIOUàèéìòù]" "['’-]" t ("-d" "it_IT") "~tex" nil utf-8)
+                                                  ("fr_FR" "[[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[^[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[’'-]" t ("-d" "fr_FR")  nil utf-8))))
 
-    (cond
-      ;; try hunspell at first
-      ;; if hunspell does NOT exist, use aspell
-     ((executable-find "hunspell")
-      (setq ispell-program-name "hunspell")
-      ;; (setq ispell-local-dictionary "fr_FR")
-      ;;(setq ispell-local-dictionary "en_US")
-      (setq ispell-local-dictionary-alist '(  
-        (nil "[[:alpha:]]" "[^[:alpha:]]" "['-]" nil ("-d" "en_US-large" ) nil utf-8)
-        ("en_US-large" "[[:alpha:]]" "[^[:alpha:]]" "[']" t ("-d" "en_US-large" ) nil utf-8)
-        ("de_DE" "[[:alpha:]ÄÖÜéäöüß]" "[^[:alpha:]ÄÖÜéäöüß]" "['’-]" t ("-d" "de_DE") nil utf-8)
-        ("es_ANY" "[[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "[^[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "['’-]" t ("-d" "es_ANY") nil utf-8)
-        ("it_IT" "[[:alpha:]AEÉIOUàèéìòù]" "[^[:alpha:]AEÉIOUàèéìòù]" "['’-]" t ("-d" "it_IT") "~tex" nil utf-8)
-        ("fr_FR" "[[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[^[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[-']" t ("-d" "fr_FR")  nil utf-8))))
+           ((executable-find "aspell")
+            (setq ispell-program-name "aspell")
+            ;; Please note ispell-extra-args contains ACTUAL parameters passed to aspell
+            (setq ispell-extra-args '("--sug-mode=ultra"))))
 
-     ((executable-find "aspell")
-      (setq ispell-program-name "aspell")
-      ;; Please note ispell-extra-args contains ACTUAL parameters passed to aspell
-      (setq ispell-extra-args '("--sug-mode=ultra"))))
-      ;;(setq ispell-extra-args '("--sug-mode=ultra" "--lang=en_US"))))
-      ;;(setq ispell-extra-args '("--sug-mode=ultra" "--lang=fr_FR"))))
+          ;; Save a new word to personal dictionary without asking
+          (setq ispell-silently-savep t)
 
-    ;; check next highlighted word custom function
-    (defun flyspell-check-next-highlighted-word ()
-      "Custom function to spell check next highlighted word"
-      (interactive)
-      (flyspell-goto-next-error)
-      (ispell-word)
-      )
+          ;; ignore tex commands
+          (add-hook 'org-mode-hook (lambda () (setq ispell-parser 'tex)))
 
-    ;; keybindings
-    ;;(global-set-key (kbd "<f7>") 'ispell-word)
-   ;; (global-set-key (kbd "C-S-<f7>") 'flyspell-mode)
-    ;;(global-set-key (kbd "C-M-<f7>") 'flyspell-buffer)
-    ;;(global-set-key (kbd "C-<f7>") 'flyspell-check-previous-highlighted-word)
-    ;;(global-set-key (kbd "M-<f7>") 'flyspell-check-next-highlighted-word)
+          ;; ignore sections of files for spellcheck
+          (add-to-list 'ispell-skip-region-alist '(":\\(PROPERTIES\\|LOGBOOK\\):" . ":END:"))
+          (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_SRC" . "#\\+END_SRC"))
+          (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_EXAMPLE" . "#\\+END_EXEMPLE"))
+          (add-to-list 'ispell-skip-region-alist '(org-property-drawer-re))
+          (add-to-list 'ispell-skip-region-alist '("\\begin{equation}" . "\\end{equation}"))
+          (add-to-list 'ispell-skip-region-alist '("\\begin{equation\*}" . "\\end{equation\*}"))
+          (add-to-list 'ispell-skip-region-alist '("\\begin{align}" . "\\end{align}"))
+          (add-to-list 'ispell-skip-region-alist '("\\begin{align\*}" . "\\end{align\*}"))
+          (add-to-list 'ispell-skip-region-alist '("\\\\cite.*{" . "}"))
+          (add-to-list 'ispell-skip-region-alist '("\\$" . "\\$"))
+          ;; (add-to-list 'ispell-skip-region-alist '("\*Einstellungen+"))
+          (add-to-list 'ispell-skip-region-alist '("\\* Settings                                   :noexport:ARCHIVE:" . "\\*\\* Etc")))
+        ;; (add-to-list 'ispell-skip-region-alist '("^\\*\sEinstellungen" . "^\\*\\*\sEnde"))
 
-   ;; ignore tex commands
-    (add-hook 'org-mode-hook (lambda () (setq ispell-parser 'tex)))
-    (defun flyspell-ignore-tex ()
-      (interactive)
-      (set (make-variable-buffer-local 'ispell-parser) 'tex))
-    (add-hook 'org-mode-hook 'flyspell-ignore-tex)
+        ;; Flyspell lazy
+        (use-package flyspell-lazy :after flyspell :load-path "~/.emacs.d/sync0_git/flyspell-lazy"
+:config
+            (flyspell-lazy-mode 1))
 
-   ;; ignore sections of files for spellcheck
-    (add-to-list 'ispell-skip-region-alist '(":\\(PROPERTIES\\|LOGBOOK\\):" . ":END:"))
-    (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_SRC" . "#\\+END_SRC"))
-    (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_EXAMPLE" . "#\\+END_EXEMPLE"))
-    (add-to-list 'ispell-skip-region-alist '("\\begin{equation}" . "\\end{equation}"))
-    (add-to-list 'ispell-skip-region-alist '("\\begin{equation\*}" . "\\end{equation\*}"))
-    (add-to-list 'ispell-skip-region-alist '("\\begin{align}" . "\\end{align}"))
-    (add-to-list 'ispell-skip-region-alist '("\\begin{align\*}" . "\\end{align\*}"))
-    ;; (add-to-list 'ispell-skip-region-alist '("\*Einstellungen+"))
-    (add-to-list 'ispell-skip-region-alist '("\*Settings .+" . "\*\*Etc"))
-   ;; (add-to-list 'ispell-skip-region-alist '("^\\*\sEinstellungen" . "^\\*\\*\sEnde"))
+     ;; (add-hook 'flyspell-mode-hook ')
+     ;;      (when (bound-and-true-p flyspell-mode) 
+     ;;        (flyspell-lazy-mode 1)))
+;;          :hook (flyspell-mode . flyspell-lazy-mode))
 
-   ;; Flyspell
-    ;;(setq-default flyspell-mode t)
-    ;; better performance
-    (setq flyspell-issue-message-flag nil)
+        ;; (use-package flyspell :after (org ispell)
+        ;;   :hook (text-mode . flyspell-mode)
+        ;;   :config
+        ;;   (setq flyspell-issue-message-flag nil))
 
-   ;; Flyspell lazy
-   (use-package flyspell-lazy :after flyspell :load-path "~/.emacs.d/sync0_git/flyspell-lazy"
-   :config
-    (flyspell-lazy-mode 1))
+         (use-package flyspell :after (org ispell)
+   ;; :hook (text-mode . flyspell-mode)
+     :config
+          (setq flyspell-issue-message-flag nil)
+          (add-hook 'flyspell-mode 'flyspell-lazy-mode)
+         (flyspell-mode 1))     ; or (flyspell-prog-mode) 
 
-    (flyspell-mode 1)      ; or (flyspell-prog-mode)
+          ;; check next highlighted word custom function
+          ;; (defun flyspell-check-next-highlighted-word ()
+          ;;   "Custom function to spell check next highlighted word"
+          ;;   (interactive)
+          ;;   (flyspell-goto-next-error)
+          ;;   (ispell-word))
+
+          ;; Avoid TeX syntax
+          ;; (defun flyspell-ignore-tex ()
+          ;;   (set (make-variable-buffer-local 'ispell-parser) 'tex))
+          ;; (add-hook 'org-mode-hook 'flyspell-ignore-tex))
+
+        ;; (flyspell-mode 1))     ; or (flyspell-prog-mode) 
  #+END_SRC 
 ** Tex
 #+BEGIN_SRC emacs-lisp
@@ -1105,201 +1141,416 @@ that I’ve copied from the web.
 #+END_SRC
 ** EVIL mode 
    #+BEGIN_SRC emacs-lisp
-     ;; initializing
-     (use-package evil  :after org
-       :bind (
-              ;; ESC quits almost anything
-              :map evil-normal-state-map
-                   ;;     ("ESC" . keyboard-quit)
-                   ;; quickly switch buffers
-                   ("C-j" . next-buffer)
-                   ("C-k" . previous-buffer)
-                   ("C-S-h" . evil-window-left)
-                   ("C-S-j" . evil-window-down)
-                   ("C-S-k" . evil-window-up)
-                   ("C-S-l" . evil-window-right))
-       ;;    :map evil-visual-state-map
-       ;;   ("ESC" . keyboard-quit))
-       ;; :map minibuffer-local-map
-       ;;("ESC" . minibuffer-keyboard-quit)
-       ;; :map minibuffer-local-ns-map
-       ;;("ESC" . minibuffer-keyboard-quit)
-       ;;:map minibuffer-local-completion-map
-       ;; ("ESC" . minibuffer-keyboard-quit)
-       ;;:map minibuffer-local-must-match-map
-       ;; ("ESC" . minibuffer-keyboard-quit)
-       ;;:map minibuffer-local-isearch-map
-       ;;("ESC" . minibuffer-keyboard-quit))
-       :init
-       (evil-mode 1)
-       :config
+                    ;; initializing
+                    (use-package evil  :after (org ivy)
+                      :bind (
+                             ;; ESC quits almost anything
+                             :map evil-normal-state-map
+                                  ;;     ("ESC" . keyboard-quit)
+                                  ;; quickly switch buffers
+                                  ("M-h" . next-buffer)
+                                  ("M-l" . previous-buffer))
+                                  ;; ("C-S-h" . evil-window-left)
+                                  ;; ("C-S-j" . evil-window-down)
+                                  ;; ("C-S-k" . evil-window-up)
+                                  ;; ("C-S-l" . evil-window-right))
+                      ;;    :map evil-visual-state-map
+                      ;;   ("ESC" . keyboard-quit))
+                      ;; :map minibuffer-local-map
+                      ;;("ESC" . minibuffer-keyboard-quit)
+                      ;; :map minibuffer-local-ns-map
+                      ;;("ESC" . minibuffer-keyboard-quit)
+                      ;;:map minibuffer-local-completion-map
+                      ;; ("ESC" . minibuffer-keyboard-quit)
+                      ;;:map minibuffer-local-must-match-map
+                      ;; ("ESC" . minibuffer-keyboard-quit)
+                      ;;:map minibuffer-local-isearch-map
+                      ;;("ESC" . minibuffer-keyboard-quit))
+                      :init
+               (evil-mode 1)
+                ; (setq evil-want-keybinding nil)
+                      :config
+                      ;(evil-mode 1)
+
+                      ;;(add-hook 'org-mode-hook (lambda () (evil-mode 1)))
+                      ;;(add-hook 'after-init-hook '#evil-mode) 
+                      (add-to-list 'evil-emacs-state-modes 'cfw:details-mode)
+
+                      ;; input methods 
+                      ;; set default input method
+                      ;; (setq default-input-method "TeX")
+                      ;; no input method for evil normal state
+                      (add-hook 'evil-normal-state-entry-hook
+                                (lambda () (set-input-method 'nil)))
+                      ;; Spanish
+
+                      ;; spanish-postfix for evil insert mode
+                      ;;(add-hook 'evil-insert-state-entry-hook
+                      ;; (lambda () (set-input-method "spanish-postfix")))
+
+                      ;; spanish-postfix for evil insert mode
+                      ;;(add-hook 'evil-insert-state-entry-hook
+                      ;; (lambda () (set-input-method "spanish-postfix")))
+
+                      ;; German 
+
+                      ;; german-postfix for evil insert mode
+                      ;;(add-hook 'evil-insert-state-entry-hook
+                      ;;(lambda () (set-input-method "german-postfix")))
+
+                      ;; EVIL org
+                      ;; setup functions
+                      (defun clever-insert-item ()
+                        "Clever insertion of org item."
+                        (if (not (org-in-item-p))
+                            (insert "\n")
+                          (org-insert-item)))
+
+                      (defun evil-org-eol-call (fun)
+                        "Go to end of line and call provided function.
+                                FUN function callback"
+                        (end-of-line)
+                        (funcall fun)
+                        (evil-append nil))
+
+                      ;; insert whitespace
+                      (defun sync0-insert-whitespace ()
+                        " Add a whitespace"
+                        (interactive)
+                        (insert " "))
+
+                      ;; key bindings
+                      ;; redefinition evils visual mode map
+                      (evil-define-key 'normal org-mode-map
+                        ;; "<" 'outline-previous-visible-heading
+                        ">"   'org-forward-heading-same-level
+                        "<"  'org-backward-heading-same-level
+                        ;; ">" 'outline-next-visible-heading
+                        "H" 'org-metaleft
+                        "L" 'org-metaright
+                        "K" 'org-metaup
+                        "J" 'org-metadown
+                        "k" 'previous-line
+                        "j" 'next-line
+                        ;;  "m" 'set-mark-command
+                        "q" 'fill-paragraph
+                        "Q" 'sync0-insert-line-below
+                        (kbd "SPC") 'sync0-insert-whitespace
+                        "o" '(lambda () (interactive) (evil-org-eol-call 'clever-insert-item))
+                        "O" '(lambda () (interactive) (evil-org-eol-call 'org-insert-heading))
+                        "$" 'org-end-of-line
+                        "^" 'org-beginning-of-line
+                        "[" 'backward-sentence
+                        "]" 'forward-sentence
+                        "{" 'org-backward-paragraph
+                        "}" 'org-forward-paragraph
+                        "-" 'org-cycle-list-bullet
+                        (kbd "<tab>") 'org-cycle)
+
+                      (evil-define-key 'normal LaTeX-mode-map
+                        "k" 'previous-line
+                        "j" 'next-line
+                        ;;  "m" 'set-mark-command
+                        "q" 'fill-paragraph
+                        "Q" 'sync0-insert-line-below
+                        (kbd "SPC") 'sync0-insert-whitespace
+                        "[" 'backward-sentence
+                        "]" 'forward-sentence)
+
+                      (evil-define-key 'visual LaTeX-mode-map
+                        "q" 'highlight-changes-remove-highlight
+                        "ma" 'sync0-tex-changes-add
+                        "md" 'sync0-tex-changes-delete
+                        "mr" 'sync0-tex-changes-replace)
+
+                      (evil-define-key 'visual org-mode-map
+                        "q" 'highlight-changes-remove-highlight
+                        "ma" 'sync0-tex-changes-add
+                        "md" 'sync0-tex-changes-delete
+                        "mr" 'sync0-tex-changes-replace
+                        "e" 'org-emphasize)
 
 
-       ;;(add-hook 'org-mode-hook (lambda () (evil-mode 1)))
-       ;;(add-hook 'after-init-hook '#evil-mode) 
-       (add-to-list 'evil-emacs-state-modes 'cfw:details-mode)
+     ;; mu4e
+                 (evil-define-key 'visual mu4e-compose-mode-map
+                   "gg" 'mu4e-compose-goto-top
+                   "G" 'mu4e-compose-goto-bottom)
 
-       ;; input methods 
-       ;; set default input method
-       ;; (setq default-input-method "TeX")
-       ;; no input method for evil normal state
-       (add-hook 'evil-normal-state-entry-hook
-                 (lambda () (set-input-method 'nil)))
-       ;; Spanish
+                      (evil-define-key 'normal mu4e-main-mode-map 
+                    "J" 'mu4e~headers-jump-to-maildir
+                    "j" 'next-line
+                    "k" 'previous-line
+                    "u" 'mu4e-update-mail-and-index
+                    "gr" 'revert-buffer
+                    "b" 'mu4e-headers-search-bookmark
+                    "B" 'mu4e-headers-search-bookmark-edit
+                    "N" 'mu4e-news
+                    ";" 'mu4e-context-switch
+                    "H" 'mu4e-display-manual
+                    "C" 'mu4e-compose-new
+                    "cc" 'mu4e-compose-new
+                    "x" 'mu4e-kill-update-mail
+                    "A" 'mu4e-about
+                    "f" 'smtpmail-send-queued-mail
+                    "m" 'mu4e~main-toggle-mail-sending-mode
+                    "s" 'mu4e-headers-search
+                    "q" 'mu4e-quit)
 
-       ;; spanish-postfix for evil insert mode
-       ;;(add-hook 'evil-insert-state-entry-hook
-       ;; (lambda () (set-input-method "spanish-postfix")))
+                      (evil-define-key 'normal mu4e-headers-mode-map 
+                    "q" 'mu4e~headers-quit-buffer
+                    "J" 'mu4e~headers-jump-to-maildir
+                    "C" 'mu4e-compose-new
+                    "E" 'mu4e-compose-edit
+                    "F" 'mu4e-compose-forward
+                    "R" 'mu4e-compose-reply
+                    "cc" 'mu4e-compose-new
+                    "ce" 'mu4e-compose-edit
+                    "cf" 'mu4e-compose-forward
+                    "cr" 'mu4e-compose-reply
+                    "o" 'mu4e-headers-change-sorting
+                    "j" 'mu4e-headers-next
+                    "k" 'mu4e-headers-prev
+                    "gr" 'mu4e-headers-rerun-search
+                    "b" 'mu4e-headers-search-bookmark
+                    "B" 'mu4e-headers-search-bookmark-edit
+                    ";" 'mu4e-context-switch
+                    (kbd "RET") 'mu4e-headers-view-message
+                    "/" 'mu4e-headers-search-narrow
+                    "s" 'mu4e-headers-search
+                    "S" 'mu4e-headers-search-edit
+                    "x" 'mu4e-mark-execute-all
+                    "a" 'mu4e-headers-action
+                    "*" 'mu4e-headers-mark-for-something ; TODO: Don't override evil-seach-word-forward?
+                    "&" 'mu4e-headers-mark-custom
+                    "A" 'mu4e-headers-mark-for-action
+                    "m" 'mu4e-headers-mark-for-move
+                    "r" 'mu4e-headers-mark-for-refile
+                    "D" 'mu4e-headers-mark-for-delete
+                    "d" 'mu4e-headers-mark-for-trash
+                    "=" 'mu4e-headers-mark-for-untrash
+                    "u" 'mu4e-headers-mark-for-unmark
+                    "U" 'mu4e-mark-unmark-all
+                    "?" 'mu4e-headers-mark-for-unread
+                    "!" 'mu4e-headers-mark-for-read
+                    "%" 'mu4e-headers-mark-pattern
+                    "+" 'mu4e-headers-mark-for-flag
+                    "-" 'mu4e-headers-mark-for-unflag
+                    "[" 'mu4e-headers-prev-unread
+                    "]" 'mu4e-headers-next-unread
+                    "gk" 'mu4e-headers-prev-unread
+                    "gj" 'mu4e-headers-next-unread
+                    (kbd "C-j") 'mu4e-headers-next
+                    (kbd "C-k") 'mu4e-headers-prev
+                    "zr" 'mu4e-headers-toggle-include-related
+                    "zt" 'mu4e-headers-toggle-threading
+                    "zd" 'mu4e-headers-toggle-skip-duplicates
+                    "gl" 'mu4e-show-log
+                    "gv" 'mu4e-select-other-view)
+                    ;; "T" '(lambda ()
+                    ;;       (interactive)
+                    ;;       (mu4e-headers-mark-thread nil '(read))))
 
-       ;; spanish-postfix for evil insert mode
-       ;;(add-hook 'evil-insert-state-entry-hook
-       ;; (lambda () (set-input-method "spanish-postfix")))
-       ;; Latin
+                      (evil-define-key 'normal mu4e-compose-mode-map 
+                    "gg" 'mu4e-compose-goto-top
+                    "G" 'mu4e-compose-goto-bottom)
 
-       ;; latin-1-postfix for evil replace mode
-       ;;(add-hook 'evil-replace-state-entry-hook
-       ;; (lambda () (set-input-method "latin-1-postfix")))
+                      (evil-define-key 'normal mu4e-view-mode-map 
+                    " " 'mu4e-view-scroll-up-or-next
+                    (kbd  "TAB") 'shr-next-link
+                    (kbd  "<backtab>") 'shr-next-link
+                    "q" 'mu4e~view-quit-buffer
+                    "gx" 'mu4e-view-go-to-url
+                    "gX" 'mu4e-view-fetch-url
+                    "C" 'mu4e-compose-new
+                    "H" 'mu4e-view-toggle-html
+                    ;; "E"               mu4e-compose-edit
+                    ;; "F"               mu4e-compose-forward
+                    "R" 'mu4e-compose-reply
+                    "cc" 'mu4e-compose-new
+                    "ce" 'mu4e-compose-edit
+                    "cf" 'mu4e-compose-forward
+                    "cr" 'mu4e-compose-reply
+                    "p" 'mu4e-view-save-attachment
+                    "P" 'mu4e-view-save-attachment-multi ; Since mu4e 1.0, -multi is same as normal.
+                    "O" 'mu4e-headers-change-sorting
+                    "o" 'mu4e-view-open-attachment
+                    "A" 'mu4e-view-attachment-action
+                    "a" 'mu4e-view-action
+                    "J" 'mu4e~headers-jump-to-maildir
+                    "[" 'mu4e-view-headers-prev-unread
+                    "]" 'mu4e-view-headers-next-unread
+                    "gk" 'mu4e-view-headers-prev-unread
+                    "gj" 'mu4e-view-headers-next-unread
+                    (kbd"C-j") 'mu4e-view-headers-next
+                    (kbd "C-k") 'mu4e-view-headers-prev
+                    "x" 'mu4e-view-marked-execute
+                    "&" 'mu4e-view-mark-custom
+                    "*" 'mu4e-view-mark-for-something   ; TODO: Don't override "*".
+                    "m" 'mu4e-view-mark-for-move
+                    "r" 'mu4e-view-mark-for-refile
+                    "D" 'mu4e-view-mark-for-delete
+                    "d" 'mu4e-view-mark-for-trash
+                    "=" 'mu4e-view-mark-for-untrash
+                    "u" 'mu4e-view-unmark
+                    "U" 'mu4e-view-unmark-all
+                    "?" 'mu4e-view-mark-for-unread
+                    "!" 'mu4e-view-mark-for-read
+                    "%" 'mu4e-view-mark-pattern
+                    "+" 'mu4e-view-mark-for-flag
+                    "-" 'mu4e-view-mark-for-unflag
+                    "zr" 'mu4e-headers-toggle-include-related
+                    "zt" 'mu4e-headers-toggle-threading
+                    "za" 'mu4e-view-toggle-hide-cited
+                    "gl" 'mu4e-show-log
+                    "s" 'mu4e-view-search-edit
+                    "|" 'mu4e-view-pipe
+                    "." 'mu4e-view-raw-message
+                    (kbd "C--") 'mu4e-headers-split-view-shrink
+                    (kbd "C-+") 'mu4e-headers-split-view-grow)
+                    ;; "T" '(lambda ()
+                    ;;       (interactive)
+                    ;;       (mu4e-headers-mark-thread nil '(read))))
+                    ;; ,@(when evil-want-C-u-scroll
+                        ;; '("\C-u" evil-scroll-up))))
 
-       ;; latin-1-postfix for evil replace mode
-       ;;(add-hook 'evil-replace-state-entry-hook
-       ;; (lambda () (set-input-method "latin-1-postfix")))
+     ;; Bookmarks
+          (evil-define-key 'normal bookmark-bmenu-mode-map
+              "q" 'quit-window
+              "gr" 'revert-buffer
+              "g?" 'describe-mode
+              "j" 'next-line
+              "p" 'previous-line
+              "J" 'bookmark-bmenu-this-window
+              "2" 'bookmark-bmenu-2-window
+              "1" 'bookmark-bmenu-1-window
+              "x" 'bookmark-bmenu-execute-deletions
+              "d" 'bookmark-bmenu-delete
+              "/" 'bookmark-bmenu-search
+              "r" 'bookmark-bmenu-rename
+              "R" 'bookmark-bmenu-relocate
+              "L" 'bookmark-bmenu-load
+              "t" 'bookmark-bmenu-toggle-filenames
+              "a" 'bookmark-bmenu-show-annotation
+              "A" 'bookmark-bmenu-show-all-annotations
+              "s" 'bookmark-bmenu-save
+              "W" 'bookmark-bmenu-locate
+              "E" 'bookmark-bmenu-edit-annotation
+              "D" 'bookmark-bmenu-delete-backwards
+              ;; mark
+              "u" 'bookmark-bmenu-unmark
+              "m" 'bookmark-bmenu-mark
+              ;; open
+              "o" 'bookmark-bmenu-select
+              "O" 'bookmark-bmenu-other-window
+              "go" 'bookmark-bmenu-other-window
+              "gO" 'bookmark-bmenu-switch-other-window
+              (kbd "<return>") 'bookmark-bmenu-this-window
+              (kbd "S-<return>") 'bookmark-bmenu-other-window
+              (kbd "M-<return>") 'bookmark-bmenu-switch-other-window)
 
-       ;; French 
+          ;; (defun evil-collection-ivy-setup ()
+          ;;   "Set up `evil' bindings for `ivy-mode'."
+          ;;   (evil-define-key nil 'ivy-mode-map
+          ;;     (kbd "<escape>") 'minibuffer-keyboard-quit)
 
-       ;; french-postfix for evil insert mode 
-       ;; (add-hook 'evil-insert-state-entry-hook 
-       ;;           (lambda () (set-input-method "french-postfix")))
+            (evil-define-key 'normal ivy-occur-mode-map
+              ;; [mouse-1] 'ivy-occur-click
+              (kbd "<return>") 'ivy-occur-press-and-switch
+              "j" 'ivy-occur-next-line
+              "k" 'ivy-occur-previous-line
+              "h" 'evil-backward-char
+              "l" 'evil-forward-char
+              "g" nil
+              "gg" 'evil-goto-first-line
+              "gf" 'ivy-occur-press
+              "ga" 'ivy-occur-read-action
+              "go" 'ivy-occur-dispatch
+              "gc" 'ivy-occur-toggle-calling
+              ;; refresh
+              "gr" 'ivy-occur-revert-buffer
+              ;; quit
+              "q" 'quit-window)
 
-       ;; french-postfix for evil replace mode
-       ;; (add-hook 'evil-replace-state-entry-hook
-       ;;           (lambda () (set-input-method "french-postfix")))
-       ;; German 
+            ;; (when evil-want-C-d-scroll
+            ;;   (evil-collection-define-key 'normal 'ivy-occur-grep-mode-map
+            ;;     "D" 'ivy-occur-delete-candidate
+            ;;     (kbd "C-d") 'evil-scroll-down))
 
-       ;; german-postfix for evil insert mode
-       ;;(add-hook 'evil-insert-state-entry-hook
-       ;;(lambda () (set-input-method "german-postfix")))
+            (evil-define-key 'visual ivy-occur-grep-mode-map
+              "j" 'evil-next-line
+              "k" 'evil-previous-line)
 
-       ;; german-postfix for evil replace mode
-       ;;(add-hook 'evil-replace-state-entry-hook
-       ;;(lambda () (set-input-method "german-postfix")))
-
-       ;; EVIL org
-       ;; setup functions
-       (defun clever-insert-item ()
-         "Clever insertion of org item."
-         (if (not (org-in-item-p))
-             (insert "\n")
-           (org-insert-item)))
-
-       (defun evil-org-eol-call (fun)
-         "Go to end of line and call provided function.
-                 FUN function callback"
-         (end-of-line)
-         (funcall fun)
-         (evil-append nil))
-
-       ;; insert whitespace
-       (defun sync0-insert-whitespace ()
-         " Add a whitespace"
-         (interactive)
-         (insert " ")
-         )
-       ;; key bindings
-       ;; redefinition evils visual mode map
-       (evil-define-key 'normal org-mode-map
-         ;; "<" 'outline-previous-visible-heading
-         ">"   'org-forward-heading-same-level
-         "<"  'org-backward-heading-same-level
-         ;; ">" 'outline-next-visible-heading
-         "H" 'org-metaleft
-         "L" 'org-metaright
-         "K" 'org-metaup
-         "J" 'org-metadown
-         ;; "K" 'outline-previous-visible-heading
-         ;;"J" 'outline-next-visible-heading
-         ;; "H" (if (fboundp 'org-backward-same-level)
-         ;;   'org-backward-same-level
-         ;;'org-backward-heading-same-level)
-         ;;  "L" (if (fboundp 'org-forward-same-level) ;to be backward compatible with older org version
-         ;;   'org-forward-same-level
-         ;;'org-forward-heading-same-level)
-         ;;  "<" 'org-metaleft
-         ;; ">" 'org-metaright
-         "k" 'previous-line
-         "j" 'next-line
-         ;;  "m" 'set-mark-command
-         "q" 'fill-paragraph
-         "Q" 'sync0-insert-line-below
-         (kbd "SPC") 'sync0-insert-whitespace
-         "o" '(lambda () (interactive) (evil-org-eol-call 'clever-insert-item))
-         "O" '(lambda () (interactive) (evil-org-eol-call 'org-insert-heading))
-         "$" 'org-end-of-line
-         "^" 'org-beginning-of-line
-         "[" 'backward-sentence
-         "]" 'forward-sentence
-         "{" 'org-backward-paragraph
-         "}" 'org-forward-paragraph
-         "-" 'org-cycle-list-bullet
-         (kbd "<tab>") 'org-cycle)
-
-       (evil-define-key 'normal LaTeX-mode-map
-         "k" 'previous-line
-         "j" 'next-line
-         ;;  "m" 'set-mark-command
-         "q" 'fill-paragraph
-         "Q" 'sync0-insert-line-below
-         (kbd "SPC") 'sync0-insert-whitespace
-         "[" 'backward-sentence
-         "]" 'forward-sentence)
-
-       (evil-define-key 'visual LaTeX-mode-map
-         "q" 'highlight-changes-remove-highlight
-         "ma" 'sync0-tex-changes-add
-         "md" 'sync0-tex-changes-delete
-         "mr" 'sync0-tex-changes-replace)
-
-       (evil-define-key 'visual org-mode-map
-         "q" 'highlight-changes-remove-highlight
-         "ma" 'sync0-tex-changes-add
-         "md" 'sync0-tex-changes-delete
-         "mr" 'sync0-tex-changes-replace
-         "e" 'org-emphasize)
-
-       (setq ;; evil-mode-line-format nil
-             ;; turn off auto-indent 
-             evil-auto-indent nil
-             ;; Change color of evil cursor
-             evil-insert-state-cursor '(bar "#dc322f")
-             evil-normal-state-cursor '(box "#268bd2")
-             evil-visual-state-cursor '(box "#d33682"))
-       ;; Improve EVIL behavior with visual lines
-       ;; Make movement keys work like they should
-       (define-key evil-normal-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
-       (define-key evil-normal-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line)
-       (define-key evil-motion-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
-       (define-key evil-motion-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line)
+            (evil-define-key 'normal ivy-occur-grep-mode-map
+              "d" 'ivy-occur-delete-candidate
+              (kbd "C-x C-q") 'ivy-wgrep-change-to-wgrep-mode
+              "i" 'ivy-wgrep-change-to-wgrep-mode
+              "gd" 'ivy-occur-delete-candidate
+              ;; [mouse-1] 'ivy-occur-click
+              (kbd "<return>") 'ivy-occur-press-and-switch
+              "j" 'ivy-occur-next-line
+              "k" 'ivy-occur-previous-line
+              "h" 'evil-backward-char
+              "l" 'evil-forward-char
+              "g" nil
+              "gg" 'evil-goto-first-line
+              "gf" 'ivy-occur-press
+              "gr" 'ivy-occur-revert-buffer
+              "ga" 'ivy-occur-read-action
+              "go" 'ivy-occur-dispatch
+              "gc" 'ivy-occur-toggle-calling
+              "0" 'evil-digit-argument-or-evil-beginning-of-line
+              ;; quit
+              "q" 'quit-window)
 
 
-       (defvar +evil-esc-hook '(t)
-         "A hook run after ESC is pressed in normal mode (invoked by
-          `evil-force-normal-state'). If any hook returns non-nil, all hooks after it are
-          ignored.")
+              (evil-define-key 'normal ivy-minibuffer-map
+                (kbd "<escape>") 'abort-recursive-edit
+                (kbd "<return>") 'exit-minibuffer
+                (kbd "C-m") 'ivy-done
+                "j" 'ivy-next-line
+                "k" 'ivy-previous-line)
 
-       (defun +evil*attach-escape-hook ()
-         "Run the `+evil-esc-hook'."
-         (cond ((minibuffer-window-active-p (minibuffer-window))
-                ;; quit the minibuffer if open.
-                (abort-recursive-edit))
-               ((evil-ex-hl-active-p 'evil-ex-search)
-                ;; disable ex search buffer highlights.
-                (evil-ex-nohighlight))
-               (t
-                ;; Run all escape hooks. If any returns non-nil, then stop there.
-                (run-hook-with-args-until-success '+evil-esc-hook))))
-       (advice-add #'evil-force-normal-state :after #'+evil*attach-escape-hook)
+              (evil-define-key 'insert ivy-minibuffer-map
+                (kbd "<backspace>") 'ivy-backward-delete-char
+                (kbd "C-r") 'ivy-reverse-i-search
+                (kbd "C-n") 'ivy-next-line
+                (kbd "C-p") 'ivy-previous-line)
 
-       ;; Make horizontal movement cross lines                                    
-       (setq-default evil-cross-lines t))
+                      (setq ;; evil-mode-line-format nil
+                            ;; turn off auto-indent 
+                            evil-auto-indent nil
+                            ;; Change color of evil cursor
+                            evil-insert-state-cursor '(bar "#dc322f")
+                            evil-normal-state-cursor '(box "#268bd2")
+                            evil-visual-state-cursor '(box "#d33682"))
+
+                      ;; Improve EVIL behavior with visual lines
+                      ;; Make movement keys work like they should
+                      (define-key evil-normal-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
+                      (define-key evil-normal-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line)
+                      (define-key evil-motion-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
+                      (define-key evil-motion-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line)
+
+
+                      (defvar +evil-esc-hook '(t)
+                        "A hook run after ESC is pressed in normal mode (invoked by
+                         `evil-force-normal-state'). If any hook returns non-nil, all hooks after it are ignored.")
+
+                      (defun +evil*attach-escape-hook ()
+                        "Run the `+evil-esc-hook'."
+                        (cond ((minibuffer-window-active-p (minibuffer-window))
+                               ;; quit the minibuffer if open.
+                               (abort-recursive-edit))
+                              ((evil-ex-hl-active-p 'evil-ex-search)
+                               ;; disable ex search buffer highlights.
+                               (evil-ex-nohighlight))
+                              (t
+                               ;; Run all escape hooks. If any returns non-nil, then stop there.
+                               (run-hook-with-args-until-success '+evil-esc-hook))))
+                      (advice-add #'evil-force-normal-state :after #'+evil*attach-escape-hook)
+
+                      ;; Make horizontal movement cross lines                                    
+                      (setq-default evil-cross-lines t))
    #+END_SRC 
 *** evil-snipe
 #+BEGIN_SRC emacs-lisp
@@ -1421,18 +1672,24 @@ evil-escape-unordered-key-sequence t
           ;; :config
            ;; Ex command that allows you to invoke evil-multiedit with a regular expression, e.g.
            ;;(evil-ex-define-cmd "ie[dit]" 'evil-multiedit-ex-match))
+*** Evil collection 
+#+BEGIN_SRC emacs-lisp
+  ;; (use-package evil-collection :after evil
+  ;; :custom (evil-collection-mu4e t)
+  ;; :init (evil-collection-init))
+  #+END_SRC 
 ** Projectile
 #+BEGIN_SRC emacs-lisp
-(use-package projectile :after ivy
-  :config
-  (progn
-    (setq projectile-keymap-prefix (kbd "C-p"))
-    (setq projectile-completion-system 'ivy)
-    (setq projectile-enable-caching t)
-    ;;(setq projectile-indexing-method 'alien)
-    (add-to-list 'projectile-globally-ignored-files "node-modules"))
-  :config
-  (projectile-mode))
+  (use-package projectile :after ivy
+    :config
+    (progn
+      ;; (setq projectile-keymap-prefix (kbd "C-p"))
+      (setq projectile-completion-system 'ivy)
+      (setq projectile-enable-caching t)
+      ;;(setq projectile-indexing-method 'alien)
+      (add-to-list 'projectile-globally-ignored-files "node-modules"))
+    :config
+    (projectile-mode))
 #+END_SRC
 ** Swiper
 #+BEGIN_SRC emacs-lisp
@@ -1465,6 +1722,9 @@ evil-escape-unordered-key-sequence t
 (add-hook 'after-init-hook 'ivy-mode))
 #+END_SRC
 ** Org-mode 
+#+BEGIN_SRC emacs-lisp
+(add-hook 'org-mode-hook 'flyspell-mode)
+  #+END_SRC 
 *** Capture mode
 #+BEGIN_SRC emacs-lisp
   (setq org-default-notes-file "~/Dropbox/org/todo.org")
@@ -1473,33 +1733,34 @@ evil-escape-unordered-key-sequence t
 
   (defvar org-capture-templates '(
                                   ("t" "Tache" entry
-                                   (file+olp "~/Dropbox/org/todo.org" "Tasks" "Indéfini")
+                                   (file+olp "~/Dropbox/org/todo.org" "Tâches" "Indéfini")
                                    "*** 無 %^{Tache} \n:PROPERTIES:\n:ADDED: %<[%Y-%m-%d]>\n:END:" :prepend t)
                                   ("s" "Tache d'etude" entry
-                                   (file+olp "~/Dropbox/org/todo.org" "Tasks" "Études" "Indéfini")
+                                   (file+olp "~/Dropbox/org/todo.org" "Tâches" "Études" "Indéfini")
                                    "**** 無 %^{Tache d'etude} %^g \n:PROPERTIES:\n:ADDED: %<[%Y-%m-%d]>\n:END:" :prepend t)
                                           ;("r" "Tache de révision" entry
                                           ; (file+headline "~/Dropbox/projects/paris_1/m1_2_notes.org" "Undefiniert")
                                           ; "*** 無 %^{Tache de révision} %^{Type de tâche|:review:|:reading:|:project:|:exam:} \nCreated: %<[%Y-%m-%d]>")
                                   ("i" "Idée" entry
-                                   (file+headline "~/Dropbox/org/todo.org" "Ideas")
+                                   (file+headline "~/Dropbox/org/ideas.org" "Ideas")
                                    "** %^{idea_title} \n:PROPERTIES:\n:ADDED: %<[%Y-%m-%d]>\n:TRACE: %a\n:END:" :prepend t)
                                   ("e" "Idée d'Emacs" entry
-                                   (file+headline "~/Dropbox/org/todo.org" "Emacs")
+                                   (file+headline "~/Dropbox/org/ideas.org" "Emacs")
                                    "** %^{idea_title} \n:PROPERTIES:\n:ADDED: %<[%Y-%m-%d]>\n:TRACE: %a\n:END:" :prepend t)
                                   ("q" "Question" entry
-                                   (file+headline "~/Dropbox/org/todo.org" "Questions")
+                                   (file+headline "~/Dropbox/org/ideas.org" "Questions")
                                    "** %^{question} \n:PROPERTIES:\n:ADDED: %<[%Y-%m-%d]>\n:TRACE: %a\n:END:" :prepend t)
                                   ("a" "Auteur" entry
                                    (file "~/Dropbox/org/master.org")
                                    "* %^{last_name,first_name} :lecture: \n:ORIGIN:\n%^{Where?}\n:END:\n:PROPERTIES:\n:ADDED: %<[%Y-%m-%d]>\n:END:" :prepend t)
                                   ("b" "Book (todo)" entry
-                                   (file+headline "~/Dropbox/org/todo.org" "Books")
+                                   (file+headline "~/Dropbox/org/ideas.org" "Books")
                                    "** %^{book_title}\n:ORIGIN:\n%^{Where?}\n:END:\n:PROPERTIES:\n:ADDED: %<[%Y-%m-%d]>\n:TRACE: %a\n:END:\n" :prepend t)
                                   ("r" "New Reading (master)" entry
                                    (file "~/Dropbox/org/master.org")
                                    "* %^{reading_title}\n:ORIGIN:\n%^{Where?}\n:END:\n:PROPERTIES:\n:YEAR:\n:JOURNAL:\n:VOLUME:\n:ISSUE:\n:PAGES:\n:ADDED: %<[%Y-%m-%d]>\n:TRACE: %a\n:END:\n" :prepend t)
                                   )) 
+
 #+END_SRC 
 **** Another settings
 (defvar org-capture-templates
@@ -2212,11 +2473,6 @@ set. Currently I get an empty list with this setting for the variable:
       ;; # -*- buffer-auto-save-file-name: nil; -*-
 
       #+END_SRC 
-*** hook flyspell into org-mode
-#+BEGIN_SRC emacs-lisp
-(add-hook 'org-mode-hook 'flyspell-mode)
-;; (add-hook 'org-mode-hook 'flyspell-buffer)
-#+END_SRC
 *** Org2blog                                                                    
 This package allow org mode to interact with WordPress. 
 #+BEGIN_SRC emacs-lisp
@@ -2248,13 +2504,6 @@ This package allow org mode to interact with WordPress.
           (format-time-string "%Y-%m-%d" (current-time)))))
           (setq org2blog/wp-buffer-format-function
 'my-format-function)
-*** keybindings
-#+BEGIN_SRC emacs-lisp
-;; fast insert drawer
-;; (define-key org-mode-map (kbd "C-d") 'org-insert-drawer)
-;; fast show in buffer
-;; (define-key org-mode-map (kbd "C-b") 'org-tree-to-indirect-buffer)
-#+END_SRC
 *** export settings for LaTeX
 #+BEGIN_SRC emacs-lisp
   ;; export references (to tables, graphics, etc.) properly, evaluating the +NAME property. 
@@ -2413,13 +2662,6 @@ This package allow org mode to interact with WordPress.
 
 (define-key org-mode-map (kbd "M-<return>") 'smart-org-meta-return-dwim)
 #+END_SRC
-*** MobileOrg
-;; Set to the location of your Org files on your local system
-(setq org-directory "~/Dropbox/org")
-;; Set to the name of the file where new notes will be stored
-(setq org-mobile-inbox-for-pull "~/Dropbox/org/moborg_notes.org")
-;; Set to <your Dropbox root directory>/MobileOrg.
-(setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
 *** Change default apps 
 #+BEGIN_SRC emacs-lisp
 (add-hook 'org-mode-hook
@@ -2471,29 +2713,31 @@ This package allow org mode to interact with WordPress.
           org-ref-open-pdf-function 'org-ref-get-mendeley-filename
           ;; set ivy for completion
           org-ref-completion-library 'org-ref-ivy-cite)
-:config 
-            (define-key org-mode-map (kbd "C-c [") 'org-ref-ivy-insert-cite-link)
-            (define-key org-mode-map  (kbd "C-c 0") 'org-ref-open-bibtex-notes)
-            (define-key org-mode-map  (kbd "C-c 9") 'org-ref-open-notes-from-reftex)
-;; define notes template
-(defvar org-ref-note-title-format 
-  "** %t
-[[file:master.org::%t]]
- :PROPERTIES: 
-  :Custom_ID: %k
-  :AUTHOR: %a
-  :JOURNAL: %j
-  :YEAR: %y
-  :VOLUME: %v 
-  :PAGES: %p
-  :DOI: %D
-  :URL: %U 
-  :ADDED:    
-:END:")
-;; open in different viewer
-(setq bibtex-completion-pdf-open-function
-  (lambda (fpath)
-    (call-process "mendeleydesktop" nil 0 nil fpath))))
+    :config 
+    (define-key org-mode-map (kbd "C-c [") 'org-ref-ivy-insert-cite-link)
+    (define-key org-mode-map  (kbd "C-c 0") 'org-ref-open-bibtex-notes)
+    (define-key org-mode-map  (kbd "C-c 9") 'org-ref-open-notes-from-reftex)
+    ;; define notes template
+    (setq org-ref-note-title-format 
+          "** %t
+   :PROPERTIES: 
+    :Custom_ID: %k
+    :AUTHOR: %a
+    :JOURNAL: %j
+    :YEAR: %y
+    :VOLUME: %v 
+    :PAGES: %p
+    :DOI: %D
+    :URL: %U 
+    :ADDED:    
+    :LOCATION:    
+  :END:
+
+  ")
+    ;; open in different viewer
+    (setq bibtex-completion-pdf-open-function
+          (lambda (fpath)
+            (call-process "zathura" nil 0 nil fpath))))
 #+END_SRC 
 **** Fix open-pdf issue
 ##+BEGIN_SRC emacs-lisp
@@ -2545,6 +2789,7 @@ This package allow org mode to interact with WordPress.
   :init ; stuff to do before requiring the package
 (add-hook 'LaTeX-mode-hook #'yas-minor-mode)
 (add-hook 'org-mode-hook #'yas-minor-mode)
+(add-hook 'mu4e-compose-mode-hook #'yas-minor-mode)
 (add-hook 'bibtex-mode-hook #'yas-minor-mode)
   :config ; stuff to do after requiring the package
 (progn
@@ -2758,114 +3003,256 @@ This package allow org mode to interact with WordPress.
 #+END_SRC 
 ** Smartparens 
 #+BEGIN_SRC emacs-lisp
-    ;; Auto-close delimiters and blocks as you type
-  (use-package smartparens
-    :hook (emacs-startup . smartparens-global-mode)
-    :config
-    (require 'smartparens-config)
+        ;; Auto-close delimiters and blocks as you type
+      (use-package smartparens
+        :hook (emacs-startup . smartparens-global-mode)
+        :config
+        (require 'smartparens-config)
 
-    (setq sp-autowrap-region nil ; let evil-surround handle this
-          sp-highlight-pair-overlay nil
-          sp-cancel-autoskip-on-backward-movement nil
-          sp-show-pair-delay 0
-          sp-max-pair-length 3)
+        (setq sp-autowrap-region nil ; let evil-surround handle this
+              sp-highlight-pair-overlay nil
+              sp-cancel-autoskip-on-backward-movement nil
+              sp-show-pair-delay 0
+              sp-max-pair-length 3)
 
-    ;; disable smartparens in evil-mode's replace state (they conflict)
-    (add-hook 'evil-replace-state-entry-hook #'turn-off-smartparens-mode)
-    (add-hook 'evil-replace-state-exit-hook  #'turn-on-smartparens-mode)
+    ;; Add custom pairs
+   ;; (require 'smartparens-latex)
 
-(defhydra hydra-learn-sp (:hint nil)
-  "
-  _B_ backward-sexp            -----
-  _F_ forward-sexp               _s_ splice-sexp
-  _L_ backward-down-sexp         _df_ splice-sexp-killing-forward
-  _H_ backward-up-sexp           _db_ splice-sexp-killing-backward
-^^------                         _da_ splice-sexp-killing-around
-  _k_ down-sexp                -----
-  _j_ up-sexp                    _C-s_ select-next-thing-exchange
--^^-----                         _C-p_ select-previous-thing
-  _n_ next-sexp                  _C-n_ select-next-thing
-  _p_ previous-sexp            -----
-  _a_ beginning-of-sexp          _C-f_ forward-symbol
-  _z_ end-of-sexp                _C-b_ backward-symbol
---^^-                          -----
-  _t_ transpose-sexp             _c_ convolute-sexp
--^^--                            _g_ absorb-sexp
-  _x_ delete-char                _q_ emit-sexp
-  _dw_ kill-word               -----
-  _dd_ kill-sexp                 _,b_ extract-before-sexp
--^^--                            _,a_ extract-after-sexp
-  _S_ unwrap-sexp              -----
--^^--                            _AP_ add-to-previous-sexp
-  _C-h_ forward-slurp-sexp       _AN_ add-to-next-sexp
-  _C-l_ forward-barf-sexp      -----
-  _C-S-h_ backward-slurp-sexp    _ join-sexp
-  _C-S-l_ backward-barf-sexp     _|_ split-sexp
-"
-  ;; TODO: Use () and [] - + * | <space>
-  ("B" sp-backward-sexp );; similiar to VIM b
-  ("F" sp-forward-sexp );; similar to VIM f
-  ;;
-  ("L" sp-backward-down-sexp )
-  ("H" sp-backward-up-sexp )
-  ;;
-  ("k" sp-down-sexp ) ; root - towards the root
-  ("j" sp-up-sexp )
-  ;;
-  ("n" sp-next-sexp )
-  ("p" sp-previous-sexp )
-  ;; a..z
-  ("a" sp-beginning-of-sexp )
-  ("z" sp-end-of-sexp )
-  ;;
-  ("t" sp-transpose-sexp )
-  ;;
-  ("x" sp-delete-char )
-  ("dw" sp-kill-word )
-  ;;("ds" sp-kill-symbol ) ;; Prefer kill-sexp
-  ("dd" sp-kill-sexp )
-  ;;("yy" sp-copy-sexp ) ;; Don't like it. Pref visual selection
-  ;;
-  ("S" sp-unwrap-sexp ) ;; Strip!
-  ;;("wh" sp-backward-unwrap-sexp ) ;; Too similar to above
-  ;;
-  ("C-h" sp-forward-slurp-sexp )
-  ("C-l" sp-forward-barf-sexp )
-  ("C-S-h" sp-backward-slurp-sexp )
-  ("C-S-l" sp-backward-barf-sexp )
-  ;;
-  ;;("C-[" (bind (sp-wrap-with-pair "[")) ) ;;FIXME
-  ;;("C-(" (bind (sp-wrap-with-pair "(")) )
-  ;;
-  ("s" sp-splice-sexp )
-  ("df" sp-splice-sexp-killing-forward )
-  ("db" sp-splice-sexp-killing-backward )
-  ("da" sp-splice-sexp-killing-around )
-  ;;
-  ("C-s" sp-select-next-thing-exchange )
-  ("C-p" sp-select-previous-thing )
-  ("C-n" sp-select-next-thing )
-  ;;
-  ("C-f" sp-forward-symbol )
-  ("C-b" sp-backward-symbol )
-  ;;
-  ;;("C-t" sp-prefix-tag-object)
-  ;;("H-p" sp-prefix-pair-object)
-  ("c" sp-convolute-sexp )
-  ("g" sp-absorb-sexp )
-  ("q" sp-emit-sexp )
-  ;;
-  (",b" sp-extract-before-sexp )
-  (",a" sp-extract-after-sexp )
-  ;;
-  ("AP" sp-add-to-previous-sexp );; Difference to slurp?
-  ("AN" sp-add-to-next-sexp )
-  ;;
-  ("_" sp-join-sexp ) ;;Good
-  ("|" sp-split-sexp )) 
+  (defun sp-latex-insert-spaces-inside-pair (_id action _context)
+    "ID, ACTION, CONTEXT."
+    (when (eq action 'insert)
+      (insert "  ")
+      (backward-char 1))
+    (when (and (eq action 'wrap)
+               (save-excursion
+                 (goto-char (sp-get sp-last-wrapped-region :beg-in))
+                 (not (sp--looking-back-p "[[{(]"))))
+      (save-excursion
+        (goto-char (sp-get sp-last-wrapped-region :end-in))
+        (insert " ")
+        (goto-char (sp-get sp-last-wrapped-region :beg-in))
+        (insert " "))))
 
-(global-set-key (kbd "M-g M-p") 'hydra-learn-sp/body)
-  )
+  (defun sp-latex-skip-match-apostrophe (ms _mb me)
+    "MS, MB, ME."
+    (when (equal ms "'")
+      (save-excursion
+        (goto-char me)
+        (looking-at-p "\\sw"))))
+
+  (defun sp-latex-skip-double-quote (_id action _context)
+    "ID, ACTION, CONTEXT."
+    (when (eq action 'insert)
+      (when (looking-at-p "''''")
+        (delete-char -2)
+        (delete-char 2)
+        (forward-char 2))))
+
+  (defun sp-latex-point-after-backslash (id action _context)
+    "Return t if point follows a backslash, nil otherwise.
+  This predicate is only tested on \"insert\" action.
+  ID, ACTION, CONTEXT."
+    (when (eq action 'insert)
+      (let ((trigger (sp-get-pair id :trigger)))
+        (looking-back (concat "\\\\" (regexp-quote (if trigger trigger id))) nil))))
+
+  (add-to-list 'sp-navigate-skip-match
+               '((tex-mode plain-tex-mode latex-mode) . sp--backslash-skip-match))
+
+  (sp-with-modes '(
+                   tex-mode
+                   org-mode
+                   plain-tex-mode
+                   latex-mode
+                   LaTeX-mode
+                   )
+    (sp-local-pair "`" "'"
+                   :actions '(:rem autoskip)
+                   :skip-match 'sp-latex-skip-match-apostrophe
+                   :unless '(sp-latex-point-after-backslash))
+    ;; math modes, yay.  The :actions are provided automatically if
+    ;; these pairs do not have global definitions.
+    (sp-local-pair "$" "$")
+    (sp-local-pair "\\[" "\\]"
+                   :unless '(sp-latex-point-after-backslash))
+
+    ;; disable useless pairs.
+    (sp-local-pair "\\\\(" nil :actions nil)
+    (sp-local-pair "'" nil :actions nil)
+    (sp-local-pair "\\\"" nil :actions nil)
+
+    ;; quote should insert ``'' instead of double quotes.  If we ever
+    ;; need to insert ", C-q is our friend.
+    (sp-local-pair "``" "''"
+                   :trigger "\""
+                   :unless '(sp-latex-point-after-backslash)
+                   :post-handlers '(sp-latex-skip-double-quote))
+
+    ;; add the prefix function sticking to {} pair
+    (sp-local-pair "{" nil :prefix "\\\\\\(\\sw\\|\\s_\\)*")
+
+    ;; do not add more space when slurping
+    (sp-local-pair "{" "}")
+    (sp-local-pair "(" ")")
+    (sp-local-pair "[" "]")
+
+    ;; pairs for big brackets.  Needs more research on what pairs are
+    ;; useful to add here.  Post suggestions if you know some.
+    (sp-local-pair "\\left(" "\\right)"
+                   :trigger "\\l("
+                   :when '(sp-in-math-p)
+                   :post-handlers '(sp-latex-insert-spaces-inside-pair))
+    (sp-local-pair "\\left[" "\\right]"
+                   :trigger "\\l["
+                   :when '(sp-in-math-p)
+                   :post-handlers '(sp-latex-insert-spaces-inside-pair))
+    (sp-local-pair "\\left\\{" "\\right\\}"
+                   :trigger "\\l{"
+                   :when '(sp-in-math-p)
+                   :post-handlers '(sp-latex-insert-spaces-inside-pair))
+    (sp-local-pair "\\left|" "\\right|"
+                   :trigger "\\l|"
+                   :when '(sp-in-math-p)
+                   :post-handlers '(sp-latex-insert-spaces-inside-pair))
+    (sp-local-pair "\\bigl(" "\\bigr)"
+                   :post-handlers '(sp-latex-insert-spaces-inside-pair))
+    (sp-local-pair "\\biggl(" "\\biggr)"
+                   :post-handlers '(sp-latex-insert-spaces-inside-pair))
+    (sp-local-pair "\\Bigl(" "\\Bigr)"
+                   :post-handlers '(sp-latex-insert-spaces-inside-pair))
+    (sp-local-pair "\\Biggl(" "\\Biggr)"
+                   :post-handlers '(sp-latex-insert-spaces-inside-pair))
+    (sp-local-pair "\\bigl[" "\\bigr]"
+                   :post-handlers '(sp-latex-insert-spaces-inside-pair))
+    (sp-local-pair "\\biggl[" "\\biggr]"
+                   :post-handlers '(sp-latex-insert-spaces-inside-pair))
+    (sp-local-pair "\\Bigl[" "\\Bigr]"
+                   :post-handlers '(sp-latex-insert-spaces-inside-pair))
+    (sp-local-pair "\\Biggl[" "\\Biggr]"
+                   :post-handlers '(sp-latex-insert-spaces-inside-pair))
+    (sp-local-pair "\\bigl\\{" "\\bigr\\}"
+                   :post-handlers '(sp-latex-insert-spaces-inside-pair))
+    (sp-local-pair "\\biggl\\{" "\\biggr\\}"
+                   :post-handlers '(sp-latex-insert-spaces-inside-pair))
+    (sp-local-pair "\\Bigl\\{" "\\Bigr\\}"
+                   :post-handlers '(sp-latex-insert-spaces-inside-pair))
+    (sp-local-pair "\\Biggl\\{" "\\Biggr\\}"
+                   :post-handlers '(sp-latex-insert-spaces-inside-pair))
+    (sp-local-pair "\\lfloor" "\\rfloor"
+                   :post-handlers '(sp-latex-insert-spaces-inside-pair))
+    (sp-local-pair "\\lceil" "\\rceil"
+                   :post-handlers '(sp-latex-insert-spaces-inside-pair))
+    (sp-local-pair "\\langle" "\\rangle"
+                   :post-handlers '(sp-latex-insert-spaces-inside-pair))
+    (sp-local-pair  "\\lVert" "\\rVert"
+            :when '(sp-in-math-p)
+            :trigger "\\lVert"
+            :post-handlers '(sp-latex-insert-spaces-inside-pair))
+    (sp-local-pair  "\\lvert" "\\rvert"
+            :when '(sp-in-math-p)
+            :trigger "\\lvert"
+            :post-handlers '(sp-latex-insert-spaces-inside-pair)))
+
+    ;; some common wrappings
+    ;; (sp-local-tag "\"" "``" "''" :actions '(wrap)))
+
+
+        ;; disable smartparens in evil-mode's replace state (they conflict)
+        (add-hook 'evil-replace-state-entry-hook #'turn-off-smartparens-mode)
+        (add-hook 'evil-replace-state-exit-hook  #'turn-on-smartparens-mode)
+
+    (defhydra hydra-learn-sp (:hint nil)
+      "
+      _B_ backward-sexp            -----
+      _F_ forward-sexp               _s_ splice-sexp
+      _L_ backward-down-sexp         _df_ splice-sexp-killing-forward
+      _H_ backward-up-sexp           _db_ splice-sexp-killing-backward
+    ^^------                         _da_ splice-sexp-killing-around
+      _k_ down-sexp                -----
+      _j_ up-sexp                    _C-s_ select-next-thing-exchange
+    -^^-----                         _C-p_ select-previous-thing
+      _n_ next-sexp                  _C-n_ select-next-thing
+      _p_ previous-sexp            -----
+      _a_ beginning-of-sexp          _C-f_ forward-symbol
+      _z_ end-of-sexp                _C-b_ backward-symbol
+    --^^-                          -----
+      _t_ transpose-sexp             _c_ convolute-sexp
+    -^^--                            _g_ absorb-sexp
+      _x_ delete-char                _q_ emit-sexp
+      _dw_ kill-word               -----
+      _dd_ kill-sexp                 _,b_ extract-before-sexp
+    -^^--                            _,a_ extract-after-sexp
+      _S_ unwrap-sexp              -----
+    -^^--                            _AP_ add-to-previous-sexp
+      _C-h_ forward-slurp-sexp       _AN_ add-to-next-sexp
+      _C-l_ forward-barf-sexp      -----
+      _C-S-h_ backward-slurp-sexp    _ join-sexp
+      _C-S-l_ backward-barf-sexp     _|_ split-sexp
+    "
+      ;; TODO: Use () and [] - + * | <space>
+      ("B" sp-backward-sexp );; similiar to VIM b
+      ("F" sp-forward-sexp );; similar to VIM f
+      ;;
+      ("L" sp-backward-down-sexp )
+      ("H" sp-backward-up-sexp )
+      ;;
+      ("k" sp-down-sexp ) ; root - towards the root
+      ("j" sp-up-sexp )
+      ;;
+      ("n" sp-next-sexp )
+      ("p" sp-previous-sexp )
+      ;; a..z
+      ("a" sp-beginning-of-sexp )
+      ("z" sp-end-of-sexp )
+      ;;
+      ("t" sp-transpose-sexp )
+      ;;
+      ("x" sp-delete-char )
+      ("dw" sp-kill-word )
+      ;;("ds" sp-kill-symbol ) ;; Prefer kill-sexp
+      ("dd" sp-kill-sexp )
+      ;;("yy" sp-copy-sexp ) ;; Don't like it. Pref visual selection
+      ;;
+      ("S" sp-unwrap-sexp ) ;; Strip!
+      ;;("wh" sp-backward-unwrap-sexp ) ;; Too similar to above
+      ;;
+      ("C-h" sp-forward-slurp-sexp )
+      ("C-l" sp-forward-barf-sexp )
+      ("C-S-h" sp-backward-slurp-sexp )
+      ("C-S-l" sp-backward-barf-sexp )
+      ;;
+      ;;("C-[" (bind (sp-wrap-with-pair "[")) ) ;;FIXME
+      ;;("C-(" (bind (sp-wrap-with-pair "(")) )
+      ;;
+      ("s" sp-splice-sexp )
+      ("df" sp-splice-sexp-killing-forward )
+      ("db" sp-splice-sexp-killing-backward )
+      ("da" sp-splice-sexp-killing-around )
+      ;;
+      ("C-s" sp-select-next-thing-exchange )
+      ("C-p" sp-select-previous-thing )
+      ("C-n" sp-select-next-thing )
+      ;;
+      ("C-f" sp-forward-symbol )
+      ("C-b" sp-backward-symbol )
+      ;;
+      ;;("C-t" sp-prefix-tag-object)
+      ;;("H-p" sp-prefix-pair-object)
+      ("c" sp-convolute-sexp )
+      ("g" sp-absorb-sexp )
+      ("q" sp-emit-sexp )
+      ;;
+      (",b" sp-extract-before-sexp )
+      (",a" sp-extract-after-sexp )
+      ;;
+      ("AP" sp-add-to-previous-sexp );; Difference to slurp?
+      ("AN" sp-add-to-next-sexp )
+      ;;
+      ("_" sp-join-sexp ) ;;Good
+      ("|" sp-split-sexp )) 
+
+    (global-set-key (kbd "M-g M-p") 'hydra-learn-sp/body)
+      )
 
   #+END_SRC 
 ** Highlight changes mode
@@ -3111,7 +3498,6 @@ Turning on Text mode runs the normal hook `englisch-mode-hook'."
   ;;     (propertize "無語" 'face 'bold))))
   #+END_SRC 
 ** Spaceline
-#+BEGIN_SRC emacs-lisp
     (use-package spaceline :after powerline
      :config 
   (setq spaceline-responsive nil))
@@ -3149,7 +3535,6 @@ Turning on Text mode runs the normal hook `englisch-mode-hook'."
         ;;  (spaceline-all-the-icons--setup-neotree)
         (spaceline-all-the-icons-theme 'sync0-language-segment)))
         ;; (spaceline-all-the-icons-theme)))
-  #+END_SRC 
 ** Hydra
 #+BEGIN_SRC emacs-lisp
 (use-package hydra
@@ -3272,7 +3657,94 @@ screen-sharing.
     ;; Force evil to rehash keybindings for the current state
     (add-hook 'git-timemachine-mode-hook #'evil-force-normal-state))
   #+END_SRC 
-* Custom Functions
+** Mu
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
+
+    ;; (defun load-if-exists (f)
+    ;;   "load the elisp file only if it exists and is readable"
+    ;;   (if (file-readable-p f)
+    ;;       (load-file f)))
+
+    ;; (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e/")
+      ;; (load-if-exists "~/.emac.d/mu4econfig.el")
+      (load-file "~/.emacs.d/mu4econfig.el")
+  #+END_SRC 
+* Custom Tweaks
+** Add abbrevs 
+(defun define-abbrev (table name expansion &optional hook &rest props)
+  "Define an abbrev in TABLE named NAME, to expand to EXPANSION and call HOOK.
+NAME must be a string, and should be lower-case.
+EXPANSION should usually be a string.
+To undefine an abbrev, define it with EXPANSION = nil.
+If HOOK is non-nil, it should be a function of no arguments;
+it is called after EXPANSION is inserted.
+If EXPANSION is not a string (and not nil), the abbrev is a
+ special one, which does not expand in the usual way but only
+ runs HOOK.
+
+If HOOK is a non-nil symbol with a non-nil `no-self-insert' property,
+it can control whether the character that triggered abbrev expansion
+is inserted.  If such a HOOK returns non-nil, the character is not
+inserted.  If such a HOOK returns nil, then so does `abbrev-insert'
+\(and `expand-abbrev'), as if no abbrev expansion had taken place.
+
+PROPS is a property list.  The following properties are special:
+- `:count': the value for the abbrev's usage-count, which is incremented each
+  time the abbrev is used (the default is zero).
+- `:system': if non-nil, says that this is a \"system\" abbreviation
+  which should not be saved in the user's abbreviation file.
+  Unless `:system' is `force', a system abbreviation will not
+  overwrite a non-system abbreviation of the same name.
+- `:case-fixed': non-nil means that abbreviations are looked up without
+  case-folding, and the expansion is not capitalized/upcased.
+- `:enable-function': a function of no argument which returns non-nil if the
+  abbrev should be used for a particular call of `expand-abbrev'.
+
+An obsolete but still supported calling form is:
+
+\(define-abbrev TABLE NAME EXPANSION &optional HOOK COUNT SYSTEM)."
+  (when (and (consp props) (or (null (car props)) (numberp (car props))))
+    ;; Old-style calling convention.
+    (setq props `(:count ,(car props)
+                  ,@(if (cadr props) (list :system (cadr props))))))
+  (unless (plist-get props :count)
+    (setq props (plist-put props :count 0)))
+  (setq props (plist-put props :abbrev-table-modiff
+                         (abbrev-table-get table :abbrev-table-modiff)))
+  (let ((system-flag (plist-get props :system))
+        (sym (obarray-put table name)))
+    ;; Don't override a prior user-defined abbrev with a system abbrev,
+    ;; unless system-flag is `force'.
+    (unless (and (not (memq system-flag '(nil force)))
+                 (boundp sym) (symbol-value sym)
+                 (not (abbrev-get sym :system)))
+      (unless (or system-flag
+                  (and (boundp sym)
+                       ;; load-file-name
+                       (equal (symbol-value sym) expansion)
+                       (equal (symbol-function sym) hook)))
+        (setq abbrevs-changed t))
+      (set sym expansion)
+      (fset sym hook)
+      (setplist sym
+                ;; Don't store the `force' value of `system-flag' into
+                ;; the :system property.
+                (if (eq 'force system-flag) (plist-put props :system t) props))
+      (abbrev-table-put table :abbrev-table-modiff
+                        (1+ (abbrev-table-get table :abbrev-table-modiff))))
+    name))
+
+#+BEGIN_SRC emacs-lisp
+(defun sync0-define-local-abbrev (x y)
+  "Defines a new abbrev for current local abbrev table."
+  (interactive "sEnter abbrev: 
+sEnter expansion: ")
+    (when (and x y (not (equal x y)))
+  (define-abbrev local-abbrev-table x y)
+  (message "\"%s\" now expands to \"%s\" %sally"
+           x y "loc")))
+  #+END_SRC 
 ** Sentence highlight
 #+BEGIN_SRC emacs-lisp
   (use-package sentence-highlight :load-path "~/.emacs.d/sync0/" 
@@ -3389,11 +3861,51 @@ abort completely with `C-g'."
                    bef aft (if p "loc" "glob")))
       (user-error "No typo at or before point"))))
 
+;; set a faster shortcut
+(define-key global-map (kbd "M-i") 'endless/ispell-word-then-abbrev)
+** 取 Automatic abbrevs integration with ispell
+;;(define-key ctl-x-map "\C-i"
+  ;;#'endless/ispell-word-then-abbrev)
+
+(defun endless/simple-get-word ()
+  (car-safe (save-excursion (flyspell-get-word nil))))
+
+(defun endless/flyspell-word-then-abbrev ()
+  "Call `flyspell-word', then create an abbrev for it.
+With prefix P, create local abbrev. Otherwise it will
+be global.
+If there's nothing wrong with the word at point, keep
+looking for a typo until the beginning of buffer. You can
+skip typos you don't want to fix with `SPC', and you can
+abort completely with `C-g'."
+  (interactive)
+  (let (bef aft)
+    (save-excursion
+      (while (if (setq bef (endless/simple-get-word))
+                 ;; Word was corrected or used quit.
+                 (if (flyspell-word nil 'quiet)
+                     nil ; End the loop.
+                   ;; Also end if we reach `bob'.
+                   (not (bobp)))
+               ;; If there's no word at point, keep looking
+               ;; until `bob'.
+               (not (bobp)))
+        (backward-word)
+        (backward-char))
+      (setq aft (endless/simple-get-word)))
+    (if (and aft bef (not (equal aft bef)))
+        (let ((aft (downcase aft))
+              (bef (downcase bef)))
+          (define-abbrev local-abbrev-table bef aft)
+          (message "\"%s\" now expands to \"%s\" %sally"
+                   bef aft "loc"))
+      (user-error "No typo at or before point"))))
+
 (setq save-abbrevs 'silently)
 (setq-default abbrev-mode t)
 
 ;; set a faster shortcut
-(define-key global-map (kbd "M-i") 'endless/ispell-word-then-abbrev)
+(define-key global-map (kbd "M-i") 'endless/flyspell-word-then-abbrev)
 ** Automatic abbrevs integration with ispell
 #+BEGIN_SRC emacs-lisp
 ;;(define-key ctl-x-map "\C-i"
@@ -3432,9 +3944,6 @@ abort completely with `C-g'."
           (message "\"%s\" now expands to \"%s\" %sally"
                    bef aft "loc"))
       (user-error "No typo at or before point"))))
-
-(setq save-abbrevs 'silently)
-(setq-default abbrev-mode t)
 
 ;; set a faster shortcut
 (define-key global-map (kbd "M-i") 'endless/ispell-word-then-abbrev)
@@ -3489,20 +3998,25 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
     (ispell-change-dictionary "fr_FR")
      (add-to-list 'minor-mode-alist '(rabelais-mode " rabelais"))
     (abbrev-mode 1))
-* Useful Key Bindings
-** Font size change
-#+BEGIN_SRC emacs-lisp
-(define-key global-map (kbd "C-=") 'text-scale-increase)
-(define-key global-map (kbd "C--") 'text-scale-decrease)
-#+END_SRC
-** Cycle through buffers
-#+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "<C-tab>") 'bury-buffer)
-#+END_SRC
-** Load EMACS initialization file
-(global-set-key (kbd "C-c i") 
-(lambda() (interactive)(org-babel-load-file "~/.emacs.d/emacs_settings.org")))
-** Rebind frequent commands
+** Useful Key Bindings
+ #+BEGIN_SRC emacs-lisp
+;; Font size change
+ (define-key global-map (kbd "C-=") 'text-scale-increase)
+ (define-key global-map (kbd "C--") 'text-scale-decrease)
+
+;; Cycle through buffers
+ (global-set-key (kbd "<C-tab>") 'bury-buffer)
+
+;; Quickly save
+ (global-set-key "\M-w" 'save-buffer)
+
+;; Quickly work with bookmarks
+  (global-set-key (kbd "M-m") 'bookmark-set)
+  (global-set-key (kbd "M-b") 'counsel-bookmark)
+ #+END_SRC
+*** Load EMACS initialization file
+ (global-set-key (kbd "C-c i") 
+ (lambda() (interactive)(org-babel-load-file "~/.emacs.d/emacs_settings.org")))
 *** Ctrl-<space> to pop-global-mark
  (defun pop-local-or-global-mark ()
   "Pop to local mark if it exists or to the global mark if it does not."
@@ -3514,31 +4028,3 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
 ;; keybinding
 ;;(global-set-key (kbd "C-SPC") nil) ;; default bound to set-mark
 ;;(global-set-key (kbd "C-SPC") 'pop-local-or-global-mark) 
-*** Quickly save
-#+BEGIN_SRC emacs-lisp
-(global-set-key "\M-w" 'save-buffer)
-#+END_SRC  
-*** Quickly work with bookmarks
-#+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "M-m") 'bookmark-set)
-  (global-set-key (kbd "M-b") 'counsel-bookmark)
-#+END_SRC 
-* Backups 
-** Store all autosave files in the tmp dir
-#+BEGIN_SRC emacs-lisp 
-(setq auto-save-file-name-transforms
-      `((".*" ,temporary-file-directory t)))
-#+END_SRC
-** Backups in backup dir
-#+BEGIN_SRC emacs-lisp 
-(setq backup-by-copying t
-      backup-directory-alist '(("." . "~/.emacs.d/backups"))
-      delete-old-versions t
-      kept-new-versions 10
-      kept-old-versions 0
-;; use versioned backups
-      version-control t)
-
-;; no lockfiles
-(setq create-lockfiles nil) 
-#+END_SRC
