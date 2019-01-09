@@ -475,58 +475,33 @@ startup file for faster performance and organization.
        (progn
          ;; interline spacing
          (set-face-attribute 'default nil 
-                             :family "Fira Mono"
+                             :family "Source Code Pro"
                              :height 120)
-         (setq line-spacing 0.09))
+         (setq line-spacing 0))
      ;; laptop font size
      (progn
        ;; interline spacing
        (set-face-attribute 'default nil 
-                           :family "Fira Mono"
+                           :family "Source Code Pro"
                            :height 125)
-       (setq line-spacing 0.14)))
+       (setq line-spacing 0)))
 
-   ;; (defun my-buffer-face-mode-fixed ()
-   ;;   "Sets a fixed width (monospace) font in current buffer"
-   ;;   (if (> (x-display-pixel-width) 1400)
-   ;;       ;; dual monitor
-   ;;       (setq buffer-face-mode-face '(:family "Fira Mono" :height 140 :spacing monospace)) 
-   ;;     ;; laptop
-   ;;     (setq buffer-face-mode-face '(:family "Fira Mono" :height 115 :spacing monospace)))
-   ;;   (buffer-face-mode))
-
-   ;; (defun my-buffer-face-mode-fixed ()
-   ;;   "Sets a fixed width (monospace) font in current buffer"
-   ;;   ;; (interactive)
-   ;;   (if window-system
-   ;;       (progn
-   ;;         (if (> (x-display-pixel-width) 1400)
-   ;;             ;; dual monitor
-   ;;             (setq buffer-face-mode-face '(:family "Fira Mono" :height 140 :spacing monospace)) 
-   ;;           ;; laptop
-   ;;           (setq buffer-face-mode-face '(:family "Fira Mono" :height 120 :spacing monospace)))))
-   ;;   (buffer-face-mode))
-
-   ;; ;; ;; Variable-width faces 
-   ;; (defun my-buffer-face-mode-variable ()
-   ;;   "Set font to a variable width (proportional) fonts in current buffer"
-   ;;   ;; (interactive)
-   ;;   (if window-system
-   ;;       (progn
-   ;;         (if (> (x-display-pixel-width) 1300)
-   ;;             ;; external monitor
-   ;;             (setq buffer-face-mode-face '(:family "Linux Libertine" :height 170)) 
-   ;;           ;; laptop
-   ;;           (setq buffer-face-mode-face '(:family "Linux Libertine" :height 130)))))
-   ;;   (buffer-face-mode))
+   (defun my-buffer-face-mode-fixed ()
+     "Sets a fixed width (monospace) font in current buffer"
+     (if (> (display-pixel-width) 2000)
+         ;; external monitor font size
+         (setq buffer-face-mode-face '(:family "Source Code Pro" :height 120)) 
+       ;; laptop font size
+       (setq buffer-face-mode-face '(:family "Source Code Pro" :height 125)))
+     (buffer-face-mode))
 
    ;; Variable-width faces 
    (defun my-buffer-face-mode-variable ()
      "Set font to a variable width (proportional) fonts in current buffer"
      (if (> (display-pixel-width) 2000)
-         ;; external monitor
+         ;; external monitor font size
        (setq buffer-face-mode-face '(:family "Linux Libertine" :height 140))
-       ;; laptop
+       ;; laptop font size
          (setq buffer-face-mode-face '(:family "Linux Libertine" :height 160)))
      (buffer-face-mode))
 
@@ -861,47 +836,6 @@ that I’ve copied from the web.
   (add-hook 'after-save-hook 'sync0-after-save-actions)
   #+END_SRC 
 ** LaTeX changes package
-(defvar sync0-tex-changes-id "sync0")
-
-(defun sync0-tex-changes-add ()
-"Inserts an \added command to a LaTeX document using the 'changes' package"
-  (interactive)
-    (insert (concat "\\added[id=" sync0-tex-changes-id  "]{}"))
-    (goto-char (- (point) 2))
-(evil-insert-state)
-)
-
-(defun sync0-tex-changes-delete ()
-  "Inserts an \delete command to a LaTeX document using the 'changes' package"
-  (interactive)
-  (if (use-region-p)
-      (save-excursion
-        (let ((low (region-beginning))
-              (high (region-end))
-               (command (concat "\\deleted[id=" sync0-tex-changes-id  "]{")))
-        (goto-char high)
-        (insert "}")
-        (goto-char low)
-        (insert command)))
-    (message "This command can only act on an active region")))
-
-
-(defun sync0-tex-changes-replace ()
-  "Inserts an \replace command to a LaTeX document using the     'changes' package"
-  (interactive)
-  (if (use-region-p)
-      (let ((low (region-beginning))
-            (high (region-end))
-            (command (concat "\\replaced[id=" sync0-tex-changes-id  "]{}{")))
-        (goto-char high)
-        (insert "}")
-        (goto-char low)
-        (insert command)
-        (goto-char (- (point) 2))
-(evil-insert-state)
-)
-    (message "This command can only act on an active region")))
-** LaTeX changes package
 #+BEGIN_SRC emacs-lisp
   ;; (defvar sync0-tex-changes-id "sync0")
 
@@ -1149,7 +1083,8 @@ that I’ve copied from the web.
                                   ;;     ("ESC" . keyboard-quit)
                                   ;; quickly switch buffers
                                   ("M-h" . next-buffer)
-                                  ("M-l" . previous-buffer))
+                                  ("M-l" . previous-buffer)
+                                  ("/" . swiper))
                                   ;; ("C-S-h" . evil-window-left)
                                   ;; ("C-S-j" . evil-window-down)
                                   ;; ("C-S-k" . evil-window-up)
@@ -1721,7 +1656,7 @@ evil-escape-unordered-key-sequence t
 :config
 (add-hook 'after-init-hook 'ivy-mode))
 #+END_SRC
-** Org-mode 
+** Org mode 
 #+BEGIN_SRC emacs-lisp
 (add-hook 'org-mode-hook 'flyspell-mode)
   #+END_SRC 
@@ -1738,9 +1673,6 @@ evil-escape-unordered-key-sequence t
                                   ("s" "Tache d'etude" entry
                                    (file+olp "~/Dropbox/org/todo.org" "Tâches" "Études" "Indéfini")
                                    "**** 無 %^{Tache d'etude} %^g \n:PROPERTIES:\n:ADDED: %<[%Y-%m-%d]>\n:END:" :prepend t)
-                                          ;("r" "Tache de révision" entry
-                                          ; (file+headline "~/Dropbox/projects/paris_1/m1_2_notes.org" "Undefiniert")
-                                          ; "*** 無 %^{Tache de révision} %^{Type de tâche|:review:|:reading:|:project:|:exam:} \nCreated: %<[%Y-%m-%d]>")
                                   ("i" "Idée" entry
                                    (file+headline "~/Dropbox/org/ideas.org" "Ideas")
                                    "** %^{idea_title} \n:PROPERTIES:\n:ADDED: %<[%Y-%m-%d]>\n:TRACE: %a\n:END:" :prepend t)
@@ -1750,6 +1682,9 @@ evil-escape-unordered-key-sequence t
                                   ("q" "Question" entry
                                    (file+headline "~/Dropbox/org/ideas.org" "Questions")
                                    "** %^{question} \n:PROPERTIES:\n:ADDED: %<[%Y-%m-%d]>\n:TRACE: %a\n:END:" :prepend t)
+("m" "Courriel" entry 
+(file+headline "~/Dropbox/org/todo.org" "Courriels")
+         "*** 無 %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n" :prepend t)
                                   ("a" "Auteur" entry
                                    (file "~/Dropbox/org/master.org")
                                    "* %^{last_name,first_name} :lecture: \n:ORIGIN:\n%^{Where?}\n:END:\n:PROPERTIES:\n:ADDED: %<[%Y-%m-%d]>\n:END:" :prepend t)
@@ -1875,8 +1810,9 @@ idea
                                          ;; "~/Dropbox/paris_1/m2_1"
                                          "~/Dropbox/paris_1/m2_1/m2_1_notes.org"
                                          ;; "~/Dropbox/paris_1/memoire"
-                                         "~/Dropbox/paris_1/memoire/memoire_draft_petit.org"
+                                         "~/Dropbox/paris_1/memoire/memoire_draft.org"
                                          "~/Dropbox/paris_1/memoire/memoire.org"
+                                         "~/Dropbox/paris_1/memoire/README.org"
                                          "~/Dropbox/org/jahrestage.org"
                                          "~/Dropbox/org/master.org"
                                          "~/Dropbox/org/todo.org"))
@@ -2505,93 +2441,119 @@ This package allow org mode to interact with WordPress.
           (setq org2blog/wp-buffer-format-function
 'my-format-function)
 *** export settings for LaTeX
+Even though, by default, Emacs Org mode has the export keyword
+~LATEX_COMPILER:~ to choose among the different engines (pdflatex, xelatex, or
+lualatex), I had to tweek the settings to run LaTeX through ~latexmk~ for
+biber to work properly with BibLaTeX. In layman English, the following
+configuration is necessary for automatic bibliography management to work
+properly when exporting org documents to LaTeX.
 #+BEGIN_SRC emacs-lisp
-  ;; export references (to tables, graphics, etc.) properly, evaluating the +NAME property. 
-  (setq org-latex-prefer-user-labels t)
+      ;; export references (to tables, graphics, etc.) properly, evaluating the +NAME property. 
+      (setq org-latex-prefer-user-labels t)
 
-  ;; export process is sent to the background
-  (setq org-export-in-background t)
+      ;; export process is sent to the background
+      (setq org-export-in-background t)
 
-  ;; select tasks (i.e., TODOs) for export
-  (setq org-export-with-tasks '("次" "完" "無" "中" "待" "疑"))
+      ;; select tasks (i.e., TODOs) for export
+      (setq org-export-with-tasks '("次" "完" "無" "中" "待" "疑"))
 
-(defun sync0-latex-compile ()
-    (save-buffer)
-    (TeX-command "LaTeX" 'TeX-master-file))
+    (defun sync0-latex-compile ()
+        (save-buffer)
+        (TeX-command "LaTeX" 'TeX-master-file))
 
-  (defun sync0-latex-and-beamer-export ()
-    "Export current org file with beamer if it has beamer as latex class."
-    (interactive)
-    (when (equal major-mode 'org-mode) 
-        (if (string-match "LATEX_CLASS: beamer" (buffer-string))
-            (org-beamer-export-to-pdf)
-          (org-latex-export-to-pdf))
-      ))
+      (defun sync0-latex-and-beamer-export ()
+        "Export current org file with beamer if it has beamer as latex class."
+        (interactive)
+        (when (equal major-mode 'org-mode) 
+            (if (string-match "LATEX_CLASS: beamer" (buffer-string))
+                (org-beamer-export-to-pdf)
+              (org-latex-export-to-pdf))
+          ))
 
-  ;; speed keybinding for latex pdf export
-  ;;(global-set-key "\M-p" 'org-latex-export-to-pdf)
-  (global-set-key "\M-p" 'sync0-latex-and-beamer-export)
+      ;; speed keybinding for latex pdf export
+      ;;(global-set-key "\M-p" 'org-latex-export-to-pdf)
+      (global-set-key "\M-p" 'sync0-latex-and-beamer-export)
 
-                                          ;(add-hook 'org-mode-hook
-                                          ;     (lambda () (define-key global-map "\M-p" 'org-latex-export-to-pdf)))
-  ;;(lambda () (define-key org-mode-map "\M-p" 'org-latex-export-to-pdf)))
+                                              ;(add-hook 'org-mode-hook
+                                              ;     (lambda () (define-key global-map "\M-p" 'org-latex-export-to-pdf)))
+      ;;(lambda () (define-key org-mode-map "\M-p" 'org-latex-export-to-pdf)))
 
-  ;; Default packages included in every tex file, pdflatex or xelatex
-  ;;(setq org-latex-packages-alist
-  ;;      '(("" "graphicx" t)
-  ;;        ("" "longtable" nil)
-  ;;        ("" "float" nil)))
+      ;; Default packages included in every tex file, pdflatex or xelatex
+      ;;(setq org-latex-packages-alist
+      ;;      '(("" "graphicx" t)
+      ;;        ("" "longtable" nil)
+      ;;        ("" "float" nil)))
 
-  ;; source: https://lists.gnu.org/archive/html/emacs-orgmode/2013-06/msg00240.html
-  (defun my-auto-tex-cmd (backend)
-    "When exporting from .org with latex,
-      automatically run latex, pdflatex, or xelatex as appropriate,
-      using latexmk."
-    (let ((texcmd))
-      (setq texcmd "latexmk -pdf %f")
-      (if (string-match "LATEX_CMD: pdflatex" (buffer-string))
-          (progn
-            (setq texcmd "latexmk -pdf -pdflatex='pdflatex -file-line-error --shell-escape -synctex=1' %f")
-            (setq org-latex-default-packages-alist
-                  '(("AUTO" "inputenc" t)
-                    ("T1"   "fontenc"   t)
-                    (""     "fixltx2e"  nil)
-                    (""     "wrapfig"   nil)
-                    (""     "soul"      t)
-                    (""     "textcomp"  t)
-                    (""     "marvosym"  t)
-                    (""     "wasysym"   t)
-                    (""     "latexsym"  t)
-                    (""     "amssymb"   t)
-                    (""     "hyperref"  nil)))))
-      (if (string-match "LATEX_CMD: xelatex" (buffer-string))
-          (progn
-            (setq texcmd "latexmk -pdflatex='xelatex -file-line-error --shell-escape -synctex=1' -pdf %f")
-            (setq org-latex-default-packages-alist
-                  '(("" "fontspec" t)
-                    ("" "xunicode" t)
-                    ("" "url" t)
-                    ;; ("" "rotating" t)
-                    ;; ("" "memoir-article-styles" t)
-                    ;; ("american" "babel" t)
-                    ;; ("babel" "csquotes" t)
-                    ;; ("" "listings" nil)
-                    ;; ("svgnames" "xcolor" t)
-                    ("" "soul" t)
-                    ;;("xetex, colorlinks=true, urlcolor=FireBrick, plainpages=false, pdfpagelabels, bookmarksnumbered" "hyperref" nil)
-                    ))
-            (setq org-latex-classes
-                  (cons '("memarticle"
-                          "\\documentclass[12pt,oneside,article]{memoir}"
-                          ("\\section{%s}" . "\\section*{%s}")
-                          ("\\subsection{%s}" . "\\subsection*{%s}")
-                          ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                          ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                          ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
-                        org-latex-classes))))
+      ;; source: https://lists.gnu.org/archive/html/emacs-orgmode/2013-06/msg00240.html
+      ;; (defun my-auto-tex-cmd (backend)
+      ;;   "When exporting from .org with latex,
+      ;;     automatically run latex, pdflatex, or xelatex as appropriate,
+      ;;     using latexmk."
+      ;;   (let ((texcmd))
+      ;;     (setq texcmd "latexmk -pdf %f")
+      ;;     (if (string-match "LATEX_CMD: pdflatex" (buffer-string))
+      ;;         (progn
+      ;;           (setq texcmd "latexmk -pdf -pdflatex='pdflatex -file-line-error --shell-escape -synctex=1' %f")
+      ;;           (setq org-latex-default-packages-alist
+      ;;                 '(("AUTO" "inputenc" t)
+      ;;                   ("T1"   "fontenc"   t)
+      ;;                   (""     "fixltx2e"  nil)
+      ;;                   (""     "wrapfig"   nil)
+      ;;                   (""     "soul"      t)
+      ;;                   (""     "amssymb"   t)
+      ;;                   (""     "hyperref"  nil)))))
+      ;;     (if (string-match "LATEX_CMD: lualatex" (buffer-string))
+      ;;         (progn
+      ;;           (setq texcmd "latexmk -pdflatex='lualatex -file-line-error --shell-escape -synctex=1' -pdf %f")
+      ;;           (setq org-latex-default-packages-alist
+      ;;                 '(("" "fontspec" t)
+      ;;                   ("" "hyperref" t)))))
+      ;;     (if (string-match "LATEX_CMD: xelatex" (buffer-string))
+      ;;         (progn
+      ;;           (setq texcmd "latexmk -pdflatex='xelatex -file-line-error --shell-escape -synctex=1' -pdf %f")
+      ;;           (setq org-latex-default-packages-alist
+      ;;                 '(("" "fontspec" t)
+      ;;                   ("" "xunicode" t)
+      ;;                   ("" "url" t)
+      ;;                   ("" "soul" t)
+      ;;                   ))
+      ;;           (setq org-latex-classes
+      ;;                 (cons '("memarticle"
+      ;;                         "\\documentclass[12pt,oneside,article]{memoir}"
+      ;;                         ("\\section{%s}" . "\\section*{%s}")
+      ;;                         ("\\subsection{%s}" . "\\subsection*{%s}")
+      ;;                         ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+      ;;                         ("\\paragraph{%s}" . "\\paragraph*{%s}")
+      ;;                         ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
+      ;;                       org-latex-classes))))
 
-      (setq org-latex-pdf-process (list texcmd))))
-  (add-hook 'org-export-before-parsing-hook 'my-auto-tex-cmd)
+      ;;     (setq org-latex-pdf-process (list texcmd))))
+      ;; (add-hook 'org-export-before-parsing-hook 'my-auto-tex-cmd)
+
+      (defun my-auto-tex-cmd (backend)
+        "When exporting from .org with latex,
+          automatically run pdflatex, xelatex, or lualatex as
+          appropriate, using latexmk."
+        (let ((texcmd))
+          (setq texcmd "latexmk -pdf %f")
+          (if (string-match "LATEX_COMPILER: pdflatex" (buffer-string))
+              (progn
+                (setq texcmd "latexmk -pdflatex='pdflatex -file-line-error --shell-escape -synctex=1' -pdf %f")))
+          (if (string-match "LATEX_COMPILER: lualatex" (buffer-string))
+              (progn
+                (setq texcmd "latexmk -pdflatex='lualatex -file-line-error --shell-escape -synctex=1' -pdf %f")))
+          (if (string-match "LATEX_COMPILER: xelatex" (buffer-string))
+              (progn
+                (setq texcmd "latexmk -pdflatex='xelatex -file-line-error --shell-escape -synctex=1' -pdf %f")))
+
+          (setq org-latex-pdf-process (list texcmd))))
+
+      (add-hook 'org-export-before-parsing-hook 'my-auto-tex-cmd)
+
+  ;; (setq org-latex-pdf-process (quote ("texi2dvi --pdf --clean --verbose
+  ;; --batch %f" "bibtex %b" "texi2dvi --pdf --clean --verbose --batch %f"
+  ;; "texi2dvi --pdf --clean --verbose --batch %f")))
+
 #+END_SRC
 *** Export to Word (doc)
 #+BEGIN_SRC emacs-lisp
@@ -2667,7 +2629,7 @@ This package allow org mode to interact with WordPress.
 (add-hook 'org-mode-hook
            '(lambda ()
             (delete '("\\.pdf\\'" . default) org-file-apps)
-            (add-to-list 'org-file-apps '("\\.pdf\\'" . "mendeleydesktop %s"))))
+            (add-to-list 'org-file-apps '("\\.pdf\\'" . "zathura %s"))))
 #+END_SRC   
 *** Editing source code
 #+BEGIN_SRC emacs-lisp
@@ -2688,6 +2650,14 @@ This package allow org mode to interact with WordPress.
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'org-export-exclude-tags "取")
 #+END_SRC 
+*** org-mu4e
+  This package stores org-mode links to messages.
+#+BEGIN_SRC emacs-lisp
+(use-package org-mu4e :after org
+:config
+;; Store link to message if in header view, not to header query.
+(setq org-mu4e-link-query-in-headers-mode nil))
+  #+END_SRC 
 ** Ivy-bibtex
          bibtex-completion-library-path '("~/Documents/mendeley/")
          bibtex-completion-pdf-field "file"
@@ -3386,7 +3356,7 @@ This package allow org mode to interact with WordPress.
   ;;   (if current-input-method (deactivate-input-method)))
 
     (defun sync0-english-keyboard-setup ()
-      "Set input methods for EVIL mode suitable for French"
+      "Set input methods for EVIL mode suitable for English"
       ;; check whether EVIL mode is active
       (when (bound-and-true-p evil-mode) 
         ;; TeX for evil insert mode 
@@ -3414,6 +3384,8 @@ This package allow org mode to interact with WordPress.
   (defvar sync0-language-active 
     "Is a human language minor mode enabled?")
 
+(setq sync0-language-active nil)
+
   (define-minor-mode rabelais-mode
     "Get your foos in the right places."
 ;; The initial value.
@@ -3424,7 +3396,7 @@ This package allow org mode to interact with WordPress.
     :global  t
     (when (bound-and-true-p orwell-mode) 
       (add-hook 'text-mode-hook (lambda () (orwell-mode -1))))
-    (setq sync0-language-active 'Rabelais
+    (setq sync0-language-active 'rabelais
           local-abbrev-table rabelais-mode-abbrev-table)
     (sync0-french-keyboard-setup)
     (ispell-change-dictionary "fr_FR")
@@ -3443,7 +3415,7 @@ This package allow org mode to interact with WordPress.
     :global  t
     (when (bound-and-true-p rabelais-mode) 
       (add-hook 'text-mode-hook (lambda () (rabelais-mode -1))))
-    (setq sync0-language-active 'Orwell
+    (setq sync0-language-active 'orwell
           local-abbrev-table orwell-mode-abbrev-table)
     (sync0-english-keyboard-setup)
     (ispell-change-dictionary "en_US-large")
@@ -3799,8 +3771,12 @@ sEnter expansion: ")
   (defun insert-current-day () 
     (insert (shell-command-to-string "echo -n $(date +%d)")))
 
-  (defun insert-current-month () 
+  (defun insert-current-moth () 
     (insert (shell-command-to-string "echo -n $(date +%B)")))
+
+  (defun sync0-insert-today-timestamp () 
+  "Insert today's date in the YYYY/MM/DD format"
+    (insert (shell-command-to-string "echo -n $(date +"%Y/%m/%d")")))
 
 (defun sync0-insert-dates ()
   "insert a bunch of dates"
@@ -3948,6 +3924,33 @@ abort completely with `C-g'."
 ;; set a faster shortcut
 (define-key global-map (kbd "M-i") 'endless/ispell-word-then-abbrev)
 #+END_SRC 
+** Dictionary look up
+#+BEGIN_SRC emacs-lisp
+  (autoload 'ispell-get-word "ispell")
+
+  (defun sync0-lookup-word (word)
+    "Search an online dictionary for the word at point according
+    to the active language minor mode."
+            (interactive (list (save-excursion (car (ispell-get-word nil)))))
+    (cond  ((bound-and-true-p orwell-mode) 
+            (browse-url (format "https://www.merriam-webster.com/dictionary/%s" word)))
+           ((bound-and-true-p rabelais-mode) 
+            (browse-url (format "https://larousse.fr/dictionnaires/francais/%s" word)))
+           (t "No language minor mode specified")))
+
+  (defun sync0-lookup-conjugation (word)
+    "Search an online dictionary for the word at point according
+    to the active language minor mode."
+            (interactive (list (save-excursion (car (ispell-get-word nil)))))
+    (cond  ((bound-and-true-p orwell-mode) 
+            (browse-url (format "https://www.merriam-webster.com/dictionary/%s" word)))
+           ((bound-and-true-p rabelais-mode) 
+            (browse-url (format "http://la-conjugaison.nouvelobs.com/du/verbe/%s.php" word)))
+           (t "No language minor mode specified")))
+
+  (global-set-key (kbd "M-#") 'sync0-lookup-word)
+  (global-set-key (kbd "M-$") 'sync0-lookup-conjugation)
+  #+END_SRC 
 ** Latex changes mode
   (defvar sync0-language-active 0
     "Is a human language minor mode enabled?")

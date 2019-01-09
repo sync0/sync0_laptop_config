@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: org_table_export_options
-# key: table
+# key: caption
 # --
 \#+ATTR_LATEX: :tabular environment: tabular :rmlines
 \#+CAPTION: ${1:Lorem ipsum dolor sit amet}

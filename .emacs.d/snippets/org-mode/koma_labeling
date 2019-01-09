@@ -2,6 +2,6 @@
 # name: labeling_koma
 # key: labeling
 # --
-\begin{labeling}[~]{${1:Commentaire}} 
-\item[$1] ${2:Lorem ipsum dolor sit amet}
+\begin{labeling}[:]{} 
+\item[${1:Commentaire}] ${2:Lorem ipsum dolor sit amet}
 \end{labeling}$0
