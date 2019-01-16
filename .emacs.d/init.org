@@ -17,53 +17,26 @@
 
 # Initial visualization settings.
 #+STARTUP: noindent showeverything nostars
-# Necessary to export code from org mode to elisp. 
+# Necessary to export code from Emacs org mode to elisp. 
 #+PROPERTY: header-args :tangle yes
 * Introduction 
 This is my Emacs configuration file. As the sloppy code herein attests, I
-am not a programmer but a black magician. I use Emacs mainly to take notes
-and write research papers, so these settings reflect that usage.
-** Tips 
+am not a programmer. I use Emacs primarily for taking notes and writing
+academic articles, so these settings reflect that usage. 
+** Reminders for Myself 
  - In Org mode, ~<s + tab~ creates a code block. To make it executable,
-   add the words ~emacs-lisp~ to the first line, after ~#+BEGIN_SRC~.
+   add the words ~emacs-lisp~ to the first line, right after ~#+BEGIN_SRC~.
  - The location for hunspell dictionaries should be in
    /usr/share/hunspell. Otherwise, an error arises that I was unable to solve.
 * Configuration
-  Some of these settings are necessary before loading any packages. Other are
-not, but I have included them here for ease of finding. 
-** Scratch Message
-The following code changes the welcoming message displayed by Emacs in the
-/scratch/ buffer. I use the beginning of Karl Marx and Friedrich Engels'
-/Manifest der Kommunistischen Partei/.
-#+BEGIN_SRC emacs-lisp
-(setq initial-scratch-message ";; Ein Gespenst geht um in Europa – das Gespenst des Kommunismus. 
-;; Alle Mächte des alten Europa haben sich zu einer heiligen Hetzjagd 
-;; gegen dies Gespenst verbündet, 
-;; der Papst und der Czar, 
-;; Metternich und Guizot, 
-;; französische Radikale und deutsche Polizisten.
-
-;; Wo ist die Oppositionspartei, 
-;; die nicht von ihren regierenden Gegnern als kommunistisch verschrieen worden wäre, 
-;; wo die Oppositionspartei, 
-;; die den fortgeschritteneren Oppositionsleuten sowohl, 
-;; wie ihren reaktionären Gegnern den brandmarkenden Vorwurf 
-;; des Kommunismus nicht zurückgeschleudert hätte?
-
-;; Zweierlei geht aus dieser Thatsache hervor.
-
-;; Der Kommunismus wird bereits von allen europäischen Mächten 
-;; als eine Macht anerkannt.
-
-;; Es ist hohe Zeit daß die Kommunisten ihre Anschauungsweise, 
-;; ihre Zwecke, 
-;; ihre Tendenzen vor der ganzen Welt offen darlegen, 
-;; und den Mährchen vom Gespenst des Kommunismus 
-;; ein Manifest der Partei selbst entgegenstellen.")
-  #+END_SRC 
+  Some of the settings in this part are necessary before loading any Emacs
+packages, so they must be placed in the beginning of the configuration
+file. Some other settings do not require this position, but I have included
+them here for ease of finding. 
 ** Doom macros
-Since I have borrowed extensively from [[https://github.com/hlissner][hlissner's]] Emacs configuration, I
-have also included some of his macros in my configuration. 
+As a non-programmer, I have borrowed most nasty tricks in this
+configuration from other users. In this section, I have included some
+custom macros from [[https://github.com/hlissner][hlissner's]] Emacs configuration.
 *** after!
 #+BEGIN_SRC emacs-lisp
 (eval-and-compile
@@ -210,16 +183,12 @@ line or use --debug-init to enable this.")
         (message "No setting found for %s" keyword)
         nil)))))
   #+END_SRC 
-** User Info.
-#+BEGIN_SRC emacs-lisp
-  (setq user-full-name "Carlos Alberto Rivera Carreño"
-        user-mail-address "cantorlunae@gmail.com")
-#+END_SRC 
 ** Tangling 
-   This code, which I borrowed from another user, sets up tangling to
-   byte-compile the /init.org/ file, and thus, make Emacs load faster. Also,
-   when byte-compiling, Emacs displays whether there are any errors or
-   warnings, which makes it easier to track bugs and else.
+   This code sets up tangling to byte-compile the /init.org/ file
+   automatically on save. Byte compiling this file speeds up Emacs on
+   startup. Likewise, when byte-compiling, Emacs displays whether there are
+   any errors or warnings, which simplifies debugging.
+
    #+BEGIN_SRC emacs-lisp
      (defun tangle-init ()
        "If the current buffer is 'init.org' the code-blocks are
@@ -232,8 +201,9 @@ line or use --debug-init to enable this.")
            (byte-compile-file (concat user-emacs-directory "init.el")))))
      (add-hook 'after-save-hook 'tangle-init)
    #+END_SRC 
-** Packages
+** Package Management
 These settings configure Emacs package manager and the package repositories.
+
    #+BEGIN_SRC emacs-lisp
      ;; Initialize Emac's package manager.
      (package-initialize)
@@ -246,223 +216,217 @@ These settings configure Emacs package manager and the package repositories.
 
      (setq package-check-signature nil)
    #+END_SRC
-** Use-package
-[[https://github.com/jwiegley][jwiegley's]] ~use-package~ macro simplifies package configuration in the ~.emacs~
-startup file for faster performance and organization.
-#+BEGIN_SRC emacs-lisp
-;; Verify that "use-package" is installed.
-  (unless (package-installed-p 'use-package)
-;; Refresh contents of package list.
-    (package-refresh-contents)
-;; Install "use-package."
-    (package-install 'use-package))
-
-  (setq use-package-verbose t)
-
-;; Activate "use-package." 
-  (require 'use-package)
-;; Necessary to allow use-package to bind keys through ":bind".
-  (require 'bind-key)
-#+END_SRC 
-** Mode Line
+*** Use-package
+ [[https://github.com/jwiegley][jwiegley's]] ~use-package~ macro simplifies package configuration in the ~.emacs~
+ startup file for faster startup and easier organization.
  #+BEGIN_SRC emacs-lisp
-   ;; Display time in modeline.
-   (setq display-time-string-forms
-         '((propertize (format-time-string " %H:%M " now) 'face 'bold)))
-   ;; (setq display-time-format "%I:%M:%S")
-   (display-time-mode 1)
+ ;; Verify that "use-package" is installed.
+   (unless (package-installed-p 'use-package)
+ ;; Refresh contents of package list.
+     (package-refresh-contents)
+ ;; Install "use-package."
+     (package-install 'use-package))
 
-   ;; Display battery in modeline.
-   ;; (display-battery-mode 1)
-   ;; Display battery in modeline using the Fancy Battery package
-   ;; Find at https://github.com/lunaryorn, but beware as it is unmaintained 
-   (use-package fancy-battery
-     :hook
-     (after-init . fancy-battery-mode))
-   ;; :init 
-   ;; (add-hook 'after-init-hook #'fancy-battery-mode))
+   (setq use-package-verbose t)
+
+ ;; Activate "use-package." 
+   (require 'use-package)
+ ;; Necessary to allow use-package to bind keys through ":bind".
+   (require 'bind-key)
+ #+END_SRC 
+** General Settings
+*** Scratch Message
+ The following code changes the Emacs welcome message in the ~scratch~
+ buffer. I use a fragment from the chapter "Where I Lived, and What I Lived
+ for" from Thoreau's /Walden, or, Life in the Woods/ (1854). 
+
+ #+BEGIN_SRC emacs-lisp
+   (setq initial-scratch-message ";;
+   ;; 
+   ;; WHERE I LIVED, AND WHAT I LIVED FOR
+   ;; 
+   ;; I went to the woods because I wished to live deliberately, to
+   ;; front only the essential facts of life, and see if I could not
+   ;; learn what it had to teach, and not, when I came to die, discover
+   ;; that I had not lived. I did not wish to live what was not life,
+   ;; living is so dear; nor did I wish to practise resignation, unless
+   ;; it was quite necessary. I wanted to live deep and suck out all
+   ;; the marrow of life, to live so sturdily and Spartan-like as to
+   ;; put to rout all that was not life, to cut a broad swath and shave
+   ;; close, to drive life into a corner, and reduce it to its lowest
+   ;; terms, and, if it proved to be mean, why then to get the whole
+   ;; and genuine meanness of it, and publish its meanness to the
+   ;; world; or if it were sublime, to know it by experience, and be
+   ;; able to give a true account of it in my next excursion.
+   ;; 
+   ;; 
+   ;; Henry David Thoreau, Walden (1854)")
    #+END_SRC 
-** Workspace settings 
-   #+BEGIN_SRC emacs-lisp
-   ;; Line numbers
-   ;; After version 26, Emacs has native support for line numbers. 
-   (when (version<= "26.0.50" emacs-version )
-     (global-display-line-numbers-mode))
+*** User Information
+ #+BEGIN_SRC emacs-lisp
+   (setq user-full-name "Carlos Alberto Rivera Carreño"
+         user-mail-address "cantorlunae@gmail.com")
+ #+END_SRC 
+*** Mode Line
+  #+BEGIN_SRC emacs-lisp
+        ;; Display time in modeline.
+        (setq display-time-string-forms
+              '((propertize (format-time-string " %H:%M " now) 'face 'bold)))
+        ;; (setq display-time-format "%I:%M:%S")
+        (display-time-mode 1)
 
-          (tool-bar-mode -1) 
-          (menu-bar-mode -1)
-          (scroll-bar-mode -1)
-          ;;(menu-bar-showhide-fringe-menu-customize-disable)
+        (use-package fancy-battery
+          :hook
+          (after-init . fancy-battery-mode))
 
-          ;; begin maxmized
-          (add-to-list 'default-frame-alist '(fullscreen . maximized))
-
-          (setq mode-line-format nil
+          (setq 
+    ;; mode-line-format nil
                 inhibit-splash-screen t
                 echo-keystrokes 0.1
-                auto-revert-interval 1
-                )
+                auto-revert-interval 1)
 
-          (setq-default                    
-           ;; Use spaces instead of tabs
-           indent-tabs-mode nil              
-           ;; Split verticly by default
-           split-width-threshold 0         
-           ;; Split verticly by default
-           split-height-threshold nil        
-           ;; disable bidirectional text for tiny performance boost
-           bidi-display-reordering nil 
-           ;; don't blink--too distracting
-           blink-matching-paren nil    
-           ;; hide cursors in other windows
-           cursor-in-non-selected-windows nil  
-           frame-inhibit-implied-resize t
-           ;; avoid ugly problèmes with gît-gutter 
-           fringes-outside-margins t
-           ;; left-margin-width 3
-           ;; right-margin-width 7
-           left-fringe-width 3
-           right-fringe-width 0
-           ;; remove continuation arrow on right fringe
-           fringe-indicator-alist (delq (assq 'continuation fringe-indicator-alist)
-                                        fringe-indicator-alist)
-           highlight-nonselected-windows nil
-           image-animate-loop t
-           indicate-buffer-boundaries nil
-           indicate-empty-lines nil
-           max-mini-window-height 0.3
-           )
+          ;; Workspace keybindgs
+          ;; (defun toggle-mode-line () 
+          ;;   "toggles the modeline on and off"
+          ;;   (interactive) 
+          ;;   (setq mode-line-format
+          ;;         (if (equal mode-line-format nil)
+          ;;             (default-value 'mode-line-format)) )
+          ;;   (redraw-display))
+    #+END_SRC 
+*** Line numbers
+After version 26, Emacs has native support for line numbers. 
 
-          ;; highlight matching delimiters
-          (setq show-paren-delay 0.1
-                show-paren-highlight-openparen t
-                show-paren-when-point-inside-paren t)
-          (show-paren-mode 1)
+    #+BEGIN_SRC emacs-lisp
+    (when (version<= "26.0.50" emacs-version )
+    (global-display-line-numbers-mode))
+    #+END_SRC 
+*** Remove Annoying Toolbars
+    #+BEGIN_SRC emacs-lisp
+      (tool-bar-mode -1) 
+      (menu-bar-mode -1)
+      (scroll-bar-mode -1)
+      (menu-bar-showhide-fringe-menu-customize-disable)
 
-     ;; On graphical displays, you can use window dividers in order to separate
-     ;; windows visually.
-          (setq-default window-divider-default-places t
-                        window-divider-default-bottom-width 0
-                        window-divider-default-right-width 1)
-          (add-hook 'emacs-startup-hook #'window-divider-mode)
+      ;; In case I need those annoying toolbars back, I bind them:
+      ;; (global-set-key [C-f11] 'toggle-mode-line)
+      (global-set-key (kbd "<f8>") 'tool-bar-mode)
+      (global-set-key (kbd "<f9>") 'menu-bar-mode)
+      #+END_SRC 
+*** Appeareance
+    #+BEGIN_SRC emacs-lisp
+      ;; begin maxmized
+      (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
-          ;; (use-package fringe-helper :load-path "~/.emacs.d/sync0_git/fringe-helper.el/" 
-          ;;   :commands (fringe-helper-define fringe-helper-convert))
+      (setq-default                    
+       ;; Use spaces instead of tabs
+       indent-tabs-mode nil              
+       ;; Split verticly by default
+       split-width-threshold 0         
+       ;; Split verticly by default
+       split-height-threshold nil        
+       ;; disable bidirectional text for tiny performance boost
+       bidi-display-reordering nil 
+       ;; don't blink--too distracting
+       blink-matching-paren nil    
+       ;; hide cursors in other windows
+       cursor-in-non-selected-windows nil  
+       frame-inhibit-implied-resize t
+       ;; avoid ugly problèmes with gît-gutter 
+       fringes-outside-margins t
+       ;; left-margin-width 3
+       ;; right-margin-width 7
+       left-fringe-width 3
+       right-fringe-width 0
+       ;; remove continuation arrow on right fringe
+       fringe-indicator-alist (delq (assq 'continuation fringe-indicator-alist)
+                                    fringe-indicator-alist)
+       highlight-nonselected-windows nil
+       image-animate-loop t
+       indicate-buffer-boundaries nil
+       indicate-empty-lines nil
+       max-mini-window-height 0.3
+       )
 
-          ;; make navigation easy
-          ;; (setq frame-title-format "%b")
+      ;; highlight matching delimiters
+      (setq show-paren-delay 0.1
+            show-paren-highlight-openparen t
+            show-paren-when-point-inside-paren t)
+      (show-paren-mode 1)
 
-          ;;Workspace keybindgs
-          (defun toggle-mode-line () 
-            "toggles the modeline on and off"
-            (interactive) 
-            (setq mode-line-format
-                  (if (equal mode-line-format nil)
-                      (default-value 'mode-line-format)) )
-            (redraw-display))
+      ;; On graphical displays, you can use window dividers in order to separate
+      ;; windows visually.
+      (setq-default window-divider-default-places t
+                    window-divider-default-bottom-width 0
+                    window-divider-default-right-width 1)
+      (add-hook 'emacs-startup-hook #'window-divider-mode)
+ #+END_SRC
+*** Bookmarks
+ #+BEGIN_SRC emacs-lisp
+     ;; Bookmarks directory
+     (setq bookmark-default-file (concat user-emacs-directory "bookmarks")
+           bookmark-save-flag 1)
+ #+END_SRC 
+*** Autosave
+ #+BEGIN_SRC emacs-lisp
+     (setq auto-save-interval 100
+              auto-save-timeout 60)
+ #+END_SRC 
+*** CUSTOM
+ #+BEGIN_SRC emacs-lisp
+     ;; Set CUSTOM directory
+     (setq custom-file (expand-file-name "custom_settings.el" user-emacs-directory))
+     (load custom-file t)
+ #+END_SRC 
+*** Sane Defaults
+    #+BEGIN_SRC emacs-lisp
+      ;; Remove yes-no EMACS inconsistency
+      (fset 'yes-or-no-p 'y-or-n-p)
 
-          (global-set-key [C-f11] 'toggle-mode-line)
-          (global-set-key (kbd "<f8>") 'tool-bar-mode)
-          (global-set-key (kbd "<f9>") 'menu-bar-mode)
-#+END_SRC
-** Mixed settings
-#+BEGIN_SRC emacs-lisp
-    ;; Bookmarks directory
-    (setq bookmark-default-file (concat user-emacs-directory "bookmarks")
-          bookmark-save-flag 1)
+(setq debug-on-error t)
 
-    ;; Autosave
-    (setq auto-save-interval 100
-             auto-save-timeout 60)
-
-    ;; CUSTOM directory
-    (setq custom-file (expand-file-name "custom_settings.el" user-emacs-directory))
-    (load custom-file t)
-
-    ;; Remove yes-no EMACS inconsistency
-    (fset 'yes-or-no-p 'y-or-n-p)
-
-    ;; Git gutter thingy
-      (defvar doom-fringe-size '3 "Default fringe width.")
-;; (defconst doom-fringe-size '3 "Default fringe width")
-    ;; ;; ;; (setq-default fringes-outside-margins t)
-       (fringe-mode doom-fringe-size)
-(if (fboundp 'fringe-mode) (fringe-mode doom-fringe-size))
+      ;; Git gutter thingy
+      ;; (defvar doom-fringe-size '3 "Default fringe width.")
+      ;; (defconst doom-fringe-size '3 "Default fringe width")
+      ;; ;; ;; (setq-default fringes-outside-margins t)
+      ;; (fringe-mode doom-fringe-size)
+      ;; (if (fboundp 'fringe-mode) (fringe-mode doom-fringe-size))
       ;;(push `(left-fringe  . ,doom-fringe-size) default-frame-alist)
       ;;(push `(right-fringe . ,doom-fringe-size) default-frame-alist)
 
       ;;(if (fboundp 'fringe-mode) (fringe-mode doom-fringe-size))
-    ;;  (fringe-mode '(3 . 0))
-  ;;    (if (fboundp 'fringe-mode) (fringe-mode '(3 . 0)))
+      ;;  (fringe-mode '(3 . 0))
+      ;;    (if (fboundp 'fringe-mode) (fringe-mode '(3 . 0)))
 
-  ;; margins fonction
-  ;;(defun sync0-fringes ()
-   ;;"Set margins in current buffer."
- ;;        (setq-default left-fringe-width 3)
-;;         (setq-default right-fringe-width 0))
+      ;; (defun doom|no-fringes-in-minibuffer ()
+      ;;   "Disable fringes in the minibuffer window."
+      ;;   (set-window-fringes (minibuffer-window) 0 0 nil))
+      ;; (add-hook! '(after-init-hook minibuffer-setup-hook)
+      ;;   #'doom|no-fringes-in-minibuffer)
 
-   ;; (add-hook 'text-mode-hook 'sync0-fringes)
+      ;; Force UTF-8 encoding
+      ;; disable CJK coding/encoding (Chinese/Japanese/Korean characters)
+      ;; (setq utf-translate-cjk-mode nil)
+      ;; backwards compatibility as default-buffer-file-coding-system
+      ;; is deprecated in 23.2.
 
-     (defun doom|no-fringes-in-minibuffer ()
-       "Disable fringes in the minibuffer window."
-       (set-window-fringes (minibuffer-window) 0 0 nil))
-     (add-hook! '(after-init-hook minibuffer-setup-hook)
-       #'doom|no-fringes-in-minibuffer)
+      ;; set the default encoding system
+      ;; (prefer-coding-system 'utf-8)
+      (set-language-environment 'utf-8)
+      (set-default-coding-systems 'utf-8)
+      (set-terminal-coding-system 'utf-8)
+      (set-keyboard-coding-system 'utf-8)
+      (set-selection-coding-system 'utf-8)
+      (setq default-file-name-coding-system 'utf-8)
+      (setq locale-coding-system 'utf-8)
+      ;; (if (boundp buffer-file-coding-system)
+      ;;     (setq buffer-file-coding-system 'utf-8)
+      ;;   (setq default-buffer-file-coding-system 'utf-8))
 
-    ;; Force UTF-8 encoding
-
-    ;; disable CJK coding/encoding (Chinese/Japanese/Korean characters)
-    ;; (setq utf-translate-cjk-mode nil)
-    (set-language-environment 'utf-8)
-    ;; backwards compatibility as default-buffer-file-coding-system
-    ;; is deprecated in 23.2.
-    ;; (if (boundp buffer-file-coding-system)
-    ;;    (setq buffer-file-coding-system 'utf-8)
-    ;; (setq default-buffer-file-coding-system 'utf-8))
-
-    ;; set the default encoding system
-    (setq default-file-name-coding-system 'utf-8)
-    (set-default-coding-systems 'utf-8)
-    (setq locale-coding-system 'utf-8)
-    (set-terminal-coding-system 'utf-8)
-    (set-keyboard-coding-system 'utf-8)
-    (set-selection-coding-system 'utf-8)
-    (prefer-coding-system 'utf-8)
-    (when (display-graphic-p)
-
-    ;; Treat clipboard input as UTF-8 string first; compound text next, etc.
-       (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
-#+END_SRC
-** List of recent files
-#+BEGIN_SRC emacs-lisp
-  (use-package recentf
-    :config
-    (setq recentf-max-saved-items 100
-     recentf-max-menu-items 10)
-    (recentf-mode +1)
-  (define-key recentf-dialog-mode-map (kbd "j") 'next-line)
-  (define-key recentf-dialog-mode-map (kbd "k") 'previous-line))
-#+END_SRC
-** 取 Margins to buffer
-;; setting margins at start up
-(setq left-margin-width 4)
-;;(setq right-margin-width 26)
-
-;; margins function
-(defun my-toggle-margins ()
-"Set margins in current buffer."
-(interactive)
-  (if (or (> left-margin-width 0) (> right-margin-width 0))
-    (progn
-      (setq left-margin-width 0)
-      (setq right-margin-width 0)
-      (set-window-buffer (selected-window) (current-buffer)))
-    (setq left-margin-width 26)
-    (setq right-margin-width 26)
-    (set-window-buffer (selected-window) (current-buffer))))
-
-;; set key binding
-(global-set-key [C-f9] 'my-toggle-margins)
+      ;; Treat clipboard input as UTF-8 string first; compound text next, etc.
+      (when (display-graphic-p)
+        (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
+ #+END_SRC
 ** Text settings
 *** Set default faces
  #+BEGIN_SRC emacs-lisp
@@ -510,31 +474,13 @@ startup file for faster performance and organization.
    (add-hook 'Info-mode-hook 'my-buffer-face-mode-variable)
    (add-hook 'text-mode-hook 'my-buffer-face-mode-variable)
 
-
-
-
-   ;;   (defun fontify-frame (frame)
-   ;; (interactive)
-   ;; (if window-system
-   ;; (progn 
-   ;; (if (> (x-display-pixel-width) 2000) 
-   ;; (text-scale-set 0) 
-   ;;              (text-scale-set 0.8)))))
-
-   ;; ;; Fontify current frame
-   ;; (fontify-frame nil)
-
-   ;; ;; Fontify any future frames
-   ;; (push 'fontify-frame after-make-frame-functions)
-
    ;; Allow narrowing
    (put 'narrow-to-region 'disabled nil)
 
    ;; Sentences end with single espace
-   (setq sentence-end-double-space nil)
-
+   (setq sentence-end-double-space nil
    ;; Word wrap
-   (setq org-startup-truncated t)
+   org-startup-truncated t)
   #+END_SRC
 *** Add blank lines
 #+BEGIN_SRC emacs-lisp
@@ -772,6 +718,16 @@ that I’ve copied from the web.
 
 )
 #+END_SRC 
+** List of recent files
+#+BEGIN_SRC emacs-lisp
+  (use-package recentf
+    :config
+    (setq recentf-max-saved-items 100
+     recentf-max-menu-items 10)
+    (recentf-mode +1)
+  (define-key recentf-dialog-mode-map (kbd "j") 'next-line)
+  (define-key recentf-dialog-mode-map (kbd "k") 'previous-line))
+#+END_SRC
 ** Abbrev Mode
 #+BEGIN_SRC emacs-lisp
   ;; Avoid expansion character insertion
@@ -833,68 +789,68 @@ that I’ve copied from the web.
         (sync0-latex-fast-compile)))
     )
 
-  (add-hook 'after-save-hook 'sync0-after-save-actions)
+  ;; (add-hook 'after-save-hook 'sync0-after-save-actions)
   #+END_SRC 
-** LaTeX changes package
-#+BEGIN_SRC emacs-lisp
-  ;; (defvar sync0-tex-changes-id "sync0")
+*** LaTeX changes package
+ #+BEGIN_SRC emacs-lisp
+   ;; (defvar sync0-tex-changes-id "sync0")
 
-  (defun sync0-tex-changes-add ()
-    "Inserts an \added command to a LaTeX document using the 'changes' package"
-    (interactive)
-    (insert "\\added{}")
-    (goto-char (- (point) 2))
-    (evil-insert-state)
-    )
+   (defun sync0-tex-changes-add ()
+     "Inserts an \added command to a LaTeX document using the 'changes' package"
+     (interactive)
+     (insert "\\added{}")
+     (goto-char (- (point) 2))
+     (evil-insert-state)
+     )
 
-  (defun sync0-tex-changes-delete ()
-    "Inserts an \delete command to a LaTeX document using the 'changes' package"
-    (interactive)
-    (if (use-region-p)
-        (save-excursion
-          (let ((low (region-beginning))
-                (high (region-end))
-                (command "\\deleted{"))
-            (goto-char high)
-            (insert "}")
-            (goto-char low)
-            (insert command)))
-      (message "This command can only act on an active region")))
+   (defun sync0-tex-changes-delete ()
+     "Inserts an \delete command to a LaTeX document using the 'changes' package"
+     (interactive)
+     (if (use-region-p)
+         (save-excursion
+           (let ((low (region-beginning))
+                 (high (region-end))
+                 (command "\\deleted{"))
+             (goto-char high)
+             (insert "}")
+             (goto-char low)
+             (insert command)))
+       (message "This command can only act on an active region")))
 
-  (defun sync0-tex-changes-replace ()
-    "Inserts an \replace command to a LaTeX document using the 'changes' package"
-    (interactive)
-    (if (use-region-p)
-        (let ((low (region-beginning))
-              (high (region-end))
-              (command "\\replaced{}{"))
-          (goto-char high)
-          (insert "}")
-          (goto-char low)
-          (insert command)
-          (goto-char (- (point) 2))
-          (evil-insert-state))
-      (message "This command can only act on an active region")))
-  #+END_SRC 
+   (defun sync0-tex-changes-replace ()
+     "Inserts an \replace command to a LaTeX document using the 'changes' package"
+     (interactive)
+     (if (use-region-p)
+         (let ((low (region-beginning))
+               (high (region-end))
+               (command "\\replaced{}{"))
+           (goto-char high)
+           (insert "}")
+           (goto-char low)
+           (insert command)
+           (goto-char (- (point) 2))
+           (evil-insert-state))
+       (message "This command can only act on an active region")))
+   #+END_SRC 
 ** Backups 
-** Store all autosave files in the tmp dir
-#+BEGIN_SRC emacs-lisp 
-(setq auto-save-file-name-transforms
-      `((".*" ,temporary-file-directory t)))
-#+END_SRC
-** Backups in backup dir
-#+BEGIN_SRC emacs-lisp 
-(setq backup-by-copying t
-      backup-directory-alist '(("." . "~/.emacs.d/backups"))
-      delete-old-versions t
-      kept-new-versions 10
-      kept-old-versions 0
-;; use versioned backups
-      version-control t)
+*** Store all autosave files in the tmp dir
+ #+BEGIN_SRC emacs-lisp 
+ (setq auto-save-file-name-transforms
+       `((".*" ,temporary-file-directory t)))
+ #+END_SRC
+*** Backups in backup dir
+ #+BEGIN_SRC emacs-lisp 
+ (setq backup-by-copying t
+       backup-directory-alist '(("." . "~/.emacs.d/backups"))
+       delete-old-versions t
+       kept-new-versions 10
+       kept-old-versions 0
+ ;; use versioned backups
+       version-control t)
 
-;; no lockfiles
-(setq create-lockfiles nil) 
-#+END_SRC
+ ;; no lockfiles
+ (setq create-lockfiles nil) 
+ #+END_SRC
 * Packages 
 ** Highlight indentation
 #+BEGIN_SRC emacs-lisp
@@ -965,93 +921,85 @@ that I’ve copied from the web.
   #+END_SRC 
 ** Spellchecking
  #+BEGIN_SRC emacs-lisp
-        ;; Ispell configuration.
-        (use-package ispell
-          :config
-          ;; Set up hunspell dictionaries
-          (setq ispell-hunspell-dict-paths-alist
-                '(("en_US-large" "/usr/share/hunspell/en_US-large.aff")
-                  ("fr_FR" "/usr/share/hunspell/fr_FR.aff")
-                  ("de_DE" "/usr/share/hunspell/de_DE.aff")
-                  ("it_IT" "/usr/share/hunspell/it_IT.aff")
-                  ("fr_FR" "/usr/share/hunspell/fr_FR.aff")
-                  ("es_ANY" "/usr/share/hunspell/es_ANY.aff")))
-
-          (cond
-           ;; try hunspell at first
-           ;; if hunspell does NOT exist, use aspell
-           ((executable-find "hunspell")
-            (setq ispell-program-name "hunspell")
-            ;;(setq ispell-local-dictionary "en_US")
-            (setq ispell-local-dictionary-alist '(  
-                                                  (nil "[[:alpha:]]" "[^[:alpha:]]" "['-]" nil ("-d" "en_US-large" ) nil utf-8)
-                                                  ("en_US-large" "[[:alpha:]]" "[^[:alpha:]]" "['-]" t ("-d" "en_US-large" ) nil utf-8)
-                                                  ("de_DE" "[[:alpha:]ÄÖÜéäöüß]" "[^[:alpha:]ÄÖÜéäöüß]" "['’-]" t ("-d" "de_DE") nil utf-8)
-                                                  ("es_ANY" "[[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "[^[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "['’-]" t ("-d" "es_ANY") nil utf-8)
-                                                  ("it_IT" "[[:alpha:]AEÉIOUàèéìòù]" "[^[:alpha:]AEÉIOUàèéìòù]" "['’-]" t ("-d" "it_IT") "~tex" nil utf-8)
-                                                  ("fr_FR" "[[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[^[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[’'-]" t ("-d" "fr_FR")  nil utf-8))))
-
-           ((executable-find "aspell")
-            (setq ispell-program-name "aspell")
-            ;; Please note ispell-extra-args contains ACTUAL parameters passed to aspell
-            (setq ispell-extra-args '("--sug-mode=ultra"))))
-
-          ;; Save a new word to personal dictionary without asking
-          (setq ispell-silently-savep t)
-
-          ;; ignore tex commands
-          (add-hook 'org-mode-hook (lambda () (setq ispell-parser 'tex)))
-
-          ;; ignore sections of files for spellcheck
-          (add-to-list 'ispell-skip-region-alist '(":\\(PROPERTIES\\|LOGBOOK\\):" . ":END:"))
-          (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_SRC" . "#\\+END_SRC"))
-          (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_EXAMPLE" . "#\\+END_EXEMPLE"))
-          (add-to-list 'ispell-skip-region-alist '(org-property-drawer-re))
-          (add-to-list 'ispell-skip-region-alist '("\\begin{equation}" . "\\end{equation}"))
-          (add-to-list 'ispell-skip-region-alist '("\\begin{equation\*}" . "\\end{equation\*}"))
-          (add-to-list 'ispell-skip-region-alist '("\\begin{align}" . "\\end{align}"))
-          (add-to-list 'ispell-skip-region-alist '("\\begin{align\*}" . "\\end{align\*}"))
-          (add-to-list 'ispell-skip-region-alist '("\\\\cite.*{" . "}"))
-          (add-to-list 'ispell-skip-region-alist '("\\$" . "\\$"))
-          ;; (add-to-list 'ispell-skip-region-alist '("\*Einstellungen+"))
-          (add-to-list 'ispell-skip-region-alist '("\\* Settings                                   :noexport:ARCHIVE:" . "\\*\\* Etc")))
-        ;; (add-to-list 'ispell-skip-region-alist '("^\\*\sEinstellungen" . "^\\*\\*\sEnde"))
-
-        ;; Flyspell lazy
-        (use-package flyspell-lazy :after flyspell :load-path "~/.emacs.d/sync0_git/flyspell-lazy"
-:config
-            (flyspell-lazy-mode 1))
-
-     ;; (add-hook 'flyspell-mode-hook ')
-     ;;      (when (bound-and-true-p flyspell-mode) 
-     ;;        (flyspell-lazy-mode 1)))
-;;          :hook (flyspell-mode . flyspell-lazy-mode))
-
-        ;; (use-package flyspell :after (org ispell)
-        ;;   :hook (text-mode . flyspell-mode)
-        ;;   :config
-        ;;   (setq flyspell-issue-message-flag nil))
-
-         (use-package flyspell :after (org ispell)
-   ;; :hook (text-mode . flyspell-mode)
+   ;; Ispell configuration.
+   (use-package ispell
      :config
-          (setq flyspell-issue-message-flag nil)
-          (add-hook 'flyspell-mode 'flyspell-lazy-mode)
-         (flyspell-mode 1))     ; or (flyspell-prog-mode) 
+     ;; Set up hunspell dictionaries
+     (setq ispell-hunspell-dict-paths-alist
+           '(("en_US-large" "/usr/share/hunspell/en_US-large.aff")
+             ("fr_FR" "/usr/share/hunspell/fr_FR.aff")
+             ("de_DE" "/usr/share/hunspell/de_DE.aff")
+             ("it_IT" "/usr/share/hunspell/it_IT.aff")
+             ("fr_FR" "/usr/share/hunspell/fr_FR.aff")
+             ("es_ANY" "/usr/share/hunspell/es_ANY.aff")))
 
-          ;; check next highlighted word custom function
-          ;; (defun flyspell-check-next-highlighted-word ()
-          ;;   "Custom function to spell check next highlighted word"
-          ;;   (interactive)
-          ;;   (flyspell-goto-next-error)
-          ;;   (ispell-word))
+     (cond
+      ;; try hunspell at first
+      ;; if hunspell does NOT exist, use aspell
+      ((executable-find "hunspell")
+       (setq ispell-program-name "hunspell")
+       ;;(setq ispell-local-dictionary "en_US")
+       (setq ispell-local-dictionary-alist '(  
+                                             (nil "[[:alpha:]]" "[^[:alpha:]]" "['-]" nil ("-d" "en_US-large" ) nil utf-8)
+                                             ("en_US-large" "[[:alpha:]]" "[^[:alpha:]]" "['-]" t ("-d" "en_US-large" ) nil utf-8)
+                                             ("de_DE" "[[:alpha:]ÄÖÜéäöüß]" "[^[:alpha:]ÄÖÜéäöüß]" "['’-]" t ("-d" "de_DE") nil utf-8)
+                                             ("es_ANY" "[[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "[^[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "['’-]" t ("-d" "es_ANY") nil utf-8)
+                                             ("it_IT" "[[:alpha:]AEÉIOUàèéìòù]" "[^[:alpha:]AEÉIOUàèéìòù]" "['’-]" t ("-d" "it_IT") "~tex" nil utf-8)
+                                             ("fr_FR" "[[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[^[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[’'-]" t ("-d" "fr_FR")  nil utf-8))))
 
-          ;; Avoid TeX syntax
-          ;; (defun flyspell-ignore-tex ()
-          ;;   (set (make-variable-buffer-local 'ispell-parser) 'tex))
-          ;; (add-hook 'org-mode-hook 'flyspell-ignore-tex))
+      ((executable-find "aspell")
+       (setq ispell-program-name "aspell")
+       ;; Please note ispell-extra-args contains ACTUAL parameters passed to aspell
+       (setq ispell-extra-args '("--sug-mode=ultra"))))
 
-        ;; (flyspell-mode 1))     ; or (flyspell-prog-mode) 
+     ;; Save a new word to personal dictionary without asking
+     (setq ispell-silently-savep t)
+
+     ;; ignore tex commands
+     (add-hook 'org-mode-hook (lambda () (setq ispell-parser 'tex)))
+
+     ;; ignore sections of files for spellcheck
+     (add-to-list 'ispell-skip-region-alist '(":\\(PROPERTIES\\|LOGBOOK\\):" . ":END:"))
+     (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_SRC" . "#\\+END_SRC"))
+     (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_EXAMPLE" . "#\\+END_EXEMPLE"))
+     (add-to-list 'ispell-skip-region-alist '(org-property-drawer-re))
+     (add-to-list 'ispell-skip-region-alist '("\\begin{equation}" . "\\end{equation}"))
+     (add-to-list 'ispell-skip-region-alist '("\\begin{equation\*}" . "\\end{equation\*}"))
+     (add-to-list 'ispell-skip-region-alist '("\\begin{align}" . "\\end{align}"))
+     (add-to-list 'ispell-skip-region-alist '("\\begin{align\*}" . "\\end{align\*}"))
+     (add-to-list 'ispell-skip-region-alist '("\\\\cite.*{" . "}"))
+     (add-to-list 'ispell-skip-region-alist '("\\$" . "\\$"))
+     ;; (add-to-list 'ispell-skip-region-alist '("\*Einstellungen+"))
+     (add-to-list 'ispell-skip-region-alist '("\\* Settings                                   :noexport:ARCHIVE:" . "\\*\\* Etc")))
+   ;; (add-to-list 'ispell-skip-region-alist '("^\\*\sEinstellungen" . "^\\*\\*\sEnde"))
+
+   ;; Flyspell lazy
+   (use-package flyspell-lazy :after flyspell :load-path "~/.emacs.d/sync0_git/flyspell-lazy"
+     :config
+     (flyspell-lazy-mode 1))
+
+   ;; (add-hook 'flyspell-mode-hook ')
+   ;;      (when (bound-and-true-p flyspell-mode) 
+   ;;        (flyspell-lazy-mode 1)))
+
+   (use-package flyspell :after (org ispell)
+     ;; :hook (text-mode . flyspell-mode)
+     :config
+     (setq flyspell-issue-message-flag nil)
+     (add-hook 'flyspell-mode-hook 'flyspell-lazy-mode)
+     (flyspell-mode 1))     ; or (flyspell-prog-mode) 
+
+   ;; check next highlighted word custom function
+   ;; (defun flyspell-check-next-highlighted-word ()
+   ;;   "Custom function to spell check next highlighted word"
+   ;;   (interactive)
+   ;;   (flyspell-goto-next-error)
+   ;;   (ispell-word))
+
+   ;; Avoid TeX syntax
+   ;; (defun flyspell-ignore-tex ()
+   ;;   (set (make-variable-buffer-local 'ispell-parser) 'tex))
+   ;; (add-hook 'org-mode-hook 'flyspell-ignore-tex))
  #+END_SRC 
 ** Tex
 #+BEGIN_SRC emacs-lisp
@@ -1155,7 +1103,7 @@ that I’ve copied from the web.
                         (insert " "))
 
                       ;; key bindings
-                      ;; redefinition evils visual mode map
+                      ;; redefinition evils normal mode map
                       (evil-define-key 'normal org-mode-map
                         ;; "<" 'outline-previous-visible-heading
                         ">"   'org-forward-heading-same-level
@@ -1168,8 +1116,8 @@ that I’ve copied from the web.
                         "k" 'previous-line
                         "j" 'next-line
                         ;;  "m" 'set-mark-command
-                        "q" 'fill-paragraph
-                        "Q" 'sync0-insert-line-below
+                        "s" 'fill-paragraph
+                        "S" 'sync0-insert-line-below
                         (kbd "SPC") 'sync0-insert-whitespace
                         "o" '(lambda () (interactive) (evil-org-eol-call 'clever-insert-item))
                         "O" '(lambda () (interactive) (evil-org-eol-call 'org-insert-heading))
@@ -2448,111 +2396,113 @@ biber to work properly with BibLaTeX. In layman English, the following
 configuration is necessary for automatic bibliography management to work
 properly when exporting org documents to LaTeX.
 #+BEGIN_SRC emacs-lisp
-      ;; export references (to tables, graphics, etc.) properly, evaluating the +NAME property. 
-      (setq org-latex-prefer-user-labels t)
+        ;; export references (to tables, graphics, etc.) properly, evaluating the +NAME property. 
+        (setq org-latex-prefer-user-labels t)
 
-      ;; export process is sent to the background
-      (setq org-export-in-background t)
+        ;; export process is sent to the background
+        (setq org-export-in-background t)
 
-      ;; select tasks (i.e., TODOs) for export
-      (setq org-export-with-tasks '("次" "完" "無" "中" "待" "疑"))
+        ;; select tasks (i.e., TODOs) for export
+        (setq org-export-with-tasks '("次" "完" "無" "中" "待" "疑"))
 
-    (defun sync0-latex-compile ()
-        (save-buffer)
-        (TeX-command "LaTeX" 'TeX-master-file))
+      (defun sync0-latex-compile ()
+          (save-buffer)
+          (TeX-command "LaTeX" 'TeX-master-file))
 
-      (defun sync0-latex-and-beamer-export ()
-        "Export current org file with beamer if it has beamer as latex class."
-        (interactive)
-        (when (equal major-mode 'org-mode) 
-            (if (string-match "LATEX_CLASS: beamer" (buffer-string))
-                (org-beamer-export-to-pdf)
-              (org-latex-export-to-pdf))
-          ))
+        (defun sync0-latex-and-beamer-export ()
+          "Export current org file with beamer if it has beamer as latex class."
+          (interactive)
+          (when (equal major-mode 'org-mode) 
+              (if (string-match "LATEX_CLASS: beamer" (buffer-string))
+                  (org-beamer-export-to-pdf)
+                (org-latex-export-to-pdf))
+            ))
 
-      ;; speed keybinding for latex pdf export
-      ;;(global-set-key "\M-p" 'org-latex-export-to-pdf)
-      (global-set-key "\M-p" 'sync0-latex-and-beamer-export)
+        ;; speed keybinding for latex pdf export
+        ;;(global-set-key "\M-p" 'org-latex-export-to-pdf)
+        (global-set-key "\M-p" 'sync0-latex-and-beamer-export)
 
-                                              ;(add-hook 'org-mode-hook
-                                              ;     (lambda () (define-key global-map "\M-p" 'org-latex-export-to-pdf)))
-      ;;(lambda () (define-key org-mode-map "\M-p" 'org-latex-export-to-pdf)))
+                                                ;(add-hook 'org-mode-hook
+                                                ;     (lambda () (define-key global-map "\M-p" 'org-latex-export-to-pdf)))
+        ;;(lambda () (define-key org-mode-map "\M-p" 'org-latex-export-to-pdf)))
 
-      ;; Default packages included in every tex file, pdflatex or xelatex
-      ;;(setq org-latex-packages-alist
-      ;;      '(("" "graphicx" t)
-      ;;        ("" "longtable" nil)
-      ;;        ("" "float" nil)))
+        ;; Default packages included in every tex file, pdflatex or xelatex
+        ;;(setq org-latex-packages-alist
+        ;;      '(("" "graphicx" t)
+        ;;        ("" "longtable" nil)
+        ;;        ("" "float" nil)))
 
-      ;; source: https://lists.gnu.org/archive/html/emacs-orgmode/2013-06/msg00240.html
-      ;; (defun my-auto-tex-cmd (backend)
-      ;;   "When exporting from .org with latex,
-      ;;     automatically run latex, pdflatex, or xelatex as appropriate,
-      ;;     using latexmk."
-      ;;   (let ((texcmd))
-      ;;     (setq texcmd "latexmk -pdf %f")
-      ;;     (if (string-match "LATEX_CMD: pdflatex" (buffer-string))
-      ;;         (progn
-      ;;           (setq texcmd "latexmk -pdf -pdflatex='pdflatex -file-line-error --shell-escape -synctex=1' %f")
-      ;;           (setq org-latex-default-packages-alist
-      ;;                 '(("AUTO" "inputenc" t)
-      ;;                   ("T1"   "fontenc"   t)
-      ;;                   (""     "fixltx2e"  nil)
-      ;;                   (""     "wrapfig"   nil)
-      ;;                   (""     "soul"      t)
-      ;;                   (""     "amssymb"   t)
-      ;;                   (""     "hyperref"  nil)))))
-      ;;     (if (string-match "LATEX_CMD: lualatex" (buffer-string))
-      ;;         (progn
-      ;;           (setq texcmd "latexmk -pdflatex='lualatex -file-line-error --shell-escape -synctex=1' -pdf %f")
-      ;;           (setq org-latex-default-packages-alist
-      ;;                 '(("" "fontspec" t)
-      ;;                   ("" "hyperref" t)))))
-      ;;     (if (string-match "LATEX_CMD: xelatex" (buffer-string))
-      ;;         (progn
-      ;;           (setq texcmd "latexmk -pdflatex='xelatex -file-line-error --shell-escape -synctex=1' -pdf %f")
-      ;;           (setq org-latex-default-packages-alist
-      ;;                 '(("" "fontspec" t)
-      ;;                   ("" "xunicode" t)
-      ;;                   ("" "url" t)
-      ;;                   ("" "soul" t)
-      ;;                   ))
-      ;;           (setq org-latex-classes
-      ;;                 (cons '("memarticle"
-      ;;                         "\\documentclass[12pt,oneside,article]{memoir}"
-      ;;                         ("\\section{%s}" . "\\section*{%s}")
-      ;;                         ("\\subsection{%s}" . "\\subsection*{%s}")
-      ;;                         ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-      ;;                         ("\\paragraph{%s}" . "\\paragraph*{%s}")
-      ;;                         ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
-      ;;                       org-latex-classes))))
+        ;; source: https://lists.gnu.org/archive/html/emacs-orgmode/2013-06/msg00240.html
+        ;; (defun my-auto-tex-cmd (backend)
+        ;;   "When exporting from .org with latex,
+        ;;     automatically run latex, pdflatex, or xelatex as appropriate,
+        ;;     using latexmk."
+        ;;   (let ((texcmd))
+        ;;     (setq texcmd "latexmk -pdf %f")
+        ;;     (if (string-match "LATEX_CMD: pdflatex" (buffer-string))
+        ;;         (progn
+        ;;           (setq texcmd "latexmk -pdf -pdflatex='pdflatex -file-line-error --shell-escape -synctex=1' %f")
+        ;;           (setq org-latex-default-packages-alist
+        ;;                 '(("AUTO" "inputenc" t)
+        ;;                   ("T1"   "fontenc"   t)
+        ;;                   (""     "fixltx2e"  nil)
+        ;;                   (""     "wrapfig"   nil)
+        ;;                   (""     "soul"      t)
+        ;;                   (""     "amssymb"   t)
+        ;;                   (""     "hyperref"  nil)))))
+        ;;     (if (string-match "LATEX_CMD: lualatex" (buffer-string))
+        ;;         (progn
+        ;;           (setq texcmd "latexmk -pdflatex='lualatex -file-line-error --shell-escape -synctex=1' -pdf %f")
+        ;;           (setq org-latex-default-packages-alist
+        ;;                 '(("" "fontspec" t)
+        ;;                   ("" "hyperref" t)))))
+        ;;     (if (string-match "LATEX_CMD: xelatex" (buffer-string))
+        ;;         (progn
+        ;;           (setq texcmd "latexmk -pdflatex='xelatex -file-line-error --shell-escape -synctex=1' -pdf %f")
+        ;;           (setq org-latex-default-packages-alist
+        ;;                 '(("" "fontspec" t)
+        ;;                   ("" "xunicode" t)
+        ;;                   ("" "url" t)
+        ;;                   ("" "soul" t)
+        ;;                   ))
+        ;;           (setq org-latex-classes
+        ;;                 (cons '("memarticle"
+        ;;                         "\\documentclass[12pt,oneside,article]{memoir}"
+        ;;                         ("\\section{%s}" . "\\section*{%s}")
+        ;;                         ("\\subsection{%s}" . "\\subsection*{%s}")
+        ;;                         ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+        ;;                         ("\\paragraph{%s}" . "\\paragraph*{%s}")
+        ;;                         ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
+        ;;                       org-latex-classes))))
 
-      ;;     (setq org-latex-pdf-process (list texcmd))))
-      ;; (add-hook 'org-export-before-parsing-hook 'my-auto-tex-cmd)
+        ;;     (setq org-latex-pdf-process (list texcmd))))
+        ;; (add-hook 'org-export-before-parsing-hook 'my-auto-tex-cmd)
 
-      (defun my-auto-tex-cmd (backend)
-        "When exporting from .org with latex,
-          automatically run pdflatex, xelatex, or lualatex as
-          appropriate, using latexmk."
-        (let ((texcmd))
-          (setq texcmd "latexmk -pdf %f")
-          (if (string-match "LATEX_COMPILER: pdflatex" (buffer-string))
-              (progn
-                (setq texcmd "latexmk -pdflatex='pdflatex -file-line-error --shell-escape -synctex=1' -pdf %f")))
-          (if (string-match "LATEX_COMPILER: lualatex" (buffer-string))
-              (progn
-                (setq texcmd "latexmk -pdflatex='lualatex -file-line-error --shell-escape -synctex=1' -pdf %f")))
-          (if (string-match "LATEX_COMPILER: xelatex" (buffer-string))
-              (progn
-                (setq texcmd "latexmk -pdflatex='xelatex -file-line-error --shell-escape -synctex=1' -pdf %f")))
+        ;; (defun my-auto-tex-cmd (backend)
+        ;;   "When exporting from .org with latex,
+        ;;     automatically run pdflatex, xelatex, or lualatex as
+        ;;     appropriate, using latexmk."
+        ;;   (let ((texcmd))
+        ;;     (setq texcmd "latexmk -pdf %f")
+        ;;     (if (string-match "LATEX_COMPILER: pdflatex" (buffer-string))
+        ;;         (progn
+        ;;           (setq texcmd "latexmk -pdflatex='pdflatex -file-line-error --shell-escape -synctex=1' -pdf %f")))
+        ;;     (if (string-match "LATEX_COMPILER: lualatex" (buffer-string))
+        ;;         (progn
+        ;;           (setq texcmd "latexmk -pdflatex='lualatex -file-line-error --shell-escape -synctex=1' -pdf %f")))
+        ;;     (if (string-match "LATEX_COMPILER: xelatex" (buffer-string))
+        ;;         (progn
+        ;;           (setq texcmd "latexmk -pdflatex='xelatex -file-line-error --shell-escape -synctex=1' -pdf %f")))
 
-          (setq org-latex-pdf-process (list texcmd))))
+        ;;     (setq org-latex-pdf-process (list texcmd))))
 
-      (add-hook 'org-export-before-parsing-hook 'my-auto-tex-cmd)
+  (setq org-latex-pdf-process (list "latexmk -pdflatex='lualatex -file-line-error --shell-escape -synctex=1' -pdf %f"))
 
-  ;; (setq org-latex-pdf-process (quote ("texi2dvi --pdf --clean --verbose
-  ;; --batch %f" "bibtex %b" "texi2dvi --pdf --clean --verbose --batch %f"
-  ;; "texi2dvi --pdf --clean --verbose --batch %f")))
+        ;; (add-hook 'org-export-before-parsing-hook 'my-auto-tex-cmd)
+
+    ;; (setq org-latex-pdf-process (quote ("texi2dvi --pdf --clean --verbose
+    ;; --batch %f" "bibtex %b" "texi2dvi --pdf --clean --verbose --batch %f"
+    ;; "texi2dvi --pdf --clean --verbose --batch %f")))
 
 #+END_SRC
 *** Export to Word (doc)
@@ -2593,6 +2543,15 @@ properly when exporting org documents to LaTeX.
          '("scrbook"
              "\\documentclass{scrbook}"
              ("\\part{%s}" . "\\part*{%s}")
+             ("\\chapter{%s}" . "\\chapter*{%s}")
+             ("\\section{%s}" . "\\section*{%s}")
+             ("\\subsection{%s}" . "\\subsection*{%s}")
+             ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+             ("\\paragraph{%s}" . "\\paragraph*{%s}")
+             ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+(add-to-list 'org-latex-classes
+         '("sync0book"
+             "\\documentclass{scrbook}"
              ("\\chapter{%s}" . "\\chapter*{%s}")
              ("\\section{%s}" . "\\section*{%s}")
              ("\\subsection{%s}" . "\\subsection*{%s}")
@@ -2658,35 +2617,92 @@ properly when exporting org documents to LaTeX.
 ;; Store link to message if in header view, not to header query.
 (setq org-mu4e-link-query-in-headers-mode nil))
   #+END_SRC 
+** Bibtex Mode
+#+BEGIN_SRC emacs-lisp
+    ;; (use-package bibtex
+    ;;   :custom
+    ;;   (bibtex-dialect (quote biblatex));; biblatex as default bib format
+
+    (use-package bibtex
+      :config
+      (setq bibtex-dialect 'biblatex ;; biblatex as default bib format
+            bibtex-maintain-sorted-entries t
+            bibtex-field-delimiters 'braces
+            bibtex-comma-after-last-field t
+            bibtex-align-at-equal-sign t
+            bibtex-autokey-name-year-separator ""
+            bibtex-autokey-year-title-separator ""
+            ;; bibtex-autokey-titleword-first-ignore '("the" "a" "if" "and" "an")
+            bibtex-autokey-titleword-length 0
+            bibtex-autokey-year-length 4
+            bibtex-autokey-titlewords 0)
+  (defun sync0-bibtex-generate-autokey ()
+      "This overwrites the bibtex-generate-autokey function that comes with Emacs.
+    I want my keys to be formatted: authornameYEAR, then a letter
+    if there is already an entry that matches authornameYEAR."
+      (interactive)
+
+      (let* ((names (bibtex-autokey-get-names))
+             (year (bibtex-autokey-get-year))
+             (existing-keys (bibtex-parse-keys))
+             key)
+        (setq key (format "%s%s" names year))
+        (let ((ret key))
+          (cl-loop for c
+                   from ?b to ?z
+                   while (assoc ret existing-keys)
+                   do (setq ret (format "%s%c" key c)))
+          ret))))
+
+  #+END_SRC 
 ** Ivy-bibtex
          bibtex-completion-library-path '("~/Documents/mendeley/")
          bibtex-completion-pdf-field "file"
 #+BEGIN_SRC emacs-lisp
-  (use-package ivy-bibtex :after (org ivy)
-    :config
-    (setq ivy-bibtex-bibliography "~/Documents/mendeley/master.bib" ;; where your references are stored
-          ivy-bibtex-library-path "~/Documents/mendeley/" ;; where your pdfs etc are stored
-          ivy-bibtex-notes-path "~/Dropbox/org/master.org" ;; where your notes are stored
-          bibtex-completion-bibliography 'org-ref-default-bibliography ;; writing completion
-          bibtex-completion-notes-path "~/Documents/org/master.org")
-        (define-key org-mode-map  (kbd "C-c 8") 'ivy-bibtex))
+    (use-package ivy-bibtex :after (org ivy)
+      :config
+      (setq ;; ivy-bibtex-bibliography 'org-ref-default-bibliography ;; where your references are stored
+       ;; ivy-bibtex-library-path 'org-ref-pdf-directory ;; where your pdfs etc are stored
+       ;; ivy-bibtex-notes-path 'org-ref-bibliography-notes;; where your notes are stored
+       bibtex-completion-bibliography '("~/Documents/mendeley/sync0_library.bib") ;; writing completion
+       bibtex-completion-notes-path '"~/Dropbox/org/master.org"
+       ;; bibtex-completion-library-path '("~/Documents/mendeley/") 
+       bibtex-completion-pdf-field "file"
+       bibtex-completion-pdf-symbol "⌘"
+       bibtex-completion-notes-symbol "✎"
+       ;; open in different viewer
+  ;;    bibtex-completion-pdf-open-function '(lambda (fpath) (call-process "zathura" nil 0 nil fpath))
+)
+      ;; (define-key org-mode-map  (kbd "C-c 0") 'ivy-bibtex)
+  )
   #+END_SRC 
 ** Org-ref 
 #+BEGIN_SRC emacs-lisp
   (use-package org-ref :after (org ivy)
     :init 
-    (setq reftex-default-bibliography '("~/Documents/mendeley/library.bib")
+    (setq reftex-default-bibliography '("~/Documents/mendeley/sync0_library.bib")
           ;; see org-ref for use of these variables
           org-ref-bibliography-notes "~/Dropbox/org/master.org"
-          org-ref-default-bibliography '("~/Documents/mendeley/library.bib")
+          org-ref-default-bibliography '("~/Documents/mendeley/sync0_library.bib")
           org-ref-pdf-directory "~/Documents/mendeley/"
-          org-ref-open-pdf-function 'org-ref-get-mendeley-filename
+          ;; org-ref-open-pdf-function 'org-ref-get-mendeley-filename
           ;; set ivy for completion
           org-ref-completion-library 'org-ref-ivy-cite)
     :config 
+(defun sync0-org-ref-open-pdf-at-point ()
+  "Open the pdf for bibtex key under point if it exists."
+  (interactive)
+  (let* ((results (org-ref-get-bibtex-key-and-file))
+         (key (car results))
+         (pdf-file (car(bibtex-completion-find-pdf key))))
+    (if (file-exists-p pdf-file)
+       (org-open-file pdf-file))
+      (message "No PDF found for %s" key)))
+(setq org-ref-open-pdf-function 'sync0-org-ref-open-pdf-at-point)
     (define-key org-mode-map (kbd "C-c [") 'org-ref-ivy-insert-cite-link)
-    (define-key org-mode-map  (kbd "C-c 0") 'org-ref-open-bibtex-notes)
-    (define-key org-mode-map  (kbd "C-c 9") 'org-ref-open-notes-from-reftex)
+    (define-key org-mode-map  (kbd "C-c 9") 'org-ref-open-bibtex-notes)
+    (define-key org-mode-map  (kbd "C-c 0") 'org-ref-open-notes-from-reftex)
+    (define-key org-mode-map  (kbd "C-c 8") 'sync0-org-ref-open-pdf-at-point)
     ;; define notes template
     (setq org-ref-note-title-format 
           "** %t
@@ -2704,26 +2720,178 @@ properly when exporting org documents to LaTeX.
   :END:
 
   ")
-    ;; open in different viewer
-    (setq bibtex-completion-pdf-open-function
-          (lambda (fpath)
-            (call-process "zathura" nil 0 nil fpath))))
+    )
 #+END_SRC 
-**** Fix open-pdf issue
-##+BEGIN_SRC emacs-lisp
-(defun org-ref-open-bibtex-pdf ()
-  (interactive)
-  (save-excursion
-    (bibtex-beginning-of-entry)
-    (let* ((bibtex-expand-strings t)
-           (entry (bibtex-parse-entry t))
-           (key (reftex-get-bib-field "=key=" entry))
-           (pdf (org-ref-get-mendeley-filename key)))
-      (message "%s" pdf)
-      (if (file-exists-p pdf)
-          (org-open-link-from-string (format "[[file:%s]]" pdf))
-        (ding)))))
-        ##+END_SRC 
+** 取 Interleave 
+          (use-package interleave :after (org-ref evil)
+            :config 
+            (setq interleave--pdf-prop "Custom_ID")
+
+
+            (defun sync0-interleave--find-pdf-path (buffer)
+              "Search the `Custom_ID' property in BUFFER and extracts it when found."
+              (with-current-buffer buffer
+                (save-restriction
+                  (widen)
+                  (save-excursion
+                    (goto-char (point-min))
+                    (re-search-forward "^:Custom_ID:" nil :noerror)
+                      (let* ((key (org-entry-get nil interleave--pdf-prop))
+                           (pdf-file (car(bibtex-completion-find-pdf key))))
+                      (quote pdf-file))))))
+
+      ;; (defun sync0-test-function ()
+      ;;   (interactive)
+      ;;                 (let* ((key (org-entry-get nil interleave--pdf-prop))
+      ;;                      (pdf-file (car(bibtex-completion-find-pdf key))))
+      ;;                   (message "The path is %s" pdf-file)))
+
+            ;; (if (file-exists-p pdf-file)
+            ;;     (org-open-file pdf-file))
+            ;; (message "No PDF found for %s" key)))
+
+
+            (defun sync0-interleave--headline-pdf-path (buffer)
+              "Return the INTERLEAVE_PDF property of the current headline in BUFFER."
+              (with-current-buffer buffer
+                (save-excursion
+                  (let ((headline (org-element-at-point)))
+                    (when (and (equal (org-element-type headline) 'headline)
+                               (org-entry-get nil interleave--pdf-prop))
+                      (setq interleave-multi-pdf-notes-file t)
+                      (let* ((key (org-entry-get nil interleave--pdf-prop))
+                             (pdf-file (car(bibtex-completion-find-pdf key))))
+                             (quote pdf-file)))))))
+
+  (defun sync0-interleave--open-file (split-window)
+    "Opens the pdf file in besides the notes buffer.
+  SPLIT-WINDOW is a function that actually splits the window, so it must be either
+  `split-window-right' or `split-window-below'."
+    (let* ((buf (current-buffer))
+           (pdf-file-name
+            (or (interleave--headline-pdf-path buf)
+                (interleave--find-pdf-path buf))))
+      (delete-other-windows)
+      (funcall split-window)
+      (when (integerp interleave-split-lines)
+        (if (eql interleave-split-direction 'horizontal)
+            (enlarge-window interleave-split-lines)
+          (enlarge-window-horizontally interleave-split-lines)))
+      (find-file pdf-file-name)
+      (interleave-pdf-mode 1)))
+
+  (let* ((results (org-ref-get-bibtex-key-and-file))
+         (key (car results))
+         (pdf-file (funcall org-ref-get-pdf-filename-function key)
+
+ (if (file-exists-p pdf-file)
+        (find-file pdf-file)
+      (message "No PDF found for %s" key))))
+
+    ;; (defun interleave--headline-pdf-path (buffer)
+    ;;   "Return the INTERLEAVE_PDF property of the current headline in BUFFER."
+    ;;   (with-current-buffer buffer
+    ;;     (save-excursion
+    ;;       (let ((headline (org-element-at-point)))
+    ;;         (when (and (equal (org-element-type headline) 'headline)
+    ;;                    (org-entry-get nil interleave--pdf-prop))
+    ;;           (setq interleave-multi-pdf-notes-file t)
+    ;;           (org-entry-get nil interleave--pdf-prop))))))
+
+            ;; (let* ((results (org-ref-get-bibtex-key-and-file keyonpoint))
+            ;;        (key (car results))
+            ;;        (pdf-file (car(bibtex-completion-find-pdf key))))
+            ;;   (quote (pdf-file)))))))
+
+            ;;           (org-entry-get nil interleave--pdf-prop))))))
+
+        ;; (evil-set-initial-state 'git-commit-mode 'insert)
+
+  ;; (advice-add 'interleave--find-pdf-path :override
+  ;;             (sync0-interleave--find-pdf-path))
+  ;; (advice-add 'interleave--headline-pdf-path :override
+  ;;             (sync0-interleave--headline-pdf-path))
+  ;; (advice-add 'interleave--open-file :override
+  ;;             (sync0-interleave--open-file))
+
+        ;; (defun sync0-interleave-hook ()
+        ;;   (with-current-buffer interleave-pdf-buffer
+        ;;     ;; Do something meaningful here
+        ;; (evil-insert-state)
+
+        ;;     (message "Evil mode has changed to insert state.")))
+        ;; (add-hook 'interleave-mode-hook #'sync0-interleave-hook)
+
+            (evil-define-key 'normal org-mode-map
+              (kbd "g-SPC") 'interleave-sync-pdf-page-current
+              "gp" 'interleave-sync-pdf-page-previous
+              "gn" 'interleave-sync-pdf-page-next)
+
+            (evil-define-key 'normal interleave-pdf-mode-map
+        (kbd "h")     'interleave-go-to-next-page
+        (kbd "l")     'interleave-go-to-previous-page
+        (kbd "j")   'interleave-scroll-up
+        (kbd "k") 'interleave-scroll-down
+        (kbd "i")     'interleave-add-note
+        (kbd "q")     'interleave-quit
+        (kbd "c")   'interleave-sync-pdf-page-current
+        (kbd "p")   'interleave-sync-pdf-page-previous
+        (kbd "n")   'interleave-sync-pdf-page-next)
+
+            )
+**** ivy-bibtex
+;; autoload ivy-bibtex
+(add-to-list 'load-path "~/.emacs.d/ivy-bibtex/")
+(autoload 'ivy-bibtex "ivy-bibtex" "" t)
+
+(setq bibtex-completion-bibliography '("~/Documents/mendeley/master.bib")
+         bibtex-completion-library-path '("~/Documents/mendeley/")
+         bibtex-completion-pdf-field "file"
+         bibtex-completion-notes-path "~/Dropbox/org/master.org"
+         bibtex-completion-pdf-symbol "在文"
+         bibtex-completion-notes-symbol "筆錄")
+****  custom template function
+(setq bibtex-completion-notes-template-one-file
+      (format
+       "\n*** 未 ${title}\n :PROPERTIES:\n :AUTHOR: ${author}\n :YEAR: ${year}\n :Custom_ID: ${=key=}\n :END:\n"))
+(setq org-ref-notes-function
+      (lambda (thekey)
+        (let ((bibtex-completion-bibliography (org-ref-find-bibliography)))
+          (bibtex-completion-edit-notes
+           (list (car (org-ref-get-bibtex-key-and-file thekey)))))))
+(add-hook 'org-mode-hook
+          (lambda ()
+            (define-key org-mode-map  (kbd "C-c 9") 'org-ref-open-notes-at-point)))
+**** 疑 custom notes function
+
+** 取 Interleave 
+    (use-package interleave :after (org-ref evil)
+      :config 
+  ;; (defun sync0-interleave-hook ()
+  ;;   (with-current-buffer interleave-pdf-buffer
+  ;;     ;; Do something meaningful here
+  ;; (evil-insert-state)
+
+  ;;     (message "Evil mode has changed to insert state.")))
+  ;; (add-hook 'interleave-mode-hook #'sync0-interleave-hook)
+
+  ;;     (evil-define-key 'normal org-mode-map
+  ;;       (kbd "g-SPC") 'interleave-sync-pdf-page-current
+  ;;       "gp" 'interleave-sync-pdf-page-previous
+  ;;       "gn" 'interleave-sync-pdf-page-next)
+
+  ;;     (evil-define-key 'normal interleave-pdf-mode-map
+  ;; (kbd "h")     'interleave-go-to-next-page
+  ;; (kbd "l")     'interleave-go-to-previous-page
+  ;; (kbd "j")   'interleave-scroll-up
+  ;; (kbd "k") 'interleave-scroll-down
+  ;; (kbd "i")     'interleave-add-note
+  ;; (kbd "q")     'interleave-quit
+  ;; (kbd "c")   'interleave-sync-pdf-page-current
+  ;; (kbd "p")   'interleave-sync-pdf-page-previous
+  ;; (kbd "n")   'interleave-sync-pdf-page-next)
+
+      )
 **** ivy-bibtex
 ;; autoload ivy-bibtex
 (add-to-list 'load-path "~/.emacs.d/ivy-bibtex/")
@@ -2767,59 +2935,17 @@ properly when exporting org documents to LaTeX.
 ;; annoying warning
 (add-to-list 'warning-suppress-types '(yasnippet backquote-change))))
 #+END_SRC
-** Neotree
-(require 'neotree)
-;; (global-set-key [f6] 'neotree-toggle)
-
-;; theme config
-(setq neo-theme (if (display-graphic-p) 'icons 'arrow))
-
-;; show neotree on startup
-;; (neotree-show)
-
-;; Every time when the neotree window is opened, let it find current file and jump to node.
-(setq neo-smart-open t)
-
-;; When running ‘projectile-switch-project’ (C-c p p), ‘neotree’ will change root automatically.
-(setq projectile-switch-project-action 'neotree-projectile-action)
-
-;; Similar to find-file-in-project, NeoTree can be opened (toggled) at projectile project root as follows:
- (defun neotree-project-dir ()
-    "Open NeoTree using the git root."
-    (interactive)
-    (let ((project-dir (projectile-project-root))
-          (file-name (buffer-file-name)))
-      (neotree-toggle)
-      (if project-dir
-          (if (neo-global--window-exists-p)
-              (progn
-                (neotree-dir project-dir)
-                (neotree-find file-name)))
-        (message "Could not find git project root."))))
-
-;; remap last function
-;;(global-set-key [f6] 'neotree-project-dir)
-
-;;(add-hook 'neotree-mode-hook
- ;;   (lambda ()
-  ;;    (define-key evil-normal-state-local-map (kbd "q") 'neotree-hide)
-   ;;   (define-key evil-normal-state-local-map (kbd "I") 'neotree-hidden-file-toggle)
-    ;;  (define-key evil-normal-state-local-map (kbd "z") 'neotree-stretch-toggle)
-    ;;  (define-key evil-normal-state-local-map (kbd "R") 'neotree-refresh)
-     ;; (define-key evil-normal-state-local-map (kbd "m") 'neotree-rename-node)
-      ;;(define-key evil-normal-state-local-map (kbd "c") 'neotree-create-node)
-      ;;(define-key evil-normal-state-local-map (kbd "d") 'neotree-delete-node)
-      ;;(define-key evil-normal-state-local-map (kbd "s") 'neotree-enter-vertical-split)
-      ;;(define-key evil-normal-state-local-map (kbd "S") 'neotree-enter-horizontal-split)
-      ;;(define-key evil-normal-state-local-map (kbd "RET") 'neotree-enter))))
 ** Anzu
 #+BEGIN_SRC emacs-lisp
-  (use-package anzu  :defer 5
-    :config 
-(progn
-(global-anzu-mode)
-            (setq-default anzu-mode-line-update-function
-                          'spaceline-all-the-icons-anzu-update-func)))
+  ;;   (use-package anzu  :defer 5
+  ;;     :config 
+  ;; (progn
+  ;; (global-anzu-mode)
+  ;;             (setq-default anzu-mode-line-update-function
+  ;;                           'spaceline-all-the-icons-anzu-update-func)))
+    (use-package anzu  :defer 5
+      :config 
+  (global-anzu-mode))
 #+END_SRC 
 ** Smooth scrolling
 #+BEGIN_SRC emacs-lisp
@@ -2907,39 +3033,22 @@ properly when exporting org documents to LaTeX.
   			  			  (yas-expand))))
 ** Solaire mode
 #+BEGIN_SRC emacs-lisp
-(use-package solaire-mode  :after doom-themes 
-  :init ; stuff to do before requiring the package
-  (progn
-;; brighten buffers (that represent real files)
-(add-hook 'after-change-major-mode-hook #'turn-on-solaire-mode)
-;; To enable solaire-mode unconditionally for certain modes:
-(add-hook 'ediff-prepare-buffer-hook #'solaire-mode)
-;; ...if you use auto-revert-mode, this prevents solaire-mode from turning
-;; itself off every time Emacs reverts the file
-(add-hook 'after-revert-hook #'turn-on-solaire-mode)
-;; highlight the minibuffer when it is activated:
-(add-hook 'minibuffer-setup-hook #'solaire-mode-in-minibuffer))
-;; if the bright and dark background colors are the wrong way around, use this
-;; to switch the backgrounds of the `default` and `solaire-default-face` faces.
-;; This should be used *after* you load the active thème!
-  :config ; stuff to do after requiring the package
-;; NOTE: This is necessary for themes in the doom-themes package!
-(solaire-mode-swap-bg))
+  (use-package solaire-mode :after doom-themes 
+    :hook ((change-major-mode after-revert ediff-prepare-buffer) . turn-on-solaire-mode)
+    :config
+    (add-hook 'minibuffer-setup-hook #'solaire-mode-in-minibuffer)
+  ;; (setq solaire-mode-remap-modeline nil)
+    (solaire-mode-swap-bg))
 #+END_SRC 
 ** Hl-line mode
 #+BEGIN_SRC emacs-lisp
-    ;; (use-package hl-line-mode  :after nlinum
-    ;; :commands global-hl-line-mode
-    ;; :config
-    ;; (global-hl-line-mode 1))
-
   (use-package hl-line ; built-in
     :hook ((text-mode conf-mode) . hl-line-mode)
     :config
     ;; I don't need hl-line showing in other windows. This also offers a small
     ;; speed boost when buffer is displayed in multiple windows.
     (setq hl-line-sticky-flag nil
-          global-hl-line-sticky-flag nil)
+          global-hl-line-sticky-flag nil))
 
     ;; On Emacs 26+, when point is on the last line, hl-line highlights bleed into
     ;; the rest of the window after eob. This is the fix.
@@ -2956,20 +3065,20 @@ properly when exporting org documents to LaTeX.
     ;;                  (line-beginning-position 2)))))
     ;;   (setq hl-line-range-function #'doom--line-range))
 
-    (after! evil
-      (defvar-local doom-buffer-hl-line-mode nil)
+    ;; (after! evil
+    ;;   (defvar-local doom-buffer-hl-line-mode nil)
 
       ;; Disable `hl-line' in evil-visual mode (temporarily). `hl-line' can make
       ;; the selection region harder to see while in evil visual mode.
-      (defun doom|disable-hl-line ()
-        (when hl-line-mode
-          (setq doom-buffer-hl-line-mode t)
-          (hl-line-mode -1)))
-      (defun doom|enable-hl-line-maybe ()
-        (if doom-buffer-hl-line-mode (hl-line-mode +1)))
+      ;; (defun doom|disable-hl-line ()
+      ;;   (when hl-line-mode
+      ;;     (setq doom-buffer-hl-line-mode t)
+      ;;     (hl-line-mode -1)))
+      ;; (defun doom|enable-hl-line-maybe ()
+      ;;   (if doom-buffer-hl-line-mode (hl-line-mode +1)))
 
-      (add-hook 'evil-visual-state-entry-hook #'doom|disable-hl-line)
-      (add-hook 'evil-visual-state-exit-hook  #'doom|enable-hl-line-maybe)))
+      ;; (add-hook 'evil-visual-state-entry-hook #'doom|disable-hl-line)
+      ;; (add-hook 'evil-visual-state-exit-hook  #'doom|enable-hl-line-maybe)))
 #+END_SRC 
 ** Smartparens 
 #+BEGIN_SRC emacs-lisp
@@ -3438,75 +3547,6 @@ Turning on Text mode runs the normal hook `englisch-mode-hook'."
   ;;(setq common-abbrevs-list 'common-english-abbrevs)
   (abbrev-mode 1)
   (run-hooks 'marquez-mode-hook))
-*** Spaceline segment
-#+BEGIN_SRC emacs-lisp
-  ;; (defun sync0-language-segment (sync0-language-active)
-  ;;   "Display active human language minor mode."
-  ;;   (when (equal sync0-language-active 1)
-  ;;     (cond ((bound-and-true-p orwell-mode) 
-  ;;            (propertize (format "Orwell") 'face `(:height ,(spaceline-all-the-icons--height 0.9) :inherit) 'display '(raise 0.1)))
-  ;;     ((bound-and-true-p rabelais-mode)
-  ;;      (propertize (format "Rabelais") 'face `(:height ,(spaceline-all-the-icons--height 0.9) :inherit) 'display '(raise 0.1)))
-  ;;     )))
-
-  ;; (defun sync0-language-segment (sync0-language-active)
-  ;;   "Display active human language minor mode."
-  ;;   (when (boundp 'sync0-language-active)
-  ;;            (format "%s" sync0-language-active))) 
-
-  (defun sync0-language-segment (sync0-language-active)
-    "Display active human language minor mode."
-    (when (boundp 'sync0-language-active)
-              (propertize (format "%s" sync0-language-active) 'face `(:height ,(spaceline-all-the-icons--height 0.9) :inherit) 'display '(raise 0.1))))
-
-  ;; (spaceline-define-segment sync0-language-segment
-  ;;   "Inform wheter a human language mode is on"
-  ;;   (if (equal 'sync0-language-active 1)
-  ;;       (progn
-  ;;         (when (and active (bound-and-true-p orwell-mode)
-  ;;                    (propertize "Orwell" 'face 'bold)))
-  ;;         (when (and active (bound-and-true-p rabelais-mode)
-  ;;                    (propertize "Rabelais" 'face 'bold))))
-  ;;     (propertize "無語" 'face 'bold))))
-  #+END_SRC 
-** Spaceline
-    (use-package spaceline :after powerline
-     :config 
-  (setq spaceline-responsive nil))
-    ;; (use-package spaceline-colors :after spaceline-all-the-icons :load-path "init/spaceline-colors"
-    ;;   :config (advice-add 'load-theme :after 'spaceline-update-faces))
-
-    ;; (spaceline-define-segment sync0-language-segment
-    ;;   "Inform wheter a human language mode is on"
-    ;;   (if (equal 'sync0-language-active 1)
-    ;;       (progn
-    ;;         (when (and active (bound-and-true-p orwell-mode)
-    ;;                    (propertize "Orwell" 'face 'bold)))
-    ;;         (when (and active (bound-and-true-p rabelais-mode)
-    ;;                    (propertize "Rabelais" 'face 'bold))))
-    ;;     (propertize "無語" 'face 'bold))))
-
-    (use-package spaceline-all-the-icons
-      :after spaceline
-      :config
-      (progn
-        (setq spaceline-all-the-icons-icon-set-bookmark 'heart
-              spaceline-all-the-icons-icon-set-modified 'toggle
-              spaceline-all-the-icons-icon-set-dedicated 'pin
-              ;;        spaceline-all-the-icons-icon-set-flycheck-slim 'dots
-              ;;         spaceline-all-the-icons-flycheck-alternate t
-              spaceline-all-the-icons-highlight-file-name t
-              spaceline-all-the-icons-hide-long-buffer-path t)
-        (spaceline-toggle-all-the-icons-bookmark-on)
-        (spaceline-toggle-all-the-icons-dedicated-on)
-        ;; (spaceline-toggle-all-the-icons-fullscreen-on)
-        ;;(spaceline-toggle-all-the-icons-buffer-position-on)
-        (spaceline-all-the-icons--setup-anzu)
-        ;;    (spaceline-all-the-icons--setup-package-updates)
-        ;;(spaceline-all-the-icons--setup-paradox)
-        ;;  (spaceline-all-the-icons--setup-neotree)
-        (spaceline-all-the-icons-theme 'sync0-language-segment)))
-        ;; (spaceline-all-the-icons-theme)))
 ** Hydra
 #+BEGIN_SRC emacs-lisp
 (use-package hydra
@@ -3622,9 +3662,10 @@ screen-sharing.
     ;; Sometimes I forget `git-timemachine' is enabled in a buffer, so instead of
     ;; showing revision details in the minibuffer, show them in
     ;; `header-line-format', which has better visibility.
-    ;; (setq git-timemachine-show-minibuffer-details nil)
-    (add-hook 'git-timemachine-mode-hook #'+vcs|init-header-line)
-    (advice-add #'git-timemachine-show-revision :after #'+vcs*update-header-line)
+    (setq git-timemachine-show-minibuffer-details nil)
+
+    ;; (add-hook 'git-timemachine-mode-hook #'+vcs|init-header-line)
+    ;; (advice-add #'git-timemachine-show-revision :after #'+vcs*update-header-line)
 
     ;; Force evil to rehash keybindings for the current state
     (add-hook 'git-timemachine-mode-hook #'evil-force-normal-state))
@@ -3632,81 +3673,10 @@ screen-sharing.
 ** Mu
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
-
-    ;; (defun load-if-exists (f)
-    ;;   "load the elisp file only if it exists and is readable"
-    ;;   (if (file-readable-p f)
-    ;;       (load-file f)))
-
-    ;; (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e/")
-      ;; (load-if-exists "~/.emac.d/mu4econfig.el")
       (load-file "~/.emacs.d/mu4econfig.el")
   #+END_SRC 
 * Custom Tweaks
 ** Add abbrevs 
-(defun define-abbrev (table name expansion &optional hook &rest props)
-  "Define an abbrev in TABLE named NAME, to expand to EXPANSION and call HOOK.
-NAME must be a string, and should be lower-case.
-EXPANSION should usually be a string.
-To undefine an abbrev, define it with EXPANSION = nil.
-If HOOK is non-nil, it should be a function of no arguments;
-it is called after EXPANSION is inserted.
-If EXPANSION is not a string (and not nil), the abbrev is a
- special one, which does not expand in the usual way but only
- runs HOOK.
-
-If HOOK is a non-nil symbol with a non-nil `no-self-insert' property,
-it can control whether the character that triggered abbrev expansion
-is inserted.  If such a HOOK returns non-nil, the character is not
-inserted.  If such a HOOK returns nil, then so does `abbrev-insert'
-\(and `expand-abbrev'), as if no abbrev expansion had taken place.
-
-PROPS is a property list.  The following properties are special:
-- `:count': the value for the abbrev's usage-count, which is incremented each
-  time the abbrev is used (the default is zero).
-- `:system': if non-nil, says that this is a \"system\" abbreviation
-  which should not be saved in the user's abbreviation file.
-  Unless `:system' is `force', a system abbreviation will not
-  overwrite a non-system abbreviation of the same name.
-- `:case-fixed': non-nil means that abbreviations are looked up without
-  case-folding, and the expansion is not capitalized/upcased.
-- `:enable-function': a function of no argument which returns non-nil if the
-  abbrev should be used for a particular call of `expand-abbrev'.
-
-An obsolete but still supported calling form is:
-
-\(define-abbrev TABLE NAME EXPANSION &optional HOOK COUNT SYSTEM)."
-  (when (and (consp props) (or (null (car props)) (numberp (car props))))
-    ;; Old-style calling convention.
-    (setq props `(:count ,(car props)
-                  ,@(if (cadr props) (list :system (cadr props))))))
-  (unless (plist-get props :count)
-    (setq props (plist-put props :count 0)))
-  (setq props (plist-put props :abbrev-table-modiff
-                         (abbrev-table-get table :abbrev-table-modiff)))
-  (let ((system-flag (plist-get props :system))
-        (sym (obarray-put table name)))
-    ;; Don't override a prior user-defined abbrev with a system abbrev,
-    ;; unless system-flag is `force'.
-    (unless (and (not (memq system-flag '(nil force)))
-                 (boundp sym) (symbol-value sym)
-                 (not (abbrev-get sym :system)))
-      (unless (or system-flag
-                  (and (boundp sym)
-                       ;; load-file-name
-                       (equal (symbol-value sym) expansion)
-                       (equal (symbol-function sym) hook)))
-        (setq abbrevs-changed t))
-      (set sym expansion)
-      (fset sym hook)
-      (setplist sym
-                ;; Don't store the `force' value of `system-flag' into
-                ;; the :system property.
-                (if (eq 'force system-flag) (plist-put props :system t) props))
-      (abbrev-table-put table :abbrev-table-modiff
-                        (1+ (abbrev-table-get table :abbrev-table-modiff))))
-    name))
-
 #+BEGIN_SRC emacs-lisp
 (defun sync0-define-local-abbrev (x y)
   "Defines a new abbrev for current local abbrev table."
@@ -3735,36 +3705,6 @@ sEnter expansion: ")
             (set-face-foreground 'sentence-highlight-face "#b48ead"))))
 
         (add-hook 'cycle-themes-after-cycle-hook #'sync0-change-sentence-highlight-color)))
-
-  ;; (use-package sentence-highlight :load-path "~/.emacs.d/sync0/" 
-  ;;   :after cycle-themes
-  ;;   :commands sentence-highlight-mode
-  ;;   :config 
-  ;;   (progn
-  ;;     (defun sync0-change-sentence-highlight-color ()
-  ;;       "Change the sentence hightlight color based on the doom-theme enabled." 
-  ;;       (when (boundp 'cycle-themes-last-theme-set)
-  ;;         (when (equal cycle-themes-last-theme-set 'doom-spacegrey)
-  ;;           ;; solarized-light
-  ;;           (set-face-foreground 'sentence-highlight-face "#002b36")
-  ;;           (equal cycle-themes-last-theme-set 'doom-solarized-light')
-  ;;           ;; space-grey
-  ;;           (set-face-foreground 'sentence-highlight-face "#c0c5ce"))))
-  ;;       (add-hook 'cycle-themes-after-cycle-hook 'sync0-change-sentence-highlight-color)))
-
-    ;; (base8      '("#DFDFDF" "#dfdfdf" "white"        ))
-    ;; (fg         '("#c0c5ce" "#c0c5ce" "brightwhite"  ))
-    ;; (red        '("#BF616A" "#BF616A" "red"          ))
-    ;; (orange     '("#D08770" "#D08770" "brightred"    ))
-    ;; (green      '("#A3BE8C" "#A3BE8C" "green"        ))
-    ;; (blue       '("#8FA1B3" "#8FA1B3" "brightblue"   ))
-    ;; (violet     '("#b48ead" "#b48ead" "brightmagenta"))
-    ;; (teal       '("#4db5bd" "#44b9b1" "brightgreen"  ))
-    ;; (yellow     '("#ECBE7B" "#ECBE7B" "yellow"       ))
-    ;; (dark-blue  '("#2257A0" "#2257A0" "blue"         ))
-    ;; (magenta    '("#c678dd" "#c678dd" "magenta"      ))
-    ;; (cyan       '("#46D9FF" "#46D9FF" "brightcyan"   ))
-    ;; (dark-cyan  '("#5699AF" "#5699AF" "cyan"         ))
   #+END_SRC 
 ** Date
 #+BEGIN_SRC emacs-lisp
@@ -3776,7 +3716,7 @@ sEnter expansion: ")
 
   (defun sync0-insert-today-timestamp () 
   "Insert today's date in the YYYY/MM/DD format"
-    (insert (shell-command-to-string "echo -n $(date +"%Y/%m/%d")")))
+    (insert (shell-command-to-string "echo -n $(date +'%Y/%m/%d')")))
 
 (defun sync0-insert-dates ()
   "insert a bunch of dates"
@@ -3797,91 +3737,6 @@ sEnter expansion: ")
       (insert (format  "** \ordinalnum{%s} Week \n" weeky))
       (setq weeky (1+ weeky)))))
 #+END_SRC
-** 取 Automatic abbrevs integration with ispell
-;;(define-key ctl-x-map "\C-i"
-  ;;#'endless/ispell-word-then-abbrev)
-
-(defun endless/simple-get-word ()
-  (car-safe (save-excursion (ispell-get-word nil))))
-
-(defun endless/ispell-word-then-abbrev (p)
-  "Call `ispell-word', then create an abbrev for it.
-With prefix P, create local abbrev. Otherwise it will
-be global.
-If there's nothing wrong with the word at point, keep
-looking for a typo until the beginning of buffer. You can
-skip typos you don't want to fix with `SPC', and you can
-abort completely with `C-g'."
-  (interactive "P")
-  (let (bef aft)
-    (save-excursion
-      (while (if (setq bef (endless/simple-get-word))
-                 ;; Word was corrected or used quit.
-                 (if (ispell-word nil 'quiet)
-                     nil ; End the loop.
-                   ;; Also end if we reach `bob'.
-                   (not (bobp)))
-               ;; If there's no word at point, keep looking
-               ;; until `bob'.
-               (not (bobp)))
-        (backward-word)
-        (backward-char))
-      (setq aft (endless/simple-get-word)))
-    (if (and aft bef (not (equal aft bef)))
-        (let ((aft (downcase aft))
-              (bef (downcase bef)))
-          (define-abbrev
-            (if p local-abbrev-table global-abbrev-table)
-            bef aft)
-          (message "\"%s\" now expands to \"%s\" %sally"
-                   bef aft (if p "loc" "glob")))
-      (user-error "No typo at or before point"))))
-
-;; set a faster shortcut
-(define-key global-map (kbd "M-i") 'endless/ispell-word-then-abbrev)
-** 取 Automatic abbrevs integration with ispell
-;;(define-key ctl-x-map "\C-i"
-  ;;#'endless/ispell-word-then-abbrev)
-
-(defun endless/simple-get-word ()
-  (car-safe (save-excursion (flyspell-get-word nil))))
-
-(defun endless/flyspell-word-then-abbrev ()
-  "Call `flyspell-word', then create an abbrev for it.
-With prefix P, create local abbrev. Otherwise it will
-be global.
-If there's nothing wrong with the word at point, keep
-looking for a typo until the beginning of buffer. You can
-skip typos you don't want to fix with `SPC', and you can
-abort completely with `C-g'."
-  (interactive)
-  (let (bef aft)
-    (save-excursion
-      (while (if (setq bef (endless/simple-get-word))
-                 ;; Word was corrected or used quit.
-                 (if (flyspell-word nil 'quiet)
-                     nil ; End the loop.
-                   ;; Also end if we reach `bob'.
-                   (not (bobp)))
-               ;; If there's no word at point, keep looking
-               ;; until `bob'.
-               (not (bobp)))
-        (backward-word)
-        (backward-char))
-      (setq aft (endless/simple-get-word)))
-    (if (and aft bef (not (equal aft bef)))
-        (let ((aft (downcase aft))
-              (bef (downcase bef)))
-          (define-abbrev local-abbrev-table bef aft)
-          (message "\"%s\" now expands to \"%s\" %sally"
-                   bef aft "loc"))
-      (user-error "No typo at or before point"))))
-
-(setq save-abbrevs 'silently)
-(setq-default abbrev-mode t)
-
-;; set a faster shortcut
-(define-key global-map (kbd "M-i") 'endless/flyspell-word-then-abbrev)
 ** Automatic abbrevs integration with ispell
 #+BEGIN_SRC emacs-lisp
 ;;(define-key ctl-x-map "\C-i"
@@ -3951,56 +3806,6 @@ abort completely with `C-g'."
   (global-set-key (kbd "M-#") 'sync0-lookup-word)
   (global-set-key (kbd "M-$") 'sync0-lookup-conjugation)
   #+END_SRC 
-** Latex changes mode
-  (defvar sync0-language-active 0
-    "Is a human language minor mode enabled?")
-
-
-(evil-define-operator sync0-latex-changes-evil-delete (beg end type register yank-handler)
-  "Delete text from BEG to END with TYPE.
-Save in REGISTER or in the kill-ring with YANK-HANDLER."
-  (interactive "<R><x><y>")
-  (unless register
-    (let ((text (filter-buffer-substring beg end)))
-      (unless (string-match-p "\n" text)
-        ;; set the small delete register
-        (evil-set-register ?- text))))
-  (let ((evil-was-yanked-without-register nil))
-    (evil-yank beg end type register yank-handler))
-  (cond
-   ((eq type 'block)
-    (evil-apply-on-block #'delete-region beg end nil))
-   ((and (eq type 'line)
-         (= end (point-max))
-         (or (= beg end)
-             (/= (char-before end) ?\n))
-         (/= beg (point-min))
-         (=  (char-before beg) ?\n))
-    (delete-region (1- beg) end))
-   (t
-    (delete-region beg end)))
-  ;; place cursor on beginning of line
-  (when (and (called-interactively-p 'any)
-             (eq type 'line))
-    (evil-first-non-blank)))
-
-
-  (define-minor-mode sync0-latex-changes-mode
-    "Get your foos in the right places."
-;; The initial value.
- :init-value nil
-;; The indicator for the mode line.
-    :lighter " rabelais"
-;; Make it a global minor mode. 
-    :global  t
-    (when (bound-and-true-p orwell-mode) 
-      (add-hook 'text-mode-hook (lambda () (orwell-mode -1))))
-    (setq sync0-language-active 1
-          local-abbrev-table rabelais-mode-abbrev-table)
-    (sync0-french-keyboard-setup)
-    (ispell-change-dictionary "fr_FR")
-     (add-to-list 'minor-mode-alist '(rabelais-mode " rabelais"))
-    (abbrev-mode 1))
 ** Useful Key Bindings
  #+BEGIN_SRC emacs-lisp
 ;; Font size change
