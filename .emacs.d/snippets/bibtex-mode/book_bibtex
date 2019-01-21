@@ -1,13 +1,4 @@
 # -*- mode: snippet -*-
 # name: book_bibtex 
-# key: book
+# key: 
 # --
-@book{${1:Last}_${2:Name}_${3:citation_key},
-author = {$1, $2},
-year = {${4:1984}},
-title = {{${5:book_title}}},
-editor = {${6:name_&_last}},
-file = {:home/sync0/Documents/mendeley/$1_$4_$5.pdf:pdf},
-address = {${7:Paris}},
-publisher = {${8:Gallimard}}
-}$0

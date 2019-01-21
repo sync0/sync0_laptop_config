@@ -380,52 +380,52 @@ After version 26, Emacs has native support for line numbers.
  #+END_SRC 
 *** Sane Defaults
     #+BEGIN_SRC emacs-lisp
-      ;; Remove yes-no EMACS inconsistency
-      (fset 'yes-or-no-p 'y-or-n-p)
+            ;; Remove yes-no EMACS inconsistency
+            (fset 'yes-or-no-p 'y-or-n-p)
 
-(setq debug-on-error t)
+      ;; (setq debug-on-error t)
 
-      ;; Git gutter thingy
-      ;; (defvar doom-fringe-size '3 "Default fringe width.")
-      ;; (defconst doom-fringe-size '3 "Default fringe width")
-      ;; ;; ;; (setq-default fringes-outside-margins t)
-      ;; (fringe-mode doom-fringe-size)
-      ;; (if (fboundp 'fringe-mode) (fringe-mode doom-fringe-size))
-      ;;(push `(left-fringe  . ,doom-fringe-size) default-frame-alist)
-      ;;(push `(right-fringe . ,doom-fringe-size) default-frame-alist)
+            ;; Git gutter thingy
+            ;; (defvar doom-fringe-size '3 "Default fringe width.")
+            ;; (defconst doom-fringe-size '3 "Default fringe width")
+            ;; ;; ;; (setq-default fringes-outside-margins t)
+            ;; (fringe-mode doom-fringe-size)
+            ;; (if (fboundp 'fringe-mode) (fringe-mode doom-fringe-size))
+            ;;(push `(left-fringe  . ,doom-fringe-size) default-frame-alist)
+            ;;(push `(right-fringe . ,doom-fringe-size) default-frame-alist)
 
-      ;;(if (fboundp 'fringe-mode) (fringe-mode doom-fringe-size))
-      ;;  (fringe-mode '(3 . 0))
-      ;;    (if (fboundp 'fringe-mode) (fringe-mode '(3 . 0)))
+            ;;(if (fboundp 'fringe-mode) (fringe-mode doom-fringe-size))
+            ;;  (fringe-mode '(3 . 0))
+            ;;    (if (fboundp 'fringe-mode) (fringe-mode '(3 . 0)))
 
-      ;; (defun doom|no-fringes-in-minibuffer ()
-      ;;   "Disable fringes in the minibuffer window."
-      ;;   (set-window-fringes (minibuffer-window) 0 0 nil))
-      ;; (add-hook! '(after-init-hook minibuffer-setup-hook)
-      ;;   #'doom|no-fringes-in-minibuffer)
+            ;; (defun doom|no-fringes-in-minibuffer ()
+            ;;   "Disable fringes in the minibuffer window."
+            ;;   (set-window-fringes (minibuffer-window) 0 0 nil))
+            ;; (add-hook! '(after-init-hook minibuffer-setup-hook)
+            ;;   #'doom|no-fringes-in-minibuffer)
 
-      ;; Force UTF-8 encoding
-      ;; disable CJK coding/encoding (Chinese/Japanese/Korean characters)
-      ;; (setq utf-translate-cjk-mode nil)
-      ;; backwards compatibility as default-buffer-file-coding-system
-      ;; is deprecated in 23.2.
+            ;; Force UTF-8 encoding
+            ;; disable CJK coding/encoding (Chinese/Japanese/Korean characters)
+            ;; (setq utf-translate-cjk-mode nil)
+            ;; backwards compatibility as default-buffer-file-coding-system
+            ;; is deprecated in 23.2.
 
-      ;; set the default encoding system
-      ;; (prefer-coding-system 'utf-8)
-      (set-language-environment 'utf-8)
-      (set-default-coding-systems 'utf-8)
-      (set-terminal-coding-system 'utf-8)
-      (set-keyboard-coding-system 'utf-8)
-      (set-selection-coding-system 'utf-8)
-      (setq default-file-name-coding-system 'utf-8)
-      (setq locale-coding-system 'utf-8)
-      ;; (if (boundp buffer-file-coding-system)
-      ;;     (setq buffer-file-coding-system 'utf-8)
-      ;;   (setq default-buffer-file-coding-system 'utf-8))
+            ;; set the default encoding system
+            ;; (prefer-coding-system 'utf-8)
+            (set-language-environment 'utf-8)
+            (set-default-coding-systems 'utf-8)
+            (set-terminal-coding-system 'utf-8)
+            (set-keyboard-coding-system 'utf-8)
+            (set-selection-coding-system 'utf-8)
+            (setq default-file-name-coding-system 'utf-8)
+            (setq locale-coding-system 'utf-8)
+            ;; (if (boundp buffer-file-coding-system)
+            ;;     (setq buffer-file-coding-system 'utf-8)
+            ;;   (setq default-buffer-file-coding-system 'utf-8))
 
-      ;; Treat clipboard input as UTF-8 string first; compound text next, etc.
-      (when (display-graphic-p)
-        (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
+            ;; Treat clipboard input as UTF-8 string first; compound text next, etc.
+            (when (display-graphic-p)
+              (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
  #+END_SRC
 ** Text settings
 *** Set default faces
@@ -497,6 +497,8 @@ After version 26, Emacs has native support for line numbers.
   (save-excursion
     (end-of-line 0)
     (open-line 1)))
+
+
   #+END_SRC 
 *** Auto-fill settings
  #+BEGIN_SRC emacs-lisp
@@ -921,85 +923,85 @@ that I’ve copied from the web.
   #+END_SRC 
 ** Spellchecking
  #+BEGIN_SRC emacs-lisp
-   ;; Ispell configuration.
-   (use-package ispell
-     :config
-     ;; Set up hunspell dictionaries
-     (setq ispell-hunspell-dict-paths-alist
-           '(("en_US-large" "/usr/share/hunspell/en_US-large.aff")
-             ("fr_FR" "/usr/share/hunspell/fr_FR.aff")
-             ("de_DE" "/usr/share/hunspell/de_DE.aff")
-             ("it_IT" "/usr/share/hunspell/it_IT.aff")
-             ("fr_FR" "/usr/share/hunspell/fr_FR.aff")
-             ("es_ANY" "/usr/share/hunspell/es_ANY.aff")))
+         ;; Ispell configuration.
+         (use-package ispell
+           :config
+           ;; Set up hunspell dictionaries
+           (setq ispell-hunspell-dict-paths-alist
+                 '(("en_US-large" "/usr/share/hunspell/en_US-large.aff")
+                   ("fr_FR" "/usr/share/hunspell/fr_FR.aff")
+                   ("de_DE" "/usr/share/hunspell/de_DE.aff")
+                   ("it_IT" "/usr/share/hunspell/it_IT.aff")
+                   ("es_ANY" "/usr/share/hunspell/es_ANY.aff")))
 
-     (cond
-      ;; try hunspell at first
-      ;; if hunspell does NOT exist, use aspell
-      ((executable-find "hunspell")
-       (setq ispell-program-name "hunspell")
-       ;;(setq ispell-local-dictionary "en_US")
-       (setq ispell-local-dictionary-alist '(  
-                                             (nil "[[:alpha:]]" "[^[:alpha:]]" "['-]" nil ("-d" "en_US-large" ) nil utf-8)
-                                             ("en_US-large" "[[:alpha:]]" "[^[:alpha:]]" "['-]" t ("-d" "en_US-large" ) nil utf-8)
-                                             ("de_DE" "[[:alpha:]ÄÖÜéäöüß]" "[^[:alpha:]ÄÖÜéäöüß]" "['’-]" t ("-d" "de_DE") nil utf-8)
-                                             ("es_ANY" "[[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "[^[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "['’-]" t ("-d" "es_ANY") nil utf-8)
-                                             ("it_IT" "[[:alpha:]AEÉIOUàèéìòù]" "[^[:alpha:]AEÉIOUàèéìòù]" "['’-]" t ("-d" "it_IT") "~tex" nil utf-8)
-                                             ("fr_FR" "[[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[^[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[’'-]" t ("-d" "fr_FR")  nil utf-8))))
+           (cond
+            ;; try hunspell at first
+            ;; if hunspell does NOT exist, use aspell
+            ((executable-find "hunspell")
+             (setq ispell-program-name "hunspell")
+             ;;(setq ispell-local-dictionary "en_US")
+             (setq ispell-local-dictionary-alist '(  
+                                                   ;; (nil "[[:alpha:]]" "[^[:alpha:]]" "['-]" t ("-d" "en_US-large" ) nil utf-8)
+                                                   ("en_US-large" "[[:alpha:]]" "[^[:alpha:]]" "['-]" t ("-d" "en_US-large" ) nil utf-8)
+                                                   ("de_DE" "[[:alpha:]ÄÖÜéäöüß]" "[^[:alpha:]ÄÖÜéäöüß]" "['’-]" t ("-d" "de_DE") nil utf-8)
+                                                   ("es_ANY" "[[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "[^[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "['’-]" t ("-d" "es_ANY") nil utf-8)
+                                                   ("it_IT" "[[:alpha:]AEÉIOUàèéìòù]" "[^[:alpha:]AEÉIOUàèéìòù]" "['’-]" t ("-d" "it_IT") "~tex" nil utf-8)
+                                                   ("fr_FR" "[[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[^[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[’'-]" t ("-d" "fr_FR")  nil utf-8))))
 
-      ((executable-find "aspell")
-       (setq ispell-program-name "aspell")
-       ;; Please note ispell-extra-args contains ACTUAL parameters passed to aspell
-       (setq ispell-extra-args '("--sug-mode=ultra"))))
+            ((executable-find "aspell")
+             (setq ispell-program-name "aspell")
+             ;; Please note ispell-extra-args contains ACTUAL parameters passed to aspell
+             (setq ispell-extra-args '("--sug-mode=ultra"))))
 
-     ;; Save a new word to personal dictionary without asking
-     (setq ispell-silently-savep t)
+           ;; Save a new word to personal dictionary without asking
+           (setq ispell-silently-savep t)
 
-     ;; ignore tex commands
-     (add-hook 'org-mode-hook (lambda () (setq ispell-parser 'tex)))
+           ;; ignore tex commands
+           (add-hook 'org-mode-hook (lambda () (setq ispell-parser 'tex)))
 
-     ;; ignore sections of files for spellcheck
-     (add-to-list 'ispell-skip-region-alist '(":\\(PROPERTIES\\|LOGBOOK\\):" . ":END:"))
-     (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_SRC" . "#\\+END_SRC"))
-     (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_EXAMPLE" . "#\\+END_EXEMPLE"))
-     (add-to-list 'ispell-skip-region-alist '(org-property-drawer-re))
-     (add-to-list 'ispell-skip-region-alist '("\\begin{equation}" . "\\end{equation}"))
-     (add-to-list 'ispell-skip-region-alist '("\\begin{equation\*}" . "\\end{equation\*}"))
-     (add-to-list 'ispell-skip-region-alist '("\\begin{align}" . "\\end{align}"))
-     (add-to-list 'ispell-skip-region-alist '("\\begin{align\*}" . "\\end{align\*}"))
-     (add-to-list 'ispell-skip-region-alist '("\\\\cite.*{" . "}"))
-     (add-to-list 'ispell-skip-region-alist '("\\$" . "\\$"))
-     ;; (add-to-list 'ispell-skip-region-alist '("\*Einstellungen+"))
-     (add-to-list 'ispell-skip-region-alist '("\\* Settings                                   :noexport:ARCHIVE:" . "\\*\\* Etc")))
-   ;; (add-to-list 'ispell-skip-region-alist '("^\\*\sEinstellungen" . "^\\*\\*\sEnde"))
+           ;; ignore sections of files for spellcheck
+           (add-to-list 'ispell-skip-region-alist '(":\\(PROPERTIES\\|LOGBOOK\\):" . ":END:"))
+           (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_SRC" . "#\\+END_SRC"))
+           (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_EXAMPLE" . "#\\+END_EXEMPLE"))
+           (add-to-list 'ispell-skip-region-alist '(org-property-drawer-re))
+           (add-to-list 'ispell-skip-region-alist '("\\begin{equation}" . "\\end{equation}"))
+           (add-to-list 'ispell-skip-region-alist '("\\begin{equation\*}" . "\\end{equation\*}"))
+           (add-to-list 'ispell-skip-region-alist '("\\begin{align}" . "\\end{align}"))
+           (add-to-list 'ispell-skip-region-alist '("\\begin{align\*}" . "\\end{align\*}"))
+           (add-to-list 'ispell-skip-region-alist '("\\\\cite.*{" . "}"))
+           (add-to-list 'ispell-skip-region-alist '("\\$" . "\\$"))
+           ;; (add-to-list 'ispell-skip-region-alist '("\*Einstellungen+"))
+           (add-to-list 'ispell-skip-region-alist '("\\* Settings                                   :noexport:ARCHIVE:" . "\\*\\* Etc")))
+         ;; (add-to-list 'ispell-skip-region-alist '("^\\*\sEinstellungen" . "^\\*\\*\sEnde"))
 
-   ;; Flyspell lazy
-   (use-package flyspell-lazy :after flyspell :load-path "~/.emacs.d/sync0_git/flyspell-lazy"
-     :config
-     (flyspell-lazy-mode 1))
+         ;; Flyspell lazy
+         (use-package flyspell-lazy :after flyspell :load-path "~/.emacs.d/sync0_git/flyspell-lazy"
+   :commands flyspell-lazy-mode)
+           ;; (flyspell-lazy-mode 1))
 
-   ;; (add-hook 'flyspell-mode-hook ')
-   ;;      (when (bound-and-true-p flyspell-mode) 
-   ;;        (flyspell-lazy-mode 1)))
+         ;; (add-hook 'flyspell-mode-hook ')
+         ;;      (when (bound-and-true-p flyspell-mode) 
+         ;;        (flyspell-lazy-mode 1)))
 
-   (use-package flyspell :after (org ispell)
-     ;; :hook (text-mode . flyspell-mode)
-     :config
-     (setq flyspell-issue-message-flag nil)
-     (add-hook 'flyspell-mode-hook 'flyspell-lazy-mode)
-     (flyspell-mode 1))     ; or (flyspell-prog-mode) 
+         (use-package flyspell :after (org ispell)
+           ;; :hook (text-mode . flyspell-mode)
+      :commands flyspell-mode 
+           :config
+           (setq flyspell-issue-message-flag nil)
+           (add-hook 'flyspell-mode-hook 'flyspell-lazy-mode))
+           ;; (flyspell-mode 1))     ; or (flyspell-prog-mode) 
 
-   ;; check next highlighted word custom function
-   ;; (defun flyspell-check-next-highlighted-word ()
-   ;;   "Custom function to spell check next highlighted word"
-   ;;   (interactive)
-   ;;   (flyspell-goto-next-error)
-   ;;   (ispell-word))
+         ;; check next highlighted word custom function
+         ;; (defun flyspell-check-next-highlighted-word ()
+         ;;   "Custom function to spell check next highlighted word"
+         ;;   (interactive)
+         ;;   (flyspell-goto-next-error)
+         ;;   (ispell-word))
 
-   ;; Avoid TeX syntax
-   ;; (defun flyspell-ignore-tex ()
-   ;;   (set (make-variable-buffer-local 'ispell-parser) 'tex))
-   ;; (add-hook 'org-mode-hook 'flyspell-ignore-tex))
+         ;; Avoid TeX syntax
+         ;; (defun flyspell-ignore-tex ()
+         ;;   (set (make-variable-buffer-local 'ispell-parser) 'tex))
+         ;; (add-hook 'org-mode-hook 'flyspell-ignore-tex))
  #+END_SRC 
 ** Tex
 #+BEGIN_SRC emacs-lisp
@@ -1032,23 +1034,23 @@ that I’ve copied from the web.
                                   ;; quickly switch buffers
                                   ("M-h" . next-buffer)
                                   ("M-l" . previous-buffer)
-                                  ("/" . swiper))
+                                  ("/" . swiper)
                                   ;; ("C-S-h" . evil-window-left)
                                   ;; ("C-S-j" . evil-window-down)
                                   ;; ("C-S-k" . evil-window-up)
                                   ;; ("C-S-l" . evil-window-right))
-                      ;;    :map evil-visual-state-map
-                      ;;   ("ESC" . keyboard-quit))
-                      ;; :map minibuffer-local-map
-                      ;;("ESC" . minibuffer-keyboard-quit)
-                      ;; :map minibuffer-local-ns-map
-                      ;;("ESC" . minibuffer-keyboard-quit)
-                      ;;:map minibuffer-local-completion-map
-                      ;; ("ESC" . minibuffer-keyboard-quit)
-                      ;;:map minibuffer-local-must-match-map
-                      ;; ("ESC" . minibuffer-keyboard-quit)
-                      ;;:map minibuffer-local-isearch-map
-                      ;;("ESC" . minibuffer-keyboard-quit))
+                         :map evil-visual-state-map
+                        ("ESC" . keyboard-quit)
+                      :map minibuffer-local-map
+                      ("ESC" . minibuffer-keyboard-quit)
+                      :map minibuffer-local-ns-map
+                      ("ESC" . minibuffer-keyboard-quit)
+                      :map minibuffer-local-completion-map
+                      ("ESC" . minibuffer-keyboard-quit)
+                      :map minibuffer-local-must-match-map
+                      ("ESC" . minibuffer-keyboard-quit)
+                      :map minibuffer-local-isearch-map
+                      ("ESC" . minibuffer-keyboard-quit))
                       :init
                (evil-mode 1)
                 ; (setq evil-want-keybinding nil)
@@ -1102,13 +1104,19 @@ that I’ve copied from the web.
                         (interactive)
                         (insert " "))
 
+                      ;; insert whitespace
+                      (defun sync0-insert-whitespace ()
+                        " Add a whitespace"
+                        (interactive)
+                        (insert " "))
+
                       ;; key bindings
                       ;; redefinition evils normal mode map
                       (evil-define-key 'normal org-mode-map
-                        ;; "<" 'outline-previous-visible-heading
-                        ">"   'org-forward-heading-same-level
-                        "<"  'org-backward-heading-same-level
-                        ;; ">" 'outline-next-visible-heading
+                        "<" 'outline-previous-visible-heading
+                        ">" 'outline-next-visible-heading
+                         (kbd "C->") 'org-forward-heading-same-level
+                        (kbd "C-<") 'org-backward-heading-same-level
                         "H" 'org-metaleft
                         "L" 'org-metaright
                         "K" 'org-metaup
@@ -1605,9 +1613,6 @@ evil-escape-unordered-key-sequence t
 (add-hook 'after-init-hook 'ivy-mode))
 #+END_SRC
 ** Org mode 
-#+BEGIN_SRC emacs-lisp
-(add-hook 'org-mode-hook 'flyspell-mode)
-  #+END_SRC 
 *** Capture mode
 #+BEGIN_SRC emacs-lisp
   (setq org-default-notes-file "~/Dropbox/org/todo.org")
@@ -2422,88 +2427,7 @@ properly when exporting org documents to LaTeX.
         ;;(global-set-key "\M-p" 'org-latex-export-to-pdf)
         (global-set-key "\M-p" 'sync0-latex-and-beamer-export)
 
-                                                ;(add-hook 'org-mode-hook
-                                                ;     (lambda () (define-key global-map "\M-p" 'org-latex-export-to-pdf)))
-        ;;(lambda () (define-key org-mode-map "\M-p" 'org-latex-export-to-pdf)))
-
-        ;; Default packages included in every tex file, pdflatex or xelatex
-        ;;(setq org-latex-packages-alist
-        ;;      '(("" "graphicx" t)
-        ;;        ("" "longtable" nil)
-        ;;        ("" "float" nil)))
-
-        ;; source: https://lists.gnu.org/archive/html/emacs-orgmode/2013-06/msg00240.html
-        ;; (defun my-auto-tex-cmd (backend)
-        ;;   "When exporting from .org with latex,
-        ;;     automatically run latex, pdflatex, or xelatex as appropriate,
-        ;;     using latexmk."
-        ;;   (let ((texcmd))
-        ;;     (setq texcmd "latexmk -pdf %f")
-        ;;     (if (string-match "LATEX_CMD: pdflatex" (buffer-string))
-        ;;         (progn
-        ;;           (setq texcmd "latexmk -pdf -pdflatex='pdflatex -file-line-error --shell-escape -synctex=1' %f")
-        ;;           (setq org-latex-default-packages-alist
-        ;;                 '(("AUTO" "inputenc" t)
-        ;;                   ("T1"   "fontenc"   t)
-        ;;                   (""     "fixltx2e"  nil)
-        ;;                   (""     "wrapfig"   nil)
-        ;;                   (""     "soul"      t)
-        ;;                   (""     "amssymb"   t)
-        ;;                   (""     "hyperref"  nil)))))
-        ;;     (if (string-match "LATEX_CMD: lualatex" (buffer-string))
-        ;;         (progn
-        ;;           (setq texcmd "latexmk -pdflatex='lualatex -file-line-error --shell-escape -synctex=1' -pdf %f")
-        ;;           (setq org-latex-default-packages-alist
-        ;;                 '(("" "fontspec" t)
-        ;;                   ("" "hyperref" t)))))
-        ;;     (if (string-match "LATEX_CMD: xelatex" (buffer-string))
-        ;;         (progn
-        ;;           (setq texcmd "latexmk -pdflatex='xelatex -file-line-error --shell-escape -synctex=1' -pdf %f")
-        ;;           (setq org-latex-default-packages-alist
-        ;;                 '(("" "fontspec" t)
-        ;;                   ("" "xunicode" t)
-        ;;                   ("" "url" t)
-        ;;                   ("" "soul" t)
-        ;;                   ))
-        ;;           (setq org-latex-classes
-        ;;                 (cons '("memarticle"
-        ;;                         "\\documentclass[12pt,oneside,article]{memoir}"
-        ;;                         ("\\section{%s}" . "\\section*{%s}")
-        ;;                         ("\\subsection{%s}" . "\\subsection*{%s}")
-        ;;                         ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-        ;;                         ("\\paragraph{%s}" . "\\paragraph*{%s}")
-        ;;                         ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
-        ;;                       org-latex-classes))))
-
-        ;;     (setq org-latex-pdf-process (list texcmd))))
-        ;; (add-hook 'org-export-before-parsing-hook 'my-auto-tex-cmd)
-
-        ;; (defun my-auto-tex-cmd (backend)
-        ;;   "When exporting from .org with latex,
-        ;;     automatically run pdflatex, xelatex, or lualatex as
-        ;;     appropriate, using latexmk."
-        ;;   (let ((texcmd))
-        ;;     (setq texcmd "latexmk -pdf %f")
-        ;;     (if (string-match "LATEX_COMPILER: pdflatex" (buffer-string))
-        ;;         (progn
-        ;;           (setq texcmd "latexmk -pdflatex='pdflatex -file-line-error --shell-escape -synctex=1' -pdf %f")))
-        ;;     (if (string-match "LATEX_COMPILER: lualatex" (buffer-string))
-        ;;         (progn
-        ;;           (setq texcmd "latexmk -pdflatex='lualatex -file-line-error --shell-escape -synctex=1' -pdf %f")))
-        ;;     (if (string-match "LATEX_COMPILER: xelatex" (buffer-string))
-        ;;         (progn
-        ;;           (setq texcmd "latexmk -pdflatex='xelatex -file-line-error --shell-escape -synctex=1' -pdf %f")))
-
-        ;;     (setq org-latex-pdf-process (list texcmd))))
-
-  (setq org-latex-pdf-process (list "latexmk -pdflatex='lualatex -file-line-error --shell-escape -synctex=1' -pdf %f"))
-
-        ;; (add-hook 'org-export-before-parsing-hook 'my-auto-tex-cmd)
-
-    ;; (setq org-latex-pdf-process (quote ("texi2dvi --pdf --clean --verbose
-    ;; --batch %f" "bibtex %b" "texi2dvi --pdf --clean --verbose --batch %f"
-    ;; "texi2dvi --pdf --clean --verbose --batch %f")))
-
+  (setq org-latex-pdf-process (list "latexmk -lualatex -bibtex-cond -f %f"))
 #+END_SRC
 *** Export to Word (doc)
 #+BEGIN_SRC emacs-lisp
@@ -3508,6 +3432,7 @@ properly when exporting org documents to LaTeX.
     (setq sync0-language-active 'rabelais
           local-abbrev-table rabelais-mode-abbrev-table)
     (sync0-french-keyboard-setup)
+        (flyspell-mode 1) 
     (ispell-change-dictionary "fr_FR")
      (add-to-list 'minor-mode-alist '(rabelais-mode " rabelais"))
     (abbrev-mode 1))
@@ -3527,6 +3452,7 @@ properly when exporting org documents to LaTeX.
     (setq sync0-language-active 'orwell
           local-abbrev-table orwell-mode-abbrev-table)
     (sync0-english-keyboard-setup)
+        (flyspell-mode 1) 
     (ispell-change-dictionary "en_US-large")
      (add-to-list 'minor-mode-alist '(orwell-mode " orwell"))
     (abbrev-mode 1))
@@ -3675,6 +3601,127 @@ screen-sharing.
   (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
       (load-file "~/.emacs.d/mu4econfig.el")
   #+END_SRC 
+** Company Mode
+#+BEGIN_SRC emacs-lisp
+  ;;           (use-package company
+  ;;           :defer 2
+  ;;       :config
+  ;;         (setq company-idle-delay .1
+  ;;                 company-tooltip-limit 5
+  ;;           ;; company-begin-commands '(self-insert-command)
+  ;;                 ;; company-dabbrev-downcase nil
+  ;;                 ;; company-dabbrev-ignore-case nil
+  ;;           company-minimum-prefix-length 2
+  ;;                 ;; company-dabbrev-code-other-buffers t
+  ;;           company-show-numbers t
+  ;;           company-selection-wrap-around t
+  ;;                 company-tooltip-align-annotations t
+  ;;                 company-require-match 'never
+  ;;                 ;; company-global-modes '(not eshell-mode comint-mode erc-mode message-mode help-mode gud-mode)
+  ;;                 company-frontends '(company-pseudo-tooltip-frontend company-echo-metadata-frontend)
+  ;;                 ;; company-backends '(company-capf company-dabbrev company-ispell)
+  ;;                 company-transformers '(company-sort-by-occurrence))
+  ;;         ;; (add-to-list 'company-backends 'company-bibtex)
+  ;; (make-local-variable 'company-backends)
+  ;;         (add-to-list 'company-backends 'company-capf)
+  ;;         (add-to-list 'company-backends 'company-yasnippet)
+  ;;         (add-to-list 'company-backends 'company-elisp)
+  ;;         (add-to-list 'company-backends 'company-files)
+  ;;         (add-to-list 'company-backends 'company-gtags)
+  ;;         (add-to-list 'company-backends 'company-ispell)
+  ;; ;; (define-key company-active-map 'company-complete-common nil)
+  ;;       (global-company-mode +1))
+
+  ;;     (use-package company-bibtex
+  ;;       :after (bibtex company)
+  ;;       :config 
+  ;;   (add-to-list 'company-backends 'company-bibtex)
+  ;;       (setq company-bibtex-bibliography
+  ;;               '("/home/sync0/Documents/mendeley/sync0_library.bib"))
+  ;;       (setq company-bibtex-key-regex "[[:alnum:]+_]*"))
+
+          ;; (autoload 'company-capf "company-capf")
+          ;; (autoload 'company-yasnippet "company-yasnippet")
+          ;; (autoload 'company-dabbrev "company-dabbrev")
+          ;; (autoload 'company-dabbrev-code "company-dabbrev-code")
+          ;; (autoload 'company-etags "company-etags")
+          ;; (autoload 'company-elisp "company-elisp")
+          ;; (autoload 'company-files "company-files")
+          ;; (autoload 'company-gtags "company-gtags")
+          ;; (autoload 'company-ispell "company-ispell")
+  #+END_SRC 
+** Flycheck
+#+BEGIN_SRC emacs-lisp
+  ;;     (use-package flycheck
+  ;;       ;; :init (global-flycheck-mode)
+  ;;             :hook (text-mode . flycheck-mode)
+  ;;       :config
+  ;;       (flycheck-define-checker proselint
+  ;;                                "A linter for prose."
+  ;;                                :command ("proselint" source-inplace)
+  ;;                                :error-patterns
+  ;;                                ((warning line-start (file-name) ":" line ":" column ": "
+  ;;                                          (id (one-or-more (not (any " "))))
+  ;;                                          (message) line-end))
+  ;;                                :modes (text-mode markdown-mode gfm-mode org-mode))
+  ;; (setq flycheck-check-syntax-automatically '(save
+  ;;                                             idle-change
+  ;;                                             mode-enabled))
+  ;; (with-eval-after-load 'flycheck
+  ;;   (flycheck-pos-tip-mode))
+  ;; (setq flycheck-indication-mode 'right-fringe)
+  ;; (setq flycheck-pos-tip-timeout 10)
+  ;; ;; Immediate syntax checking quite annoying. Slow it down a bit.
+  ;; (setq flycheck-idle-change-delay 60.0))
+
+    ;; (use-package flycheck
+    ;;   :ensure t
+    ;;   :if (version<= "24.4" emacs-version)
+    ;;   :commands global-flycheck-mode
+    ;;   :init (add-hook 'prog-mode-hook 'global-flycheck-mode)
+    ;;   :config
+    ;;   (progn
+    ;;     ;; Settings
+    ;;     (setq-default flycheck-emacs-lisp-initialize-packages t
+    ;;                   flycheck-highlighting-mode 'lines
+    ;;                   flycheck-check-syntax-automatically '(save)
+    ;;                   flycheck-disabled-checkers '(c/c++-clang c/c++-gcc))
+
+      ;; (add-to-list 'flycheck-checkers 'proselint)
+      ;;   (flycheck-define-checker proselint
+      ;;     "A linter for prose."
+      ;;     :command ("proselint" source-inplace)
+      ;;     :error-patterns
+      ;;     ((warning line-start (file-name) ":" line ":" column ": "
+      ;;               (id (one-or-more (not (any " "))))
+      ;;               (message) line-end))
+      ;;     :modes (text-mode markdown-mode gfm-mode))
+
+      ;; (add-to-list 'flycheck-checkers 'proselint)
+      ;;   (defun magnars/adjust-flycheck-automatic-syntax-eagerness ()
+      ;;   "Adjust how often we check for errors based on if there are any.
+      ;; This lets us fix any errors as quickly as possible, but in a
+      ;; clean buffer we're an order of magnitude laxer about checking."
+      ;;   (setq flycheck-idle-change-delay
+      ;;         (if flycheck-current-errors 0.5 30.0)))
+
+      ;; Each buffer gets its own idle-change-delay because of the
+      ;; buffer-sensitive adjustment above.
+      ;; (make-variable-buffer-local 'flycheck-idle-change-delay)
+
+      ;; (add-hook 'flycheck-after-syntax-check-hook
+      ;;           'magnars/adjust-flycheck-automatic-syntax-eagerness)
+
+      ;; Remove newline checks, since they would trigger an immediate check
+      ;; when we want the idle-change-delay to be in effect while editing.
+      ;; (setq flycheck-check-syntax-automatically '(save
+      ;;                                             idle-change
+      ;;                                             mode-enabled))
+
+      ;; (eval-after-load 'flycheck
+      ;;   '(custom-set-variables
+      ;;     '(flycheck-display-errors-function #'flycheck-pos-tip-error-messages)))
+  #+END_SRC 
 * Custom Tweaks
 ** Add abbrevs 
 #+BEGIN_SRC emacs-lisp
@@ -3805,6 +3852,48 @@ abort completely with `C-g'."
 
   (global-set-key (kbd "M-#") 'sync0-lookup-word)
   (global-set-key (kbd "M-$") 'sync0-lookup-conjugation)
+  #+END_SRC 
+** Auto update Org Modified Property
+#+BEGIN_SRC emacs-lisp
+  (defun yant/getentryhash ()
+  "Get the hash sum of the text in current entry, except :HASH: and :MODIFIED: property texts."
+  (save-excursion
+    (let* ((beg (progn (org-back-to-heading) (point)))
+       (end (progn
+          (forward-char)          
+          (if (not (re-search-forward "^\*\* " (point-max) t))
+              (point-max)
+            (match-beginning 0))))
+       (full-str (buffer-substring beg end))
+       (str-nohash (if (string-match "^ *:HASH:.+\n" full-str)
+               (replace-match "" nil nil full-str)
+             full-str))
+       (str-nohash-nomod (if (string-match "^ *:MODIFIED:.+\n" str-nohash)
+                 (replace-match "" nil nil str-nohash)
+                   str-nohash))
+       (str-nohash-nomod-nopropbeg (if (string-match "^ *:PROPERTIES:\n" str-nohash-nomod)
+                       (replace-match "" nil nil str-nohash-nomod)
+                     str-nohash-nomod))
+       (str-nohash-nomod-nopropbeg-end (if (string-match "^ *:END:\n" str-nohash-nomod-nopropbeg)
+                           (replace-match "" nil nil str-nohash-nomod-nopropbeg)
+                         str-nohash-nomod-nopropbeg)))
+      (sxhash str-nohash-nomod-nopropbeg-end))))
+
+(defun yant/update-modification-time ()
+  "Set the :MODIFIED: property of the current entry to '%Y/%m/%d' and update :HASH: property."
+  (org-set-property "HASH" (format "%s" (yant/getentryhash)))    
+  (org-set-property "MODIFIED" (format-time-string "%Y/%m/%d")))
+(defun yant/skip-nonmodified ()
+  "Skip org entries, which were not modified according to the :HASH: property"
+  (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
+    (if (string= (org-entry-get (point) "HASH" nil) (format "%s" (yant/getentryhash)))
+    next-headline
+      nil)))
+
+(add-hook 'before-save-hook (lambda ()
+                  (when (and (eq major-mode 'org-mode)
+                   (equal buffer-file-name "/home/sync0/Dropbox/org/master.org"))
+                (org-map-entries #'yant/update-modification-time nil 'file #'yant/skip-nonmodified))))
   #+END_SRC 
 ** Useful Key Bindings
  #+BEGIN_SRC emacs-lisp
