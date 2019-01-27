@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: latex_align_environment
-# key: align
+# key: lalign
 # --
 \begin{align*}
 $1 &= $2 \\\

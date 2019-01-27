@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: latex_equation_environment
-# key: equation
+# key: lequation
 # --
 \begin{equation*}
 $1 = $2
