@@ -1,7 +1,7 @@
 # -*- mode: snippet -*-
 # name: labeling_koma
-# key: labeling
+# key: klabeling
 # --
 \begin{labeling}[:]{} 
-\item[${1:Commentaire}] ${2:Lorem ipsum dolor sit amet}
+\item[${1:Commentaire}] $2
 \end{labeling}$0

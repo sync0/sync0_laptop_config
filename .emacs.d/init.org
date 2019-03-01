@@ -16,14 +16,14 @@
 #+EMAIL: cantorlunae@gmail.com
 
 # Initial visualization settings.
-#+STARTUP: noindent showeverything nostars
+#+STARTUP: indent showeverything nostars
 # Necessary to export code from Emacs org mode to elisp. 
 #+PROPERTY: header-args :tangle yes
 * Introduction 
 This is my Emacs configuration file. As the sloppy code herein attests, I
 am not a programmer. I use Emacs primarily for taking notes and writing
 academic articles, so these settings reflect that usage. 
-** Reminders for Myself 
+** A Few Tips
  - In Org mode, ~<s + tab~ creates a code block. To make it executable,
    add the words ~emacs-lisp~ to the first line, right after ~#+BEGIN_SRC~.
  - The location for hunspell dictionaries should be in
@@ -286,13 +286,13 @@ These settings configure Emacs package manager and the package repositories.
                 auto-revert-interval 1)
 
           ;; Workspace keybindgs
-          ;; (defun toggle-mode-line () 
-          ;;   "toggles the modeline on and off"
-          ;;   (interactive) 
-          ;;   (setq mode-line-format
-          ;;         (if (equal mode-line-format nil)
-          ;;             (default-value 'mode-line-format)) )
-          ;;   (redraw-display))
+          (defun toggle-mode-line () 
+            "toggles the modeline on and off"
+            (interactive) 
+            (setq mode-line-format
+                  (if (equal mode-line-format nil)
+                      (default-value 'mode-line-format)) )
+            (redraw-display))
     #+END_SRC 
 *** Line numbers
 After version 26, Emacs has native support for line numbers. 
@@ -309,7 +309,7 @@ After version 26, Emacs has native support for line numbers.
       (menu-bar-showhide-fringe-menu-customize-disable)
 
       ;; In case I need those annoying toolbars back, I bind them:
-      ;; (global-set-key [C-f11] 'toggle-mode-line)
+      (global-set-key (kbd "<f10>") 'toggle-mode-line)
       (global-set-key (kbd "<f8>") 'tool-bar-mode)
       (global-set-key (kbd "<f9>") 'menu-bar-mode)
       #+END_SRC 
@@ -919,7 +919,7 @@ that I’ve copied from the web.
   (use-package doom-modeline :after doom-themes
       ;; :ensure t
       :defer t
-      :hook (after-init . doom-modeline-init))
+      :hook (after-init . doom-modeline-mode))
   #+END_SRC 
 ** Spellchecking
  #+BEGIN_SRC emacs-lisp
@@ -1012,424 +1012,432 @@ that I’ve copied from the web.
 #+END_SRC
 ** EVIL mode 
    #+BEGIN_SRC emacs-lisp
-                    ;; initializing
-                    (use-package evil  :after (org ivy)
-                      :bind (
-                             ;; ESC quits almost anything
-                             :map evil-normal-state-map
-                                  ;;     ("ESC" . keyboard-quit)
-                                  ;; quickly switch buffers
-                                  ("M-h" . next-buffer)
-                                  ("M-l" . previous-buffer)
-                                  ("/" . swiper)
-                                  ;; ("C-S-h" . evil-window-left)
-                                  ;; ("C-S-j" . evil-window-down)
-                                  ;; ("C-S-k" . evil-window-up)
-                                  ;; ("C-S-l" . evil-window-right))
-                         ;; :map evil-visual-state-map
-                        ;; ("ESC" . keyboard-quit)
-                        ;; ("M-x" . counsel-M-x)
-                      :map minibuffer-local-map
-                      ("ESC" . minibuffer-keyboard-quit)
-                      :map minibuffer-local-ns-map
-                      ("ESC" . minibuffer-keyboard-quit)
-                      :map minibuffer-local-completion-map
-                      ("ESC" . minibuffer-keyboard-quit)
-                      :map minibuffer-local-must-match-map
-                      ("ESC" . minibuffer-keyboard-quit)
-                      :map minibuffer-local-isearch-map
-                      ("ESC" . minibuffer-keyboard-quit))
-                      :init
-               (evil-mode 1)
-                ; (setq evil-want-keybinding nil)
-                      :config
-                      ;(evil-mode 1)
+                         ;; initializing
+                         (use-package evil  :after (org ivy)
+                           :bind (
+                                  ;; ESC quits almost anything
+                                  :map evil-normal-state-map
+                                       ;;     ("ESC" . keyboard-quit)
+                                       ;; quickly switch buffers
+                                       ("M-h" . next-buffer)
+                                       ("M-l" . previous-buffer)
+                                       ("/" . swiper)
+                                       ;; ("C-S-h" . evil-window-left)
+                                       ;; ("C-S-j" . evil-window-down)
+                                       ;; ("C-S-k" . evil-window-up)
+                                       ;; ("C-S-l" . evil-window-right))
+                              ;; :map evil-visual-state-map
+                             ;; ("ESC" . keyboard-quit)
+                             ;; ("M-x" . counsel-M-x)
+                           :map minibuffer-local-map
+                           ("ESC" . minibuffer-keyboard-quit)
+                           :map minibuffer-local-ns-map
+                           ("ESC" . minibuffer-keyboard-quit)
+                           :map minibuffer-local-completion-map
+                           ("ESC" . minibuffer-keyboard-quit)
+                           :map minibuffer-local-must-match-map
+                           ("ESC" . minibuffer-keyboard-quit)
+                           :map minibuffer-local-isearch-map
+                           ("ESC" . minibuffer-keyboard-quit))
+                           :init
+                    (evil-mode 1)
+                     ; (setq evil-want-keybinding nil)
+                           :config
+                           ;(evil-mode 1)
 
-                      ;;(add-hook 'org-mode-hook (lambda () (evil-mode 1)))
-                      ;;(add-hook 'after-init-hook '#evil-mode) 
-                      (add-to-list 'evil-emacs-state-modes 'cfw:details-mode)
+                           ;;(add-hook 'org-mode-hook (lambda () (evil-mode 1)))
+                           ;;(add-hook 'after-init-hook '#evil-mode) 
+                           (add-to-list 'evil-emacs-state-modes 'cfw:details-mode)
 
-                      ;; input methods 
-                      ;; set default input method
-                      ;; (setq default-input-method "TeX")
-                      ;; no input method for evil normal state
-                      (add-hook 'evil-normal-state-entry-hook
-                                (lambda () (set-input-method 'nil)))
-                      ;; Spanish
+                           ;; input methods 
+                           ;; set default input method
+                           ;; (setq default-input-method "TeX")
+                           ;; no input method for evil normal state
+                           (add-hook 'evil-normal-state-entry-hook
+                                     (lambda () (set-input-method 'nil)))
+                           ;; Spanish
 
-                      ;; spanish-postfix for evil insert mode
-                      ;;(add-hook 'evil-insert-state-entry-hook
-                      ;; (lambda () (set-input-method "spanish-postfix")))
+                           ;; spanish-postfix for evil insert mode
+                           ;;(add-hook 'evil-insert-state-entry-hook
+                           ;; (lambda () (set-input-method "spanish-postfix")))
 
-                      ;; spanish-postfix for evil insert mode
-                      ;;(add-hook 'evil-insert-state-entry-hook
-                      ;; (lambda () (set-input-method "spanish-postfix")))
+                           ;; spanish-postfix for evil insert mode
+                           ;;(add-hook 'evil-insert-state-entry-hook
+                           ;; (lambda () (set-input-method "spanish-postfix")))
 
-                      ;; German 
+                           ;; German 
 
-                      ;; german-postfix for evil insert mode
-                      ;;(add-hook 'evil-insert-state-entry-hook
-                      ;;(lambda () (set-input-method "german-postfix")))
+                           ;; german-postfix for evil insert mode
+                           ;;(add-hook 'evil-insert-state-entry-hook
+                           ;;(lambda () (set-input-method "german-postfix")))
 
-                      ;; EVIL org
-                      ;; setup functions
-                      (defun clever-insert-item ()
-                        "Clever insertion of org item."
-                        (if (not (org-in-item-p))
-                            (insert "\n")
-                          (org-insert-item)))
+                           ;; EVIL org
+                           ;; setup functions
+                           (defun clever-insert-item ()
+                             "Clever insertion of org item."
+                             (if (not (org-in-item-p))
+                                 (insert "\n")
+                               (org-insert-item)))
 
-                      (defun evil-org-eol-call (fun)
-                        "Go to end of line and call provided function.
-                                FUN function callback"
-                        (end-of-line)
-                        (funcall fun)
-                        (evil-append nil))
+                           (defun evil-org-eol-call (fun)
+                             "Go to end of line and call provided function.
+                                     FUN function callback"
+                             (end-of-line)
+                             (funcall fun)
+                             (evil-append nil))
 
-                      ;; insert whitespace
-                      (defun sync0-insert-whitespace ()
-                        " Add a whitespace"
-                        (interactive)
-                        (insert " "))
+                           ;; insert whitespace
+                           (defun sync0-insert-whitespace ()
+                             " Add a whitespace"
+                             (interactive)
+                             (insert " "))
 
-                      ;; insert whitespace
-                      (defun sync0-insert-whitespace ()
-                        " Add a whitespace"
-                        (interactive)
-                        (insert " "))
+                           ;; insert whitespace
+                           (defun sync0-insert-whitespace ()
+                             " Add a whitespace"
+                             (interactive)
+                             (insert " "))
 
-                      ;; key bindings
-                      ;; redefinition evils normal mode map
-                      (evil-define-key 'normal org-mode-map
-                        "<" 'outline-previous-visible-heading
-                        ">" 'outline-next-visible-heading
-                         (kbd "C->") 'org-forward-heading-same-level
-                        (kbd "C-<") 'org-backward-heading-same-level
-                        "H" 'org-metaleft
-                        "L" 'org-metaright
-                        "K" 'org-metaup
-                        "J" 'org-metadown
-                        "k" 'previous-line
-                        "j" 'next-line
-                        ;;  "m" 'set-mark-command
-                        "s" 'fill-paragraph
-                        "S" 'sync0-insert-line-below
-                        (kbd "SPC") 'sync0-insert-whitespace
-                        "o" '(lambda () (interactive) (evil-org-eol-call 'clever-insert-item))
-                        "O" '(lambda () (interactive) (evil-org-eol-call 'org-insert-heading))
-                        "$" 'org-end-of-line
-                        "^" 'org-beginning-of-line
-                        "[" 'backward-sentence
-                        "]" 'forward-sentence
-                        "{" 'org-backward-paragraph
-                        "}" 'org-forward-paragraph
-                        "-" 'org-cycle-list-bullet
-                        (kbd "<tab>") 'org-cycle)
-
-                      (evil-define-key 'normal LaTeX-mode-map
-                        "k" 'previous-line
-                        "j" 'next-line
-                        ;;  "m" 'set-mark-command
-                        "q" 'fill-paragraph
-                        "Q" 'sync0-insert-line-below
-                        (kbd "SPC") 'sync0-insert-whitespace
-                        "[" 'backward-sentence
-                        "]" 'forward-sentence)
-
-                      (evil-define-key 'visual LaTeX-mode-map
-                        "q" 'highlight-changes-remove-highlight
-                        "ma" 'sync0-tex-changes-add
-                        "md" 'sync0-tex-changes-delete
-                        "mr" 'sync0-tex-changes-replace)
-
-                      (evil-define-key 'visual org-mode-map
-                        "q" 'highlight-changes-remove-highlight
-                        "ma" 'sync0-tex-changes-add
-                        "md" 'sync0-tex-changes-delete
-                        "mr" 'sync0-tex-changes-replace
-                        "e" 'org-emphasize)
+                           ;; key bindings
+                           ;; redefinition evils normal mode map
+                           (evil-define-key 'normal org-mode-map
+                             "<" 'outline-previous-visible-heading
+                             ">" 'outline-next-visible-heading
+                              (kbd "C->") 'org-forward-heading-same-level
+                             (kbd "C-<") 'org-backward-heading-same-level
+                             "H" 'org-metaleft
+                             "L" 'org-metaright
+                             "K" 'org-metaup
+                             "J" 'org-metadown
+                             "k" 'previous-line
+                             "j" 'next-line
+                              ;; "m" 'set-mark-command
+                             ;; "s" 'fill-paragraph
+                             ;; "S" 'sync0-insert-line-below
+                             ;; (kbd "SPC") 'sync0-insert-whitespace
+                             "o" '(lambda () (interactive) (evil-org-eol-call 'clever-insert-item))
+                             "O" '(lambda () (interactive) (evil-org-eol-call 'org-insert-heading))
+                             "$" 'org-end-of-line
+                             "^" 'org-beginning-of-line
+                             "[" 'backward-sentence
+                             "]" 'forward-sentence
+                             "{" 'org-backward-paragraph
+                             "}" 'org-forward-paragraph
+                             "-" 'org-cycle-list-bullet
+                             (kbd "<tab>") 'org-cycle)
 
 
-     ;; mu4e
-                 (evil-define-key 'visual mu4e-compose-mode-map
-                   "gg" 'mu4e-compose-goto-top
-                   "G" 'mu4e-compose-goto-bottom)
-
-                      (evil-define-key 'normal mu4e-main-mode-map 
-                    "J" 'mu4e~headers-jump-to-maildir
-                    "j" 'next-line
-                    "k" 'previous-line
-                    "u" 'mu4e-update-mail-and-index
-                    "gr" 'revert-buffer
-                    "b" 'mu4e-headers-search-bookmark
-                    "B" 'mu4e-headers-search-bookmark-edit
-                    "N" 'mu4e-news
-                    ";" 'mu4e-context-switch
-                    "H" 'mu4e-display-manual
-                    "C" 'mu4e-compose-new
-                    "cc" 'mu4e-compose-new
-                    "x" 'mu4e-kill-update-mail
-                    "A" 'mu4e-about
-                    "f" 'smtpmail-send-queued-mail
-                    "m" 'mu4e~main-toggle-mail-sending-mode
-                    "s" 'mu4e-headers-search
-                    "q" 'mu4e-quit)
-
-                      (evil-define-key 'normal mu4e-headers-mode-map 
-                    "q" 'mu4e~headers-quit-buffer
-                    "J" 'mu4e~headers-jump-to-maildir
-                    "C" 'mu4e-compose-new
-                    "E" 'mu4e-compose-edit
-                    "F" 'mu4e-compose-forward
-                    "R" 'mu4e-compose-reply
-                    "cc" 'mu4e-compose-new
-                    "ce" 'mu4e-compose-edit
-                    "cf" 'mu4e-compose-forward
-                    "cr" 'mu4e-compose-reply
-                    "o" 'mu4e-headers-change-sorting
-                    "j" 'mu4e-headers-next
-                    "k" 'mu4e-headers-prev
-                    "gr" 'mu4e-headers-rerun-search
-                    "b" 'mu4e-headers-search-bookmark
-                    "B" 'mu4e-headers-search-bookmark-edit
-                    ";" 'mu4e-context-switch
-                    (kbd "RET") 'mu4e-headers-view-message
-                    "/" 'mu4e-headers-search-narrow
-                    "s" 'mu4e-headers-search
-                    "S" 'mu4e-headers-search-edit
-                    "x" 'mu4e-mark-execute-all
-                    "a" 'mu4e-headers-action
-                    "*" 'mu4e-headers-mark-for-something ; TODO: Don't override evil-seach-word-forward?
-                    "&" 'mu4e-headers-mark-custom
-                    "A" 'mu4e-headers-mark-for-action
-                    "m" 'mu4e-headers-mark-for-move
-                    "r" 'mu4e-headers-mark-for-refile
-                    "D" 'mu4e-headers-mark-for-delete
-                    "d" 'mu4e-headers-mark-for-trash
-                    "=" 'mu4e-headers-mark-for-untrash
-                    "u" 'mu4e-headers-mark-for-unmark
-                    "U" 'mu4e-mark-unmark-all
-                    "?" 'mu4e-headers-mark-for-unread
-                    "!" 'mu4e-headers-mark-for-read
-                    "%" 'mu4e-headers-mark-pattern
-                    "+" 'mu4e-headers-mark-for-flag
-                    "-" 'mu4e-headers-mark-for-unflag
-                    "[" 'mu4e-headers-prev-unread
-                    "]" 'mu4e-headers-next-unread
-                    "gk" 'mu4e-headers-prev-unread
-                    "gj" 'mu4e-headers-next-unread
-                    (kbd "C-j") 'mu4e-headers-next
-                    (kbd "C-k") 'mu4e-headers-prev
-                    "zr" 'mu4e-headers-toggle-include-related
-                    "zt" 'mu4e-headers-toggle-threading
-                    "zd" 'mu4e-headers-toggle-skip-duplicates
-                    "gl" 'mu4e-show-log
-                    "gv" 'mu4e-select-other-view)
-                    ;; "T" '(lambda ()
-                    ;;       (interactive)
-                    ;;       (mu4e-headers-mark-thread nil '(read))))
-
-                      (evil-define-key 'normal mu4e-compose-mode-map 
-                    "gg" 'mu4e-compose-goto-top
-                    "G" 'mu4e-compose-goto-bottom)
-
-                      (evil-define-key 'normal mu4e-view-mode-map 
-                    " " 'mu4e-view-scroll-up-or-next
-                    (kbd  "TAB") 'shr-next-link
-                    (kbd  "<backtab>") 'shr-next-link
-                    "q" 'mu4e~view-quit-buffer
-                    "gx" 'mu4e-view-go-to-url
-                    "gX" 'mu4e-view-fetch-url
-                    "C" 'mu4e-compose-new
-                    "H" 'mu4e-view-toggle-html
-                    ;; "E"               mu4e-compose-edit
-                    ;; "F"               mu4e-compose-forward
-                    "R" 'mu4e-compose-reply
-                    "cc" 'mu4e-compose-new
-                    "ce" 'mu4e-compose-edit
-                    "cf" 'mu4e-compose-forward
-                    "cr" 'mu4e-compose-reply
-                    "p" 'mu4e-view-save-attachment
-                    "P" 'mu4e-view-save-attachment-multi ; Since mu4e 1.0, -multi is same as normal.
-                    "O" 'mu4e-headers-change-sorting
-                    "o" 'mu4e-view-open-attachment
-                    "A" 'mu4e-view-attachment-action
-                    "a" 'mu4e-view-action
-                    "J" 'mu4e~headers-jump-to-maildir
-                    "[" 'mu4e-view-headers-prev-unread
-                    "]" 'mu4e-view-headers-next-unread
-                    "gk" 'mu4e-view-headers-prev-unread
-                    "gj" 'mu4e-view-headers-next-unread
-                    (kbd"C-j") 'mu4e-view-headers-next
-                    (kbd "C-k") 'mu4e-view-headers-prev
-                    "x" 'mu4e-view-marked-execute
-                    "&" 'mu4e-view-mark-custom
-                    "*" 'mu4e-view-mark-for-something   ; TODO: Don't override "*".
-                    "m" 'mu4e-view-mark-for-move
-                    "r" 'mu4e-view-mark-for-refile
-                    "D" 'mu4e-view-mark-for-delete
-                    "d" 'mu4e-view-mark-for-trash
-                    "=" 'mu4e-view-mark-for-untrash
-                    "u" 'mu4e-view-unmark
-                    "U" 'mu4e-view-unmark-all
-                    "?" 'mu4e-view-mark-for-unread
-                    "!" 'mu4e-view-mark-for-read
-                    "%" 'mu4e-view-mark-pattern
-                    "+" 'mu4e-view-mark-for-flag
-                    "-" 'mu4e-view-mark-for-unflag
-                    "zr" 'mu4e-headers-toggle-include-related
-                    "zt" 'mu4e-headers-toggle-threading
-                    "za" 'mu4e-view-toggle-hide-cited
-                    "gl" 'mu4e-show-log
-                    "s" 'mu4e-view-search-edit
-                    "|" 'mu4e-view-pipe
-                    "." 'mu4e-view-raw-message
-                    (kbd "C--") 'mu4e-headers-split-view-shrink
-                    (kbd "C-+") 'mu4e-headers-split-view-grow)
-                    ;; "T" '(lambda ()
-                    ;;       (interactive)
-                    ;;       (mu4e-headers-mark-thread nil '(read))))
-                    ;; ,@(when evil-want-C-u-scroll
-                        ;; '("\C-u" evil-scroll-up))))
-
-     ;; Bookmarks
-          (evil-define-key 'normal bookmark-bmenu-mode-map
-              "q" 'quit-window
-              "gr" 'revert-buffer
-              "g?" 'describe-mode
-              "j" 'next-line
-              "p" 'previous-line
-              "J" 'bookmark-bmenu-this-window
-              "2" 'bookmark-bmenu-2-window
-              "1" 'bookmark-bmenu-1-window
-              "x" 'bookmark-bmenu-execute-deletions
-              "d" 'bookmark-bmenu-delete
-              "/" 'bookmark-bmenu-search
-              "r" 'bookmark-bmenu-rename
-              "R" 'bookmark-bmenu-relocate
-              "L" 'bookmark-bmenu-load
-              "t" 'bookmark-bmenu-toggle-filenames
-              "a" 'bookmark-bmenu-show-annotation
-              "A" 'bookmark-bmenu-show-all-annotations
-              "s" 'bookmark-bmenu-save
-              "W" 'bookmark-bmenu-locate
-              "E" 'bookmark-bmenu-edit-annotation
-              "D" 'bookmark-bmenu-delete-backwards
-              ;; mark
-              "u" 'bookmark-bmenu-unmark
-              "m" 'bookmark-bmenu-mark
-              ;; open
-              "o" 'bookmark-bmenu-select
-              "O" 'bookmark-bmenu-other-window
-              "go" 'bookmark-bmenu-other-window
-              "gO" 'bookmark-bmenu-switch-other-window
-              (kbd "<return>") 'bookmark-bmenu-this-window
-              (kbd "S-<return>") 'bookmark-bmenu-other-window
-              (kbd "M-<return>") 'bookmark-bmenu-switch-other-window)
-
-          ;; (defun evil-collection-ivy-setup ()
-          ;;   "Set up `evil' bindings for `ivy-mode'."
-          ;;   (evil-define-key nil 'ivy-mode-map
-          ;;     (kbd "<escape>") 'minibuffer-keyboard-quit)
-
-            (evil-define-key 'normal ivy-occur-mode-map
-              ;; [mouse-1] 'ivy-occur-click
-              (kbd "<return>") 'ivy-occur-press-and-switch
-              "j" 'ivy-occur-next-line
-              "k" 'ivy-occur-previous-line
-              "h" 'evil-backward-char
-              "l" 'evil-forward-char
-              "g" nil
-              "gg" 'evil-goto-first-line
-              "gf" 'ivy-occur-press
-              "ga" 'ivy-occur-read-action
-              "go" 'ivy-occur-dispatch
-              "gc" 'ivy-occur-toggle-calling
-              ;; refresh
-              "gr" 'ivy-occur-revert-buffer
-              ;; quit
-              "q" 'quit-window)
-
-            ;; (when evil-want-C-d-scroll
-            ;;   (evil-collection-define-key 'normal 'ivy-occur-grep-mode-map
-            ;;     "D" 'ivy-occur-delete-candidate
-            ;;     (kbd "C-d") 'evil-scroll-down))
-
-            (evil-define-key 'visual ivy-occur-grep-mode-map
-              "j" 'evil-next-line
-              "k" 'evil-previous-line)
-
-            (evil-define-key 'normal ivy-occur-grep-mode-map
-              "d" 'ivy-occur-delete-candidate
-              (kbd "C-x C-q") 'ivy-wgrep-change-to-wgrep-mode
-              "i" 'ivy-wgrep-change-to-wgrep-mode
-              "gd" 'ivy-occur-delete-candidate
-              ;; [mouse-1] 'ivy-occur-click
-              (kbd "<return>") 'ivy-occur-press-and-switch
-              "j" 'ivy-occur-next-line
-              "k" 'ivy-occur-previous-line
-              "h" 'evil-backward-char
-              "l" 'evil-forward-char
-              "g" nil
-              "gg" 'evil-goto-first-line
-              "gf" 'ivy-occur-press
-              "gr" 'ivy-occur-revert-buffer
-              "ga" 'ivy-occur-read-action
-              "go" 'ivy-occur-dispatch
-              "gc" 'ivy-occur-toggle-calling
-              "0" 'evil-digit-argument-or-evil-beginning-of-line
-              ;; quit
-              "q" 'quit-window)
+                           (evil-define-key 'normal global-map
+                             "s" 'fill-paragraph
+                             "S" 'sync0-insert-line-below
+                             (kbd "SPC") 'sync0-insert-whitespace
+     )
 
 
-              (evil-define-key 'normal ivy-minibuffer-map
-                (kbd "<escape>") 'abort-recursive-edit
-                (kbd "<return>") 'exit-minibuffer
-                (kbd "C-m") 'ivy-done
-                "j" 'ivy-next-line
-                "k" 'ivy-previous-line)
+                           (evil-define-key 'normal LaTeX-mode-map
+                             "k" 'previous-line
+                             "j" 'next-line
+                             ;;  "m" 'set-mark-command
+                             "q" 'fill-paragraph
+                             "Q" 'sync0-insert-line-below
+                             (kbd "SPC") 'sync0-insert-whitespace
+                             "[" 'backward-sentence
+                             "]" 'forward-sentence)
 
-              (evil-define-key 'insert ivy-minibuffer-map
-                (kbd "<backspace>") 'ivy-backward-delete-char
-                (kbd "C-r") 'ivy-reverse-i-search
-                (kbd "C-n") 'ivy-next-line
-                (kbd "C-p") 'ivy-previous-line)
+                           (evil-define-key 'visual LaTeX-mode-map
+                             "q" 'highlight-changes-remove-highlight
+                             "ma" 'sync0-tex-changes-add
+                             "md" 'sync0-tex-changes-delete
+                             "mr" 'sync0-tex-changes-replace)
 
-                      (setq ;; evil-mode-line-format nil
-                            ;; turn off auto-indent 
-                            evil-auto-indent nil
-                            ;; Change color of evil cursor
-                            evil-insert-state-cursor '(bar "#dc322f")
-                            evil-normal-state-cursor '(box "#268bd2")
-                            evil-visual-state-cursor '(box "#d33682"))
-
-                      ;; Improve EVIL behavior with visual lines
-                      ;; Make movement keys work like they should
-                      (define-key evil-normal-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
-                      (define-key evil-normal-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line)
-                      (define-key evil-motion-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
-                      (define-key evil-motion-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line)
+                           (evil-define-key 'visual org-mode-map
+                             "q" 'highlight-changes-remove-highlight
+                             "ma" 'sync0-tex-changes-add
+                             "md" 'sync0-tex-changes-delete
+                             "mr" 'sync0-tex-changes-replace
+                             "e" 'org-emphasize)
 
 
-                      (defvar +evil-esc-hook '(t)
-                        "A hook run after ESC is pressed in normal mode (invoked by
-                         `evil-force-normal-state'). If any hook returns non-nil, all hooks after it are ignored.")
+          ;; mu4e
+                      (evil-define-key 'visual mu4e-compose-mode-map
+                        "gg" 'mu4e-compose-goto-top
+                        "G" 'mu4e-compose-goto-bottom)
 
-                      (defun +evil*attach-escape-hook ()
-                        "Run the `+evil-esc-hook'."
-                        (cond ((minibuffer-window-active-p (minibuffer-window))
-                               ;; quit the minibuffer if open.
-                               (abort-recursive-edit))
-                              ((evil-ex-hl-active-p 'evil-ex-search)
-                               ;; disable ex search buffer highlights.
-                               (evil-ex-nohighlight))
-                              (t
-                               ;; Run all escape hooks. If any returns non-nil, then stop there.
-                               (run-hook-with-args-until-success '+evil-esc-hook))))
-                      (advice-add #'evil-force-normal-state :after #'+evil*attach-escape-hook)
+                           (evil-define-key 'normal mu4e-main-mode-map 
+                         "J" 'mu4e~headers-jump-to-maildir
+                         "j" 'next-line
+                         "k" 'previous-line
+                         "u" 'mu4e-update-mail-and-index
+                         "gr" 'revert-buffer
+                         "b" 'mu4e-headers-search-bookmark
+                         "B" 'mu4e-headers-search-bookmark-edit
+                         "N" 'mu4e-news
+                         ";" 'mu4e-context-switch
+                         "H" 'mu4e-display-manual
+                         "C" 'mu4e-compose-new
+                         "cc" 'mu4e-compose-new
+                         "x" 'mu4e-kill-update-mail
+                         "A" 'mu4e-about
+                         "f" 'smtpmail-send-queued-mail
+                         "m" 'mu4e~main-toggle-mail-sending-mode
+                         "s" 'mu4e-headers-search
+                         "q" 'mu4e-quit)
 
-                      ;; Make horizontal movement cross lines                                    
-                      (setq-default evil-cross-lines t))
+                           (evil-define-key 'normal mu4e-headers-mode-map 
+                         "q" 'mu4e~headers-quit-buffer
+                         "J" 'mu4e~headers-jump-to-maildir
+                         "C" 'mu4e-compose-new
+                         "E" 'mu4e-compose-edit
+                         "F" 'mu4e-compose-forward
+                         "R" 'mu4e-compose-reply
+                         "cc" 'mu4e-compose-new
+                         "ce" 'mu4e-compose-edit
+                         "cf" 'mu4e-compose-forward
+                         "cr" 'mu4e-compose-reply
+                         "o" 'mu4e-headers-change-sorting
+                         "j" 'mu4e-headers-next
+                         "k" 'mu4e-headers-prev
+                         "gr" 'mu4e-headers-rerun-search
+                         "b" 'mu4e-headers-search-bookmark
+                         "B" 'mu4e-headers-search-bookmark-edit
+                         ";" 'mu4e-context-switch
+                         (kbd "RET") 'mu4e-headers-view-message
+                         "/" 'mu4e-headers-search-narrow
+                         "s" 'mu4e-headers-search
+                         "S" 'mu4e-headers-search-edit
+                         "x" 'mu4e-mark-execute-all
+                         "a" 'mu4e-headers-action
+                         "*" 'mu4e-headers-mark-for-something ; TODO: Don't override evil-seach-word-forward?
+                         "&" 'mu4e-headers-mark-custom
+                         "A" 'mu4e-headers-mark-for-action
+                         "m" 'mu4e-headers-mark-for-move
+                         "r" 'mu4e-headers-mark-for-refile
+                         "D" 'mu4e-headers-mark-for-delete
+                         "d" 'mu4e-headers-mark-for-trash
+                         "=" 'mu4e-headers-mark-for-untrash
+                         "u" 'mu4e-headers-mark-for-unmark
+                         "U" 'mu4e-mark-unmark-all
+                         "?" 'mu4e-headers-mark-for-unread
+                         "!" 'mu4e-headers-mark-for-read
+                         "%" 'mu4e-headers-mark-pattern
+                         "+" 'mu4e-headers-mark-for-flag
+                         "-" 'mu4e-headers-mark-for-unflag
+                         "[" 'mu4e-headers-prev-unread
+                         "]" 'mu4e-headers-next-unread
+                         "gk" 'mu4e-headers-prev-unread
+                         "gj" 'mu4e-headers-next-unread
+                         (kbd "C-j") 'mu4e-headers-next
+                         (kbd "C-k") 'mu4e-headers-prev
+                         "zr" 'mu4e-headers-toggle-include-related
+                         "zt" 'mu4e-headers-toggle-threading
+                         "zd" 'mu4e-headers-toggle-skip-duplicates
+                         "gl" 'mu4e-show-log
+                         "gv" 'mu4e-select-other-view)
+                         ;; "T" '(lambda ()
+                         ;;       (interactive)
+                         ;;       (mu4e-headers-mark-thread nil '(read))))
+
+                           (evil-define-key 'normal mu4e-compose-mode-map 
+                         "gg" 'mu4e-compose-goto-top
+                         "G" 'mu4e-compose-goto-bottom)
+
+                           (evil-define-key 'normal mu4e-view-mode-map 
+                         " " 'mu4e-view-scroll-up-or-next
+                         (kbd  "TAB") 'shr-next-link
+                         (kbd  "<backtab>") 'shr-next-link
+                         "q" 'mu4e~view-quit-buffer
+                         "gx" 'mu4e-view-go-to-url
+                         "gX" 'mu4e-view-fetch-url
+                         "C" 'mu4e-compose-new
+                         "H" 'mu4e-view-toggle-html
+                         ;; "E"               mu4e-compose-edit
+                         ;; "F"               mu4e-compose-forward
+                         "R" 'mu4e-compose-reply
+                         "cc" 'mu4e-compose-new
+                         "ce" 'mu4e-compose-edit
+                         "cf" 'mu4e-compose-forward
+                         "cr" 'mu4e-compose-reply
+                         "p" 'mu4e-view-save-attachment
+                         "P" 'mu4e-view-save-attachment-multi ; Since mu4e 1.0, -multi is same as normal.
+                         "O" 'mu4e-headers-change-sorting
+                         "o" 'mu4e-view-open-attachment
+                         "A" 'mu4e-view-attachment-action
+                         "a" 'mu4e-view-action
+                         "J" 'mu4e~headers-jump-to-maildir
+                         "[" 'mu4e-view-headers-prev-unread
+                         "]" 'mu4e-view-headers-next-unread
+                         "gk" 'mu4e-view-headers-prev-unread
+                         "gj" 'mu4e-view-headers-next-unread
+                         (kbd"C-j") 'mu4e-view-headers-next
+                         (kbd "C-k") 'mu4e-view-headers-prev
+                         "x" 'mu4e-view-marked-execute
+                         "&" 'mu4e-view-mark-custom
+                         "*" 'mu4e-view-mark-for-something   ; TODO: Don't override "*".
+                         "m" 'mu4e-view-mark-for-move
+                         "r" 'mu4e-view-mark-for-refile
+                         "D" 'mu4e-view-mark-for-delete
+                         "d" 'mu4e-view-mark-for-trash
+                         "=" 'mu4e-view-mark-for-untrash
+                         "u" 'mu4e-view-unmark
+                         "U" 'mu4e-view-unmark-all
+                         "?" 'mu4e-view-mark-for-unread
+                         "!" 'mu4e-view-mark-for-read
+                         "%" 'mu4e-view-mark-pattern
+                         "+" 'mu4e-view-mark-for-flag
+                         "-" 'mu4e-view-mark-for-unflag
+                         "zr" 'mu4e-headers-toggle-include-related
+                         "zt" 'mu4e-headers-toggle-threading
+                         "za" 'mu4e-view-toggle-hide-cited
+                         "gl" 'mu4e-show-log
+                         "s" 'mu4e-view-search-edit
+                         "|" 'mu4e-view-pipe
+                         "." 'mu4e-view-raw-message
+                         (kbd "C--") 'mu4e-headers-split-view-shrink
+                         (kbd "C-+") 'mu4e-headers-split-view-grow)
+                         ;; "T" '(lambda ()
+                         ;;       (interactive)
+                         ;;       (mu4e-headers-mark-thread nil '(read))))
+                         ;; ,@(when evil-want-C-u-scroll
+                             ;; '("\C-u" evil-scroll-up))))
+
+          ;; Bookmarks
+               (evil-define-key 'normal bookmark-bmenu-mode-map
+                   "q" 'quit-window
+                   "gr" 'revert-buffer
+                   "g?" 'describe-mode
+                   "j" 'next-line
+                   "p" 'previous-line
+                   "J" 'bookmark-bmenu-this-window
+                   "2" 'bookmark-bmenu-2-window
+                   "1" 'bookmark-bmenu-1-window
+                   "x" 'bookmark-bmenu-execute-deletions
+                   "d" 'bookmark-bmenu-delete
+                   "/" 'bookmark-bmenu-search
+                   "r" 'bookmark-bmenu-rename
+                   "R" 'bookmark-bmenu-relocate
+                   "L" 'bookmark-bmenu-load
+                   "t" 'bookmark-bmenu-toggle-filenames
+                   "a" 'bookmark-bmenu-show-annotation
+                   "A" 'bookmark-bmenu-show-all-annotations
+                   "s" 'bookmark-bmenu-save
+                   "W" 'bookmark-bmenu-locate
+                   "E" 'bookmark-bmenu-edit-annotation
+                   "D" 'bookmark-bmenu-delete-backwards
+                   ;; mark
+                   "u" 'bookmark-bmenu-unmark
+                   "m" 'bookmark-bmenu-mark
+                   ;; open
+                   "o" 'bookmark-bmenu-select
+                   "O" 'bookmark-bmenu-other-window
+                   "go" 'bookmark-bmenu-other-window
+                   "gO" 'bookmark-bmenu-switch-other-window
+                   (kbd "<return>") 'bookmark-bmenu-this-window
+                   (kbd "S-<return>") 'bookmark-bmenu-other-window
+                   (kbd "M-<return>") 'bookmark-bmenu-switch-other-window)
+
+               ;; (defun evil-collection-ivy-setup ()
+               ;;   "Set up `evil' bindings for `ivy-mode'."
+               ;;   (evil-define-key nil 'ivy-mode-map
+               ;;     (kbd "<escape>") 'minibuffer-keyboard-quit)
+
+                 (evil-define-key 'normal ivy-occur-mode-map
+                   ;; [mouse-1] 'ivy-occur-click
+                   (kbd "<return>") 'ivy-occur-press-and-switch
+                   "j" 'ivy-occur-next-line
+                   "k" 'ivy-occur-previous-line
+                   "h" 'evil-backward-char
+                   "l" 'evil-forward-char
+                   "g" nil
+                   "gg" 'evil-goto-first-line
+                   "gf" 'ivy-occur-press
+                   "ga" 'ivy-occur-read-action
+                   "go" 'ivy-occur-dispatch
+                   "gc" 'ivy-occur-toggle-calling
+                   ;; refresh
+                   "gr" 'ivy-occur-revert-buffer
+                   ;; quit
+                   "q" 'quit-window)
+
+                 ;; (when evil-want-C-d-scroll
+                 ;;   (evil-collection-define-key 'normal 'ivy-occur-grep-mode-map
+                 ;;     "D" 'ivy-occur-delete-candidate
+                 ;;     (kbd "C-d") 'evil-scroll-down))
+
+                 (evil-define-key 'visual ivy-occur-grep-mode-map
+                   "j" 'evil-next-line
+                   "k" 'evil-previous-line)
+
+                 (evil-define-key 'normal ivy-occur-grep-mode-map
+                   "d" 'ivy-occur-delete-candidate
+                   (kbd "C-x C-q") 'ivy-wgrep-change-to-wgrep-mode
+                   "i" 'ivy-wgrep-change-to-wgrep-mode
+                   "gd" 'ivy-occur-delete-candidate
+                   ;; [mouse-1] 'ivy-occur-click
+                   (kbd "<return>") 'ivy-occur-press-and-switch
+                   "j" 'ivy-occur-next-line
+                   "k" 'ivy-occur-previous-line
+                   "h" 'evil-backward-char
+                   "l" 'evil-forward-char
+                   "g" nil
+                   "gg" 'evil-goto-first-line
+                   "gf" 'ivy-occur-press
+                   "gr" 'ivy-occur-revert-buffer
+                   "ga" 'ivy-occur-read-action
+                   "go" 'ivy-occur-dispatch
+                   "gc" 'ivy-occur-toggle-calling
+                   "0" 'evil-digit-argument-or-evil-beginning-of-line
+                   ;; quit
+                   "q" 'quit-window)
+
+
+                   (evil-define-key 'normal ivy-minibuffer-map
+                     (kbd "<escape>") 'abort-recursive-edit
+                     (kbd "<return>") 'exit-minibuffer
+                     (kbd "C-m") 'ivy-done
+                     "j" 'ivy-next-line
+                     "k" 'ivy-previous-line)
+
+                   (evil-define-key 'insert ivy-minibuffer-map
+                     (kbd "<backspace>") 'ivy-backward-delete-char
+                     (kbd "C-r") 'ivy-reverse-i-search
+                     (kbd "C-n") 'ivy-next-line
+                     (kbd "C-p") 'ivy-previous-line)
+
+                           (setq ;; evil-mode-line-format nil
+                                 ;; turn off auto-indent 
+                                 evil-auto-indent nil
+                                 ;; Change color of evil cursor
+                                 evil-insert-state-cursor '(bar "#dc322f")
+                                 evil-normal-state-cursor '(box "#268bd2")
+                                 evil-visual-state-cursor '(box "#d33682"))
+
+                           ;; Improve EVIL behavior with visual lines
+                           ;; Make movement keys work like they should
+                           (define-key evil-normal-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
+                           (define-key evil-normal-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line)
+                           (define-key evil-motion-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
+                           (define-key evil-motion-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line)
+
+
+                           (defvar +evil-esc-hook '(t)
+                             "A hook run after ESC is pressed in normal mode (invoked by
+                              `evil-force-normal-state'). If any hook returns non-nil, all hooks after it are ignored.")
+
+                           (defun +evil*attach-escape-hook ()
+                             "Run the `+evil-esc-hook'."
+                             (cond ((minibuffer-window-active-p (minibuffer-window))
+                                    ;; quit the minibuffer if open.
+                                    (abort-recursive-edit))
+                                   ((evil-ex-hl-active-p 'evil-ex-search)
+                                    ;; disable ex search buffer highlights.
+                                    (evil-ex-nohighlight))
+                                   (t
+                                    ;; Run all escape hooks. If any returns non-nil, then stop there.
+                                    (run-hook-with-args-until-success '+evil-esc-hook))))
+                           (advice-add #'evil-force-normal-state :after #'+evil*attach-escape-hook)
+
+                           ;; Make horizontal movement cross lines                                    
+                           (setq-default evil-cross-lines t))
    #+END_SRC 
 *** evil-snipe
 #+BEGIN_SRC emacs-lisp
@@ -1627,13 +1635,13 @@ evil-escape-unordered-key-sequence t
 (file+headline "~/Dropbox/org/todo.org" "Courriels")
          "*** 無 %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n" :prepend t)
                                   ("a" "Auteur" entry
-                                   (file "~/Dropbox/org/master.org")
+                                   (file "~/Dropbox/research/master.org")
                                    "* %^{last_name,first_name} :lecture: \n:ORIGIN:\n%^{Where?}\n:END:\n:PROPERTIES:\n:ADDED: %<[%Y-%m-%d]>\n:END:" :prepend t)
                                   ("b" "Book (todo)" entry
                                    (file+headline "~/Dropbox/org/ideas.org" "Books")
                                    "** %^{book_title}\n:ORIGIN:\n%^{Where?}\n:END:\n:PROPERTIES:\n:ADDED: %<[%Y-%m-%d]>\n:TRACE: %a\n:END:\n" :prepend t)
                                   ("r" "New Reading (master)" entry
-                                   (file "~/Dropbox/org/master.org")
+                                   (file "~/Dropbox/research/master.org")
                                    "* %^{reading_title}\n:ORIGIN:\n%^{Where?}\n:END:\n:PROPERTIES:\n:YEAR:\n:JOURNAL:\n:VOLUME:\n:ISSUE:\n:PAGES:\n:ADDED: %<[%Y-%m-%d]>\n:TRACE: %a\n:END:\n" :prepend t)
                                   )) 
 
@@ -1755,7 +1763,7 @@ idea
                                          "~/Dropbox/paris_1/memoire/memoire.org"
                                          "~/Dropbox/paris_1/memoire/README.org"
                                          "~/Dropbox/org/jahrestage.org"
-                                         "~/Dropbox/org/master.org"
+                                         "~/Dropbox/research"
                                          "~/Dropbox/org/todo.org"))
 
             ;; necessary function 1
@@ -2389,33 +2397,37 @@ biber to work properly with BibLaTeX. In layman English, the following
 configuration is necessary for automatic bibliography management to work
 properly when exporting org documents to LaTeX.
 #+BEGIN_SRC emacs-lisp
-        ;; export references (to tables, graphics, etc.) properly, evaluating the +NAME property. 
-        (setq org-latex-prefer-user-labels t)
+          ;; export references (to tables, graphics, etc.) properly, evaluating the +NAME property. 
+          (setq org-latex-prefer-user-labels t)
 
-        ;; export process is sent to the background
-        (setq org-export-in-background t)
+          ;; export process is sent to the background
+          (setq org-export-in-background t)
 
-        ;; select tasks (i.e., TODOs) for export
-        (setq org-export-with-tasks '("次" "完" "無" "中" "待" "疑"))
+          ;; select tasks (i.e., TODOs) for export
+          (setq org-export-with-tasks '("次" "完" "無" "中" "待" "疑"))
 
-      (defun sync0-latex-compile ()
-          (save-buffer)
-          (TeX-command "LaTeX" 'TeX-master-file))
+        (defun sync0-latex-compile ()
+            (save-buffer)
+            (TeX-command "LaTeX" 'TeX-master-file))
 
-        (defun sync0-latex-and-beamer-export ()
-          "Export current org file with beamer if it has beamer as latex class."
-          (interactive)
-          (when (equal major-mode 'org-mode) 
-              (if (string-match "LATEX_CLASS: beamer" (buffer-string))
-                  (org-beamer-export-to-pdf)
-                (org-latex-export-to-pdf))
-            ))
+          (defun sync0-latex-and-beamer-export ()
+            "Export current org file with beamer if it has beamer as latex class."
+            (interactive)
+            (when (equal major-mode 'org-mode) 
+                (if (string-match "LATEX_CLASS: beamer" (buffer-string))
+                    (org-beamer-export-to-pdf)
+                  (org-latex-export-to-pdf))
+              ))
 
-        ;; speed keybinding for latex pdf export
-        ;;(global-set-key "\M-p" 'org-latex-export-to-pdf)
-        (global-set-key "\M-p" 'sync0-latex-and-beamer-export)
+          ;; speed keybinding for latex pdf export
+          ;;(global-set-key "\M-p" 'org-latex-export-to-pdf)
+          (global-set-key "\M-p" 'sync0-latex-and-beamer-export)
 
-  (setq org-latex-pdf-process (list "latexmk -lualatex -bibtex-cond -f %f"))
+    (setq org-latex-pdf-process (list "latexmk -lualatex -bibtex-cond -f %f"))
+
+  ;; (setq org-latex-logfiles-extensions (quote ("lof" "lot" "tex~" "aux" "idx" "log" "out" "toc" "nav" "snm" "vrb" "dvi" "fdb_latexmk" "blg" "brf" "fls" "entoc" "ps" "spl" "bbl")))
+
+  (setq org-latex-logfiles-extensions (quote ("lof" "lot" "tex~" "idx" "out" "toc" "nav" "snm" "vrb" "dvi" "fdb_latexmk" "blg" "brf" "fls" "entoc" "ps" "spl")))
 #+END_SRC
 *** Export to Word (doc)
 #+BEGIN_SRC emacs-lisp
@@ -2577,7 +2589,7 @@ properly when exporting org documents to LaTeX.
        ;; ivy-bibtex-library-path 'org-ref-pdf-directory ;; where your pdfs etc are stored
        ;; ivy-bibtex-notes-path 'org-ref-bibliography-notes;; where your notes are stored
        bibtex-completion-bibliography '("~/Documents/mendeley/sync0_library.bib") ;; writing completion
-       bibtex-completion-notes-path '"~/Dropbox/org/master.org"
+       bibtex-completion-notes-path '"~/Dropbox/research"
        ;; bibtex-completion-library-path '("~/Documents/mendeley/") 
        bibtex-completion-pdf-field "file"
        bibtex-completion-pdf-symbol "⌘"
@@ -2590,49 +2602,54 @@ properly when exporting org documents to LaTeX.
   #+END_SRC 
 ** Org-ref 
 #+BEGIN_SRC emacs-lisp
-  (use-package org-ref :after (org ivy)
-    :init 
-    (setq reftex-default-bibliography '("~/Documents/mendeley/sync0_library.bib")
-          ;; see org-ref for use of these variables
-          org-ref-bibliography-notes "~/Dropbox/org/master.org"
-          org-ref-default-bibliography '("~/Documents/mendeley/sync0_library.bib")
-          org-ref-pdf-directory "~/Documents/mendeley/"
-          ;; org-ref-open-pdf-function 'org-ref-get-mendeley-filename
-          ;; set ivy for completion
-          org-ref-completion-library 'org-ref-ivy-cite)
-    :config 
-(defun sync0-org-ref-open-pdf-at-point ()
-  "Open the pdf for bibtex key under point if it exists."
-  (interactive)
-  (let* ((results (org-ref-get-bibtex-key-and-file))
-         (key (car results))
-         (pdf-file (car(bibtex-completion-find-pdf key))))
-    (if (file-exists-p pdf-file)
-       (org-open-file pdf-file))
-      (message "No PDF found for %s" key)))
-(setq org-ref-open-pdf-function 'sync0-org-ref-open-pdf-at-point)
-    (define-key org-mode-map (kbd "C-c [") 'org-ref-ivy-insert-cite-link)
-    (define-key org-mode-map  (kbd "C-c 9") 'org-ref-open-bibtex-notes)
-    (define-key org-mode-map  (kbd "C-c 0") 'org-ref-open-notes-from-reftex)
-    (define-key org-mode-map  (kbd "C-c 8") 'sync0-org-ref-open-pdf-at-point)
-    ;; define notes template
-    (setq org-ref-note-title-format 
-          "** %t
-   :PROPERTIES: 
-    :Custom_ID: %k
-    :AUTHOR: %a
-    :JOURNAL: %j
-    :YEAR: %y
-    :VOLUME: %v 
-    :PAGES: %p
-    :DOI: %D
-    :URL: %U 
-    :ADDED:    
-    :LOCATION:    
-  :END:
+        (use-package org-ref :after (org ivy)
+          :init 
+          (setq reftex-default-bibliography '("~/Documents/mendeley/sync0_library.bib")
+                ;; see org-ref for use of these variables
+                org-ref-bibliography-notes "~/Dropbox/research"
+                 org-ref-notes-directory "~/Dropbox/research/"
+                org-ref-default-bibliography '("~/Documents/mendeley/sync0_library.bib")
+                org-ref-pdf-directory "~/Documents/mendeley/"
+                ;; org-ref-open-pdf-function 'org-ref-get-mendeley-filename
+                ;; set ivy for completion
+                org-ref-completion-library 'org-ref-ivy-cite)
 
-  ")
-    )
+      ;; Tell org-ref to let helm-bibtex find notes for it
+    ;; (setq org-ref-notes-function 'org-ref-notes-funcion-many-files)
+  ;; Tell org-ref to let helm-bibtex find notes for it
+          :config 
+  (setq org-ref-notes-function
+        (lambda (thekey)
+          (let ((bibtex-completion-bibliography (org-ref-find-bibliography)))
+            (bibtex-completion-edit-notes
+             (list (car (org-ref-get-bibtex-key-and-file thekey)))))))
+
+      (defun sync0-org-ref-open-pdf-at-point ()
+        "Open the pdf for bibtex key under point if it exists."
+        (interactive)
+        (let* ((results (org-ref-get-bibtex-key-and-file))
+               (key (car results))
+               (pdf-file (car(bibtex-completion-find-pdf key))))
+          (if (file-exists-p pdf-file)
+             (org-open-file pdf-file))
+            (message "No PDF found for %s" key)))
+      (setq org-ref-open-pdf-function 'sync0-org-ref-open-pdf-at-point)
+          (define-key org-mode-map (kbd "C-c [") 'org-ref-ivy-insert-cite-link)
+          ;; (define-key org-mode-map  (kbd "C-c 9") 'org-ref-notes-function)
+          (define-key bibtex-mode-map  (kbd "C-c 9") 'org-ref-open-bibtex-notes)
+          ;;(define-key org-mode-map  (kbd "C-c 0") 'org-ref-open-notes-from-reftex)
+          (define-key org-mode-map  (kbd "C-c 0") 'org-ref-open-citation-at-point)
+          (define-key org-mode-map  (kbd "C-c 8") 'sync0-org-ref-open-pdf-at-point)
+          (define-key bibtex-mode-map  (kbd "C-c 8") 'sync0-org-ref-open-pdf-at-point)
+          ;; define notes template
+          (setq org-ref-note-title-format 
+                "* %t
+         :PROPERTIES: 
+         :Custom_ID: %k
+         :END:
+
+        ")
+          )
 #+END_SRC 
 ** 取 Interleave 
           (use-package interleave :after (org-ref evil)
@@ -3278,7 +3295,7 @@ properly when exporting org documents to LaTeX.
   ;; bind a quick and dirty shortcut to 
    (("C-x g" . magit-status)
 ;;  bind the popup of popus
-   ("C-x M-g" . magit-dispatch-popup)))
+   ("C-x M-g" . magit-dispatch)))
   #+END_SRC 
 ** Org-gcal
 #+BEGIN_SRC emacs-lisp
@@ -3880,7 +3897,8 @@ abort completely with `C-g'."
 
 (add-hook 'before-save-hook (lambda ()
                   (when (and (eq major-mode 'org-mode)
-                   (equal buffer-file-name "/home/sync0/Dropbox/org/master.org"))
+                    (not (equal buffer-file-name "/home/sync0/Dropbox/research/master.org"))
+                   (equal default-directory "/home/sync0/Dropbox/research/"))
                 (org-map-entries #'yant/update-modification-time nil 'file #'yant/skip-nonmodified))))
   #+END_SRC 
 ** Useful Key Bindings

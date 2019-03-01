@@ -1,6 +1,5 @@
 # -*- mode: snippet -*-
-# name: item_labeling_koma 
+# name: koma_labeling_item 
 # key: item
 # --
-\item[${1:Lorem}] ${2:Lorem ipsum dolor sit amet}
-$0
+\item[${1:Category}] $2 $0
