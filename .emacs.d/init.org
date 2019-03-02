@@ -3860,46 +3860,57 @@ abort completely with `C-g'."
   #+END_SRC 
 ** Auto update Org Modified Property
 #+BEGIN_SRC emacs-lisp
-  (defun yant/getentryhash ()
-  "Get the hash sum of the text in current entry, except :HASH: and :MODIFIED: property texts."
-  (save-excursion
-    (let* ((beg (progn (org-back-to-heading) (point)))
-       (end (progn
-          (forward-char)          
-          (if (not (re-search-forward "^\*\* " (point-max) t))
-              (point-max)
-            (match-beginning 0))))
-       (full-str (buffer-substring beg end))
-       (str-nohash (if (string-match "^ *:HASH:.+\n" full-str)
-               (replace-match "" nil nil full-str)
-             full-str))
-       (str-nohash-nomod (if (string-match "^ *:MODIFIED:.+\n" str-nohash)
-                 (replace-match "" nil nil str-nohash)
-                   str-nohash))
-       (str-nohash-nomod-nopropbeg (if (string-match "^ *:PROPERTIES:\n" str-nohash-nomod)
-                       (replace-match "" nil nil str-nohash-nomod)
-                     str-nohash-nomod))
-       (str-nohash-nomod-nopropbeg-end (if (string-match "^ *:END:\n" str-nohash-nomod-nopropbeg)
-                           (replace-match "" nil nil str-nohash-nomod-nopropbeg)
-                         str-nohash-nomod-nopropbeg)))
-      (sxhash str-nohash-nomod-nopropbeg-end))))
+      (defun yant/getentryhash ()
+      "Get the hash sum of the text in current entry, except :HASH: and :MODIFIED: property texts."
+      (save-excursion
+        (let* ((beg (point-min))
+           (end (point-max))
+           (full-str (buffer-substring beg end))
+           (str-nohash (if (string-match "^ *:HASH:.+\n" full-str)
+                   (replace-match "" nil nil full-str)
+                 full-str))
+           (str-nohash-nomod (if (string-match "^ *:MODIFIED:.+\n" str-nohash)
+                     (replace-match "" nil nil str-nohash)
+                       str-nohash))
+           (str-nohash-nomod-nopropbeg (if (string-match "^ *:PROPERTIES:\n" str-nohash-nomod)
+                           (replace-match "" nil nil str-nohash-nomod)
+                         str-nohash-nomod))
+           (str-nohash-nomod-nopropbeg-end (if (string-match "^ *:END:\n" str-nohash-nomod-nopropbeg)
+                               (replace-match "" nil nil str-nohash-nomod-nopropbeg)
+                             str-nohash-nomod-nopropbeg)))
+          (sxhash str-nohash-nomod-nopropbeg-end))))
 
-(defun yant/update-modification-time ()
-  "Set the :MODIFIED: property of the current entry to '%Y/%m/%d' and update :HASH: property."
-  (org-set-property "HASH" (format "%s" (yant/getentryhash)))    
-  (org-set-property "MODIFIED" (format-time-string "%Y/%m/%d")))
-(defun yant/skip-nonmodified ()
-  "Skip org entries, which were not modified according to the :HASH: property"
-  (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
-    (if (string= (org-entry-get (point) "HASH" nil) (format "%s" (yant/getentryhash)))
-    next-headline
-      nil)))
+    (defun yant/update-modification-time ()
+      "Set the :MODIFIED: property of the current entry to '%Y/%m/%d' and update :HASH: property."
+(save-excursion
+(goto-char (point-min))
+(progn
+(unless (looking-at "\* .+")
+(org-forward-heading-same-level (point)))
+      (org-set-property "HASH" (format "%s" (yant/getentryhash)))    
+      (org-set-property "MODIFIED" (format-time-string "%Y/%m/%d")))))
 
-(add-hook 'before-save-hook (lambda ()
-                  (when (and (eq major-mode 'org-mode)
-                    (not (equal buffer-file-name "/home/sync0/Dropbox/research/master.org"))
-                   (equal default-directory "/home/sync0/Dropbox/research/"))
-                (org-map-entries #'yant/update-modification-time nil 'file #'yant/skip-nonmodified))))
+    ;; (defun yant/skip-nonmodified ()
+    ;;   "Skip org entries, which were not modified according to the :HASH: property"
+    ;;   (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
+    ;;     (if (string= (org-entry-get (point) "HASH" nil) (format "%s" (yant/getentryhash)))
+    ;;     next-headline
+    ;;       nil)))
+
+    ;; (add-hook 'before-save-hook (lambda ()
+    ;;                   (when (and (eq major-mode 'org-mode)
+    ;;                     (not (equal buffer-file-name "/home/sync0/Dropbox/research/master.org"))
+    ;;                    (equal default-directory "/home/sync0/Dropbox/research/"))
+    ;;                 (org-map-entries #'yant/update-modification-time nil 'file #'yant/skip-nonmodified))))
+
+    (add-hook 'before-save-hook (lambda ()
+                      (when (and (eq major-mode 'org-mode)
+                        (not (equal buffer-file-name "/home/sync0/Dropbox/research/master.org"))
+                       (equal default-directory "/home/sync0/Dropbox/research/"))
+  (yant/update-modification-time))))
+
+                    ;; (org-map-entries #'yant/update-modification-time "+Custom_ID" 'file))))
+
   #+END_SRC 
 ** Useful Key Bindings
  #+BEGIN_SRC emacs-lisp
