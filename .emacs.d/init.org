@@ -1,20 +1,6 @@
-#   This program is free software: you can redistribute it and/or modify it
-#   under the terms of the GNU General Public License as published by the
-#   Free Software Foundation, either version 3 of the License, or (at your
-#   option) any later version.
-
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-#   GNU General Public License for more details.
-
-#   You should have received a copy of the GNU General Public License
-#   along with this program. If not, see <http://www.gnu.org/licenses/>.
-
 #+TITLE: Emacs Settings
 #+AUTHOR: sync0
 #+EMAIL: cantorlunae@gmail.com
-
 # Initial visualization settings.
 #+STARTUP: indent showeverything nostars
 # Necessary to export code from Emacs org mode to elisp. 
@@ -33,156 +19,6 @@ academic articles, so these settings reflect that usage.
 packages, so they must be placed in the beginning of the configuration
 file. Some other settings do not require this position, but I have included
 them here for ease of finding. 
-** Doom macros
-As a non-programmer, I have borrowed most nasty tricks in this
-configuration from other users. In this section, I have included some
-custom macros from [[https://github.com/hlissner][hlissner's]] Emacs configuration.
-*** after!
-#+BEGIN_SRC emacs-lisp
-(eval-and-compile
-  (defmacro after! (feature &rest forms)
-  "A smart wrapper around `with-eval-after-load'. Supresses warnings during
-compilation."
-  (declare (indent defun) (debug t))
-  `(,(if (or (not (bound-and-true-p byte-compile-current-file))
-             (if (symbolp feature)
-                 (require feature nil :no-error)
-               (load feature :no-message :no-error)))
-         #'progn
-       #'with-no-warnings)
-    (with-eval-after-load ',feature ,@forms))))
-  #+END_SRC 
-*** add-hook!
-    #+BEGIN_SRC emacs-lisp
-(eval-and-compile 
-(defun doom-enlist (exp)
-  "Return EXP wrapped in a list, or as-is if already a list."
-  (if (listp exp) exp (list exp)))
-
-(defun doom-unquote (exp)
-  "Return EXP unquoted."
-  (while (memq (car-safe exp) '(quote function))
-    (setq exp (cadr exp)))
-  exp)
-
-
-(defun doom--resolve-hook-forms (hooks)
-  (cl-loop with quoted-p = (eq (car-safe hooks) 'quote)
-           for hook in (doom-enlist (doom-unquote hooks))
-           if (eq (car-safe hook) 'quote)
-            collect (cadr hook)
-           else if quoted-p
-            collect hook
-           else collect (intern (format "%s-hook" (symbol-name hook)))))
-
-(defvar doom--transient-counter 0)
-
-(defmacro add-transient-hook! (hook &rest forms)
-  "Attaches transient forms to a HOOK.
-HOOK can be a quoted hook or a sharp-quoted function (which will be advised).
-These forms will be evaluated once when that function/hook is first invoked,
-then it detaches itself."
-  (declare (indent 1))
-  (let ((append (eq (car forms) :after))
-        (fn (intern (format "doom-transient-hook-%s" (cl-incf doom--transient-counter)))))
-    `(when ,hook
-       (fset ',fn
-             (lambda (&rest _)
-               ,@forms
-               (cond ((functionp ,hook) (advice-remove ,hook #',fn))
-                     ((symbolp ,hook)   (remove-hook ,hook #',fn)))
-               (unintern ',fn nil)))
-       (cond ((functionp ,hook)
-              (advice-add ,hook ,(if append :after :before) #',fn))
-             ((symbolp ,hook)
-              (add-hook ,hook #',fn ,append))))))
-
-      (defmacro add-hook! (&rest args)
-  "A convenience macro for `add-hook'. Takes, in order:
-  1. Optional properties :local and/or :append, which will make the hook
-     buffer-local or append to the list of hooks (respectively),
-  2. The hooks: either an unquoted major mode, an unquoted list of major-modes,
-     a quoted hook variable or a quoted list of hook variables. If unquoted, the
-     hooks will be resolved by appending -hook to each symbol.
-  3. A function, list of functions, or body forms to be wrapped in a lambda.
-Examples:
-    (add-hook! 'some-mode-hook 'enable-something)
-    (add-hook! some-mode '(enable-something and-another))
-    (add-hook! '(one-mode-hook second-mode-hook) 'enable-something)
-    (add-hook! (one-mode second-mode) 'enable-something)
-    (add-hook! :append (one-mode second-mode) 'enable-something)
-    (add-hook! :local (one-mode second-mode) 'enable-something)
-    (add-hook! (one-mode second-mode) (setq v 5) (setq a 2))
-    (add-hook! :append :local (one-mode second-mode) (setq v 5) (setq a 2))
-Body forms can access the hook's arguments through the let-bound variable
-`args'."
-  (declare (indent defun) (debug t))
-  (let ((hook-fn 'add-hook)
-        append-p local-p)
-    (while (keywordp (car args))
-      (pcase (pop args)
-        (:append (setq append-p t))
-        (:local  (setq local-p t))
-        (:remove (setq hook-fn 'remove-hook))))
-    (let ((hooks (doom--resolve-hook-forms (pop args)))
-          (funcs
-           (let ((val (car args)))
-             (if (memq (car-safe val) '(quote function))
-                 (if (cdr-safe (cadr val))
-                     (cadr val)
-                   (list (cadr val)))
-               (list args))))
-          forms)
-      (dolist (fn funcs)
-        (setq fn (if (symbolp fn)
-                     `(function ,fn)
-                   `(lambda (&rest _) ,@args)))
-        (dolist (hook hooks)
-          (push (if (eq hook-fn 'remove-hook)
-                    `(remove-hook ',hook ,fn ,local-p)
-                  `(add-hook ',hook ,fn ,append-p ,local-p))
-                forms)))
-      `(progn ,@(nreverse forms))))))
-      #+END_SRC 
-*** def-setting!
-#+BEGIN_SRC emacs-lisp
-(eval-and-compile
-(defvar doom-settings nil)
-  (defmacro def-setting! (keyword arglist &optional docstring &rest forms)
-  "Define a setting. Like `defmacro', this should return a form to be executed
-when called with `set!'. FORMS are not evaluated until `set!' calls it.
-See `doom/describe-setting' for a list of available settings.
-Do not use this for configuring Doom core."
-  (declare (indent defun) (doc-string 3))
-  (unless (keywordp keyword)
-    (error "Not a valid property name: %s" keyword))
-  (let ((fn (intern (format "doom--set%s" keyword))))
-    `(progn
-       (defun ,fn ,arglist
-         ,docstring
-         ,@forms)
-       (cl-pushnew ',(cons keyword fn) doom-settings :test #'eq :key #'car)))))
-  #+END_SRC 
-*** set!
-#+BEGIN_SRC emacs-lisp
-(eval-and-compile 
-(defvar doom-debug-mode (or (getenv "DEBUG") init-file-debug)
-  "If non-nil, all doom functions will be verbose. Set DEBUG=1 in the command
-line or use --debug-init to enable this.")
-
-(defmacro set! (keyword &rest values)
-  "Set an option defined by `def-setting!'. Skip if doesn't exist. See
-`doom/describe-setting' for a list of available settings."
-  (declare (indent defun))
-  (unless values
-    (error "Empty set! for %s" keyword))
-  (let ((fn (cdr (assq keyword doom-settings))))
-    (if fn
-        (apply fn values)
-      (when doom-debug-mode
-        (message "No setting found for %s" keyword)
-        nil)))))
-  #+END_SRC 
 ** Tangling 
    This code sets up tangling to byte-compile the /init.org/ file
    automatically on save. Byte compiling this file speeds up Emacs on
@@ -269,30 +105,32 @@ These settings configure Emacs package manager and the package repositories.
  #+END_SRC 
 *** Mode Line
   #+BEGIN_SRC emacs-lisp
-        ;; Display time in modeline.
-        (setq display-time-string-forms
-              '((propertize (format-time-string " %H:%M " now) 'face 'bold)))
-        ;; (setq display-time-format "%I:%M:%S")
-        (display-time-mode 1)
+            ;; Display time in modeline.
+            (setq display-time-string-forms
+                  '((propertize (format-time-string " %H:%M " now) 'face 'bold)))
+            ;; (setq display-time-format "%I:%M:%S")
 
-        (use-package fancy-battery
-          :hook
-          (after-init . fancy-battery-mode))
+            (display-time-mode 1)
+    ;; (display-battery-mode 1)
 
-          (setq 
-    ;; mode-line-format nil
-                inhibit-splash-screen t
-                echo-keystrokes 0.1
-                auto-revert-interval 1)
+            (use-package fancy-battery
+              :hook
+              (after-init . fancy-battery-mode))
 
-          ;; Workspace keybindgs
-          (defun toggle-mode-line () 
-            "toggles the modeline on and off"
-            (interactive) 
-            (setq mode-line-format
-                  (if (equal mode-line-format nil)
-                      (default-value 'mode-line-format)) )
-            (redraw-display))
+              (setq 
+        ;; mode-line-format nil
+                    inhibit-splash-screen t
+                    echo-keystrokes 0.1
+                    auto-revert-interval 1)
+
+              ;; Workspace keybindgs
+              (defun toggle-mode-line () 
+                "toggles the modeline on and off"
+                (interactive) 
+                (setq mode-line-format
+                      (if (equal mode-line-format nil)
+                          (default-value 'mode-line-format)) )
+                (redraw-display))
     #+END_SRC 
 *** Line numbers
 After version 26, Emacs has native support for line numbers. 
@@ -383,33 +221,6 @@ After version 26, Emacs has native support for line numbers.
             ;; Remove yes-no EMACS inconsistency
             (fset 'yes-or-no-p 'y-or-n-p)
 
-      ;; (setq debug-on-error t)
-
-            ;; Git gutter thingy
-            ;; (defvar doom-fringe-size '3 "Default fringe width.")
-            ;; (defconst doom-fringe-size '3 "Default fringe width")
-            ;; ;; ;; (setq-default fringes-outside-margins t)
-            ;; (fringe-mode doom-fringe-size)
-            ;; (if (fboundp 'fringe-mode) (fringe-mode doom-fringe-size))
-            ;;(push `(left-fringe  . ,doom-fringe-size) default-frame-alist)
-            ;;(push `(right-fringe . ,doom-fringe-size) default-frame-alist)
-
-            ;;(if (fboundp 'fringe-mode) (fringe-mode doom-fringe-size))
-            ;;  (fringe-mode '(3 . 0))
-            ;;    (if (fboundp 'fringe-mode) (fringe-mode '(3 . 0)))
-
-            ;; (defun doom|no-fringes-in-minibuffer ()
-            ;;   "Disable fringes in the minibuffer window."
-            ;;   (set-window-fringes (minibuffer-window) 0 0 nil))
-            ;; (add-hook! '(after-init-hook minibuffer-setup-hook)
-            ;;   #'doom|no-fringes-in-minibuffer)
-
-            ;; Force UTF-8 encoding
-            ;; disable CJK coding/encoding (Chinese/Japanese/Korean characters)
-            ;; (setq utf-translate-cjk-mode nil)
-            ;; backwards compatibility as default-buffer-file-coding-system
-            ;; is deprecated in 23.2.
-
             ;; set the default encoding system
             ;; (prefer-coding-system 'utf-8)
             (set-language-environment 'utf-8)
@@ -419,6 +230,7 @@ After version 26, Emacs has native support for line numbers.
             (set-selection-coding-system 'utf-8)
             (setq default-file-name-coding-system 'utf-8)
             (setq locale-coding-system 'utf-8)
+
             ;; (if (boundp buffer-file-coding-system)
             ;;     (setq buffer-file-coding-system 'utf-8)
             ;;   (setq default-buffer-file-coding-system 'utf-8))
@@ -454,7 +266,7 @@ After version 26, Emacs has native support for line numbers.
      "Sets a fixed width (monospace) font in current buffer"
      (if (> (display-pixel-width) 2000)
          ;; external monitor font size
-         (setq buffer-face-mode-face '(:family "Source Code Pro" :height 115)) 
+         (setq buffer-face-mode-face '(:family "Source Code Pro" :height 120)) 
        ;; laptop font size
        (setq buffer-face-mode-face '(:family "Source Code Pro" :height 115)))
      (buffer-face-mode))
@@ -466,7 +278,7 @@ After version 26, Emacs has native support for line numbers.
          ;; external monitor font size
        (setq buffer-face-mode-face '(:family "Linux Libertine" :height 140))
        ;; laptop font size
-         (setq buffer-face-mode-face '(:family "Linux Libertine" :height 155)))
+         (setq buffer-face-mode-face '(:family "Linux Libertine" :height 150)))
      (buffer-face-mode))
 
    ;; Set default font faces for Info, ERC, and Org
@@ -497,8 +309,6 @@ After version 26, Emacs has native support for line numbers.
   (save-excursion
     (end-of-line 0)
     (open-line 1)))
-
-
   #+END_SRC 
 *** Auto-fill settings
  #+BEGIN_SRC emacs-lisp
@@ -510,152 +320,7 @@ After version 26, Emacs has native support for line numbers.
       ;; (add-hook 'LaTeX-mode-hook 'turn-on-auto-fill)
       ;; respect de la typographie française par fill
       ;;(setq fill-nobreak-predicate '(fill-french-nobreak-p))
-
-      ;; (defun sync0-is-this-a-csquote ()
-      ;;   "Find wheter current line begins with a LaTeX csquote"
-      ;;   (or 
-      ;;    (looking-back "blockquote.+" (line-beginning-position))
-      ;;    (looking-back "blockcquote.+" (line-beginning-position))
-      ;;    (looking-back "foreignblockquote.+" (line-beginning-position))
-      ;;    (looking-back "foreignblockcquote.+" (line-beginning-position))
-      ;;    (looking-back "annotation{.+" (line-beginning-position))
-      ;;    ;; (looking-back "replaced{.+" (line-beginning-position))
-      ;;    ;; (looking-back "added{.+" (line-beginning-position))
-      ;;    ;; (looking-back "deleted{.+" (line-beginning-position))
-      ;;    (looking-back "textbf{.+" (line-beginning-position))
-      ;;    (looking-back "textit{.+" (line-beginning-position))
-      ;;    ))
-
-      ;; (add-hook 'fill-nobreak-predicate #'sync0-is-this-a-csquote)
-
-      ;; (looking-at ".*}"))
-
-   ;; (defun sync0-fill-nobreak-predicate ()
-   ;;   (save-match-data                 
-   ;;     (or (looking-at "[ \t]*[])}»!?;:]")
-   ;;         (looking-at "[ \t]*\\.\\.\\.")
-   ;;         (save-excursion
-   ;;           (skip-chars-backward " \t")
-   ;;           (backward-char 1)
-   ;;           (looking-at "[([{«]")))))
-
-      ;; (add-hook 'fill-nobreak-predicate #'sync0-fill-nobreak-predicate)
-
-      ;; (defun sync0-foreign-language-nobreak-p ()
-      ;;   (or    (looking-at "[[[:space:]]\|[[:print:]]].*}")
-      ;;          (save-excursion 
-      ;;            (skip-chars-backward " \t")
-      ;;            (unless (bolp)
-      ;;              (backward-char 1)
-      ;;              (looking-at ".*\\text")))))
-
-      ;; (add-hook 'fill-nobreak-predicate #'sync0-foreign-language-nobreak-p)
-
-
-      ;; (defun sync0-foreign-language-nobreak-p ()
-      ;;   "Return nil if French style allows breaking the line at point.
-      ;; This is used in `fill-nobreak-predicate' to prevent breaking lines just
-      ;; after an opening paren or just before a closing paren or a punctuation
-      ;; mark such as `?' or `:'.  It is common in French writing to put a space
-      ;; at such places, which would normally allow breaking the line at those
-      ;; places."
-      ;;   (or (looking-at "[ \t]*}")
-      ;;       (save-excursion
-      ;;         (skip-chars-backward " \t")
-      ;;         (unless (bolp)
-      ;;           (backward-char 1)
-      ;;           (or (looking-at "{")
-      ;;               ;; Don't cut right after a single-letter word.
-      ;;               ;; and, memq: tests to see whether object is a member of list. ?\t: tab character. ?\s: espace character
-      ;;               (and (memq (preceding-char) '(?\t ?\s))
-      ;;                    (eq (char-syntax (following-char)) ?w)))))))
-
-      ;;    (add-hook 'fill-nobreak-predicate #'sync0-foreign-language-nobreak-p)
-
-      ;; (save-excursion 
-      ;;  (search-forward "}"
-      ;;    (line-end-position)
-      ;;     nil
-      ;;      1)
-      ;; (defun sync0-nobreak-p ()
-      ;;   (and (looking-at ".+}")
-      ;;        (looking-back "\\text.+" (line-beginning-position))))
-
-      ;; (add-hook 'fill-nobreak-predicate #'sync0-nobreak-p)
-
-
-      ;; (defun sync0-nobreak-p ()
-      ;;   (and (looking-at ".+}")
-      ;;        (looking-back "\\text.+" (line-beginning-position))))
-
-      ;; (add-hook 'fill-nobreak-predicate #'sync0-nobreak-p)
-
-
-      ;;(setq fill-nobreak-predicate '(sync0-is-this-a-csquote))
-      ;;      (add-hook 'fill-nobreak-predicate #'sync0-is-this-a-csquote)
-      ;;(add-to-list 'fill-nobreak-predicate
-      ;;     'sync0-is-this-a-csquote)
   #+END_SRC
-*** Autofill improvement
-  (defun sync0-is-this-a-csquote ()
-    "Find wheter current line begins with a LaTeX csquote"
-    (save-excursion
-      (beginning-of-line)
-      (or (looking-at ".blockquote.+") 
-          (looking-at "[[:space:]]+.blockquote.+") 
-          (looking-at ".foreignblockquote.+")
-          (looking-at "[[:space:]]+.foreignblockquote.+")
-          )))
-
-(defun sync0-is-this-a-csquote ()
-  "Find wheter current line begins with a LaTeX csquote"
-  (save-excursion
-    (beginning-of-line)
-    (or (looking-at ".blockquote.+") (looking-at ".foreignblockquote.+"))))
-
-(add-to-list 'fill-nobreak-predicate
-     'sync0-is-this-a-csquote)
-
-
-
-(defun odd-number-of-single-quotes-this-paragraph-so-far ()
-  (oddp (how-many "'" (save-excursion (backward-paragraph) (point)) (point))))
-(defun odd-number-of-double-quotes-this-paragraph-so-far ()
-  (oddp (how-many "\"" (save-excursion (backward-paragraph) (point)) (point))))
-
-(add-to-list 'fill-nobreak-predicate
-     'odd-number-of-single-quotes-this-paragraph-so-far) (add-to-list
-     'fill-nobreak-predicate
-     'odd-number-of-double-quotes-this-paragraph-so-far)
-
-- firt make a defun
-- then use this model
-
-(defun sync0-is-this-a-csquote ()
-  "Find wheter current line begins with a LaTeX csquote"
-  (save-excursion
-    (beginning-of-line)
-    (or (looking-at ".blockquote.+") (looking-at ".foreignblockquote.+"))))
-
-(add-to-list 'fill-nobreak-predicate
-     'sync0-is-this-a-csquote)
-
-(buffer-substring 1 10)
-
-(defun creole-mode/fill-break-p ()
-  "Fill computation for Creole.
-Basically just does not fill within links."
-  (memq 'link (text-properties-at (point))))
-
-(defun sync0-unfill-csquotes ()
-  "Fill computation for LaTeX's csquotes and Emacs' orgmode.
-Basically just does not fill strings begining with ."
-  ((memq ' (thing-at-point (line)))
-
-(defun current-line-empty-p ()
-  (save-excursion
-    (beginning-of-line)
-    (or (looking-at "^\\blockquote") (looking-at "^\\foreignblockquote")))
 *** Replace smart quotes with straight quotes 
 Replace smart quotes with straight quotes so that spell check can recognize
 words with contractions like “don’t” and “can’t.” For when I paste text in
@@ -701,24 +366,8 @@ that I’ve copied from the web.
 ("..." . "\\ldots")
 ;;("• " . "- ")
 ;;(" " . "")
-("  " . " ")
-
-;("ó" . "-")
-;("á" . "-")
-;("Õ" . "'")
-;("Õ" . "'")
-;("Ò" . "\"")
-;("Ó" . "\"")
-
-;("―" . "\"")
-;("‖" . "\"")
-
-;; ("- " . "") ; also remove stray spac- es
-;; ("­ " . "") ; also remove stray spac- es
-)
-                       nil   beg (min end (point-max)))
-
-)
+("  " . " "))
+                       nil   beg (min end (point-max))))
 #+END_SRC 
 ** List of recent files
 #+BEGIN_SRC emacs-lisp
@@ -757,6 +406,28 @@ that I’ve copied from the web.
   ;; try emacs to accept ' as a word constituent. 
   (setq dabbrev-abbrev-char-regexp  "\\sw")
 #+END_SRC
+*** Add abbrevs 
+#+BEGIN_SRC emacs-lisp
+(defun sync0-define-local-abbrev (x y)
+  "Defines a new abbrev for current local abbrev table."
+  (interactive "sEnter abbrev: 
+sEnter expansion: ")
+    (when (and x y (not (equal x y)))
+  (define-abbrev local-abbrev-table x y)
+  (message "\"%s\" now expands to \"%s\" %sally"
+           x y "loc")))
+  #+END_SRC 
+*** Auto-update abbrev table on save
+#+BEGIN_SRC emacs-lisp
+  ;;     (defun sync0-update-abbrevs ()
+  ;;       "Update loaded abbrev tables after changes to abbrev file"
+  ;; (read-abbrev-file))
+
+  (add-hook 'after-save-hook (lambda ()
+                               (when 
+                                   (equal buffer-file-name "/home/sync0/.emacs.d/abbrev_defs")
+                                 (read-abbrev-file))))
+  #+END_SRC 
 ** Elisp evaluation
 #+BEGIN_SRC emacs-lisp
   ;; (use-package lisp-mode
@@ -788,8 +459,7 @@ that I’ve copied from the web.
     "Used in `after-save-hook'."
     (when (equal this-command 'save-buffer)
       (when (equal major-mode 'latex-mode) 
-        (sync0-latex-fast-compile)))
-    )
+        (sync0-latex-fast-compile))))
 
   ;; (add-hook 'after-save-hook 'sync0-after-save-actions)
   #+END_SRC 
@@ -842,16 +512,15 @@ that I’ve copied from the web.
  #+END_SRC
 *** Backups in backup dir
  #+BEGIN_SRC emacs-lisp 
- (setq backup-by-copying t
-       backup-directory-alist '(("." . "~/.emacs.d/backups"))
-       delete-old-versions t
-       kept-new-versions 10
-       kept-old-versions 0
- ;; use versioned backups
-       version-control t)
-
- ;; no lockfiles
- (setq create-lockfiles nil) 
+   (setq backup-by-copying t
+         backup-directory-alist '(("." . "~/.emacs.d/backups"))
+         delete-old-versions t
+         kept-new-versions 10
+         kept-old-versions 0
+         ;; use versioned backups
+         version-control t
+         ;; no lockfiles
+         create-lockfiles nil) 
  #+END_SRC
 * Packages 
 ** Highlight indentation
@@ -879,47 +548,91 @@ that I’ve copied from the web.
 #+END_SRC 
 ** Doom theme
 #+BEGIN_SRC emacs-lisp
-      (use-package doom-themes  
-    :init
-    (progn
-        ;;(load-theme 'doom-one-vibrant t)
-        ;;(load-theme 'doom-molokai t)
-        ;;(load-theme 'doom-peacock t)
-        ;;(load-theme 'doom-tomorrow-night t)
-      (load-theme 'doom-spacegrey t)    
-        ;;(load-theme 'doom-one-light t)
-        ;;(load-theme 'doom-tomorrow-day t)
-        ;;(load-theme 'doom-one t)
-        ;(load-theme 'doom-nova t)
-       ;; (load-theme 'doom-nord t)
-        (load-theme 'doom-solarized-light t))
-    ;;    (load-theme 'doom-solarized-light t)
-        :config
-        ;; (setq spaceline-all-the-icons-separator-type 'none)
-        (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-              doom-themes-enable-italic t) ; if nil, italics is universally disabled
-        ;; Enable flashing mode-line on errors
-        (doom-themes-visual-bell-config)
-        ;; Enable custom neotree thème
-    ;;    (doom-themes-neotree-config)  ; all-the-icons fonts must be installed!
-        ;; Corrects (and improves) org-mode's native fontification.
-        (doom-themes-org-config))
+    (use-package doom-themes  
+  :init
+  (progn
+      ;; (load-theme 'doom-one t)
+      ;; (load-theme 'doom-one-light t)
+      (load-theme 'doom-vibrant t)
+      ;; (load-theme 'doom-city-lights t)
+      ;; (load-theme 'doom-dracula t)
+      ;; (load-theme 'doom-Iosvkem t)
+      ;; (load-theme 'doom-molokai t)
+     (load-theme 'doom-nord t)
+     ;; (load-theme 'doom-nord-light t)
+     ;; (load-theme 'doom-opera t)
+     (load-theme 'doom-opera-light t)
+      (load-theme 'doom-nova t)
+      ;; (load-theme 'doom-peacock t)
+      (load-theme 'doom-solarized-light t)
+      (load-theme 'doom-sourcerer t)
+    (load-theme 'doom-spacegrey t))
+      ;; (load-theme 'doom-tomorrow-night t)
+      ;; (load-theme 'doom-tomorrow-day t))
+      :config
+      (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+            doom-themes-enable-italic t) ; if nil, italics is universally disabled
+      ;; Enable flashing mode-line on errors
+      (doom-themes-visual-bell-config)
+      ;; Enable custom neotree theme
+  ;;    (doom-themes-neotree-config)  ; all-the-icons fonts must be installed!
+      ;; Corrects (and improves) org-mode's native fontification.
+      (doom-themes-org-config))
 
-      ;; Cycley between thèmes
-     (use-package cycle-themes :load-path "~/.emacs.d/sync0_git/cycle-themes.el/" 
-     :after doom-themes
-       :init (setq cycle-themes-theme-list
-           ;;  '(doom-spacegrey doom-nova doom-nord doom-solarized-light))
-           ;;  '(doom-spacegrey doom-nova doom-solarized-light))
-             '(doom-spacegrey doom-solarized-light))
-       :config (cycle-themes-mode))
+    ;; Cycley between thèmes
+   (use-package cycle-themes :load-path "~/.emacs.d/sync0_git/cycle-themes.el/" 
+   :after doom-themes
+     :init (setq cycle-themes-theme-list
+         ;;  '(doom-spacegrey doom-nova doom-nord doom-solarized-light))
+         ;;  '(doom-spacegrey doom-nova doom-solarized-light))
+          ;; '(doom-one doom-one-light doom-vibrant doom-city-lights doom-Iosvkem doom-molokai doom-nord doom-nord-light doom-opera doom-opera-light doom-nova doom-peacock doom-solarized-light doom-sourcerer doom-spacegrey doom-tomorrow-night doom-tomorrow-day))
+          '(doom-vibrant doom-nord doom-opera-light doom-nova doom-solarized-light doom-sourcerer doom-spacegrey))
+           ;; '(doom-spacegrey doom-solarized-light))
+     :config (cycle-themes-mode))
 #+END_SRC 
 ** Doom modeline
 #+BEGIN_SRC emacs-lisp
   (use-package doom-modeline :after doom-themes
-      ;; :ensure t
-      :defer t
-      :hook (after-init . doom-modeline-mode))
+    :defer t
+    :hook (after-init . doom-modeline-mode)
+    ;; :init 
+    :config
+    (doom-modeline-def-modeline 'sync0-line
+      '(bar evil-state xah-fly-keys matches buffer-info buffer-position selection-info)
+      '(misc-info fancy-battery input-method buffer-encoding major-mode process vcs checker))
+    ;; '(misc-info fancy-battery minor-modes input-method buffer-encoding major-mode process vcs checker))
+    ;; '(bar workspace-number window-number evil-state god-state ryo-modal xah-fly-keys matches buffer-info remote-host buffer-position parrot selection-info)
+    ;; '(misc-info persp-name lsp irc mu4e github debug fancy-battery minor-modes input-method buffer-encoding major-mode process vcs checker))
+
+    ;; (setq doom-modeline-height 25)
+    ;; How wide the mode-line bar should be (only respected in GUI Emacs).
+    ;; (setq doom-modeline-bar-width 3)
+    ;; (setq doom-modeline-major-mode-color-icon nil)
+    ;; (setq  doom-modeline-minor-modes t)
+
+    (defun setup-custom-doom-modeline ()
+      (doom-modeline-set-modeline 'sync0-line 'default))
+
+    (add-hook 'doom-modeline-mode-hook 'setup-custom-doom-modeline))
+
+  ;; Display color icons for `major-mode'. It respects `all-the-icons-color-icons'.
+  ;; (setq doom-modeline-major-mode-color-icon nil)
+  ;; Whether display minor modes or ;; How tall the mode-line should be (only respected in GUI Emacs).
+  ;; (setq doom-modeline-height 25)
+  ;; How wide the mode-line bar should be (only respected in GUI Emacs).
+  ;; (setq doom-modeline-bar-width 3)
+  ;; Whether display github notifications or not. Requires `ghub` package.
+  ;; (setq doom-modeline-github nil)
+  ;; The interval of checking github.
+  ;; (setq doom-modeline-github-interval (* 30 60))
+  ;; Whether display environment version or not.
+  ;; (setq doom-modeline-env-version t)
+  ;; Whether display mu4e notifications or not. Requires `mu4e-alert' package.
+  ;; (setq doom-modeline-mu4e t)
+  ;; If non-nil, a word count will be added to the selection-info modeline segment.
+
+  ;; (setq doom-modeline-enable-word-count t
+  ;;  doom-modeline-minor-modes t))
   #+END_SRC 
 ** Spellchecking
  #+BEGIN_SRC emacs-lisp
@@ -962,6 +675,7 @@ that I’ve copied from the web.
      (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_SRC" . "#\\+END_SRC"))
      (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_EXAMPLE" . "#\\+END_EXEMPLE"))
      (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_equation" . "#\\+END_equation"))
+     (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_labeling" . "#\\+END_labeling"))
      (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_equation*" . "#\\+END_equation*"))
      (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_align" . "#\\+END_align"))
      (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_align*" . "#\\+END_align*"))
@@ -973,10 +687,6 @@ that I’ve copied from the web.
      :config
      (setq ispell-parser 'tex)
      (setq flyspell-issue-message-flag nil))
-
-
-   ;; (add-hook 'flyspell-mode-hook 'flyspell-lazy-mode))
-   ;; (flyspell-mode 1))     ; or (flyspell-prog-mode) 
 
    ;; check next highlighted word custom function
    ;; (defun flyspell-check-next-highlighted-word ()
@@ -1130,9 +840,7 @@ that I’ve copied from the web.
                            (evil-define-key 'normal global-map
                              "s" 'fill-paragraph
                              "S" 'sync0-insert-line-below
-                             (kbd "SPC") 'sync0-insert-whitespace
-     )
-
+                             (kbd "SPC") 'sync0-insert-whitespace)
 
                            (evil-define-key 'normal LaTeX-mode-map
                              "k" 'previous-line
@@ -1439,25 +1147,6 @@ that I’ve copied from the web.
                            ;; Make horizontal movement cross lines                                    
                            (setq-default evil-cross-lines t))
    #+END_SRC 
-*** evil-snipe
-#+BEGIN_SRC emacs-lisp
-  ;; (use-package evil-snipe :after evil
-  ;;   :commands (evil-snipe-mode evil-snipe-override-mode
-  ;;              evil-snipe-local-mode evil-snipe-override-local-mode)
-  ;;   :init
-  ;;   (setq evil-snipe-smart-case t
-  ;;         evil-snipe-scope 'visible
-  ;;         ;;evil-snipe-scope 'line
-  ;;         evil-snipe-repeat-scope 'whole-line
-  ;;         evil-snipe-char-fold t
-  ;;        ;; evil-snipe-disabled-modes 'magit-mode
-  ;;         evil-snipe-aliases '((?\[ "[[{(]")
-  ;;                              (?\] "[]})]")
-  ;;                              (?\; "[;:]")))
-  ;;   (add-hook 'after-init-hook 'evil-snipe-mode))
-   ;;(add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode)
-   ;;(add-hook 'after-init-hook 'evil-snipe-override-mode))
-  #+END_SRC 
 *** evil-escape
 #+BEGIN_SRC emacs-lisp
 (use-package evil-escape :after evil
@@ -1525,46 +1214,6 @@ evil-escape-unordered-key-sequence t
   (define-key evil-multiedit-insert-state-map (kbd "C-p") 'evil-multiedit-prev))
 
   #+END_SRC 
-           ;; :bind (:map evil-visual-state-map 
-           ;;             ;; Highlights all matches of the selection in the buffer.
-           ;;             ("R" . evil-multiedit-match-all)
-           ;;             ;; Match selected region.
-           ;;             ("M-d" . evil-multiedit-and-next)
-           ;;             ;; Same as M-d but in reverse.
-           ;;             ("M-D" . evil-multiedit-and-prev)
-           ;;             ;; Restore the last group of multiedit régions.
-           ;;             ;;("C-M-D" . evil-multiedit-restore)
-           ;;             :map evil-normal-state-map 
-           ;;             ;; Match the word under cursor (i.e. make it an edit region). Consecutive presses will
-           ;;             ;; incrementally add the next unmatched match.
-           ;;             ("M-d" . evil-multiedit-match-and-next)
-           ;;             ;; Same as M-d but in reverse.
-           ;;             ("M-D" . evil-multiedit-match-and-prev)
-           ;;             :map evil-insert-state-map 
-           ;;             ;; Insert marker at point
-           ;;             ("M-d" . evil-multiedit-toggle-marker-here)
-           ;;             :map evil-multiedit-state-map 
-           ;;             ;; RET will toggle the region under the cursor
-           ;;             ("RET" . evil-multiedit-toggle-or-restrict-region)
-           ;;             ;; For moving between edit régions
-           ;;             ("C-n" . evil-multiedit-next)
-           ;;             ("C-p" . evil-multiedit-prev)
-           ;;             :map evil-motion-state-map
-           ;;             ;; ...and in visual mode, RET will disable all fields outside the selected region
-           ;;             ("RET" . evil-multiedit-toggle-or-restrict-region)
-           ;;             :map evil-multiedit-insert-state-map
-           ;;             ;; For moving between edit régions
-           ;;             ("C-n" . evil-multiedit-next)
-           ;;             ("C-p" . evil-multiedit-prev)))
-          ;; :config
-           ;; Ex command that allows you to invoke evil-multiedit with a regular expression, e.g.
-           ;;(evil-ex-define-cmd "ie[dit]" 'evil-multiedit-ex-match))
-*** Evil collection 
-#+BEGIN_SRC emacs-lisp
-  ;; (use-package evil-collection :after evil
-  ;; :custom (evil-collection-mu4e t)
-  ;; :init (evil-collection-init))
-  #+END_SRC 
 ** Projectile
 #+BEGIN_SRC emacs-lisp
   (use-package projectile :after ivy
@@ -1631,102 +1280,19 @@ evil-escape-unordered-key-sequence t
                                   ("q" "Question" entry
                                    (file+headline "~/Dropbox/org/ideas.org" "Questions")
                                    "** %^{question} \n:PROPERTIES:\n:ADDED: %<[%Y-%m-%d]>\n:TRACE: %a\n:END:" :prepend t)
-("m" "Courriel" entry 
-(file+headline "~/Dropbox/org/todo.org" "Courriels")
-         "*** 無 %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n" :prepend t)
+                                  ("m" "Courriel" entry 
+                                   (file+headline "~/Dropbox/org/todo.org" "Courriels")
+                                   "*** 無 %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n" :prepend t)
                                   ("a" "Auteur" entry
-                                   (file "~/Dropbox/research/master.org")
+                                   (file "~/Dropbox/research/forschungsbuch.org")
                                    "* %^{last_name,first_name} :lecture: \n:ORIGIN:\n%^{Where?}\n:END:\n:PROPERTIES:\n:ADDED: %<[%Y-%m-%d]>\n:END:" :prepend t)
                                   ("b" "Book (todo)" entry
                                    (file+headline "~/Dropbox/org/ideas.org" "Books")
                                    "** %^{book_title}\n:ORIGIN:\n%^{Where?}\n:END:\n:PROPERTIES:\n:ADDED: %<[%Y-%m-%d]>\n:TRACE: %a\n:END:\n" :prepend t)
                                   ("r" "New Reading (master)" entry
-                                   (file "~/Dropbox/research/master.org")
-                                   "* %^{reading_title}\n:ORIGIN:\n%^{Where?}\n:END:\n:PROPERTIES:\n:YEAR:\n:JOURNAL:\n:VOLUME:\n:ISSUE:\n:PAGES:\n:ADDED: %<[%Y-%m-%d]>\n:TRACE: %a\n:END:\n" :prepend t)
-                                  )) 
-
+                                   (file "~/Dropbox/research/forschungsbuch.org")
+                                   "* %^{reading_title}\n:ORIGIN:\n%^{Where?}\n:END:\n:PROPERTIES:\n:YEAR:\n:JOURNAL:\n:VOLUME:\n:ISSUE:\n:PAGES:\n:ADDED: %<[%Y-%m-%d]>\n:TRACE: %a\n:END:\n" :prepend t))) 
 #+END_SRC 
-**** Another settings
-(defvar org-capture-templates
-       '(("t" "todo" entry (file org-default-notes-file)
-       "*** 無 %?\n%u\n%a\n" :clock-in t :clock-resume t)
-	 ("b" "Blank" entry (file org-default-notes-file)
-	  "*** %?\n%u")
-	 ("m" "Meeting" entry (file org-default-notes-file)
-	  "* MEETING with %? :MEETING:\n%t" :clock-in t :clock-resume t)
-	 ;;("d" "Diary" entry (file+datetree "~/org/diary.org")
-	  ;;"* %?\n%U\n" :clock-in t :clock-resume t)
-	 ;;("D" "Daily Log" entry (file "~/org/daily-log.org")
-	  ;;"* %u %?\n*Summary*: \n\n*Problem*: \n\n*Insight*: \n\n*Tomorrow*: " :clock-in t :clock-resume t)
-	 ("i" "Idea" entry (file org-default-notes-file)
-	  "* %? :IDEA: \n%u" :clock-in t :clock-resume t)
-))
-
-
-(setq org-capture-templates
-      '(("a" "Appointment" entry (file  "~/Dropbox/orgfiles/gcal.org" )
-	 "* %?\n\n%^T\n\n:PROPERTIES:\n\n:END:\n\n")
-	("l" "Link" entry (file+headline "~/Dropbox/orgfiles/links.org" "Links")
-	 "* %? %^L %^g \n%T" :prepend t)
-	("b" "Blog idea" entry (file+headline "~/Dropbox/orgfiles/i.org" "Blog Topics:")
-	 "* %?\n%T" :prepend t)
-	("t" "To Do Item" entry (file+headline "~/Dropbox/orgfiles/i.org" "To Do")
-	 "* TODO %?\n%u" :prepend t)
-	("n" "Note" entry (file+headline "~/Dropbox/orgfiles/i.org" "Note space")
-	 "* %?\n%u" :prepend t)
-	("j" "Journal" entry (file+datetree "~/Dropbox/journal.org")
-	 "* %?\nEntered on %U\n  %i\n  %a")
-	("s" "Screencast" entry (file "~/Dropbox/orgfiles/screencastnotes.org")
-	 "* %?\n%i\n")))
-
-  (setq org-capture-templates
-        `(("t" "Tasks" entry
-           (file+headline "~/personal/organizer.org" "Inbox")
-           ,my/org-basic-task-template)
-          ("T" "Quick task" entry
-           (file+headline "~/personal/organizer.org" "Inbox")
-           "* TODO %^{Task}\nSCHEDULED: %t\n"
-           :immediate-finish t)
-          ("i" "Interrupting task" entry
-           (file+headline "~/personal/organizer.org" "Inbox")
-           "* STARTED %^{Task}"
-           :clock-in :clock-resume)
-          ("e" "Emacs idea" entry
-           (file+headline "~/code/emacs-notes/tasks.org" "Emacs")
-           "* TODO %^{Task}"
-           :immediate-finish t)
-
-create a template that prompts for a todo study task with task completion and add automatically the time it was added. 
-
-emacs idea 
-basic todo
-study todo
-question 
-idea 
-
-
-;; == Capture Mode Settings ==
-;; Define the custum capture templates
-(defvar org-capture-templates 
-
-
-(defvar org-capture-templates '(
-             ("t" "Tâche" entry (file+headline "~/Dropbox/org/todo.org" "Université")
-              "**** 無 %?")
-("a" "Appointment" entry (file  "~/Dropbox/org/gcal.org" )
-	 "* %?\n\n%^T\n\n:PROPERTIES:\n\n:END:\n\n")
-	 ("b" "Blank" entry (file org-default-notes-file)
-	  "**** %?")
-	 ;;("m" "Meeting" entry (file org-default-notes-file)
-	  ;;"* MEETING with %? :MEETING:\n%t" :clock-in t :clock-resume t)
-	 ;;("d" "Diary" entry (file+datetree "~/org/diary.org")
-	  ;;"* %?\n%U\n" :clock-in t :clock-resume t)
-	 ;;("D" "Daily Log" entry (file "~/org/daily-log.org")
-	  ;;"* %u %?\n*Summary*: \n\n*Problem*: \n\n*Insight*: \n\n*Tomorrow*: " :clock-in t :clock-resume t)
-	 ("i" "Idea" entry (file+headline "~/Dropbox/org/todo.org" "Idées")
-	  "*** %? :Idea: \n%u" :prepend t)
-))
-
 *** Tags
 #+BEGIN_SRC emacs-lisp
   (setq org-tag-alist '(
@@ -2303,8 +1869,8 @@ set. Currently I get an empty list with this setting for the variable:
   (setq org-todo-keyword-faces
         '(("無" . (:foreground "#dc322f" :weight bold))
           ("完" . (:foreground "#859900" :weight bold))   
-          ("疑" . (:foreground "#d33682" :weight bold))
-          ("答" . (:foreground "#268bd2" :weight bold)) 
+          ("次" . (:foreground "#d33682" :weight bold))
+          ("阻" . (:foreground "#268bd2" :weight bold)) 
           ("待" . (:foreground "#cb4b16" :weight bold))
           ("取" . (:foreground "#6c71c4" :weight bold)) 
           ("中" . (:foreground "#b58900" :weight bold)) 
@@ -2361,21 +1927,21 @@ set. Currently I get an empty list with this setting for the variable:
 *** Org2blog                                                                    
 This package allow org mode to interact with WordPress. 
 #+BEGIN_SRC emacs-lisp
-  (use-package org2blog :after org 
-    :config
-;; initial config
-    (setq load-path (cons "~/.emacs.d/org2blog/" load-path))
-    (require 'org2blog-autoloads)
-    (setq org-list-allow-alphabetical t)
+  ;;   (use-package org2blog :after org 
+  ;;     :config
+  ;; ;; initial config
+  ;;     (setq load-path (cons "~/.emacs.d/org2blog/" load-path))
+  ;;     (require 'org2blog-autoloads)
+  ;;     (setq org-list-allow-alphabetical t)
 
-  ;; blog setup
-    (setq org2blog/wp-blog-alist
-          '(("cahiers"
-             :url "https://cyberneticrevolutionary.wordpress.com/xmlrpc.php"
-             :username "cyberneticrevolutionary"
-             :password "kosmos666"
-             :default-title "Penseé"
-             :tags-as-categories nil))))
+  ;;   ;; blog setup
+  ;;     (setq org2blog/wp-blog-alist
+  ;;           '(("cahiers"
+  ;;              :url "https://cyberneticrevolutionary.wordpress.com/xmlrpc.php"
+  ;;              :username "cyberneticrevolutionary"
+  ;;              :password "kosmos666"
+  ;;              :default-title "Penseé"
+  ;;              :tags-as-categories nil))))
 #+END_SRC
 **** default template
 (setq org2blog/wp-buffer-template
@@ -2397,37 +1963,40 @@ biber to work properly with BibLaTeX. In layman English, the following
 configuration is necessary for automatic bibliography management to work
 properly when exporting org documents to LaTeX.
 #+BEGIN_SRC emacs-lisp
-          ;; export references (to tables, graphics, etc.) properly, evaluating the +NAME property. 
-          (setq org-latex-prefer-user-labels t)
+            ;; export references (to tables, graphics, etc.) properly, evaluating the +NAME property. 
+            (setq org-latex-prefer-user-labels t)
 
-          ;; export process is sent to the background
-          (setq org-export-in-background t)
+            ;; export process is sent to the background
+            (setq org-export-in-background t)
 
-          ;; select tasks (i.e., TODOs) for export
-          (setq org-export-with-tasks '("次" "完" "無" "中" "待" "疑"))
+            ;; select tasks (i.e., TODOs) for export
+            (setq org-export-with-tasks '("次" "完" "無" "中" "待" "疑"))
 
-        (defun sync0-latex-compile ()
-            (save-buffer)
-            (TeX-command "LaTeX" 'TeX-master-file))
+          (defun sync0-latex-compile ()
+              (save-buffer)
+              (TeX-command "LaTeX" 'TeX-master-file))
 
-          (defun sync0-latex-and-beamer-export ()
-            "Export current org file with beamer if it has beamer as latex class."
-            (interactive)
-            (when (equal major-mode 'org-mode) 
-                (if (string-match "LATEX_CLASS: beamer" (buffer-string))
-                    (org-beamer-export-to-pdf)
-                  (org-latex-export-to-pdf))
-              ))
+            (defun sync0-latex-and-beamer-export ()
+              "Export current org file with beamer if it has beamer as latex class."
+              (interactive)
+              (when (equal major-mode 'org-mode) 
+                  (if (string-match "LATEX_CLASS: beamer" (buffer-string))
+                      (org-beamer-export-to-pdf)
+                    (org-latex-export-to-pdf))
+                ))
 
-          ;; speed keybinding for latex pdf export
-          ;;(global-set-key "\M-p" 'org-latex-export-to-pdf)
-          (global-set-key "\M-p" 'sync0-latex-and-beamer-export)
+            ;; speed keybinding for latex pdf export
+            ;;(global-set-key "\M-p" 'org-latex-export-to-pdf)
+            (global-set-key "\M-p" 'sync0-latex-and-beamer-export)
 
-    (setq org-latex-pdf-process (list "latexmk -lualatex -bibtex-cond -f %f"))
+      (setq org-latex-pdf-process (list "latexmk -lualatex -bibtex -f %f"))
+      ;; (setq org-latex-pdf-process (list "latexmk -lualatex -bibtex-cond -f %f"))
 
-  ;; (setq org-latex-logfiles-extensions (quote ("lof" "lot" "tex~" "aux" "idx" "log" "out" "toc" "nav" "snm" "vrb" "dvi" "fdb_latexmk" "blg" "brf" "fls" "entoc" "ps" "spl" "bbl")))
+    ;; (setq org-latex-logfiles-extensions (quote ("lof" "lot" "tex~" "aux" "idx" "log" "out" "toc" "nav" "snm" "vrb" "dvi" "fdb_latexmk" "blg" "brf" "fls" "entoc" "ps" "spl" "bbl")))
 
-  (setq org-latex-logfiles-extensions (quote ("lof" "lot" "tex~" "idx" "out" "toc" "nav" "snm" "vrb" "dvi" "fdb_latexmk" "blg" "brf" "fls" "entoc" "ps" "spl")))
+  (setq org-export-date-timestamp-format "%Y/%m/%d")
+
+    (setq org-latex-logfiles-extensions (quote ("lof" "lot" "tex~" "idx" "out" "toc" "nav" "snm" "vrb" "dvi" "fdb_latexmk" "blg" "brf" "fls" "entoc" "ps" "spl" "run.xml")))
 #+END_SRC
 *** Export to Word (doc)
 #+BEGIN_SRC emacs-lisp
@@ -2541,311 +2110,358 @@ properly when exporting org documents to LaTeX.
 ;; Store link to message if in header view, not to header query.
 (setq org-mu4e-link-query-in-headers-mode nil))
   #+END_SRC 
+*** ox-extra
+#+BEGIN_SRC emacs-lisp
+  ;; (use-package org-plus-contrib :after org)
+  ;; (use-package ox :after org)
+  (use-package ox-extra :after org 
+  :config
+  (ox-extras-activate '(ignore-headlines)))
+
+  ;; (require  'ox-extra)
+  ;; (ox-extras-activate '(ignore-headlines))
+  #+END_SRC 
 ** Bibtex Mode
 #+BEGIN_SRC emacs-lisp
-    ;; (use-package bibtex
-    ;;   :custom
-    ;;   (bibtex-dialect (quote biblatex));; biblatex as default bib format
+  ;; (use-package bibtex
+  ;;   :custom
+  ;;   (bibtex-dialect (quote biblatex));; biblatex as default bib format
 
-    (use-package bibtex
-      :config
-      (setq bibtex-dialect 'biblatex ;; biblatex as default bib format
-            bibtex-maintain-sorted-entries t
-            bibtex-field-delimiters 'braces
-            bibtex-comma-after-last-field t
-            bibtex-align-at-equal-sign t
-            bibtex-autokey-name-year-separator ""
-            bibtex-autokey-year-title-separator ""
-            ;; bibtex-autokey-titleword-first-ignore '("the" "a" "if" "and" "an")
-            bibtex-autokey-titleword-length 0
-            bibtex-autokey-year-length 4
-            bibtex-autokey-titlewords 0)
-  (defun sync0-bibtex-generate-autokey ()
+  (use-package bibtex
+    :config
+    (setq bibtex-dialect 'biblatex ;; biblatex as default bib format
+          bibtex-maintain-sorted-entries t
+          bibtex-field-delimiters 'braces
+          bibtex-entry-delimiters 'braces
+          bibtex-comma-after-last-field t
+          bibtex-align-at-equal-sign t
+          bibtex-text-indentation 0
+          bibtex-autokey-names 1
+          bibtex-autokey-names-stretch 1
+          bibtex-autokey-additional-names " et al"
+          bibtex-autokey-name-separator "_"
+          bibtex-autokey-name-year-separator ""
+          bibtex-autokey-year-title-separator ""
+          bibtex-autokey-titleword-length 0
+          bibtex-autokey-year-length 4
+          bibtex-autokey-titlewords 0)
+
+    (setq bibtex-entry-format '(opts-or-alts required-fields numerical-fields page-dashes whitespace braces last-comma delimiters sort-fields))
+
+    (setq bibtex-BibTeX-entry-alist '(
+                                      ("Article" "Article in Journal"
+                                       ("author")
+                                       ("date")
+                                       ("title" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("subtitle" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("journaltitle")
+                                       ("journalsubtitle")
+                                       ("volume" "Volume of the journal")
+                                       ("number" "Number of the journal (only allowed if entry contains volume)")
+                                       ("issue" "Issue in the journal")
+                                       ("pages" "Pages in the journal")
+                                       ("url" "Pages in the journal")
+                                       ("urldate" "Pages in the journal")
+                                       ("doi" "Pages in the journal")
+                                       ("library" "Pages in the journal")
+                                       ("language" "Pages in the journal")
+                                       ("langid" "Pages in the journal")
+                                       ("langidopts" "Pages in the journal")
+                                       ("file" "Pages in the journal")
+                                       ("addendum" "Pages in the journal")
+                                       ("keywords"))
+                                      ("InProceedings" "Article in Conference Proceedings"
+                                       ("author")
+                                       ("date")
+                                       ("title" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("subtitle" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("crossref")
+                                       ("booktitle" "Name of the conference proceedings")
+                                       ("booksubtitle" "Name of the conference proceedings")
+                                       ("organization")
+                                       ("eventdate")
+                                       ("eventtitle")
+                                       ("venue")
+                                       ("series")
+                                       ("volume" "Volume of the conference proceedings in the series")
+                                       ("number" "Number of the conference proceedings in a small series (overwritten by volume)")
+                                       ("pages" "Pages in the conference proceedings")
+                                       ("edition" "Pages in the conference proceedings")
+                                       ("publisher" "Publishing company, its location")
+                                       ("editor" "Publishing company, its location")
+                                       ("translator" "Publishing company, its location")
+                                       ("location" "Publishing company, its location")
+                                       ("url" "Publishing company, its location")
+                                       ("urldate" "Publishing company, its location")
+                                       ("doi" "Pages in the journal")
+                                       ("library" "Pages in the journal")
+                                       ("language" "Pages in the journal")
+                                       ("langid" "Pages in the journal")
+                                       ("langidopts" "Pages in the journal")
+                                       ("file" "Pages in the journal")
+                                       ("addendum")
+                                       ("keywords"))
+                                      ("InCollection" "Article in a Collection"
+                                       ("author")
+                                       ("date")
+                                       ("title" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("subtitle" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("crossref" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("booktitle" "Name of the conference proceedings")
+                                       ("booksubtitle" "Name of the conference proceedings")
+                                       ("series")
+                                       ("volume" "Volume of the conference proceedings in the series")
+                                       ("number" "Number of the conference proceedings in a small series (overwritten by volume)")
+                                       ("chapter" "Number of the conference proceedings in a small series (overwritten by volume)")
+                                       ("pages" "Pages in the conference proceedings")
+                                       ("edition" "Publishing company, its location")
+                                       ("publisher" "Publishing company, its location")
+                                       ("editor" "Publishing company, its location")
+                                       ("translator" "Publishing company, its location")
+                                       ("location" "Publishing company, its location")
+                                       ("url" "Publishing company, its location")
+                                       ("urldate" "Publishing company, its location")
+                                       ("doi" "Pages in the journal")
+                                       ("library" "Pages in the journal")
+                                       ("language" "Pages in the journal")
+                                       ("langid" "Pages in the journal")
+                                       ("langidopts" "Pages in the journal")
+                                       ("file" "Pages in the journal")
+                                       ("addendum")
+                                       ("keywords"))
+                                      ("InBook" "Chapter or Pages in a Book"
+                                       ("author")
+                                       ("date")
+                                       ("origdate")
+                                       ("origtitle")
+                                       ("title" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("subtitle" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("crossref" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("booktitle" "Name of the conference proceedings")
+                                       ("booksubtitle" "Name of the conference proceedings")
+                                       ("series")
+                                       ("volume" "Volume of the conference proceedings in the series")
+                                       ("number" "Number of the conference proceedings in a small series (overwritten by volume)")
+                                       ("chapter" "Number of the conference proceedings in a small series (overwritten by volume)")
+                                       ("pages" "Pages in the conference proceedings")
+                                       ("edition" "Publishing company, its location")
+                                       ("publisher" "Publishing company, its location")
+                                       ("editor" "Publishing company, its location")
+                                       ("translator" "Publishing company, its location")
+                                       ("location" "Publishing company, its location")
+                                       ("url" "Publishing company, its location")
+                                       ("urldate" "Publishing company, its location")
+                                       ("doi" "Pages in the journal")
+                                       ("library" "Pages in the journal")
+                                       ("language" "Pages in the journal")
+                                       ("langid" "Pages in the journal")
+                                       ("langidopts" "Pages in the journal")
+                                       ("file" "Pages in the journal")
+                                       ("addendum")
+                                       ("keywords"))
+                                      ("Proceedings" "Conference Proceedings"
+                                       ("title" "Title of the conference proceedings")
+                                       ("year")
+                                       nil
+                                       ("booktitle" "Title of the proceedings for cross references")
+                                       ("editor")
+                                       ("volume" "Volume of the conference proceedings in the series")
+                                       ("number" "Number of the conference proceedings in a small series (overwritten by volume)")
+                                       ("series" "Series in which the conference proceedings appeared")
+                                       ("address")
+                                       ("month")
+                                       ("organization" "Sponsoring organization of the conference")
+                                       ("publisher" "Publishing company, its location")
+                                       ("note"))
+                                      ("Book" "Book"
+                                       ("author")
+                                       ("date")
+                                       ("origdate")
+                                       ("origtitle")
+                                       ("title" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("subtitle" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("booktitle" "Name of the conference proceedings")
+                                       ("booksubtitle" "Name of the conference proceedings")
+                                       ("series")
+                                       ("volume" "Volume of the conference proceedings in the series")
+                                       ("number" "Number of the conference proceedings in a small series (overwritten by volume)")
+                                       ("edition" "Publishing company, its location")
+                                       ("publisher" "Publishing company, its location")
+                                       ("editor" "Publishing company, its location")
+                                       ("translator" "Publishing company, its location")
+                                       ("location" "Publishing company, its location")
+                                       ("url" "Publishing company, its location")
+                                       ("urldate" "Publishing company, its location")
+                                       ("doi" "Pages in the journal")
+                                       ("library" "Pages in the journal")
+                                       ("isbn" "Pages in the journal")
+                                       ("origlanguage" "Pages in the journal")
+                                       ("language" "Pages in the journal")
+                                       ("langid" "Pages in the journal")
+                                       ("langidopts" "Pages in the journal")
+                                       ("file" "Pages in the journal")
+                                       ("addendum")
+                                       ("keywords"))
+                                      ("Unpublished" "Unpublished"
+                                       ("author")
+                                       ("date")
+                                       ("title" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("subtitle" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("type" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("eventdate" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("eventtitle" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("venue" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("location" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("url" "Publishing company, its location")
+                                       ("urldate" "Publishing company, its location")
+                                       ("doi" "Pages in the journal")
+                                       ("library" "Pages in the journal")
+                                       ("origlanguage" "Pages in the journal")
+                                       ("language" "Pages in the journal")
+                                       ("langid" "Pages in the journal")
+                                       ("langidopts" "Pages in the journal")
+                                       ("file" "Pages in the journal")
+                                       ("addendum")
+                                       ("keywords"))
+                                      ("Misc" "Miscellaneous" nil nil
+                                       ("author")
+                                       ("date")
+                                       ("title" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("subtitle" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("organization" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("type" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("version" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("location" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("url" "Publishing company, its location")
+                                       ("urldate" "Publishing company, its location")
+                                       ("doi" "Pages in the journal")
+                                       ("library" "Pages in the journal")
+                                       ("origlanguage" "Pages in the journal")
+                                       ("language" "Pages in the journal")
+                                       ("langid" "Pages in the journal")
+                                       ("langidopts" "Pages in the journal")
+                                       ("file" "Pages in the journal")
+                                       ("addendum")
+                                       ("keywords"))))
+
+    (defun sync0-bibtex-generate-autokey ()
       "This overwrites the bibtex-generate-autokey function that comes with Emacs.
-    I want my keys to be formatted: authornameYEAR, then a letter
-    if there is already an entry that matches authornameYEAR."
+      I want my keys to be formatted: authornameYEAR, then a letter
+      if there is already an entry that matches authornameYEAR."
       (interactive)
-
       (let* ((names (bibtex-autokey-get-names))
              (year (bibtex-autokey-get-year))
-             (existing-keys (bibtex-parse-keys))
-             key)
+             (existing-keys (bibtex-parse-keys)) key)
         (setq key (format "%s%s" names year))
         (let ((ret key))
           (cl-loop for c
-                   from ?b to ?z
+                   from ?a to ?z
                    while (assoc ret existing-keys)
                    do (setq ret (format "%s%c" key c)))
           ret))))
 
+
+
   #+END_SRC 
 ** Ivy-bibtex
-         bibtex-completion-library-path '("~/Documents/mendeley/")
-         bibtex-completion-pdf-field "file"
 #+BEGIN_SRC emacs-lisp
-    (use-package ivy-bibtex :after (org ivy)
-      :config
-      (setq ;; ivy-bibtex-bibliography 'org-ref-default-bibliography ;; where your references are stored
-       ;; ivy-bibtex-library-path 'org-ref-pdf-directory ;; where your pdfs etc are stored
-       ;; ivy-bibtex-notes-path 'org-ref-bibliography-notes;; where your notes are stored
-       bibtex-completion-bibliography '("~/Documents/mendeley/sync0_library.bib") ;; writing completion
-       bibtex-completion-notes-path '"~/Dropbox/research"
-       ;; bibtex-completion-library-path '("~/Documents/mendeley/") 
-       bibtex-completion-pdf-field "file"
-       bibtex-completion-pdf-symbol "⌘"
-       bibtex-completion-notes-symbol "✎"
-       ;; open in different viewer
-  ;;    bibtex-completion-pdf-open-function '(lambda (fpath) (call-process "zathura" nil 0 nil fpath))
-)
-      ;; (define-key org-mode-map  (kbd "C-c 0") 'ivy-bibtex)
-  )
-  #+END_SRC 
+  (use-package ivy-bibtex :after (org ivy)
+    :init 
+    (setq 
+     bibtex-completion-bibliography '("~/Dropbox/research/bibliography.bib") ;; writing completion
+     bibtex-completion-notes-path '"~/Dropbox/research"
+     bibtex-completion-library-path '("~/Dropbox/research/") 
+     bibtex-completion-pdf-field "file"
+     bibtex-completion-pdf-symbol "⌘"
+     bibtex-completion-notes-symbol "✎"
+     bibtex-completion-notes-template-multiple-files  
+"#+STARTUP: indent nostars logdrawer content
+#+TITLE: ${title}
+#+CREATOR: ${=key=}
+#+AUTHOR: ${author-or-editor}
+#+SETUPFILE: \"~/Dropbox/typography/article.org\" 
+#+INCLUDE: \"~/Dropbox/typography/layouts.org::*Article\" :only-contents t
+#+INCLUDE: \"~/Dropbox/typography/settings.org::*English\" :only-contents t
+
+#+BEGIN_modified
+fullcite:${=key=}
+\\tcblower
+Last modified: 
+#+END_modified
+
+
+\\printbibliography[title=bibliographie,heading=subbibliography]
+# \\printbibliography[title=bibliographie]"
+     )
+    :config
+    (setq ivy-bibtex-default-action 'ivy-bibtex-edit-notes)
+    )
+
+  ;; (use-package ivy-bibtex :after (org ivy helm-bibtex))
+
+  ;; (use-package ivy-bibtex :after (org ivy)
+  ;;   :config
+  ;;   (setq ;; ivy-bibtex-bibliography 'org-ref-default-bibliography ;; where your references are stored
+  ;;    ;; ivy-bibtex-library-path 'org-ref-pdf-directory ;; where your pdfs etc are stored
+  ;;    ;; ivy-bibtex-notes-path 'org-ref-bibliography-notes;; where your notes are stored))
+#+END_SRC 
 ** Org-ref 
 #+BEGIN_SRC emacs-lisp
-        (use-package org-ref :after (org ivy)
-          :init 
-          (setq reftex-default-bibliography '("~/Documents/mendeley/sync0_library.bib")
-                ;; see org-ref for use of these variables
-                org-ref-bibliography-notes "~/Dropbox/research"
-                 org-ref-notes-directory "~/Dropbox/research/"
-                org-ref-default-bibliography '("~/Documents/mendeley/sync0_library.bib")
-                org-ref-pdf-directory "~/Documents/mendeley/"
-                ;; org-ref-open-pdf-function 'org-ref-get-mendeley-filename
-                ;; set ivy for completion
-                org-ref-completion-library 'org-ref-ivy-cite)
+          (use-package org-ref :after (org ivy)
+            :init 
+            (setq reftex-default-bibliography '("~/Dropbox/research/bibliography.bib")
+                  ;; see org-ref for use of these variables
+                  ;; org-ref-bibliography-notes "~/Dropbox/research"
+                   ;; org-ref-notes-directory "~/Dropbox/research/"
+                  org-ref-default-bibliography reftex-default-bibliography
+                  org-ref-pdf-directory "~/Documents/pdfs/"
+                  ;; org-ref-open-pdf-function 'org-ref-get-mendeley-filename
+                  ;; set ivy for completion
+                  org-ref-completion-library 'org-ref-ivy-cite)
 
-      ;; Tell org-ref to let helm-bibtex find notes for it
-    ;; (setq org-ref-notes-function 'org-ref-notes-funcion-many-files)
-  ;; Tell org-ref to let helm-bibtex find notes for it
-          :config 
   (setq org-ref-notes-function
         (lambda (thekey)
           (let ((bibtex-completion-bibliography (org-ref-find-bibliography)))
             (bibtex-completion-edit-notes
              (list (car (org-ref-get-bibtex-key-and-file thekey)))))))
-
-      (defun sync0-org-ref-open-pdf-at-point ()
-        "Open the pdf for bibtex key under point if it exists."
-        (interactive)
-        (let* ((results (org-ref-get-bibtex-key-and-file))
-               (key (car results))
-               (pdf-file (car(bibtex-completion-find-pdf key))))
-          (if (file-exists-p pdf-file)
-             (org-open-file pdf-file))
-            (message "No PDF found for %s" key)))
-      (setq org-ref-open-pdf-function 'sync0-org-ref-open-pdf-at-point)
-          (define-key org-mode-map (kbd "C-c [") 'org-ref-ivy-insert-cite-link)
-          ;; (define-key org-mode-map  (kbd "C-c 9") 'org-ref-notes-function)
-          (define-key bibtex-mode-map  (kbd "C-c 9") 'org-ref-open-bibtex-notes)
-          ;;(define-key org-mode-map  (kbd "C-c 0") 'org-ref-open-notes-from-reftex)
-          (define-key org-mode-map  (kbd "C-c 0") 'org-ref-open-citation-at-point)
-          (define-key org-mode-map  (kbd "C-c 8") 'sync0-org-ref-open-pdf-at-point)
-          (define-key bibtex-mode-map  (kbd "C-c 8") 'sync0-org-ref-open-pdf-at-point)
-          ;; define notes template
-          (setq org-ref-note-title-format 
-                "* %t
-         :PROPERTIES: 
-         :Custom_ID: %k
-         :END:
-
-        ")
-          )
-#+END_SRC 
-** 取 Interleave 
-          (use-package interleave :after (org-ref evil)
+        ;; Tell org-ref to let helm-bibtex find notes for it
+      ;; (setq org-ref-notes-function 'org-ref-notes-funcion-many-files)
+    ;; Tell org-ref to let helm-bibtex find notes for it
             :config 
-            (setq interleave--pdf-prop "Custom_ID")
+    ;; (setq org-ref-notes-function
+    ;;       (lambda (thekey)
+    ;;         (let ((bibtex-completion-bibliography (org-ref-find-bibliography)))
+    ;;           (bibtex-completion-edit-notes
+    ;;            (list (car (org-ref-get-bibtex-key-and-file thekey)))))))
 
-
-            (defun sync0-interleave--find-pdf-path (buffer)
-              "Search the `Custom_ID' property in BUFFER and extracts it when found."
-              (with-current-buffer buffer
-                (save-restriction
-                  (widen)
-                  (save-excursion
-                    (goto-char (point-min))
-                    (re-search-forward "^:Custom_ID:" nil :noerror)
-                      (let* ((key (org-entry-get nil interleave--pdf-prop))
-                           (pdf-file (car(bibtex-completion-find-pdf key))))
-                      (quote pdf-file))))))
-
-      ;; (defun sync0-test-function ()
-      ;;   (interactive)
-      ;;                 (let* ((key (org-entry-get nil interleave--pdf-prop))
-      ;;                      (pdf-file (car(bibtex-completion-find-pdf key))))
-      ;;                   (message "The path is %s" pdf-file)))
-
-            ;; (if (file-exists-p pdf-file)
-            ;;     (org-open-file pdf-file))
-            ;; (message "No PDF found for %s" key)))
-
-
-            (defun sync0-interleave--headline-pdf-path (buffer)
-              "Return the INTERLEAVE_PDF property of the current headline in BUFFER."
-              (with-current-buffer buffer
-                (save-excursion
-                  (let ((headline (org-element-at-point)))
-                    (when (and (equal (org-element-type headline) 'headline)
-                               (org-entry-get nil interleave--pdf-prop))
-                      (setq interleave-multi-pdf-notes-file t)
-                      (let* ((key (org-entry-get nil interleave--pdf-prop))
-                             (pdf-file (car(bibtex-completion-find-pdf key))))
-                             (quote pdf-file)))))))
-
-  (defun sync0-interleave--open-file (split-window)
-    "Opens the pdf file in besides the notes buffer.
-  SPLIT-WINDOW is a function that actually splits the window, so it must be either
-  `split-window-right' or `split-window-below'."
-    (let* ((buf (current-buffer))
-           (pdf-file-name
-            (or (interleave--headline-pdf-path buf)
-                (interleave--find-pdf-path buf))))
-      (delete-other-windows)
-      (funcall split-window)
-      (when (integerp interleave-split-lines)
-        (if (eql interleave-split-direction 'horizontal)
-            (enlarge-window interleave-split-lines)
-          (enlarge-window-horizontally interleave-split-lines)))
-      (find-file pdf-file-name)
-      (interleave-pdf-mode 1)))
-
-  (let* ((results (org-ref-get-bibtex-key-and-file))
-         (key (car results))
-         (pdf-file (funcall org-ref-get-pdf-filename-function key)
-
- (if (file-exists-p pdf-file)
-        (find-file pdf-file)
-      (message "No PDF found for %s" key))))
-
-    ;; (defun interleave--headline-pdf-path (buffer)
-    ;;   "Return the INTERLEAVE_PDF property of the current headline in BUFFER."
-    ;;   (with-current-buffer buffer
-    ;;     (save-excursion
-    ;;       (let ((headline (org-element-at-point)))
-    ;;         (when (and (equal (org-element-type headline) 'headline)
-    ;;                    (org-entry-get nil interleave--pdf-prop))
-    ;;           (setq interleave-multi-pdf-notes-file t)
-    ;;           (org-entry-get nil interleave--pdf-prop))))))
-
-            ;; (let* ((results (org-ref-get-bibtex-key-and-file keyonpoint))
-            ;;        (key (car results))
-            ;;        (pdf-file (car(bibtex-completion-find-pdf key))))
-            ;;   (quote (pdf-file)))))))
-
-            ;;           (org-entry-get nil interleave--pdf-prop))))))
-
-        ;; (evil-set-initial-state 'git-commit-mode 'insert)
-
-  ;; (advice-add 'interleave--find-pdf-path :override
-  ;;             (sync0-interleave--find-pdf-path))
-  ;; (advice-add 'interleave--headline-pdf-path :override
-  ;;             (sync0-interleave--headline-pdf-path))
-  ;; (advice-add 'interleave--open-file :override
-  ;;             (sync0-interleave--open-file))
-
-        ;; (defun sync0-interleave-hook ()
-        ;;   (with-current-buffer interleave-pdf-buffer
-        ;;     ;; Do something meaningful here
-        ;; (evil-insert-state)
-
-        ;;     (message "Evil mode has changed to insert state.")))
-        ;; (add-hook 'interleave-mode-hook #'sync0-interleave-hook)
-
-            (evil-define-key 'normal org-mode-map
-              (kbd "g-SPC") 'interleave-sync-pdf-page-current
-              "gp" 'interleave-sync-pdf-page-previous
-              "gn" 'interleave-sync-pdf-page-next)
-
-            (evil-define-key 'normal interleave-pdf-mode-map
-        (kbd "h")     'interleave-go-to-next-page
-        (kbd "l")     'interleave-go-to-previous-page
-        (kbd "j")   'interleave-scroll-up
-        (kbd "k") 'interleave-scroll-down
-        (kbd "i")     'interleave-add-note
-        (kbd "q")     'interleave-quit
-        (kbd "c")   'interleave-sync-pdf-page-current
-        (kbd "p")   'interleave-sync-pdf-page-previous
-        (kbd "n")   'interleave-sync-pdf-page-next)
-
+        (defun sync0-org-ref-open-pdf-at-point ()
+          "Open the pdf for bibtex key under point if it exists."
+          (interactive)
+          (let* ((results (org-ref-get-bibtex-key-and-file))
+                 (key (car results))
+                 (pdf-file (car(bibtex-completion-find-pdf key))))
+            (if (file-exists-p pdf-file)
+               (org-open-file pdf-file))
+              (message "No PDF found for %s" key)))
+        (setq org-ref-open-pdf-function 'sync0-org-ref-open-pdf-at-point)
+            (define-key org-mode-map (kbd "C-c [") 'org-ref-ivy-insert-cite-link)
+            ;; (define-key org-mode-map  (kbd "C-c 9") 'org-ref-notes-function)
+            (define-key org-mode-map  (kbd "C-c 9") 'ivy-bibtex)
+            (define-key bibtex-mode-map  (kbd "C-c 9") 'ivy-bibtex)
+            ;; (define-key bibtex-mode-map  (kbd "C-c 9") 'org-ref-open-bibtex-notes)
+            ;;(define-key org-mode-map  (kbd "C-c 0") 'ivy-bibtex)
+            (define-key org-mode-map  (kbd "C-c 0") 'org-ref-open-citation-at-point)
+            (define-key org-mode-map  (kbd "C-c 8") 'sync0-org-ref-open-pdf-at-point)
+            (define-key bibtex-mode-map  (kbd "C-c 8") 'sync0-org-ref-open-pdf-at-point)
+            ;; define notes template
+          ;;   (setq org-ref-note-title-format 
+          ;;         "* %t
+          ;;  :PROPERTIES: 
+          ;;  :Custom_ID: %k
+          ;;  :END:
+          ;; ")
             )
-**** ivy-bibtex
-;; autoload ivy-bibtex
-(add-to-list 'load-path "~/.emacs.d/ivy-bibtex/")
-(autoload 'ivy-bibtex "ivy-bibtex" "" t)
-
-(setq bibtex-completion-bibliography '("~/Documents/mendeley/master.bib")
-         bibtex-completion-library-path '("~/Documents/mendeley/")
-         bibtex-completion-pdf-field "file"
-         bibtex-completion-notes-path "~/Dropbox/org/master.org"
-         bibtex-completion-pdf-symbol "在文"
-         bibtex-completion-notes-symbol "筆錄")
-****  custom template function
-(setq bibtex-completion-notes-template-one-file
-      (format
-       "\n*** 未 ${title}\n :PROPERTIES:\n :AUTHOR: ${author}\n :YEAR: ${year}\n :Custom_ID: ${=key=}\n :END:\n"))
-(setq org-ref-notes-function
-      (lambda (thekey)
-        (let ((bibtex-completion-bibliography (org-ref-find-bibliography)))
-          (bibtex-completion-edit-notes
-           (list (car (org-ref-get-bibtex-key-and-file thekey)))))))
-(add-hook 'org-mode-hook
-          (lambda ()
-            (define-key org-mode-map  (kbd "C-c 9") 'org-ref-open-notes-at-point)))
-**** 疑 custom notes function
-
-** 取 Interleave 
-    (use-package interleave :after (org-ref evil)
-      :config 
-  ;; (defun sync0-interleave-hook ()
-  ;;   (with-current-buffer interleave-pdf-buffer
-  ;;     ;; Do something meaningful here
-  ;; (evil-insert-state)
-
-  ;;     (message "Evil mode has changed to insert state.")))
-  ;; (add-hook 'interleave-mode-hook #'sync0-interleave-hook)
-
-  ;;     (evil-define-key 'normal org-mode-map
-  ;;       (kbd "g-SPC") 'interleave-sync-pdf-page-current
-  ;;       "gp" 'interleave-sync-pdf-page-previous
-  ;;       "gn" 'interleave-sync-pdf-page-next)
-
-  ;;     (evil-define-key 'normal interleave-pdf-mode-map
-  ;; (kbd "h")     'interleave-go-to-next-page
-  ;; (kbd "l")     'interleave-go-to-previous-page
-  ;; (kbd "j")   'interleave-scroll-up
-  ;; (kbd "k") 'interleave-scroll-down
-  ;; (kbd "i")     'interleave-add-note
-  ;; (kbd "q")     'interleave-quit
-  ;; (kbd "c")   'interleave-sync-pdf-page-current
-  ;; (kbd "p")   'interleave-sync-pdf-page-previous
-  ;; (kbd "n")   'interleave-sync-pdf-page-next)
-
-      )
-**** ivy-bibtex
-;; autoload ivy-bibtex
-(add-to-list 'load-path "~/.emacs.d/ivy-bibtex/")
-(autoload 'ivy-bibtex "ivy-bibtex" "" t)
-
-(setq bibtex-completion-bibliography '("~/Documents/mendeley/master.bib")
-         bibtex-completion-library-path '("~/Documents/mendeley/")
-         bibtex-completion-pdf-field "file"
-         bibtex-completion-notes-path "~/Dropbox/org/master.org"
-         bibtex-completion-pdf-symbol "在文"
-         bibtex-completion-notes-symbol "筆錄")
-****  custom template function
-(setq bibtex-completion-notes-template-one-file
-      (format
-       "\n*** 未 ${title}\n :PROPERTIES:\n :AUTHOR: ${author}\n :YEAR: ${year}\n :Custom_ID: ${=key=}\n :END:\n"))
-(setq org-ref-notes-function
-      (lambda (thekey)
-        (let ((bibtex-completion-bibliography (org-ref-find-bibliography)))
-          (bibtex-completion-edit-notes
-           (list (car (org-ref-get-bibtex-key-and-file thekey)))))))
-(add-hook 'org-mode-hook
-          (lambda ()
-            (define-key org-mode-map  (kbd "C-c 9") 'org-ref-open-notes-at-point)))
-**** 疑 custom notes function
-
+#+END_SRC 
 ** Yasnippets
 #+BEGIN_SRC emacs-lisp
 (use-package yasnippet :defer t 
@@ -3074,10 +2690,10 @@ properly when exporting org documents to LaTeX.
                    latex-mode
                    LaTeX-mode
                    )
-    (sp-local-pair "`" "'"
-                   :actions '(:rem autoskip)
-                   :skip-match 'sp-latex-skip-match-apostrophe
-                   :unless '(sp-latex-point-after-backslash))
+    ;; (sp-local-pair "`" "'"
+    ;;                :actions '(:rem autoskip)
+    ;;                :skip-match 'sp-latex-skip-match-apostrophe
+    ;;                :unless '(sp-latex-point-after-backslash))
     ;; math modes, yay.  The :actions are provided automatically if
     ;; these pairs do not have global definitions.
     (sp-local-pair "$" "$")
@@ -3091,10 +2707,10 @@ properly when exporting org documents to LaTeX.
 
     ;; quote should insert ``'' instead of double quotes.  If we ever
     ;; need to insert ", C-q is our friend.
-    (sp-local-pair "``" "''"
-                   :trigger "\""
-                   :unless '(sp-latex-point-after-backslash)
-                   :post-handlers '(sp-latex-skip-double-quote))
+    ;; (sp-local-pair "``" "''"
+    ;;                :trigger "\""
+    ;;                :unless '(sp-latex-point-after-backslash)
+    ;;                :post-handlers '(sp-latex-skip-double-quote))
 
     ;; add the prefix function sticking to {} pair
     (sp-local-pair "{" nil :prefix "\\\\\\(\\sw\\|\\s_\\)*")
@@ -3259,8 +2875,7 @@ properly when exporting org documents to LaTeX.
       ("_" sp-join-sexp ) ;;Good
       ("|" sp-split-sexp )) 
 
-    (global-set-key (kbd "M-g M-p") 'hydra-learn-sp/body)
-      )
+    (global-set-key (kbd "M-g M-p") 'hydra-learn-sp/body))
 
   #+END_SRC 
 ** Highlight changes mode
@@ -3500,65 +3115,64 @@ Turning on Text mode runs the normal hook `englisch-mode-hook'."
     (setq avy-all-windows nil
           avy-background t))
   #+END_SRC 
-** Gît-gutter 
+** Git-gutter 
 #+BEGIN_SRC emacs-lisp
-          (use-package git-gutter
-            :after hydra 
-            :commands git-gutter-mode
-            :hook (text-mode . git-gutter-mode)
-            :config
-      ;; (setq-default left-fringe-width  10)
-      ;; (setq-default right-fringe-width 10)
-              (setq 
-             ;  git-gutter:window-width 1
-               git-gutter:modified-sign " " ;; two space
-                git-gutter:added-sign " "    ;; multiple character is OK
-                git-gutter:deleted-sign " ")
+            (use-package git-gutter
+              :after hydra 
+              :commands git-gutter-mode
+              :hook (text-mode . git-gutter-mode)
+              :config
+        ;; (setq-default left-fringe-width  10)
+        ;; (setq-default right-fringe-width 10)
+                (setq 
+               ;  git-gutter:window-width 1
+                 git-gutter:modified-sign " " ;; two space
+                  git-gutter:added-sign " "    ;; multiple character is OK
+                  git-gutter:deleted-sign " ")
 
 
-    ;;(set-face-background 'git-gutter:modified "orange") ;; background color
-    (set-face-background 'git-gutter:modified "#3a81c3") ;; background color
-    ;;(set-face-background 'git-gutter:added "green")
-    (set-face-background 'git-gutter:added "#7ccd7c")
-   ;; (set-face-attribute  'git-gutter:added nil :foreground "black")
-    ;;(set-face-background 'git-gutter:deleted "red")
-    (set-face-background 'git-gutter:deleted "ee6363")
-  ;;  (set-face-attribute  'git-gutter:deleted nil :foreground "black")
+      ;;(set-face-background 'git-gutter:modified "orange") ;; background color
+      (set-face-background 'git-gutter:modified "#3a81c3") ;; background color
+      ;;(set-face-background 'git-gutter:added "green")
+      (set-face-background 'git-gutter:added "#7ccd7c")
+     ;; (set-face-attribute  'git-gutter:added nil :foreground "black")
+      ;;(set-face-background 'git-gutter:deleted "red")
+      (set-face-background 'git-gutter:deleted "ee6363")
+    ;;  (set-face-attribute  'git-gutter:deleted nil :foreground "black")
 
-     (after!  evil
-        (defun +version-control|update-git-gutter ()
-          "Refresh git-gutter on ESC. Return nil to prevent shadowing other
-    `+evil-esc-hook' hooks."
-          (when git-gutter-mode
-            (ignore (git-gutter))))
-        (add-hook '+evil-esc-hook #'+version-control|update-git-gutter t))
+      ;;  (after!  evil
+      ;;     (defun +version-control|update-git-gutter ()
+      ;;       "Refresh git-gutter on ESC. Return nil to prevent shadowing other
+      ;; `+evil-esc-hook' hooks."
+      ;;       (when git-gutter-mode
+      ;;         (ignore (git-gutter))))
+      ;;     (add-hook '+evil-esc-hook #'+version-control|update-git-gutter t))
 
-            (defhydra hydra-git-gutter
-              (:body-pre (git-gutter-mode 1) :hint nil)
-              "
-                                                         ╭─────────────────┐
-                      Movement   Hunk Actions     Misc.  │ gg: +%-4s(car (git-gutter:statistic))/ -%-3s(cdr (git-gutter:statistic)) │
-                      ╭──────────────────────────────────┴─────────────────╯
-                         ^_g_^       [_s_] stage        [_R_] set start Rev
-                         ^_k_^       [_r_] revert
-                         ^↑ ^      [_m_] mark
-                         ^↓ ^      [_p_] popup          ╭──────────────────────
-                         ^_j_^                          │[_q_] quit
-                         ^_G_^                          │[_Q_] Quit and disable"
-              ("j" (progn (git-gutter:next-hunk 1) (recenter)))
-              ("k" (progn (git-gutter:previous-hunk 1) (recenter)))
-              ("g" (progn (goto-char (point-min)) (git-gutter:next-hunk 1)))
-              ("G" (progn (goto-char (point-min)) (git-gutter:previous-hunk 1)))
-              ("s" git-gutter:stage-hunk)
-              ("r" git-gutter:revert-hunk)
-              ("m" git-gutter:mark-hunk)
-              ("p" git-gutter:popup-hunk)
-              ("R" git-gutter:set-start-revision)
-              ("q" nil :color blue)
-              ("Q" (git-gutter-mode -1) :color blue))
+              (defhydra hydra-git-gutter
+                (:body-pre (git-gutter-mode 1) :hint nil)
+                "
+                                                           ╭─────────────────┐
+                        Movement   Hunk Actions     Misc.  │ gg: +%-4s(car (git-gutter:statistic))/ -%-3s(cdr (git-gutter:statistic)) │
+                        ╭──────────────────────────────────┴─────────────────╯
+                           ^_g_^       [_s_] stage        [_R_] set start Rev
+                           ^_k_^       [_r_] revert
+                           ^↑ ^      [_m_] mark
+                           ^↓ ^      [_p_] popup          ╭──────────────────────
+                           ^_j_^                          │[_q_] quit
+                           ^_G_^                          │[_Q_] Quit and disable"
+                ("j" (progn (git-gutter:next-hunk 1) (recenter)))
+                ("k" (progn (git-gutter:previous-hunk 1) (recenter)))
+                ("g" (progn (goto-char (point-min)) (git-gutter:next-hunk 1)))
+                ("G" (progn (goto-char (point-min)) (git-gutter:previous-hunk 1)))
+                ("s" git-gutter:stage-hunk)
+                ("r" git-gutter:revert-hunk)
+                ("m" git-gutter:mark-hunk)
+                ("p" git-gutter:popup-hunk)
+                ("R" git-gutter:set-start-revision)
+                ("q" nil :color blue)
+                ("Q" (git-gutter-mode -1) :color blue))
 
-(global-set-key (kbd "M-g M-g") 'hydra-git-gutter/body)
-)
+  (global-set-key (kbd "M-g M-g") 'hydra-git-gutter/body))
   #+END_SRC 
 ** EasyPG
 #+BEGIN_SRC emacs-lisp
@@ -3642,7 +3256,7 @@ screen-sharing.
   ;;       :config 
   ;;   (add-to-list 'company-backends 'company-bibtex)
   ;;       (setq company-bibtex-bibliography
-  ;;               '("/home/sync0/Documents/mendeley/sync0_library.bib"))
+  ;;               '("/home/sync0/Documents/pdfs/bibliography.bib"))
   ;;       (setq company-bibtex-key-regex "[[:alnum:]+_]*"))
 
           ;; (autoload 'company-capf "company-capf")
@@ -3727,18 +3341,212 @@ screen-sharing.
       ;;   '(custom-set-variables
       ;;     '(flycheck-display-errors-function #'flycheck-pos-tip-error-messages)))
   #+END_SRC 
-* Custom Tweaks
-** Add abbrevs 
+** Ediff
 #+BEGIN_SRC emacs-lisp
-(defun sync0-define-local-abbrev (x y)
-  "Defines a new abbrev for current local abbrev table."
-  (interactive "sEnter abbrev: 
-sEnter expansion: ")
-    (when (and x y (not (equal x y)))
-  (define-abbrev local-abbrev-table x y)
-  (message "\"%s\" now expands to \"%s\" %sally"
-           x y "loc")))
+  (use-package ediff
+  ;; :commands (modi/ediff-dwim)
+  :config
+  (progn
+    ;; No separate frame for ediff control buffer
+    (setq ediff-window-setup-function #'ediff-setup-windows-plain)
+    ;; Split windows horizontally in ediff (instead of vertically)
+    (setq ediff-split-window-function #'split-window-vertically)
+))
   #+END_SRC 
+** Minions
+  ;; (use-package minions 
+  ;;   :init
+  ;;   (setq minions-blacklist 
+  ;;         ;; '((abbrev-mode . nil)
+  ;;         ;;   (auto-fill-mode . nil)
+  ;;         ;;   (auto-revert-mode . nil)
+  ;;         ;;   (auto-revert-tail-mode . nil)
+  ;;         ;;   (flyspell-mode . nil)
+  ;;         ;;   (font-lock-mode . nil)
+  ;;         ;;   (glasses-mode . nil)
+  ;;         ;;   (hide-ifdef-mode . nil)
+  ;;         ;;   (highlight-changes-mode . nil)
+  ;;         ;;   (outline-minor-mode . nil)
+  ;;         ;;   (overwrite-mode . nil)
+  ;;         ;;   (overwrite-mode . nil)
+  ;;         ;;   (ruler-mode . nil))
+  ;;         '((org-bullets-mode . nil)
+  ;;         ;; (yas-global-mode . nil)
+  ;;         (yas-minor-mode . nil)
+  ;;         (global-git-gutter-mode . nil)
+  ;;         (git-gutter-mode . nil)
+  ;;         (org-indent-mode . nil)
+  ;;         (julia-math-mode . nil)
+  ;;         (LaTeX-math-mode . nil)
+  ;;         (TeX-interactive-mode . nil)
+  ;;         (TeX-PDF-mode . nil)
+  ;;         (TeX-source-correlate-mode . nil)
+  ;;         (TeX-Omega-mode . nil)
+  ;;         (flymake-mode . nil)
+  ;;         (ess-r-package-mode . nil)
+  ;;         (ess-roxy-mode . nil)
+  ;;         (ess-debug-minor-mode . nil)
+  ;;         (magit-blame-read-only-mode . nil)
+  ;;         (magit-blame-mode . nil)
+  ;;         (magit-blob-mode . nil)
+  ;;         (global-magit-file-mode . nil)
+  ;;         (magit-file-mode . nil)
+  ;;         (magit-wip-initial-backup-mode . nil)
+  ;;         (magit-wip-before-change-mode . nil)
+  ;;         (magit-wip-after-apply-mode . nil)
+  ;;         (magit-wip-after-save-mode . nil)
+  ;;         (magit-wip-after-save-local-mode . nil)
+  ;;         (magit-wip-mode . nil)
+  ;;         (smerge-mode . nil)
+  ;;         (magit-auto-revert-mode . nil)
+  ;;         (global-auto-revert-mode . nil)
+  ;;         (auto-revert-tail-mode . nil)
+  ;;         (auto-revert-mode . nil)
+  ;;         (transient-resume-mode . nil)
+  ;;         (git-commit-mode . nil)
+  ;;         (global-git-commit-mode . nil)
+  ;;         (which-function-mode . nil)
+  ;;         (shell-command-with-editor-mode . nil)
+  ;;         (with-editor-mode . nil)
+  ;;         (async-bytecomp-package-mode . nil)
+  ;;         (server-mode . nil)
+  ;;         (savehist-mode . nil)
+  ;;         (global-hi-lock-mode . nil)
+  ;;         (hi-lock-mode . nil)
+  ;;         (company-search-mode . nil)
+  ;;         (global-company-mode . nil)
+  ;;         (company-mode . nil)
+  ;;         (orgtbl-mode . nil)
+  ;;         (org-table-follow-field-mode . nil)
+  ;;         (gnus-dead-summary-mode . nil)
+  ;;         (gnus-undo-mode . nil)
+  ;;         (tar-subfile-mode . nil)
+  ;;         (counsel-mode . nil)
+  ;;         (xref-etags-mode . nil)
+  ;;         (buffer-face-mode . nil)
+  ;;         (text-scale-mode . nil)
+  ;;         (global-anzu-mode . nil)
+  ;;         (anzu-mode . nil)
+  ;;         (show-smartparens-global-mode . nil)
+  ;;         (show-smartparens-mode . nil)
+  ;;         (smartparens-global-mode . nil)
+  ;;         (smartparens-global-strict-mode . nil)
+  ;;         (smartparens-strict-mode . nil)
+  ;;         (smartparens-mode . nil)
+  ;;         (electric-pair-mode . nil)
+  ;;         (solaire-global-mode . nil)
+  ;;         (solaire-mode . nil)
+  ;;         (fancy-battery-mode . nil)
+  ;;         (display-battery-mode . nil)
+  ;;         (doom-modeline-mode . nil)
+  ;;         (eldoc-in-minibuffer-mode . nil)
+  ;;         (evil-escape-mode . nil)
+  ;;         (global-mu4e-conversation-mode . nil)
+  ;;         (mu4e-conversation-mode . nil)
+  ;;         (default-text-scale-mode . nil)
+  ;;         (org-capture-mode . nil)
+  ;;         (global-highlight-changes-mode . nil)
+  ;;         (highlight-changes-visible-mode . nil)
+  ;;         (highlight-changes-mode . nil)
+  ;;         (reftex-mode . nil)
+  ;;         (diff-minor-mode . nil)
+  ;;         (diff-auto-refine-mode . nil)
+  ;;         (pdf-view-midnight-minor-mode . nil)
+  ;;         (pdf-view-printer-minor-mode . nil)
+  ;;         (pdf-view-dark-minor-mode . nil)
+  ;;         (pdf-view-auto-slice-minor-mode . nil)
+  ;;         (pdf-cache-prefetch-minor-mode . nil)
+  ;;         (bibtex-completion-notes-global-mode . nil)
+  ;;         (bibtex-completion-notes-mode . nil)
+  ;;         (desktop-save-mode . nil)
+  ;;         ;; ido-everywhere
+  ;;         (doc-view-minor-mode . nil)
+  ;;         (image-minor-mode . nil)
+  ;;         (dired-hide-details-mode . nil)
+  ;;         (mml-mode . nil)
+  ;;         (mail-abbrevs-mode . nil)
+  ;;         (global-hl-line-mode . nil)
+  ;;         (hl-line-mode . nil)
+  ;;         (table-fixed-width-mode . nil)
+  ;;         (undo-tree-visualizer-selection-mode . nil)
+  ;;         (global-undo-tree-mode . nil)
+  ;;         (undo-tree-mode . nil)
+  ;;         (global-reveal-mode . nil)
+  ;;         (reveal-mode . nil)
+  ;;         (shell-dirtrack-mode . nil)
+  ;;         (evil-mode . nil)
+  ;;         (evil-local-mode . nil)
+  ;;         (rectangle-mark-mode . nil)
+  ;;         (flyspell-mode . nil)
+  ;;         (org-cdlatex-mode . nil)
+  ;;         (org-src-mode . nil)
+  ;;         (outline-minor-mode . nil)
+  ;;         (projectile-mode . nil)
+  ;;         (compilation-minor-mode . nil)
+  ;;         (compilation-shell-minor-mode . nil)
+  ;;         (ibuffer-auto-mode . nil)
+  ;;         (ivy-mode . nil)
+  ;;         (delete-selection-mode . nil)
+  ;;         (ispell-minor-mode . nil)
+  ;;         (cycle-themes-mode . nil)
+  ;;         (recentf-mode . nil)
+  ;;         (flycheck-pos-tip-mode . nil)
+  ;;         (global-flycheck-mode . nil)
+  ;;         (flycheck-mode . nil)
+  ;;         (show-paren-mode . nil)
+  ;;         (global-display-line-numbers-mode . nil)
+  ;;         (display-line-numbers-mode . nil)
+  ;;         (display-time-mode . nil)
+  ;;         (override-global-mode . nil)
+  ;;         (url-handler-mode . nil)
+  ;;         (cl-old-struct-compat-mode . nil)
+  ;;         (tooltip-mode . nil)
+  ;;         (global-eldoc-mode . nil)
+  ;;         (eldoc-mode . nil)
+  ;;         (electric-quote-mode . nil)
+  ;;         (electric-layout-mode . nil)
+  ;;         (electric-indent-mode . nil)
+  ;;         (mouse-wheel-mode . nil)
+  ;;         (tool-bar-mode . nil)
+  ;;         (paragraph-indent-minor-mode . nil)
+  ;;         (global-prettify-symbols-mode . nil)
+  ;;         (prettify-symbols-mode . nil)
+  ;;         ;; use-hard-newlines 
+  ;;         (menu-bar-mode . nil)
+  ;;         (file-name-shadow-mode . nil)
+  ;;         (horizontal-scroll-bar-mode . nil)
+  ;;         (jit-lock-debug-mode . nil)
+  ;;         (global-font-lock-mode . nil)
+  ;;         (font-lock-mode . nil)
+  ;;         (blink-cursor-mode . nil)
+  ;;         (window-divider-mode . nil)
+  ;;         (auto-composition-mode . nil)
+  ;;         (unify-8859-on-decoding-mode . nil)
+  ;;         (unify-8859-on-encoding-mode . nil)
+  ;;         (auto-encryption-mode . nil)
+  ;;         (auto-compression-mode . nil)
+  ;;         (temp-buffer-resize-mode . nil)
+  ;;         (visible-mode . nil)
+  ;;         ;; buffer-read-only
+  ;;         (size-indication-mode . nil)
+  ;;         (column-number-mode . nil)
+  ;;         (line-number-mode . nil)
+  ;;         ;; auto-fill-function 
+  ;;         (global-visual-line-mode . nil)
+  ;;         (visual-line-mode . nil)
+  ;;         (transient-mark-mode . nil)
+  ;;         (next-error-follow-minor-mode . nil)
+  ;;         (completion-in-region-mode . nil)
+  ;;         (auto-save-visited-mode . nil)
+  ;;         (auto-save-mode . nil)
+  ;;         (auto-fill-mode . nil)
+  ;;         (abbrev-mode . nil)
+  ;;         (overwrite-mode . nil)
+  ;;         (view-mode . nil)
+  ;;         (hs-minor-mode . nil)))
+  ;;         :config
+  ;;         (minions-mode 1))
+* Custom Tweaks
 ** Sentence highlight
 #+BEGIN_SRC emacs-lisp
   (use-package sentence-highlight :load-path "~/.emacs.d/sync0/" 
@@ -3858,58 +3666,566 @@ abort completely with `C-g'."
   (global-set-key (kbd "M-#") 'sync0-lookup-word)
   (global-set-key (kbd "M-$") 'sync0-lookup-conjugation)
   #+END_SRC 
+** Yasnippet Quote 
+#+BEGIN_SRC emacs-lisp
+    (defun sync0-print-bibtex-key ()
+      "Print the bibtex key of the document"
+      (interactive)
+      (save-excursion 
+        (goto-char (point-min))
+        (when (search-forward "#+CREATOR:" nil nil 1)
+          (forward-char 1)
+          (thing-at-point 'word 'no-properties))))
+
+    ;;   (defun sync0-search-bibtex-key ()
+    ;;     "Print the bibtex key of the document"
+    ;;   (save-excursion 
+    ;; (progn (goto-char (point-min))
+    ;; (re-search-forward "^#\+CREATOR:")
+    ;; (+ (point) 1)
+    ;; (thing-at-point 'word 'no-properties))))
+
+    ;; (defun sync0-last-cited-page ()
+    ;;   "Search for the page cited in the last quote environment"
+    ;;   (interactive)
+    ;;   (save-excursion
+    ;;     (if
+    ;;         (search-backward "#+BEGIN_QUOTE" nil nil 2)
+    ;;         (progn   (search-forward "p." nil nil 1)
+    ;;                  ;; (re-search-forward "p\. [0-9]+" nil nil 1)
+    ;;                  (re-search-forward "[0-9]+" nil nil 1)
+    ;;                  ;; (forward-char 1)
+    ;;                  ;; (looking-at "[0-9]+")
+    ;;                  (match-string 0))
+    ;;       (print "1"))))
+
+    (defun sync0-last-cited-page ()
+      "Search for the page cited in the last quote environment"
+      (save-excursion
+        (if (search-backward "#+BEGIN_QUOTE" nil t 2)
+            (let ((match (progn (re-search-forward "p\. [0-9]+" nil nil 1)
+                                (match-string 0))))
+              (substring match 3))
+          (print "1"))))
+
+    (defun sync0-last-cited-page-two ()
+      "Search for the page cited in the last quote environment"
+      (interactive)
+      (save-excursion
+        (if
+            (search-backward "footcite" nil nil 2)
+            (let ((match (progn (re-search-forward "p\. [0-9]+" nil nil 1)
+                                (match-string 0))))
+              (substring match 3))
+          (print "1"))))
+
+    ;; (defun sync0-last-cited-page-three ()
+    ;;   "Search for the page cited in the last quote environment"
+    ;;   (save-excursion
+    ;;     (when
+    ;;         (re-search-backward "cite\[[0-9]+\]" nil t 1)
+    ;;       (let ((match (progn (forward-char 5)
+    ;;                           (thing-at-point 'number 'no-properties))))
+    ;;         (message "%s" match)))))
+
+    (defun sync0-last-cited-page-three ()
+      "Search for the page cited in the last quote environment"
+      (save-excursion
+        (when
+            (re-search-backward "cite\\[\\([0-9]+\\)\\]" nil t 1)
+          (match-string 1))))
+
+    (defun sync0-last-cited-author ()
+      "Search for the page cited in the last quote environment"
+      (save-excursion
+        (when 
+            (re-search-backward "cite\\[.*\\]{\\(.+\\)}" nil t 1)
+          (match-string 1))))
+
+  ;; (save-match-data ; is usually a good idea
+  ;;   (and (string-match "\\`\\([^@]+\\)@\\([^@]+\\)\\'" email)
+  ;;        (setq user (match-string 1 email)
+  ;;              domain (match-string 2 email) ) ))
+  #+END_SRC 
+** Yasnippet authors
+#+BEGIN_SRC emacs-lisp
+    ;; (defun sync0-bibtex-extract-lastnames ()
+    ;; "Extract the author or editor from entry as string"
+    ;; (interactive)
+    ;; (save-excursion
+    ;;     (re-search-backward "^author")
+    ;;     (search-forward "= ")
+    ;;     (let* ((x (progn (looking-at "{.+}")(match-string 0)))
+    ;;           (y (substring x 1 -1)))
+    ;;       (if  (string-match "and" y)
+    ;;            (let* ((z (split-string y "and"))
+    ;;              (fname (let* ((first (nth 0 z))
+    ;;                         (broken (split-string first ",")))
+    ;;                         (nth 0 broken)))
+    ;;              (sname (let* ((first (nth 1 z))
+    ;;                         (broken (split-string first ",")))
+    ;;                         (nth 0 broken))))
+    ;;     (message "the strings are %s and %s" fname sname))
+    ;;         (let* ((z (split-string y ","))
+    ;;                (w  (elt z 0)))
+    ;;     (message "the string is %s" w))))))
+
+    (defun sync0-bibtex-extract-editors ()
+    "Extract the author or editor from entry as string"
+    (interactive)
+    (save-excursion
+        (re-search-backward "^editor")
+        (search-forward "= ")
+        (let* ((authorstring (progn (looking-at "{.+}")(match-string 0)))
+              (firstlast (substring authorstring 1 -1)))
+          (if  (string-match "and" firstlast)
+               (let* ((authors (split-string firstlast "and"))
+                 (f_lastname (let* ((first (nth 0 authors))
+                            (twoparts (split-string first ",")))
+                            (nth 0 twoparts)))
+                 (s_lastname (let* ((first (nth 1 authors))
+                            (twoparts (split-string first ",")))
+                            (nth 0 twoparts))))
+        (message "%s,%s" f_lastname s_lastname))
+            (let* ((twoparts (split-string firstlast ","))
+                   (lastname  (elt twoparts 0)))
+        (message "%s" lastname))))))
+
+    (defun sync0-bibtex-extract-lastnames ()
+    "Extract the author or editor from entry as string"
+    (interactive)
+    (save-excursion
+        (re-search-backward "^author")
+        (search-forward "= ")
+        (let* ((authorstring (progn (looking-at "{.+}")(match-string 0)))
+              (firstlast (substring authorstring 1 -1)))
+          (if  (string-match "and" firstlast)
+               (let* ((authors (split-string firstlast "and"))
+                 (f_lastname (let* ((first (nth 0 authors))
+                            (twoparts (split-string first ",")))
+                            (nth 0 twoparts)))
+                 (s_lastname (let* ((first (nth 1 authors))
+                            (twoparts (split-string first ",")))
+                            (nth 0 twoparts))))
+        (message "%s,%s" f_lastname s_lastname))
+            (let* ((twoparts (split-string firstlast ","))
+                   (lastname  (elt twoparts 0)))
+        (message "%s" lastname))))))
+
+
+  (defun sync0-bibtex-extract-editors-lowercase ()
+    "Extract the author or editor from entry as string"
+    (interactive)
+    (save-excursion
+      (re-search-backward "^editor")
+      (search-forward "= ")
+      (let* ((authorstring (progn (looking-at "{.+}")(match-string 0)))
+             (firstlast (substring authorstring 1 -1)))
+        (if  (string-match "and" firstlast)
+            (let* ((authors (split-string firstlast "and"))
+                   (f_author (let* ((first (nth 0 authors))
+                                      (twoparts (split-string first ","))
+                                      (lastname (nth 0 twoparts))
+                                      (firstnamespace (nth 1 twoparts))
+                                      (firstname (substring firstnamespace 1 -1))
+                                      (downlastname  (downcase lastname))
+                                      (downfirstname  (downcase firstname)))
+                                 (message "%s-%s" downlastname downfirstname)))
+                   (s_author (let* ((first (nth 1 authors))
+                                      (twoparts (split-string first ","))
+                                 (lastnamespace (nth 0 twoparts))
+                                 (firstnamespace (nth 1 twoparts))
+                                 (lastname (substring lastnamespace 1))
+                                 (firstname (substring firstnamespace 1))
+                                 (downlastname  (downcase lastname))
+                                 (downfirstname  (downcase firstname)))
+                                 (message "%s-%s" downlastname downfirstname))))
+                            (message "%s, %s" f_author s_author))
+          (let* ((twoparts (split-string firstlast ","))
+                 (lastname  (elt twoparts 0))
+                 (firstnamespace  (elt twoparts 1))
+                 (firstname (substring firstnamespace 1))
+                 (downlastname  (downcase lastname))
+                 (downfirstname  (downcase firstname)))
+            (message "%s-%s" downlastname downfirstname))))))
+
+  (defun sync0-bibtex-extract-lastnames-lowercase ()
+    "Extract the author or editor from entry as string"
+    (interactive)
+    (save-excursion
+      (re-search-backward "^author")
+      (search-forward "= ")
+      (let* ((authorstring (progn (looking-at "{.+}")(match-string 0)))
+             (firstlast (substring authorstring 1 -1)))
+        (if  (string-match "and" firstlast)
+            (let* ((authors (split-string firstlast "and"))
+                   (f_author (let* ((first (nth 0 authors))
+                                      (twoparts (split-string first ","))
+                                      (lastname (nth 0 twoparts))
+                                      (firstnamespace (nth 1 twoparts))
+                                      (firstname (substring firstnamespace 1 -1))
+                                      (downlastname  (downcase lastname))
+                                      (downfirstname  (downcase firstname)))
+                                 (message "%s-%s" downlastname downfirstname)))
+                   (s_author (let* ((first (nth 1 authors))
+                                      (twoparts (split-string first ","))
+                                 (lastnamespace (nth 0 twoparts))
+                                 (firstnamespace (nth 1 twoparts))
+                                 (lastname (substring lastnamespace 1))
+                                 (firstname (substring firstnamespace 1))
+                                 (downlastname  (downcase lastname))
+                                 (downfirstname  (downcase firstname)))
+                                 (message "%s-%s" downlastname downfirstname))))
+                            (message "%s, %s" f_author s_author))
+          (let* ((twoparts (split-string firstlast ","))
+                 (lastname  (elt twoparts 0))
+                 (firstnamespace  (elt twoparts 1))
+                 (firstname (substring firstnamespace 1))
+                 (downlastname  (downcase lastname))
+                 (downfirstname  (downcase firstname)))
+            (message "%s-%s" downlastname downfirstname))))))
+
+
+            (setq sync0-bibtex-types '("Manual" "Patent" "Report" "Thesis" "Article" "Paper"))
+
+            (setq sync0-bibtex-simon-arkseries '("Personal Pappers (1929-1979)" "Schoolwork and Early Career (1929-1943)" "Illinois Institute of Technology (1942-1949)" "RAND Corporation (1949-1973)" "Carnegie Mellon University (1948-2001)" "Consulting (1942-2000)" "Lectures and Talks (1951-2000)" "Publications (1949-2000)" "Correspondence (1940-2001)" "Dissertations (1956-1999)" "Awards (1958-1998)" "Miscellaneous (1942-2003)"))
+
+  ;; (defun sync0-bibtex-extract-lastnames-lowercase ()
+  ;;   "Extract the author or editor from entry as string"
+  ;;   (interactive)
+  ;;   (save-excursion
+  ;;     (re-search-backward "^author")
+  ;;     (search-forward "= ")
+  ;;     (let* ((authorstring (progn (looking-at "{.+}")(match-string 0)))
+  ;;            (firstlast (substring authorstring 1 -1)))
+  ;;       (if  (string-match "and" firstlast)
+  ;;           (let* ((authors (split-string firstlast "and"))
+  ;;                  (f_lastname (let* ((first (nth 0 authors))
+  ;;                                     (twoparts (split-string first ","))
+  ;;                                     (lastname (nth 0 twoparts)))
+  ;;                                (downcase lastname)))
+  ;;                  (s_lastname (let* ((first (nth 1 authors))
+  ;;                                     (twoparts (split-string first ","))
+  ;;                                (lastname (nth 0 twoparts)))
+  ;;                              (downcase lastname))))
+  ;;             (message "%s,%s" f_lastname s_lastname))
+  ;;         (let* ((twoparts (split-string firstlast ","))
+  ;;                (lastname  (elt twoparts 0))
+  ;;                (downlastname  (downcase lastname)))
+  ;;           (message "%s" downlastname))))))
+  #+END_SRC 
+** Sync0 Bibtex
+#+BEGIN_SRC emacs-lisp
+        (defun sync0-bibtex-next-key ()
+        "Print the bibtex key of the document"
+        (interactive)
+        (let ((bibtex-key (re-search-forward "@.+{" nil nil 1)))
+          (goto-char bibtex-key)))
+
+  (defun sync0-bibtex-previous-key ()
+    "Print the bibtex key of the document"
+    (interactive)
+    (let ((bibtex-key (re-search-backward "@.+{" nil nil 2)))
+      (goto-char bibtex-key)
+      (re-search-forward "@.+{" nil nil 1)))
+
+      ;; (defun sync0-bibtex-previous-key ()
+      ;;   "Print the bibtex key of the document"
+      ;;   (interactive)
+      ;;   (let ((bibtex-key (re-search-backward "@.+{" nil nil 2)))
+      ;;     (goto-char bibtex-key)))
+
+
+    (with-eval-after-load 'evil
+                             (evil-define-key 'normal bibtex-mode-map
+                               ;; "<" 'outline-previous-visible-heading
+                               ;; ">" 'outline-next-visible-heading
+                               ;;  (kbd "C->") 'org-forward-heading-same-level
+                               ;; (kbd "C-<") 'org-backward-heading-same-level
+                               "K" 'sync0-bibtex-previous-key
+                               "J" 'sync0-bibtex-next-key))
+                               ;; "k" 'previous-line
+                               ;; "j" 'next-line)
+
+(defvar sync0-bibtex-reference-keys
+  (lazy-completion-table sync0-bibtex-reference-keys
+                         (lambda () (sync0-bibtex-parse-keys nil t)))
+  "Completion table for BibTeX reference keys.
+The CDRs of the elements are t for header keys and nil for crossref keys.")
+
+(defun sync0-bibtex-parse-keys (&optional abortable verbose)
+  "Set `bibtex-reference-keys' to the keys used in the whole buffer.
+Find both entry keys and crossref entries.  If ABORTABLE is non-nil abort
+on user input.  If VERBOSE is non-nil give messages about progress.
+Return alist of keys if parsing was completed, `aborted' otherwise.
+If `bibtex-parse-keys-fast' is non-nil, use fast but simplified algorithm
+for parsing BibTeX keys.  If parsing fails, try to set this variable to nil."
+  (if (eq major-mode 'bibtex-mode)
+      (let (ref-keys crossref-keys)
+        (save-excursion
+          (save-match-data
+            (if verbose
+                (bibtex-progress-message
+                 (concat (buffer-name) ": parsing reference keys")))
+            (catch 'userkey
+              (goto-char (point-min))
+              (if bibtex-parse-keys-fast
+                  (let ((case-fold-search t)
+                        (re (concat bibtex-entry-head "\\|"
+                                    ",[ \t\n]*crossref[ \t\n]*=[ \t\n]*"
+                                    "\\(\"[^\"]*\"\\|{[^}]*}\\)[ \t\n]*[,})]")))
+                    (while (re-search-forward re nil t)
+                      (if (and abortable (input-pending-p))
+                          ;; user has aborted by typing a key: return `aborted'
+                          (throw 'userkey 'aborted))
+                      (cond ((match-end 3)
+                             ;; This is a crossref.
+                             (let ((key (buffer-substring-no-properties
+                                         (1+ (match-beginning 3)) (1- (match-end 3)))))
+                               (unless (assoc key crossref-keys)
+                                 (push (list key) crossref-keys))))
+                            ;; only keys of known entries
+                            ((assoc-string (bibtex-type-in-head)
+                                           bibtex-entry-alist t)
+                             ;; This is an entry.
+                             (let ((key (bibtex-key-in-head)))
+                               (unless (assoc key ref-keys)
+                                 (push (cons key t) ref-keys)))))))
+
+                (let (;; ignore @String entries because they are handled
+                      ;; separately by `bibtex-parse-strings'
+                      (bibtex-sort-ignore-string-entries t)
+                      bounds)
+                  (bibtex-map-entries
+                   (lambda (key _beg end)
+                     (if (and abortable
+                              (input-pending-p))
+                         ;; user has aborted by typing a key: return `aborted'
+                         (throw 'userkey 'aborted))
+                     (if verbose (bibtex-progress-message))
+                     (unless (assoc key ref-keys)
+                       (push (cons key t) ref-keys))
+                     (if (and (setq bounds (bibtex-search-forward-field "crossref" end))
+                              (setq key (bibtex-text-in-field-bounds bounds t))
+                              (not (assoc key crossref-keys)))
+                         (push (list key) crossref-keys))))))
+
+              (dolist (key crossref-keys)
+                (unless (assoc (car key) ref-keys) (push key ref-keys)))
+              (if verbose
+                  (bibtex-progress-message 'done))
+              ;; successful operation --> return `bibtex-reference-keys'
+              (setq bibtex-reference-keys ref-keys)))))))
+
+  #+END_SRC 
+** More Syn0 bibtex
+
+(defun sync0-bibtex-list-publishers ()
+ (interactive)
+ (save-excursion
+   (progn 
+    (while (and (re-search-forward "^[ \t]*@" nil nil 1)
+                (re-search-forward "^publisher = " nil nil 1))
+     (let* ((pubstringfull  (progn (looking-at "{.+}")
+                                   (match-string 0)))
+            (pubstring     (substring pubstringfull 1 -1)))
+         (add-to-list 'sync0-bibtex-publisher-list 'pubstring)))
+      (message "%s" sync0-bibtex-publisher-list))))
+
+
+(defun sync0-bibtex-list-publishers ()
+ (interactive)
+ (save-excursion
+   (progn 
+    (while (re-search-forward "^[ \t]*@" nil t 1)
+      (let* ((pubstringfull  (when  (re-search-forward "^publisher = " nil nil 1)
+                                    (looking-at "{.+}")
+                                    (match-string 0)))
+            (pubstring     (substring pubstringfull 1 -1)))
+         (cons pubstring sync0-bibtex-publisher-list)))
+      (message "%s" sync0-bibtex-publisher-list))))
+
+(defun sync0-bibtex-list-publishers ()
+ (interactive)
+ (save-excursion
+   (progn 
+    (while (re-search-forward "^[ \t]*@" nil t 1)
+      (let* ((pubstringfull  (when  (re-search-forward "^publisher = " nil nil 1)
+                                    (looking-at "{.+}")
+                                    (match-string 0)))
+            (pubstring     (substring pubstringfull 1 -1)))
+         (cons pubstring sync0-bibtex-publisher-list)))
+      (message "%s" sync0-bibtex-publisher-list))))
+
+
+(defun sync0-bibtex-list-publishers ()
+ (interactive)
+ (save-excursion
+   (progn 
+    (while (re-search-forward "^publisher = " nil t 1)
+      (let* ((pubstringfull  (progn 
+                                    (looking-at "{.+}")
+                                    (match-string 0)))
+            (pubstring     (substring pubstringfull 1 -1)))
+         (cons pubstring sync0-bibtex-publisher-list)))
+      (message "%s" sync0-bibtex-publisher-list))))
+
+
+
+(defun sync0-bibtex-list-publishers ()
+ (interactive)
+ (save-excursion
+
+   (cl-loop for item = (parsebib-find-next-item)
+            while item do
+    (let* ((pubstringfull (when (re-search-forward "^publisher = " nil nil 1)
+                                (looking-at "{.+}")
+                                (match-string 0)))
+           (pubstring     (substring pubstringfull 1 -1)))
+
+(cl-loop for pubstring in '(fred sue alice joe june)
+              collect name
+              append kids)
+
+(cl-loop for name in '(fred sue alice joe june)
+              for kids in '((bob ken) () () (kris sunshine) ())
+              collect name
+              append kids)
+
+
+(defun sync0-bibtex-list-publishers ()
+ (interactive)
+ (save-excursion
+   (let* ((pubstringfull (progn (re-search-forward "^publisher = {.+}," nil nil 1)
+                                (match-string 0)))
+            (pubstring     (substring pubstringfull 13 -2)))
+      (message "%s" pubstring))))
+
+
+         (push (cons pubstring t) ref-keys)))))))
+         (push (list key) crossref-keys))))
+
+   )))
+
+
+  ;; (goto-char (point-min))
+  (cl-loop with entry = nil
+           for entry-type = (parsebib-find-next-item)
+           while entry-type do
+            (unless 
+             (setq entry (parsebib-read-entry entry-type nil strings))
+             (if entry
+                (puthash (cdr (assoc-string "=key=" entry)) entry hash))))
+    hash))
+
+
+    (re-search-forward "^publisher = ")
+
+(cl-loop for buf in (buffer-list)
+              collect (buffer-file-name buf))
+
+** Exportable time stamps
+#+BEGIN_SRC emacs-lisp
+  (defun sync0-update-timestamp ()
+    "Update current #+DATE timestamp"
+    (interactive)
+    (save-excursion
+      (goto-char (point-min))
+      (let ((regex "[0-9][0-9][0-9][0-9]\/[0-9][0-9]\/[0-9][0-9]")
+            (date (shell-command-to-string "echo -n $(date +'%Y/%m/%d')")))
+        ;; (when (search-forward "#+DATE:" nil nil 1)
+        ;;   (if (progn (forward-char 1)(looking-at regex))
+        ;;       (replace-match date)
+        ;;     (sync0-insert-today-timestamp)))
+        (when (search-forward "Last modified:" nil nil 1)
+          (if (progn (forward-char 1)(looking-at regex))
+              (replace-match date)
+            (sync0-insert-today-timestamp))))))
+
+  ;; (defun sync0-update-timestamp ()
+  ;;   "Update current #+DATE timestamp"
+  ;;   (interactive)
+  ;;   (save-excursion
+  ;;     (goto-char (point-min))
+  ;;     (let ((regex "[0-9][0-9][0-9][0-9]\/[0-9][0-9]\/[0-9][0-9]")
+  ;;           (date (shell-command-to-string "echo -n $(date +'%Y/%m/%d')")))
+  ;;       (when (search-forward "#+DATE:" nil nil 1)
+  ;;         (if (progn (forward-char 1)(looking-at regex))
+  ;;             (replace-match date)
+  ;;           (sync0-insert-today-timestamp)))
+  ;;       (when (search-forward "Last modified:" nil nil 1)
+  ;;         (if (progn (forward-char 1)(looking-at regex))
+  ;;             (replace-match date)
+  ;;           (sync0-insert-today-timestamp))))))
+
+  ;;   (defun sync0-update-timestamp ()
+  ;;     "Update current #+DATE timestamp"
+  ;;     (interactive)
+  ;;     (save-excursion
+  ;;         (goto-char (point-min))
+  ;; (when (re-search-forward "DATE:")
+  ;; (re-search-forward "[0-9]+\/[0-9]+\/[0-9]+")
+  ;; (let ((date (sync0-insert-today-timestamp)))
+  ;; (replace-match date)))))
+
+  (add-hook 'before-save-hook (lambda ()
+                                (when (and (eq major-mode 'org-mode)
+                                           (not (equal buffer-file-name "/home/sync0/Dropbox/research/forschungsbuch.org"))
+                                           (equal default-directory "/home/sync0/Dropbox/research/"))
+                                  (sync0-update-timestamp))))
+
+  #+END_SRC 
 ** Auto update Org Modified Property
 #+BEGIN_SRC emacs-lisp
-      (defun yant/getentryhash ()
-      "Get the hash sum of the text in current entry, except :HASH: and :MODIFIED: property texts."
-      (save-excursion
-        (let* ((beg (point-min))
-           (end (point-max))
-           (full-str (buffer-substring beg end))
-           (str-nohash (if (string-match "^ *:HASH:.+\n" full-str)
-                   (replace-match "" nil nil full-str)
-                 full-str))
-           (str-nohash-nomod (if (string-match "^ *:MODIFIED:.+\n" str-nohash)
-                     (replace-match "" nil nil str-nohash)
-                       str-nohash))
-           (str-nohash-nomod-nopropbeg (if (string-match "^ *:PROPERTIES:\n" str-nohash-nomod)
-                           (replace-match "" nil nil str-nohash-nomod)
-                         str-nohash-nomod))
-           (str-nohash-nomod-nopropbeg-end (if (string-match "^ *:END:\n" str-nohash-nomod-nopropbeg)
-                               (replace-match "" nil nil str-nohash-nomod-nopropbeg)
-                             str-nohash-nomod-nopropbeg)))
-          (sxhash str-nohash-nomod-nopropbeg-end))))
+        (defun yant/getentryhash ()
+        "Get the hash sum of the text in current entry, except :HASH: and :MODIFIED: property texts."
+        (save-excursion
+          (let* ((beg (point-min))
+             (end (point-max))
+             (full-str (buffer-substring beg end))
+             (str-nohash (if (string-match "^ *:HASH:.+\n" full-str)
+                     (replace-match "" nil nil full-str)
+                   full-str))
+             (str-nohash-nomod (if (string-match "^ *:MODIFIED:.+\n" str-nohash)
+                       (replace-match "" nil nil str-nohash)
+                         str-nohash))
+             (str-nohash-nomod-nopropbeg (if (string-match "^ *:PROPERTIES:\n" str-nohash-nomod)
+                             (replace-match "" nil nil str-nohash-nomod)
+                           str-nohash-nomod))
+             (str-nohash-nomod-nopropbeg-end (if (string-match "^ *:END:\n" str-nohash-nomod-nopropbeg)
+                                 (replace-match "" nil nil str-nohash-nomod-nopropbeg)
+                               str-nohash-nomod-nopropbeg)))
+            (sxhash str-nohash-nomod-nopropbeg-end))))
 
-    (defun yant/update-modification-time ()
-      "Set the :MODIFIED: property of the current entry to '%Y/%m/%d' and update :HASH: property."
-(save-excursion
-(goto-char (point-min))
-(progn
-(unless (looking-at "\* .+")
-(org-forward-heading-same-level (point)))
-      (org-set-property "HASH" (format "%s" (yant/getentryhash)))    
-      (org-set-property "MODIFIED" (format-time-string "%Y/%m/%d")))))
+      (defun yant/update-modification-time ()
+        "Set the :MODIFIED: property of the current entry to '%Y/%m/%d' and update :HASH: property."
+  (save-excursion
+  (goto-char (point-min))
+  (progn
+  (unless (looking-at "\* .+")
+  (org-forward-heading-same-level (point)))
+        (org-set-property "HASH" (format "%s" (yant/getentryhash)))    
+        (org-set-property "MODIFIED" (format-time-string "%Y/%m/%d")))))
 
-    ;; (defun yant/skip-nonmodified ()
-    ;;   "Skip org entries, which were not modified according to the :HASH: property"
-    ;;   (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
-    ;;     (if (string= (org-entry-get (point) "HASH" nil) (format "%s" (yant/getentryhash)))
-    ;;     next-headline
-    ;;       nil)))
+      ;; (defun yant/skip-nonmodified ()
+      ;;   "Skip org entries, which were not modified according to the :HASH: property"
+      ;;   (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
+      ;;     (if (string= (org-entry-get (point) "HASH" nil) (format "%s" (yant/getentryhash)))
+      ;;     next-headline
+      ;;       nil)))
 
-    ;; (add-hook 'before-save-hook (lambda ()
-    ;;                   (when (and (eq major-mode 'org-mode)
-    ;;                     (not (equal buffer-file-name "/home/sync0/Dropbox/research/master.org"))
-    ;;                    (equal default-directory "/home/sync0/Dropbox/research/"))
-    ;;                 (org-map-entries #'yant/update-modification-time nil 'file #'yant/skip-nonmodified))))
+      ;; (add-hook 'before-save-hook (lambda ()
+      ;;                   (when (and (eq major-mode 'org-mode)
+      ;;                     (not (equal buffer-file-name "/home/sync0/Dropbox/research/master.org"))
+      ;;                    (equal default-directory "/home/sync0/Dropbox/research/"))
+      ;;                 (org-map-entries #'yant/update-modification-time nil 'file #'yant/skip-nonmodified))))
 
-    (add-hook 'before-save-hook (lambda ()
-                      (when (and (eq major-mode 'org-mode)
-                        (not (equal buffer-file-name "/home/sync0/Dropbox/research/master.org"))
-                       (equal default-directory "/home/sync0/Dropbox/research/"))
-  (yant/update-modification-time))))
 
-                    ;; (org-map-entries #'yant/update-modification-time "+Custom_ID" 'file))))
+    ;;   (add-hook 'before-save-hook (lambda ()
+    ;;                     (when (and (eq major-mode 'org-mode)
+    ;;                       (not (equal buffer-file-name "/home/sync0/Dropbox/research/forschungsbuch/.org"))
+    ;;                      (equal default-directory "/home/sync0/Dropbox/research/"))
+    ;; (yant/update-modification-time))))
 
   #+END_SRC 
 ** Useful Key Bindings

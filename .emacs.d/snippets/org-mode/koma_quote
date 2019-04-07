@@ -2,7 +2,7 @@
 # name: koma_quote
 # key: quote 
 # --
-\begin{quote}
-$1 
-\end{quote}
+#+BEGIN_QUOTE
+$1 [[parencite:${2:$$(unless yas-modified-p (yas-choose-value bibtex-reference-keys))}][${3:$4p. ${5:`(sync0-last-cited-page)`}, par. ${6:1}}]]
+#+END_QUOTE
 $0
