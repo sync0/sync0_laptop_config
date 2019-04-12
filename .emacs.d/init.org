@@ -39,7 +39,6 @@ them here for ease of finding.
    #+END_SRC 
 ** Package Management
 These settings configure Emacs package manager and the package repositories.
-
    #+BEGIN_SRC emacs-lisp
      ;; Initialize Emac's package manager.
      (package-initialize)
@@ -56,18 +55,18 @@ These settings configure Emacs package manager and the package repositories.
  [[https://github.com/jwiegley][jwiegley's]] ~use-package~ macro simplifies package configuration in the ~.emacs~
  startup file for faster startup and easier organization.
  #+BEGIN_SRC emacs-lisp
- ;; Verify that "use-package" is installed.
+   ;; Verify that "use-package" is installed.
    (unless (package-installed-p 'use-package)
- ;; Refresh contents of package list.
+     ;; Refresh contents of package list.
      (package-refresh-contents)
- ;; Install "use-package."
+     ;; Install "use-package."
      (package-install 'use-package))
 
    (setq use-package-verbose t)
 
- ;; Activate "use-package." 
+   ;; Activate "use-package." 
    (require 'use-package)
- ;; Necessary to allow use-package to bind keys through ":bind".
+   ;; Necessary to allow use-package to bind keys through ":bind".
    (require 'bind-key)
  #+END_SRC 
 ** General Settings
@@ -75,7 +74,6 @@ These settings configure Emacs package manager and the package repositories.
  The following code changes the Emacs welcome message in the ~scratch~
  buffer. I use a fragment from the chapter "Where I Lived, and What I Lived
  for" from Thoreau's /Walden, or, Life in the Woods/ (1854). 
-
  #+BEGIN_SRC emacs-lisp
    (setq initial-scratch-message ";;
    ;; 
@@ -105,32 +103,30 @@ These settings configure Emacs package manager and the package repositories.
  #+END_SRC 
 *** Mode Line
   #+BEGIN_SRC emacs-lisp
-            ;; Display time in modeline.
-            (setq display-time-string-forms
-                  '((propertize (format-time-string " %H:%M " now) 'face 'bold)))
-            ;; (setq display-time-format "%I:%M:%S")
+    ;; Display time in modeline.
+    (setq display-time-string-forms
+          '((propertize (format-time-string " %H:%M " now) 'face 'bold)))
+    (display-time-mode 1)
 
-            (display-time-mode 1)
     ;; (display-battery-mode 1)
+    (use-package fancy-battery
+      :hook
+      (after-init . fancy-battery-mode))
 
-            (use-package fancy-battery
-              :hook
-              (after-init . fancy-battery-mode))
+    (setq    inhibit-splash-screen t
+             echo-keystrokes 0.1
+             auto-revert-interval 1)
 
-              (setq 
-        ;; mode-line-format nil
-                    inhibit-splash-screen t
-                    echo-keystrokes 0.1
-                    auto-revert-interval 1)
+    ;; mode-line-format nil
 
-              ;; Workspace keybindgs
-              (defun toggle-mode-line () 
-                "toggles the modeline on and off"
-                (interactive) 
-                (setq mode-line-format
-                      (if (equal mode-line-format nil)
-                          (default-value 'mode-line-format)) )
-                (redraw-display))
+    ;; Workspace keybindgs
+    (defun toggle-mode-line () 
+      "toggles the modeline on and off"
+      (interactive) 
+      (setq mode-line-format
+            (if (equal mode-line-format nil)
+                (default-value 'mode-line-format)) )
+      (redraw-display))
     #+END_SRC 
 *** Line numbers
 After version 26, Emacs has native support for line numbers. 
@@ -397,12 +393,6 @@ that I’ve copied from the web.
   (setq save-abbrevs t              
         save-abbrevs 'silently)
 
-  ;; automatically turn on abbrev-mode for the following modes
-  ;; (dolist (hook '(
-  ;;                 ;; emacs-lisp-mode-hook
-  ;;                 text-mode-hook))
-  ;;   (add-hook hook (lambda () (abbrev-mode 1))))
-
   ;; try emacs to accept ' as a word constituent. 
   (setq dabbrev-abbrev-char-regexp  "\\sw")
 #+END_SRC
@@ -553,7 +543,7 @@ sEnter expansion: ")
   (progn
       ;; (load-theme 'doom-one t)
       ;; (load-theme 'doom-one-light t)
-      (load-theme 'doom-vibrant t)
+      ;; (load-theme 'doom-vibrant t)
       ;; (load-theme 'doom-city-lights t)
       ;; (load-theme 'doom-dracula t)
       ;; (load-theme 'doom-Iosvkem t)
@@ -561,11 +551,11 @@ sEnter expansion: ")
      (load-theme 'doom-nord t)
      ;; (load-theme 'doom-nord-light t)
      ;; (load-theme 'doom-opera t)
-     (load-theme 'doom-opera-light t)
+     ;; (load-theme 'doom-opera-light t)
       (load-theme 'doom-nova t)
       ;; (load-theme 'doom-peacock t)
       (load-theme 'doom-solarized-light t)
-      (load-theme 'doom-sourcerer t)
+      ;; (load-theme 'doom-sourcerer t)
     (load-theme 'doom-spacegrey t))
       ;; (load-theme 'doom-tomorrow-night t)
       ;; (load-theme 'doom-tomorrow-day t))
@@ -586,7 +576,8 @@ sEnter expansion: ")
          ;;  '(doom-spacegrey doom-nova doom-nord doom-solarized-light))
          ;;  '(doom-spacegrey doom-nova doom-solarized-light))
           ;; '(doom-one doom-one-light doom-vibrant doom-city-lights doom-Iosvkem doom-molokai doom-nord doom-nord-light doom-opera doom-opera-light doom-nova doom-peacock doom-solarized-light doom-sourcerer doom-spacegrey doom-tomorrow-night doom-tomorrow-day))
-          '(doom-vibrant doom-nord doom-opera-light doom-nova doom-solarized-light doom-sourcerer doom-spacegrey))
+          ;; '(doom-vibrant doom-nord doom-opera-light doom-nova doom-solarized-light doom-sourcerer doom-spacegrey))
+          '(doom-nord doom-nova doom-solarized-light doom-spacegrey))
            ;; '(doom-spacegrey doom-solarized-light))
      :config (cycle-themes-mode))
 #+END_SRC 
@@ -2391,6 +2382,7 @@ Last modified:
 
 
 \\printbibliography[title=bibliographie,heading=subbibliography]
+# \\printbibliography[title=references]
 # \\printbibliography[title=bibliographie]"
      )
     :config
@@ -2690,12 +2682,15 @@ Last modified:
                    latex-mode
                    LaTeX-mode
                    )
-    ;; (sp-local-pair "`" "'"
-    ;;                :actions '(:rem autoskip)
-    ;;                :skip-match 'sp-latex-skip-match-apostrophe
-    ;;                :unless '(sp-latex-point-after-backslash))
+
+    (sp-local-pair "`" "'"
+                   ;; :actions '(:rem autoskip)
+                   ;; :skip-match 'sp-latex-skip-match-apostrophe
+                   :unless '(sp-latex-point-after-backslash))
+
     ;; math modes, yay.  The :actions are provided automatically if
     ;; these pairs do not have global definitions.
+
     (sp-local-pair "$" "$")
     (sp-local-pair "\\[" "\\]"
                    :unless '(sp-latex-point-after-backslash))
@@ -3676,6 +3671,18 @@ abort completely with `C-g'."
         (when (search-forward "#+CREATOR:" nil nil 1)
           (forward-char 1)
           (thing-at-point 'word 'no-properties))))
+
+    (defun sync0-print-bibtex-key-two ()
+      "Print the bibtex key of the document"
+(if (progn (save-excursion 
+         (goto-char (point-min))
+        (re-search-forward "#\\+CREATOR: \\(.+\\)" nil t 1)))
+          (match-string 1)
+(progn (save-excursion
+        (when 
+            (re-search-backward "cite\\[.*\\]{\\(.+\\)}" nil t 1)
+          (match-string 1))))))
+
 
     ;;   (defun sync0-search-bibtex-key ()
     ;;     "Print the bibtex key of the document"

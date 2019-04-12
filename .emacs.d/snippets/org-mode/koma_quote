@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: koma_quote
-# key: quote 
+# key: kquote 
 # --
 #+BEGIN_QUOTE
 $1 [[parencite:${2:$$(unless yas-modified-p (yas-choose-value bibtex-reference-keys))}][${3:$4p. ${5:`(sync0-last-cited-page)`}, par. ${6:1}}]]
