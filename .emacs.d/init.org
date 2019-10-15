@@ -194,7 +194,7 @@ Configure window dividers.
    Define user information.
  #+BEGIN_SRC emacs-lisp
    (setq user-full-name "Carlos Alberto Rivera Carreño"
-         user-mail-address "cantorlunae@gmail.com")
+         user-mail-address "carc.sync0@gmail.com")
  #+END_SRC
 
  Configure bookmarks.  
@@ -272,6 +272,8 @@ Other settings.
 ;; Don't resize frames implicitly.
        frame-inhibit-implied-resize t
        highlight-nonselected-windows nil
+;; Don't show the "Welcome to GNU Emacs ..." at startup
+       inhibit-startup-screen t
        image-animate-loop t)
  #+END_SRC
 ** 完 Faces & text
@@ -380,7 +382,7 @@ Configure Hooks.
     ;; Don't create lockfiles.
     create-lockfiles nil) 
  #+END_SRC
-* 無 Sync0 Functions
+* 無 Pre-package Functions
 ** Replace smart quotes with straight quotes 
 Replace smart quotes with straight quotes so that spell check can recognize
 words with contractions like “don’t” and “can’t.” For when I paste text in
@@ -476,6 +478,7 @@ that I’ve copied from the web.
      abbrev-file-name "~/.emacs.d/abbrev_defs"
      ;; Save abbrevs when files are saved.
      save-abbrevs t              
+     ;; Don't notify when abbrevs are saved.
      save-abbrevs 'silently
      ;; Accept ' as a word constituent. 
      dabbrev-abbrev-char-regexp  "\\sw")
@@ -495,13 +498,13 @@ that I’ve copied from the web.
     (setq-default abbrev-mode t)
 
     ;; Add abbrevs 
-    (defun sync0-define-local-abbrev (x y)
+    (defun sync0-define-local-abbrev (name expansion)
       "Defines a new abbrev for current local abbrev table."
-      (interactive "sEnter abbrev: sEnter expansion: ")
-      (when (and x y (not (equal x y)))
-        (define-abbrev local-abbrev-table x y)
+      (interactive "sEnter abbrev:\nsEnter expansion:")
+      (when (and name expansion (not (equal name expansion)))
+        (define-abbrev local-abbrev-table name expansion)
         (message "\"%s\" now expands to \"%s\" %sally"
-                 x y "loc")))
+                 name expansion "loc")))
 
     ;; Auto-update abbrev table on save.
     (add-hook 'after-save-hook (lambda ()
@@ -852,9 +855,7 @@ A packate that displays a list of recent files.
   ;; specify agenda files
   (setq org-agenda-files (list "~/Dropbox/org/gcal.org"
                                "~/Dropbox/org/unterrichte.org"
-                               "~/Dropbox/org/refile-beorg.org"
                                "~/Dropbox/org/ereignisse.org"
-                               "~/Dropbox/org/jahrestage.org"
                                ;; "~/Dropbox/org/gewohnheiten.org"
                                ;; "~/Dropbox/paris_1/m2"
                                ;; "~/Dropbox/paris_1/memoire"
@@ -1375,22 +1376,23 @@ Moreover, this method can be used to create custom LaTeX classes.
       '((heading . nil)
        (plain-list-item . nil)))
 
-(defun call-rebinding-org-blank-behaviour (fn)
+(defun sync0-call-rebinding-org-blank-behaviour (fn)
   (let ((org-blank-before-new-entry
          (copy-tree org-blank-before-new-entry)))
     (when (org-at-heading-p)
       (rplacd (assoc 'heading org-blank-before-new-entry) nil))
     (call-interactively fn)))
 
-(defun smart-org-meta-return-dwim ()
+(defun sync0-org-meta-return-dwim ()
   (interactive)
-  (call-rebinding-org-blank-behaviour 'org-meta-return))
+  (sync0-call-rebinding-org-blank-behaviour 'org-meta-return))
 
-(defun smart-org-insert-todo-heading-dwim ()
+(defun sync0-org-insert-todo-heading-dwim ()
   (interactive)
-  (call-rebinding-org-blank-behaviour 'org-insert-todo-heading))
+  (sync0-call-rebinding-org-blank-behaviour 'org-insert-todo-heading))
 
-(define-key org-mode-map (kbd "M-<return>") 'smart-org-meta-return-dwim)
+(define-key org-mode-map (kbd "M-<return>") 'sync0-org-meta-return-dwim)
+(define-key org-mode-map (kbd "M-S-<return>") 'sync0-org-insert-todo-heading-dwim)
 #+END_SRC
 *** Change default apps 
 #+BEGIN_SRC emacs-lisp
@@ -1456,13 +1458,11 @@ Moreover, this method can be used to create custom LaTeX classes.
     (setq org-mu4e-link-query-in-headers-mode nil))
   #+END_SRC 
 ** 完 ox-extra
-#+BEGIN_SRC emacs-lisp
   ;; (use-package org-plus-contrib :after org)
   ;; (use-package ox :after org)
   (use-package ox-extra :after org 
   :config
   (ox-extras-activate '(ignore-headlines)))
-  #+END_SRC 
 ** 待 evil 
    #+BEGIN_SRC emacs-lisp
      (use-package evil  :after (org ivy)
@@ -1984,7 +1984,7 @@ Moreover, this method can be used to create custom LaTeX classes.
 #+AUTHOR: ${author-or-editor}
 #+INTERLEAVE_PDF: ${file}
 #+SETUPFILE: \"~/Dropbox/typography/article_two_column.org\" 
-#+INCLUDE: \"~/Dropbox/typography/layouts.org::*Article: Two Column\" :only-contents t
+#+INCLUDE: \"~/Dropbox/typography/layouts.org::*Research: Two Column\" :only-contents t
 #+INCLUDE: \"~/Dropbox/typography/settings.org::*English\" :only-contents t
 
 #+BEGIN_modified
@@ -2379,16 +2379,23 @@ Last modified:
   #+END_SRC 
 ** 完 org-gcal
 #+BEGIN_SRC emacs-lisp
-  (use-package org-gcal :defer t :after org 
+  (use-package org-gcal :after org 
     :init
-    (setq org-gcal-client-id "478680381907-rdq488vt3kdutlt1a32sajihog95iuo2.apps.googleusercontent.com"
-          org-gcal-client-secret "EsCu2Ikaga6TIa0KVpZ9jRTS"
-          org-gcal-file-alist '(("cantorlunae@gmail.com" .  "~/Dropbox/org/gcal.org")
-                                ("uv89i0rlnv503i17nedvmo95f8@group.calendar.google.com" . "~/Dropbox/org/unterrichte.org")
-                                ("c83agj55j9uipbjdd2mmp7h9v8@group.calendar.google.com" . "~/Dropbox/org/ereignisse.org")
-                                ;; ("ekk7658f3jm5fh1mea2sdnu8vc@group.calendar.google.com" . "~/Dropbox/org/gewohnheiten.org")
-                                ("#contacts@group.v.calendar.google.com" . "~/Dropbox/org/jahrestage.org")
-                                ;;("#contacts@group.v.calendar.google.com" . "~/Dropbox/org/jahrestage.org")
+    ;; (setq org-gcal-client-id "478680381907-rdq488vt3kdutlt1a32sajihog95iuo2.apps.googleusercontent.com"
+    ;;       org-gcal-client-secret "EsCu2Ikaga6TIa0KVpZ9jRTS"
+    ;;       org-gcal-file-alist '(("cantorlunae@gmail.com" .  "~/Dropbox/org/gcal.org")
+    ;;                             ("uv89i0rlnv503i17nedvmo95f8@group.calendar.google.com" . "~/Dropbox/org/unterrichte.org")
+    ;;                             ("c83agj55j9uipbjdd2mmp7h9v8@group.calendar.google.com" . "~/Dropbox/org/ereignisse.org")
+    ;;                             ;; ("ekk7658f3jm5fh1mea2sdnu8vc@group.calendar.google.com" . "~/Dropbox/org/gewohnheiten.org")
+    ;;                             ("#contacts@group.v.calendar.google.com" . "~/Dropbox/org/jahrestage.org")
+    ;;                             ;;("#contacts@group.v.calendar.google.com" . "~/Dropbox/org/jahrestage.org")
+    ;;                             ))
+    (setq org-gcal-client-id "290464566541-1u8lseabker9nn607poqqijr3ehctk6a.apps.googleusercontent.com"
+          org-gcal-client-secret "6hyt98lbk4qrK3481DwxDMos"
+          org-gcal-file-alist '(("carc.sync0@gmail.com" .  "~/Dropbox/org/gcal.org")
+                                ("5iudo90h5e3nabbubvsj1lov4o@group.calendar.google.com" . "~/Dropbox/org/unterrichte.org")
+                                ("p9vu3a782nahsma6ud1rdg1qpc@group.calendar.google.com" . "~/Dropbox/org/ereignisse.org")
+                                ("vbnn8eksqpqun2mbtdlknhh9uk@group.calendar.google.com" . "~/Dropbox/org/gewohnheiten.org")
                                 ))
     :config
     (setq org-gcal-auto-archive nil))
@@ -2777,17 +2784,17 @@ Last modified:
   #+END_SRC 
 ** 完 desktop-save mode
 #+BEGIN_SRC emacs-lisp
-  (use-package desktop
-    :config
-    (setq desktop-auto-save-timeout 300
-          desktop-restore-reuses-frames nil)
-    (desktop-save-mode 1))
+  ;; (use-package desktop
+  ;;   :config
+  ;;   (setq desktop-auto-save-timeout 300
+  ;;         desktop-restore-reuses-frames nil)
+  ;;   (desktop-save-mode 1))
   #+END_SRC 
 ** 完 saveplace
 #+BEGIN_SRC emacs-lisp
-  (use-package saveplace
-    :config 
-    (setq-default save-place t))
+  ;; (use-package saveplace
+  ;;   :config 
+  ;;   (setq-default save-place t))
   #+END_SRC 
 ** 待 pdf-tools
 #+BEGIN_SRC emacs-lisp
@@ -2862,7 +2869,7 @@ Last modified:
     (setq doc-view-continuous t))
   #+END_SRC 
 * 無 Custom Tweaks
-** Sync0 Hydras
+** Sync0 hydras
 #+BEGIN_SRC emacs-lisp
  (defhydra hydra-org-clock (:color blue :hint nil)
    "
@@ -2904,6 +2911,11 @@ Clock   In/out^     ^Edit^   ^Summary     (_?_)
 
         (add-hook 'cycle-themes-after-cycle-hook #'sync0-change-sentence-highlight-color)))
   #+END_SRC 
+** Definitions
+#+BEGIN_SRC emacs-lisp
+(setq sync0-english-parts-speech '("noun" "intransitive verb" "transitive verb" "verb" "conjunction" "adjective" "adverb"))
+(setq sync0-french-parts-speech '("nom féminin" "nom masculin" "verbe intransitif" "verbe transitif" "verbe" "conjonction" "adjectif" "adverbe"))
+  #+END_SRC 
 ** Date
 #+BEGIN_SRC emacs-lisp
   (defun insert-current-day () 
@@ -2934,7 +2946,21 @@ Clock   In/out^     ^Edit^   ^Summary     (_?_)
     (while (< weeky 32)
       (insert (format  "** \ordinalnum{%s} Week \n" weeky))
       (setq weeky (1+ weeky)))))
-#+END_SRC
+
+;; Some functions for sync0-journal
+
+  (defun sync0-journal-today-headline () 
+  "Insert a headline with today's date in the DD/MM/YYYY format"
+  (interactive)
+  (insert
+   (concat "*** [/] " (shell-command-to-string "echo -n $(date +'%A')") " (" (shell-command-to-string "echo -n $(date +'%d/%m/%Y')") ")")))
+
+  (defun sync0-journal-weekly-evaluation () 
+  "Insert a headline with today's date in the DD/MM/YYYY format"
+  (interactive)
+  (insert
+   (concat "*** [/] Weekly Evaluation " "(" (shell-command-to-string "echo -n $(date +'%d/%m/%Y')") ")")))
+#+END_SRC 
 ** Automatic abbrevs integration with ispell
 #+BEGIN_SRC emacs-lisp
 ;;(define-key ctl-x-map "\C-i"
@@ -3004,7 +3030,7 @@ abort completely with `C-g'."
   (global-set-key (kbd "M-#") 'sync0-lookup-word)
   (global-set-key (kbd "M-$") 'sync0-lookup-conjugation)
   #+END_SRC 
-** Yasnippet Quote 
+** Yasnippet quote 
 #+BEGIN_SRC emacs-lisp
   (defun sync0-print-bibtex-key ()
     "Print the bibtex key of the document"
@@ -3263,7 +3289,7 @@ abort completely with `C-g'."
   ;;                (downlastname  (downcase lastname)))
   ;;           (message "%s" downlastname))))))
   #+END_SRC 
-** Sync0 Bibtex
+** Sync0 bibtex
 #+BEGIN_SRC emacs-lisp
         (defun sync0-bibtex-next-key ()
         "Print the bibtex key of the document"
