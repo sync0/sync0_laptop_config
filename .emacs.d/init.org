@@ -13,10 +13,22 @@ The functions prefixed by ~sync0~ are not necessarily my creations; this is
 just the placeholder I use to distinguish them from Emacs and other
 packages' native functions.
 
+Since I am such a lousy programmer, many parts of this configuration
+have been borrowed from more proficient programmers. Although I am
+trying hard to tidy up the documentation for this file, my limited
+programming literacy prevents me from better explaining the
+functioning of borrowed code sections. Therefore, in certain packages
+that I rarely use, there are vast passages of orphan and undocumented
+code. Furthermore, since writing documentation is so time consuming, I
+don't update it frequently.
+
 Should you have any suggestions for improving the code, I would greatly
 appreciate if you sent me an email.
 ** 完 Organization
-I organize all my emacs configuration in ~init.org~. 
+I configure Emacs with a single file: ~init.org~. This is the file you
+are reading. The only thing not included in this file are snippets,
+Github packages, and the like. Those you have to find yourself, but,
+where possible, I have tried to provide links. 
 ** 完 Tips
 Before presenting the code, I have compiled a few tips that you might find
 useful for setting up Emacs: 
@@ -741,17 +753,6 @@ A packate that displays a list of recent files.
     (epa-file-enable))
   #+END_SRC 
 ** 完 org 
-Even though, by default, Emacs Org mode has the export keyword
-~LATEX_COMPILER:~ to choose among the different engines (pdflatex, xelatex, or
-lualatex), I had to tweek the settings to run LaTeX through ~latexmk~ for
-biber to work properly with BibLaTeX. In layman English, the following
-configuration is necessary for automatic bibliography management to work
-properly when exporting org documents to LaTeX.
-
-BTW, you can assign "pdf" in above variables if you prefer PDF format
-for page breaks add this to org files
-# #+ODT: <text:p text:style-name="PageBreak"/>
-
 #+BEGIN_SRC emacs-lisp
   (use-package org 
     :init
@@ -1244,50 +1245,60 @@ set. Currently I get an empty list with this setting for the variable:
 *** 完 org-clock
 #+BEGIN_SRC emacs-lisp
   (use-package org-clock :after (org org-agenda)
-    :init
+    :custom
+    ;; Set default column view headings: Task Priority Effort Clock_Summary
+    (org-columns-default-format "%1PRIORITY %2TODO %DEADLINE %60ITEM(Task) %5EFFORT(Effort){:} %5CLOCKSUM")
+    (org-agenda-clockreport-parameter-plist
+     '(:link t :maxlevel 6 :fileskip0 t :compact t :narrow 60 :score 0))
+    ;; Agenda clock report parameters
+    ;; global Effort estimate values
+    ;;        1    2    3    4    5    6    7    8    9    0
+    ;; These are the hotkeys ^
+    (org-global-properties  '(("Effort_ALL" . "1:00 2:00 4:00 5:00 8:00 10:00 12:00 15:00 20:00 24:00")))
+    ;; If idle for more than 15 minutes, resolve the things by asking what to do
+    ;; with the clock time
+    (org-clock-idle-time 5)
+    ;; Show lot of clocking history so it's easy to pick items off the `C-c I` list
+    (org-clock-history-length 23)
+    ;; Save the running clock and all clock history when exiting Emacs, load it on startup
+    (org-clock-persist 'history)
+    ;; org-clock-persist t
+    ;; Resume clocking task on clock-in if the clock is open
+    (org-clock-in-resume t)
+    ;; Do not prompt to resume an active clock, just resume it
+    (org-clock-persist-query-resume nil)
+    ;; Change tasks to whatever when clocking in
+    (org-clock-in-switch-to-state "中")
+    ;; Save clock data and state changes and notes in the LOGBOOK drawer
+    (org-clock-into-drawer t)
+    ;; Sometimes I change tasks I'm clocking quickly - this removes clocked tasks
+    ;; with 0:00 duration
+    (org-clock-out-remove-zero-time-clocks t)
+    ;; Clock out when moving task to a done state
+    (org-clock-out-when-done t)
+    ;; Enable auto clock resolution for finding open clocks
+    (org-clock-auto-clock-resolution (quote when-no-clock-is-running))
+    ;; Include current clocking task in clock reports
+    (org-clock-report-include-clocking-task t)
+    ;; use pretty things for the clocktable
+    (org-pretty-entities t)
+    :config
     (defun sync0-org-clock-in ()
       (interactive)
       (org-clock-in '(4)))
-    :config
-    ;; Set default column view headings: Task Priority Effort Clock_Summary
-    ;; (setq org-columns-default-format "%TAGS %ITEM(Task) %1PRIORITY %DEADLINE %SCHEDULED %10CLOCKSUM")
-    ;; (setq org-columns-default-format "%50ITEM(Task) %10Effort(Effort){:} %10CLOCKSUM %16TIMESTAMP_IA")
-    ;; (setq org-columns-default-format "%50ITEM(Task) %2PRIORITY %10Effort(Effort){:} %10CLOCKSUM")
-    (setq org-columns-default-format "%1PRIORITY %2TODO %DEADLINE %60ITEM(Task) %5EFFORT(Effort){:} %5CLOCKSUM"
-          org-agenda-clockreport-parameter-plist
-          '(:link t :maxlevel 6 :fileskip0 t :compact t :narrow 60 :score 0)
-          ;; Agenda clock report parameters
-          ;; global Effort estimate values
-          ;;        1    2    3    4    5    6    7    8    9    0
-          ;; These are the hotkeys ^
-          org-global-properties  '(("Effort_ALL" . "1:00 2:00 4:00 5:00 8:00 10:00 12:00 15:00 20:00 24:00"))
-          ;; If idle for more than 15 minutes, resolve the things by asking what to do
-          ;; with the clock time
-          org-clock-idle-time 5
-          ;; Show lot of clocking history so it's easy to pick items off the `C-c I` list
-          org-clock-history-length 23
-          ;; Save the running clock and all clock history when exiting Emacs, load it on startup
-          org-clock-persist 'history
-          ;; org-clock-persist t
-          ;; Resume clocking task on clock-in if the clock is open
-          org-clock-in-resume t
-          ;; Do not prompt to resume an active clock, just resume it
-          org-clock-persist-query-resume nil
-          ;; Change tasks to whatever when clocking in
-          org-clock-in-switch-to-state "中"
-          ;; Save clock data and state changes and notes in the LOGBOOK drawer
-          org-clock-into-drawer t
-          ;; Sometimes I change tasks I'm clocking quickly - this removes clocked tasks
-          ;; with 0:00 duration
-          org-clock-out-remove-zero-time-clocks t
-          ;; Clock out when moving task to a done state
-          org-clock-out-when-done t
-          ;; Enable auto clock resolution for finding open clocks
-          org-clock-auto-clock-resolution (quote when-no-clock-is-running)
-          ;; Include current clocking task in clock reports
-          org-clock-report-include-clocking-task t
-          ;; use pretty things for the clocktable
-          org-pretty-entities t)
+    ;; This function was taken from Sacha Chua. 
+    ;; Display words typed and minutes spent in an org subtree.
+    (defun sync0-org-entry-word-count ()
+      (interactive)
+      (save-restriction
+        (save-excursion
+          (org-narrow-to-subtree)
+          (goto-char (point-min))
+          (let* ((words (count-words-region (point-min) (point-max)))
+                 (minutes (org-clock-sum-current-item))
+                 (wpm (/ words minutes)))
+            (message "WPM: %d (words: %d, minutes: %d)" wpm words minutes)
+            (kill-new (number-to-string wpm))))))
 
     ;; Resume clocking task when emacs is restarted
     (org-clock-persistence-insinuate)
@@ -1296,18 +1307,21 @@ set. Currently I get an empty list with this setting for the variable:
            ("C-c O" . org-clock-out)))
 #+END_SRC 
 *** 完 ox-latex
+Even though, by default, Emacs Org mode has the export keyword
+~LATEX_COMPILER:~ to choose among the different engines (pdflatex, xelatex, or
+lualatex), I had to tweek the settings to run LaTeX through ~latexmk~ for
+biber to work properly with BibLaTeX. In layman English, the following
+configuration is necessary for automatic bibliography management to work
+properly when exporting org documents to LaTeX.
+
+BTW, you can assign "pdf" in above variables if you prefer PDF format
+for page breaks add this to org files
+# #+ODT: <text:p text:style-name="PageBreak"/>
+
 #+BEGIN_SRC emacs-lisp
   (use-package ox-latex :after org
     ;; :defines (org-latex-classes org-export-exclude-tags)
-    :init
 
-    (defun sync0-latex-and-beamer-export ()
-      "Export current org file with beamer if it has beamer as latex class."
-      (interactive)
-      (when (equal major-mode 'org-mode) 
-        (if (string-match "LATEX_CLASS: beamer" (buffer-string))
-            (org-beamer-export-to-pdf)
-          (org-latex-export-to-pdf))))
     :custom
     ;; Export references (to tables, graphics, etc.) properly, evaluating the +NAME property. 
     (org-latex-prefer-user-labels t)
@@ -1328,6 +1342,15 @@ set. Currently I get an empty list with this setting for the variable:
     (org-odt-preferred-output-format "doc")
     (org-latex-logfiles-extensions (quote ("lof" "lot" "tex~" "idx" "out" "toc" "nav" "snm" "vrb" "dvi" "fdb_latexmk" "blg" "brf" "fls" "entoc" "ps" "spl" "run.xml")))
     :config
+
+    (defun sync0-latex-and-beamer-export ()
+      "Export current org file with beamer if it has beamer as latex class."
+      (interactive)
+      (when (equal major-mode 'org-mode) 
+        (if (string-match "LATEX_CLASS: beamer" (buffer-string))
+            (org-beamer-export-to-pdf)
+          (org-latex-export-to-pdf))))
+
     ;; (setq org-latex-logfiles-extensions (quote ("lof" "lot" "tex~" "idx" "out" "toc" "nav" "snm" "vrb" "dvi" "fdb_latexmk" "blg" "brf" "fls" "entoc" "ps" "spl" "run.xml")))
 
     ;; Set tags to excluce from export. 
@@ -1371,7 +1394,9 @@ set. Currently I get an empty list with this setting for the variable:
                                       ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
                                       ("\\paragraph{%s}" . "\\paragraph*{%s}")
                                       ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-    :bind (:map org-mode-map ("M-p" . sync0-latex-and-beamer-export)))
+    :bind 
+(:map org-mode-map 
+("M-p" . sync0-latex-and-beamer-export)))
 #+END_SRC 
 *** 完 org-bullets
 #+BEGIN_SRC emacs-lisp
@@ -1399,6 +1424,7 @@ set. Currently I get an empty list with this setting for the variable:
 #+BEGIN_SRC emacs-lisp
   (use-package org-ref :after (org ivy bibtex ivy-bibtex)
 ;;    :init 
+:functions (org-ref-find-bibliography org-ref-get-bibtex-key-and-file)
     :custom
     (reftex-default-bibliography '("~/Dropbox/research/bibliography.bib"))
     ;; see org-ref for use of these variables
@@ -1451,17 +1477,18 @@ set. Currently I get an empty list with this setting for the variable:
 #+END_SRC 
 *** 完 org-gcal
 #+BEGIN_SRC emacs-lisp
-  (use-package org-gcal :after org 
-    :init
-    (setq org-gcal-client-id "290464566541-1u8lseabker9nn607poqqijr3ehctk6a.apps.googleusercontent.com"
-          org-gcal-client-secret "6hyt98lbk4qrK3481DwxDMos"
-          org-gcal-file-alist '(("carc.sync0@gmail.com" .  "~/Dropbox/org/gcal.org")
-                                ("5iudo90h5e3nabbubvsj1lov4o@group.calendar.google.com" . "~/Dropbox/org/unterrichte.org")
-                                ("p9vu3a782nahsma6ud1rdg1qpc@group.calendar.google.com" . "~/Dropbox/org/ereignisse.org")
-                                ("vbnn8eksqpqun2mbtdlknhh9uk@group.calendar.google.com" . "~/Dropbox/org/gewohnheiten.org")
-                                ))
-    :custom
-    (org-gcal-auto-archive nil))
+    (use-package org-gcal 
+      :after (org simple-secrets)
+      :config
+      (setq org-gcal-client-id (secret-lookup "sync0-gcal-client-id")
+            org-gcal-client-secret (secret-lookup "sync0-gcal-client-secret")
+            org-gcal-file-alist '(("carc.sync0@gmail.com" .  "~/Dropbox/org/gcal.org")
+                                  ("5iudo90h5e3nabbubvsj1lov4o@group.calendar.google.com" . "~/Dropbox/org/unterrichte.org")
+                                  ("p9vu3a782nahsma6ud1rdg1qpc@group.calendar.google.com" . "~/Dropbox/org/ereignisse.org")
+                                  ("vbnn8eksqpqun2mbtdlknhh9uk@group.calendar.google.com" . "~/Dropbox/org/gewohnheiten.org")
+                                  ))
+      :custom
+      (org-gcal-auto-archive nil))
 #+END_SRC 
 *** 完 org-crypt
 #+BEGIN_SRC emacs-lisp
@@ -2328,8 +2355,8 @@ set. Currently I get an empty list with this setting for the variable:
     :if window-system
     :config (setq-default powerline-default-separator 'nil))
   #+END_SRC 
-** Foreign languages
-*** Foreign language setup
+** foreign languages
+*** setup
 #+BEGIN_SRC emacs-lisp
     ;; (defun sync0-toggle-off-input-method ()
     ;;   (interactive)
@@ -2366,7 +2393,7 @@ set. Currently I get an empty list with this setting for the variable:
 
     ;; (add-hook 'evil-replace-state-exit-hook 'deactivate-input-method)
   #+END_SRC 
-*** Rabelais-mode
+*** rabelais-mode
 #+BEGIN_SRC emacs-lisp
   (define-minor-mode rabelais-mode
     "Minor mode for editing French text."
@@ -2414,7 +2441,7 @@ set. Currently I get an empty list with this setting for the variable:
          (add-to-list 'minor-mode-alist '(rabelais-mode " rabelais"))
          (abbrev-mode 1))))
   #+END_SRC 
-*** Orwell-mode
+*** orwell-mode
 #+BEGIN_SRC emacs-lisp
   (define-minor-mode orwell-mode
     "Minor mode for editing French text."
@@ -2462,7 +2489,7 @@ set. Currently I get an empty list with this setting for the variable:
          (add-to-list 'minor-mode-alist '(orwell-mode " orwell"))
          (abbrev-mode 1))))
   #+END_SRC 
-*** Marquez-mode
+*** marquez-mode
 #+BEGIN_SRC emacs-lisp
   (define-minor-mode marquez-mode
     "Minor mode for editing French text."
@@ -2585,7 +2612,7 @@ set. Currently I get an empty list with this setting for the variable:
     ;; Force evil to rehash keybindings for the current state
     (add-hook 'git-timemachine-mode-hook #'evil-force-normal-state))
   #+END_SRC 
-** 無 Mu
+** 無 mu
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
       (load-file "~/.emacs.d/mu4econfig.el")
@@ -2600,8 +2627,18 @@ set. Currently I get an empty list with this setting for the variable:
     (ediff-split-window-function #'split-window-vertically))
   #+END_SRC 
 ** 完 festival
+This package simply reads aloud text selections. If this functionality
+seems trivial, as an academic writer, it has proven quite useful. Use
+it to improve the /feel/ (cadence and rhythm) of your writing. 
+
+Caveat: Getting this package to work was a PITA; on top of the
+installation, you must rummage the internet for the voices. The
+default voices are just not usable. As an Arch Linux user, I found
+some quality voices in the AUR repositories.
+
 #+BEGIN_SRC emacs-lisp
-  (use-package festival :load-path "~/.emacs.d/sync0/" 
+  (use-package festival 
+:load-path "~/.emacs.d/sync0/" 
 :commands say-minor-mode
 :functions festival-send-command
     :config
@@ -2632,15 +2669,31 @@ set. Currently I get an empty list with this setting for the variable:
   ;;   (desktop-save-mode 1))
   #+END_SRC 
 ** 完 saveplace
+This is Emacs' default minor mode to save your location in visited
+files. With ~saveplace~ enabled, when you open a file, the point goes to
+its last location. 
+
 #+BEGIN_SRC emacs-lisp
   (use-package saveplace
-    :config 
-    (setq-default save-place t))
+    :init
+    (defun sync0-save-place-reposition ()
+      "Force windows to recenter current line (with saved position)."
+      (run-with-timer 0 nil
+                      (lambda (buf)
+                        (when (buffer-live-p buf)
+                          (dolist (win (get-buffer-window-list buf nil t))
+                            (with-selected-window win (recenter)))))
+                      (current-buffer)))
+    ;; Start save-place-mode.
+    (save-place-mode)
+    :hook
+    (find-file . sync0-save-place-reposition))
   #+END_SRC 
 ** 完 pdf-tools
 #+BEGIN_SRC emacs-lisp
   (use-package pdf-tools
     :pin manual ;; manually update
+    :functions pdf-view-midnight-minor-mode
     :custom
      ;; automatically annotate highlights
      (pdf-annot-activate-created-annotations t)
@@ -2665,10 +2718,9 @@ set. Currently I get an empty list with this setting for the variable:
       (interactive)
       (setq pdf-view-midnight-colors '("#C0C5CE" . "#4F5B66" )) ; amber
       (pdf-view-midnight-minor-mode))
-
+:hook
     ;; Use dark mode. 
-    (add-hook 'pdf-tools-enabled-hook 'pdf-view-midnight-minor-mode)
-
+(pdf-tools-enabled . pdf-view-midnight-minor-mode)
 :bind (:map pdf-view-mode-map
     ("C-s" . isearch-forward)
     ("j" . pdf-view-scroll-up-or-next-page)
@@ -2680,15 +2732,21 @@ set. Currently I get an empty list with this setting for the variable:
     ("t" . pdf-annot-add-text-annotation)
     ("g" . pdf-view-first-page)
     ("G" . pdf-view-last-page)
-    ("D" . pdf-view-dark-minor-mode)
+    ("d" . pdf-view-dark-minor-mode)
     ("D" . pdf-annot-delete)))
   #+END_SRC 
 ** 完 docview
+This package is Emacs' default major mode for viewing DVI, PostScript,
+PDF, OpenDocument, and Microsoft Office documents. This package is, in
+a sense, a poor man's version of ~pdf-tools~; if I keep its
+configuration, it's just in case the latter fails.
+
 #+BEGIN_SRC emacs-lisp
   (use-package doc-view 
     :custom
     (doc-view-continuous t)
-    :bind (:map doc-view-mode-map
+    :bind 
+(:map doc-view-mode-map
     ("q" . quit-window)
     ("+" . doc-view-enlarge)
     ("=" . doc-view-enlarge)
@@ -2713,7 +2771,8 @@ set. Currently I get an empty list with this setting for the variable:
   #+END_SRC 
 ** 完 sentence-highlight
 #+BEGIN_SRC emacs-lisp
-  (use-package sentence-highlight :load-path "~/.emacs.d/sync0/" 
+  (use-package sentence-highlight 
+    :load-path "~/.emacs.d/sync0/" 
     :after cycle-themes
     :commands sentence-highlight-mode
     :init
@@ -2728,10 +2787,85 @@ set. Currently I get an empty list with this setting for the variable:
     :config 
     (set-face-foreground 'sentence-highlight-face "#002b36")
     (add-hook 'cycle-themes-after-cycle-hook #'sync0-change-sentence-highlight-color))
-  #+END_SRC 
+#+END_SRC 
+** 完 which-key
+This package displays available keybindings in a popup. As configured
+herein, ~which-key~ will not show automatically in the minibuffer. That
+is the default behavior, which gets annoying rather fast.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package which-key
+  :after evil
+  :custom
+  ;; Use minibuffer instead of opening another buffer to the side.
+  (which-key-popup-type 'minibuffer)
+  (which-key-sort-order 'which-key-key-order-alpha)
+  ;; (which-key-popup-type 'side-window)
+  ;; Allow C-h to trigger which-key before it is done automatically.
+  (which-key-show-early-on-C-h t)
+  ;; (which-key-idle-delay 10000)
+  (which-key-idle-delay 1)
+  ;; (which-key-idle-secondary-delay 0.05)
+  (which-key-allow-evil-operators t)
+  (which-key-show-operator-state-maps t)
+    :init
+    (which-key-mode))
+#+END_SRC 
+** 完 windmove
+This built-in Emacs package lets you move point from window to window
+using more familiar key combinations than the default ~C-x o~.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package windmove
+  :bind (("M-." . windmove-left)
+         ;; ("M-<up>" . windmove-up)
+         ;; ("M-<down>" . windmove-down)
+         ("M-," . windmove-right)))
+#+END_SRC 
+** 完 google-this
+This package provides a set of functions for launching google searches
+from within emacs.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package google-this 
+    :after evil
+    :init
+    (google-this-mode 1)
+    :bind 
+    ;; Search selection with google.
+    ;; Query google search. 
+    (("C-c g" . google-this-search)
+     :map evil-visual-state-map
+     ("g"  . google-this)))
+#+END_SRC 
+** 完 simple-secrets
+This package contains a set of functions to manage passwords. After
+defining ~secret-password-file~, you can draw information from this
+file, without revealing the encrypted contents. For example, in this
+file, whenever I use ~(secret-lookup [secret_name])~, I am drawing
+information from my encrypted secrets file (i.e., ~sync0_secrets.gpg~)
+that I don't want to reveal. 
+
+#+BEGIN_SRC emacs-lisp
+  (use-package simple-secrets
+    :load-path "~/.emacs.d/sync0/" 
+    :after s
+    :custom
+    (secret-password-file "~/.emacs.d/sync0_secrets.gpg")
+    :config
+    (secret-load-keys))
+#+END_SRC 
+** 完 s
+The long lost Emacs string manipulation library. This is required for
+~simple-secrets~ to work. 
+
+#+BEGIN_SRC emacs-lisp
+  (use-package s)
+#+END_SRC 
 * 無 Custom Tweaks
 ** Sync0 hydras
 #+BEGIN_SRC emacs-lisp
+(with-eval-after-load 'org-clock 
  (defhydra hydra-org-clock (:color blue :hint nil)
    "
 Clock   In/out^     ^Edit^   ^Summary     (_?_)
@@ -2751,7 +2885,7 @@ Clock   In/out^     ^Edit^   ^Summary     (_?_)
    ("r" org-clock-report)
    ("?" (org-info "Clocking commands")))
 
- (bind-key "C-c w" 'hydra-org-clock/body)
+ (bind-key "C-c w" 'hydra-org-clock/body))
   #+END_SRC 
 ** Definitions
 #+BEGIN_SRC emacs-lisp
