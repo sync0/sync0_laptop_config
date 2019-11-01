@@ -3,7 +3,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(TeX-PDF-mode t t)
+ '(TeX-PDF-mode t)
  '(TeX-view-program-selection
    (quote
     (((output-dvi has-no-display-manager)
@@ -87,10 +87,18 @@ Last modified:
  '(cfw:fchar-top-left-corner 9487)
  '(cfw:fchar-top-right-corner 9491)
  '(cfw:fchar-vertical-line 9475)
+ '(company-dabbrev-ignore-case t)
+ '(company-idle-delay 0.1)
+ '(company-minimum-prefix-length 2)
+ '(company-selection-wrap-around t)
+ '(company-show-numbers nil)
+ '(company-tooltip-align-annotations t)
+ '(company-tooltip-limit 5)
  '(custom-safe-themes
    (quote
     ("7d56fb712ad356e2dacb43af7ec255c761a590e1182fe0537e1ec824b7897357" "d6f04b6c269500d8a38f3fabadc1caa3c8fdf46e7e63ee15605af75a09d5441e" "66d53738cc824d0bc5b703276975581b8de2b903d6ce366cd62207b5dd6d3d13" "332e009a832c4d18d92b3a9440671873187ca5b73c2a42fbd4fc67ecf0379b8c" "70ed3a0f434c63206a23012d9cdfbe6c6d4bb4685ad64154f37f3c15c10f3b90" "8e04ea7bf8a736b0bfacd363f4810ffce774ff9ba24f356172ae2b83307aebb2" "ef4edbfc3ec509612f3cf82476beddd2aeb3da7bdc3a35726337a0cc838a4ef4" "e3c87e869f94af65d358aa279945a3daf46f8185f1a5756ca1c90759024593dd" "9954ed41d89d2dcf601c8e7499b6bb2778180bfcaeb7cdfc648078b8e05348c6" "6b289bab28a7e511f9c54496be647dc60f5bd8f9917c9495978762b99d8c96a0" "8aca557e9a17174d8f847fb02870cb2bb67f3b6e808e46c0e54a44e3e18e1020" "75d3dde259ce79660bac8e9e237b55674b910b470f313cdf4b019230d01a982a" "151bde695af0b0e69c3846500f58d9a0ca8cb2d447da68d7fbf4154dcf818ebc" "cd736a63aa586be066d5a1f0e51179239fe70e16a9f18991f6f5d99732cabb32" "d1b4990bd599f5e2186c3f75769a2c5334063e9e541e37514942c27975700370" "fe666e5ac37c2dfcf80074e88b9252c71a22b6f5d2f566df9a7aa4f9bea55ef8" "6d589ac0e52375d311afaa745205abb6ccb3b21f6ba037104d71111e7e76a3fc" "100e7c5956d7bb3fd0eebff57fde6de8f3b9fafa056a2519f169f85199cc1c96" "7e78a1030293619094ea6ae80a7579a562068087080e01c2b8b503b27900165c" "d2e9c7e31e574bf38f4b0fb927aaff20c1e5f92f72001102758005e53d77b8c9" "1c082c9b84449e54af757bcae23617d11f563fc9f33a832a8a2813c4d7dfb652" "b54826e5d9978d59f9e0a169bbd4739dd927eead3ef65f56786621b53c031a7c" "6b2636879127bf6124ce541b1b2824800afc49c6ccd65439d6eb987dbf200c36" "10461a3c8ca61c52dfbbdedd974319b7f7fd720b091996481c8fb1dded6c6116" "93a0885d5f46d2aeac12bf6be1754faa7d5e28b27926b8aa812840fe7d0b7983" "ecba61c2239fbef776a72b65295b88e5534e458dfe3e6d7d9f9cb353448a569e" "4697a2d4afca3f5ed4fdf5f715e36a6cac5c6154e105f3596b44a4874ae52c45" "a156fcac344bbfdc979a5adf9cecf1c2de56c4c937549ae0571b7f11ad4fe6a9" "53d1bb57dadafbdebb5fbd1a57c2d53d2b4db617f3e0e05849e78a4f78df3a1b" "013c62a1fcee7c8988c831027b1c38ae215f99722911b69e570f21fc19cb662e" "723e48296d0fc6e030c7306c740c42685d672fd22337bc84392a1cf92064788a" "aa0a998c0aa672156f19a1e1a3fb212cdc10338fb50063332a0df1646eb5dfea" "d1242585c6d9818a8ae8c9eff32a309f331dee2ea4533b23aae38d3158029faf" "4597d1e9bbf1db2c11d7cf9a70204fa42ffc603a2ba5d80c504ca07b3e903770" "e4a6fc5d9f4bc63b6ce9743396b68098ae7011d29e9876082ef3969c18b0ea93" "90bd0eb20a1cb155b5a076f698b3c72cfe775aa7ea93b7bfbc171eb250db5e20" "242ed4611e9e78142f160e9a54d7e108750e973064cee4505bfcfc22cc7c61b1" "891debfe489c769383717cc7d0020244a8d62ce6f076b2c42dd1465b7c94204d" "0598de4cc260b7201120b02d580b8e03bd46e5d5350ed4523b297596a25f7403" "7666b079fc1493b74c1f0c5e6857f3cf0389696f2d9b8791c892c696ab4a9b64" "2a1b4531f353ec68f2afd51b396375ac2547c078d035f51242ba907ad8ca19da" "77c3f5f5acaa5a276ca709ff82cce9b303f49d383415f740ba8bcc76570718b9" "2af26301bded15f5f9111d3a161b6bfb3f4b93ec34ffa95e42815396da9cb560" "6be42070d23e832a7493166f90e9bb08af348a818ec18389c1f21d33542771af" "a7e7804313dbf827a441c86a8109ef5b64b03011383322cbdbf646eb02692f76" "2e1d19424153d41462ad31144549efa41f55dacda9b76571f73904612b15fd0a" "3481e594ae6866d72c40ad77d86a1ffa338d01daa9eb0977e324f365cef4f47c" default)))
  '(dabbrev-abbrev-char-regexp "\\sw" t)
+ '(desktop-auto-save-timeout 300)
  '(doc-view-continuous t)
  '(doc-view-resolution 300)
  '(doom-modeline-bar-width 3)
@@ -138,6 +146,13 @@ Last modified:
  '(git-gutter:modified-sign " ")
  '(git-timemachine-show-minibuffer-details nil t)
  '(global-hl-line-sticky-flag nil)
+ '(guess-language-langcodes
+   (quote
+    ((en "en_US-large" "english")
+     (fr "fr_FR" "french")
+     (es "es_ANY" "spanish"))))
+ '(guess-language-languages (quote (en fr es)))
+ '(guess-language-min-paragraph-length 35)
  '(hl-line-sticky-flag nil)
  '(inhibit-compacting-font-caches t t)
  '(ispell-hunspell-dict-paths-alist
@@ -154,6 +169,12 @@ Last modified:
  '(jdee-db-requested-breakpoint-face-colors (cons "#1B2229" "#A3BE8C"))
  '(jdee-db-spec-breakpoint-face-colors (cons "#1B2229" "#4f5b66"))
  '(lv-use-seperator t t)
+ '(magit-branch-arguments nil t)
+ '(magit-push-always-verify nil t)
+ '(magit-restore-window-configuration t t)
+ '(org-agenda-clockreport-parameter-plist
+   (quote
+    (:link t :maxlevel 6 :fileskip0 t :compact t :narrow 60 :score 0)))
  '(org-agenda-columns-add-appointments-to-effort-sum t)
  '(org-agenda-compact-blocks t)
  '(org-agenda-deadline-leaders (quote ("  豫定 " "%2d日後 " "%2d日前 ")))
@@ -169,6 +190,19 @@ Last modified:
  '(org-agenda-window-setup (quote only-window))
  '(org-blank-before-new-entry (quote ((heading) (plain-list-item))))
  '(org-bullets-bullet-list (quote ("一" "二" "三" "四" "五")))
+ '(org-clock-auto-clock-resolution (quote when-no-clock-is-running) t)
+ '(org-clock-history-length 23 t)
+ '(org-clock-idle-time 5 t)
+ '(org-clock-in-resume t t)
+ '(org-clock-in-switch-to-state "中" t)
+ '(org-clock-into-drawer t t)
+ '(org-clock-out-remove-zero-time-clocks t t)
+ '(org-clock-out-when-done t t)
+ '(org-clock-persist (quote history) t)
+ '(org-clock-persist-query-resume nil t)
+ '(org-clock-report-include-clocking-task t t)
+ '(org-columns-default-format
+   "%1PRIORITY %2TODO %DEADLINE %60ITEM(Task) %5EFFORT(Effort){:} %5CLOCKSUM")
  '(org-confirm-babel-evaluate nil)
  '(org-crypt-key "carc.sync0@gmail.com")
  '(org-cycle-separator-lines 0)
@@ -184,6 +218,9 @@ Last modified:
  '(org-fontify-quote-and-verse-blocks t)
  '(org-fontify-whole-heading-line t)
  '(org-gcal-auto-archive nil)
+ '(org-global-properties
+   (quote
+    (("Effort_ALL" . "1:00 2:00 4:00 5:00 8:00 10:00 12:00 15:00 20:00 24:00"))))
  '(org-hide-emphasis-markers t)
  '(org-journal-date-format "%A, %d/%m/%Y")
  '(org-journal-dir "~/Dropbox/org/journal/2019")
@@ -201,6 +238,7 @@ Last modified:
  '(org-latex-prefer-user-labels t t)
  '(org-odt-preferred-output-format "doc" t)
  '(org-outline-path-complete-in-steps nil)
+ '(org-pretty-entities t)
  '(org-ref-completion-library (quote org-ref-ivy-cite) t)
  '(org-ref-default-bibliography (quote ("~/Dropbox/research/bibliography.bib")) t)
  '(org-ref-open-pdf-function (quote sync0-org-ref-open-pdf-at-point) t)
@@ -249,7 +287,7 @@ Last modified:
  '(orwell-mode t)
  '(package-selected-packages
    (quote
-    (google-this which-key org-journal request request-deferred doom-modeline org-gcal smartparens minions flycheck-pos-tip interleave mu4e-alert mu4e-conversation git-timemachine gnuplot gnuplot-mode magit avy yasnippet diff-hl highlight-indentation highlight-numbers rainbow-delimiters git-gutter ivy-bibtex lisp-mode hl-line-mode diminish font-lock+ fancy-battery dim evil-escape calfw-cal calfw-org calfw-gcal calfw visual-fill-column hlinum doom-themes solaire-mode eldoc-eval use-package evil-multiedit iedit anzu evil-anzu powerline all-the-icons all-the-icons-ivy auctex org ivy smooth-scrolling org-ref projectile org-bullets evil counsel)))
+    (sublimity focus define-word guess-language company-quickhelp company google-this which-key org-journal request request-deferred doom-modeline org-gcal smartparens minions flycheck-pos-tip interleave mu4e-alert mu4e-conversation git-timemachine gnuplot gnuplot-mode magit avy yasnippet diff-hl highlight-indentation highlight-numbers rainbow-delimiters git-gutter ivy-bibtex lisp-mode hl-line-mode diminish font-lock+ fancy-battery dim evil-escape calfw-cal calfw-org calfw-gcal calfw visual-fill-column hlinum doom-themes solaire-mode eldoc-eval use-package evil-multiedit iedit anzu evil-anzu powerline all-the-icons all-the-icons-ivy auctex org ivy smooth-scrolling org-ref projectile org-bullets evil counsel)))
  '(pdf-annot-activate-created-annotations t t)
  '(pdf-view-midnight-colors (quote ("#C0C5CE" . "#4F5B66")) t)
  '(pdf-view-resize-factor 1.1 t)
@@ -257,11 +295,11 @@ Last modified:
  '(projectile-completion-system (quote ivy))
  '(projectile-enable-caching t)
  '(rainbow-delimiters-max-face-count 3 t)
- '(recentf-max-menu-items 10)
- '(recentf-max-saved-items 100)
+ '(recentf-max-menu-items 10 t)
+ '(recentf-max-saved-items 100 t)
  '(reftex-default-bibliography (quote ("~/Dropbox/research/bibliography.bib")) t)
  '(save-abbrevs (quote silently))
- '(smooth-scroll-margin 5)
+ '(secret-password-file "~/.emacs.d/sync0_secrets.gpg")
  '(sp-autowrap-region nil)
  '(sp-cancel-autoskip-on-backward-movement nil)
  '(sp-highlight-pair-overlay nil)
@@ -289,11 +327,10 @@ Last modified:
     (cons 340 "#65737E")
     (cons 360 "#65737E")))
  '(vc-annotate-very-old-color nil)
- '(which-key-allow-evil-operators t)
  '(which-key-idle-delay 0.05)
  '(which-key-popup-type (quote minibuffer))
  '(which-key-show-early-on-C-h t)
- '(which-key-show-operator-state-maps t))
+ '(which-key-sort-order (quote which-key-key-order-alpha)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

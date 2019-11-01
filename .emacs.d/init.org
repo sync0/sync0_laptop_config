@@ -9,9 +9,11 @@ This is my Emacs configuration file. As the sloppy code herein attests, I
 am not a proficient programmer. I use Emacs primarily for taking notes and
 writing academic articles, so these settings reflect that usage. 
 
-The functions prefixed by ~sync0~ are not necessarily my creations; this is
-just the placeholder I use to distinguish them from Emacs and other
-packages' native functions.
+The functions prefixed by ~sync0~ are not necessarily my creations; this
+is just the placeholder I use to distinguish them from Emacs and other
+packages' native functions. I would like to credit the authors of all
+borrowed functions, but I don't do this consistently because writing
+such precise documention is too time consuming.
 
 Since I am such a lousy programmer, many parts of this configuration
 have been borrowed from more proficient programmers. Although I am
@@ -24,6 +26,46 @@ don't update it frequently.
 
 Should you have any suggestions for improving the code, I would greatly
 appreciate if you sent me an email.
+** 無 For Tyros
+Emacs is too complex; accept that you will never learn /all/ of it.
+
+I suggest you learn enough Emacs for your daily needs, and then begin
+from there. I have been using Emacs for years, and I still learn
+something new whenever I take the time to check what other users are
+doing with their setup. Once, it even happened that I asked an Emacs
+related question on a forum, and a twenty-plus-year Emacs veteran was
+surprised to see my discussion of a useful, but little known function
+that he had never heard of. As you could glance from the introduction
+to this file, I am not a programmer, and my coding skills are very
+limited. As an academic historian, my needs differ from those of most
+Emacs users, and this very specific usage reflects on my
+configuration. Briefly, my advice to you, oh tyro, is: Learn the Emacs
+you need, learn from those better than you, and remember that each
+user's configuration is very personal and reflects their specific
+needs.
+
+One thing I could never like about vanilla Emacs is its lack of
+usability. Some users might disagree, but I believe that if it wasn't
+for its extensibility, Emacs would be inferior to the competition. As
+a treat to tyros, I have tried to highlight those packages that I
+consider an absolute must: Without these, Emacs would drive me crazy.
+
+In my honest opinion, no matter what you do with Emacs, you should
+have the following installed or activated:
+
+- ~org~ (the reason I started using Emacs).
+- ~evil~ (yes! Vim keybindings are way better)
+- ~doom-themes~ (vanilla Emacs is just too ugly.)
+- ~doom-modeline~ (looks good with doom-themes)
+- ~counsel~ (improved versions of useful commands)
+- ~ivy~ (completion frontend. Alternatively, you could use ~helm~)
+- ~saveplace~ (good luck finding your way around files otherwise)
+- ~rainbow-delimiters~ (good luck editing those pesky parentheses otherwise)
+- ~smartparens~ (same as above)
+- ~pdf-tools~ (not a must, but comes in handy sometimes)
+- ~google-this~ (not a must, but since everyone uses google these days,
+  why not?)
+ 
 ** 完 Organization
 I configure Emacs with a single file: ~init.org~. This is the file you
 are reading. The only thing not included in this file are snippets,
@@ -94,7 +136,7 @@ startup file for faster startup and easier organization.
 
      ;; Activate "use-package". 
      (require 'use-package)
-     (require 'diminish)
+     ;; (require 'diminish)
      ;; Necessary to allow use-package to bind keys through ":bind" keyword.
      (require 'bind-key)
  #+END_SRC 
@@ -142,7 +184,8 @@ Display time in modeline.
 Fancy battery. 
   #+BEGIN_SRC emacs-lisp
     (use-package fancy-battery
-      :hook (after-init . fancy-battery-mode))
+      :hook 
+(after-init . fancy-battery-mode))
     #+END_SRC 
 ** 完 Toolbars
 Define a function to toggle mode line. 
@@ -181,9 +224,9 @@ Other settings.
       (setq-default                    
        ;; Avoid ugly problemes with git-gutter.
        fringes-outside-margins t
-       ;; left-margin-width 3
+       left-margin-width 0
        ;; right-margin-width 7
-       left-fringe-width 3
+       left-fringe-width 5
        right-fringe-width 0
        ;; Remove continuation arrow on right fringe.
        fringe-indicator-alist (delq (assq 'continuation fringe-indicator-alist)
@@ -431,7 +474,8 @@ that I’ve copied from the web.
 ** 完 auto-fill
  #+BEGIN_SRC emacs-lisp
    (use-package auto-fill-mode
-     :hook (text-mode . turn-on-auto-fill)
+     :hook 
+     (text-mode . turn-on-auto-fill)
      :init 
      ;; Configure exceptions for auto-fill mode. 
      (defun sync0-nobreak-p ()
@@ -472,7 +516,7 @@ that I’ve copied from the web.
     ;; Initialize abbrev-mode by default. 
     (setq-default abbrev-mode t)
 
-    ;; Add abbrevs 
+    ;; Add abbrevs manually.
     (defun sync0-define-local-abbrev (name expansion)
       "Defines a new abbrev for current local abbrev table."
       (interactive "sEnter abbrev:\nsEnter expansion:")
@@ -499,22 +543,24 @@ A packate that displays a list of recent files.
                 ("j"  . next-line)
                 ("k"  . previous-line)))
 #+END_SRC
-** 完 highlight-indentation
-#+BEGIN_SRC emacs-lisp
+** 取 highlight-indentation
   (use-package highlight-indentation
     :commands (highlight-indentation-mode highlight-indentation-current-column-mode))
   ;; ;; For modes with sub-par number fontification
   ;; (use-package highlight-numbers :commands highlight-numbers-mode)
-  #+END_SRC 
 ** 完 rainbow-delimiters
 #+BEGIN_SRC emacs-lisp
   (use-package rainbow-delimiters
-    :hook (lisp-mode . rainbow-delimiters-mode)
-    :custom (rainbow-delimiters-max-face-count 3))
+    :hook 
+    ((text-mode . rainbow-delimiters-mode)
+     (prog-mode . rainbow-delimiters-mode))
+    :custom 
+    (rainbow-delimiters-max-face-count 3))
   #+END_SRC 
 ** 完 all-the-icons
 #+BEGIN_SRC emacs-lisp
-  (use-package all-the-icons :after ivy
+  (use-package all-the-icons 
+    :after ivy
     :custom
     ;; improve performance 
     (inhibit-compacting-font-caches t)
@@ -545,17 +591,19 @@ A packate that displays a list of recent files.
 
    Cycle between themes.
 #+BEGIN_SRC emacs-lisp
-  (use-package cycle-themes :load-path "~/.emacs.d/sync0_git/cycle-themes.el/" 
+  (use-package cycle-themes 
+    :load-path "~/.emacs.d/sync0_git/cycle-themes.el/" 
     :after doom-themes
-    :init 
-    (setq cycle-themes-theme-list '(doom-nord doom-nova doom-solarized-light doom-spacegrey))
     :config 
+    (setq cycle-themes-theme-list '(doom-nord doom-nova doom-solarized-light doom-spacegrey))
     (cycle-themes-mode))
 #+END_SRC 
 ** 完 solaire-mode
 #+BEGIN_SRC emacs-lisp
-  (use-package solaire-mode :after doom-themes 
-    :hook ((change-major-mode after-revert ediff-prepare-buffer) . turn-on-solaire-mode)
+  (use-package solaire-mode 
+    :after doom-themes 
+    :hook 
+    ((change-major-mode after-revert ediff-prepare-buffer) . turn-on-solaire-mode)
     :config
     (add-hook 'minibuffer-setup-hook #'solaire-mode-in-minibuffer)
     ;; (setq solaire-mode-remap-modeline nil)
@@ -563,8 +611,10 @@ A packate that displays a list of recent files.
 #+END_SRC 
 ** 完 doom-modeline
 #+BEGIN_SRC emacs-lisp
-  (use-package doom-modeline :after doom-themes
-    :hook (after-init . doom-modeline-mode)
+  (use-package doom-modeline 
+:after doom-themes
+    :hook 
+(after-init . doom-modeline-mode)
     :custom
     ;; How tall the mode-line should be. It's only respected in GUI.
     ;; If the actual char height is larger, it respects the actual height.
@@ -612,34 +662,31 @@ A packate that displays a list of recent files.
 ** 完 ispell
  #+BEGIN_SRC emacs-lisp
    (use-package ispell
-:custom
-      ;; Save a new word to personal dictionary without asking
-      (ispell-silently-savep t)
-      ;; Set up hunspell dictionaries
-      (ispell-hunspell-dict-paths-alist
+     :custom
+     ;; Save a new word to personal dictionary without asking
+     (ispell-silently-savep t)
+     ;; Set up hunspell dictionaries
+     (ispell-hunspell-dict-paths-alist
       '(("en_US-large" "/usr/share/hunspell/en_US-large.aff")
         ;; ("de_DE" "/usr/share/hunspell/de_DE.aff")
         ;; ("it_IT" "/usr/share/hunspell/it_IT.aff")
         ("es_ANY" "/usr/share/hunspell/es_ANY.aff")
         ("fr_FR" "/usr/share/hunspell/fr_FR.aff")))
      :config
-     (cond
-      ;; if hunspell does NOT exist, use aspell
-      ((executable-find "hunspell")
-       (setq ispell-program-name "hunspell")
-       ;;(setq ispell-local-dictionary "en_US")
-       (setq ispell-local-dictionary-alist '(  
-                                             ;; (nil "[[:alpha:]]" "[^[:alpha:]]" "['-]" t ("-d" "en_US-large" ) nil utf-8)
-                                             ("en_US-large" "[[:alpha:]]" "[^[:alpha:]]" "['-]" t ("-d" "en_US-large" ) nil utf-8)
-                                             ;; ("de_DE" "[[:alpha:]ÄÖÜéäöüß]" "[^[:alpha:]ÄÖÜéäöüß]" "['’-]" t ("-d" "de_DE") nil utf-8)
-                                             ("es_ANY" "[[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "[^[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "['’-]" t ("-d" "es_ANY") nil utf-8)
-                                             ;; ("it_IT" "[[:alpha:]AEÉIOUàèéìòù]" "[^[:alpha:]AEÉIOUàèéìòù]" "['’-]" t ("-d" "it_IT") "~tex" nil utf-8)
-                                             ("fr_FR" "[[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[^[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[’'-]" t ("-d" "fr_FR")  nil utf-8))))
+     ;; if hunspell does NOT exist, use aspell
+     (cond ((executable-find "hunspell")
+            (setq ispell-program-name "hunspell")
+            ;;(setq ispell-local-dictionary "en_US")
+            (setq ispell-local-dictionary-alist '(("en_US-large" "[[:alpha:]]" "[^[:alpha:]]" "['-]" t ("-d" "en_US-large" ) nil utf-8)
+                                                  ;; ("de_DE" "[[:alpha:]ÄÖÜéäöüß]" "[^[:alpha:]ÄÖÜéäöüß]" "['’-]" t ("-d" "de_DE") nil utf-8)
+                                                  ("es_ANY" "[[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "[^[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "['’-]" t ("-d" "es_ANY") nil utf-8)
+                                                  ;; ("it_IT" "[[:alpha:]AEÉIOUàèéìòù]" "[^[:alpha:]AEÉIOUàèéìòù]" "['’-]" t ("-d" "it_IT") "~tex" nil utf-8)
+                                                  ("fr_FR" "[[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[^[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[’'-]" t ("-d" "fr_FR")  nil utf-8))))
 
-      ((executable-find "aspell")
-       (setq ispell-program-name "aspell")
-       ;; Please note ispell-extra-args contains ACTUAL parameters passed to aspell
-       (setq ispell-extra-args '("--sug-mode=ultra"))))
+           ((executable-find "aspell")
+            (setq ispell-program-name "aspell")
+            ;; Please note ispell-extra-args contains ACTUAL parameters passed to aspell
+            (setq ispell-extra-args '("--sug-mode=ultra"))))
 
      ;; Ignore sections of files for spellcheck
      (add-to-list 'ispell-skip-region-alist '(":\\(PROPERTIES\\|LOGBOOK\\):" . ":END:"))
@@ -656,7 +703,8 @@ A packate that displays a list of recent files.
 ** 完 flyspell
  #+BEGIN_SRC emacs-lisp
    (use-package flyspell :after (org ispell)
-     ;; :hook (text-mode . flyspell-mode)
+     :hook 
+     (text-mode . flyspell-mode)
      :custom
      (ispell-parser 'tex)
      (flyspell-issue-message-flag nil)
@@ -672,7 +720,6 @@ A packate that displays a list of recent files.
 #+BEGIN_SRC emacs-lisp
   (use-package tex
     :defer t
-    :ensure auctex
     :custom
     (preview-gs-command "/usr/local/bin/gs")
     (TeX-PDF-mode t)
@@ -690,29 +737,67 @@ A packate that displays a list of recent files.
           (sync0-latex-fast-compile))))
 
     ;; Set hooks to execute after files are saved. 
-    :hook (after-save . sync0-after-save-actions))
+    :hook 
+(after-save . sync0-after-save-actions))
   #+END_SRC 
 ** 完 no-break-fade
 #+BEGIN_SRC emacs-lisp
-  (use-package nobreak-fade :load-path "~/.emacs.d/sync0/nobreak-fade.el" 
+  (use-package nobreak-fade 
+    :load-path "~/.emacs.d/sync0/nobreak-fade.el" 
     :after tex
     ;; :command nobreak-fade
     :config
     (autoload 'nobreak-fade-single-letter-p "nobreak-fade")
-    (add-hook 'fill-nobreak-predicate 'nobreak-fade-single-letter-p))
     ;; (add-hook 'tex-mode-hook 'nobreak-fade)
+    (add-hook 'fill-nobreak-predicate 'nobreak-fade-single-letter-p))
 #+END_SRC
 ** 完 projectile
+Configuration taken from
+https://github.com/danieroux/emacs/blob/master/mine/djr-hydra.el
+
 #+BEGIN_SRC emacs-lisp
-  (use-package projectile :after ivy
+  (use-package projectile 
+    :after (ivy hydra)
     :custom
     ;; (projectile-keymap-prefix (kbd "C-p"))
     (projectile-completion-system 'ivy)
     (projectile-enable-caching t)
     ;;(setq projectile-indexing-method 'alien)
     :config
+    (defhydra sync0-hydra-projectile (:color teal)
+      "
+    Find File          Search/Tags       Buffers                  Cache
+    ------------------------------------------------------------------------------------------
+    ^^_f_: file dwim       _a_: ag             ^^_i_: Ibuffer               _c_: cache clear
+    ^^_r_: recent file     _g_: update gtags   ^^_K_: Kill all buffers      _x_: remove known project
+    ^^_d_: dir             _o_: multi-occur    ^^_X_: cleanup non-existing  _z_: cache current
+    Operate On
+    ---------------------
+    ^^_D_: Dired
+    ^^_m_: Magit
+    ^^_e_: Eshell
+    "
+      ("a"   projectile-ag                      nil)
+      ("c"   projectile-invalidate-cache        nil)
+      ("d"   projectile-find-dir                nil)
+      ("e"   (eshell '(4))                      nil)
+      ("D"   projectile-dired                   nil)
+      ("f"   projectile-find-file-dwim          nil)
+      ("g"   projectile-regenerate-tags         nil)
+      ("i"   projectile-ibuffer                 nil)
+      ("K"   projectile-kill-buffers            nil)
+      ("m"   (magit-status (projectile-project-root)) nil)
+      ("o"   projectile-multi-occur             nil)
+      ("p"   projectile-switch-project          nil)
+      ("r"   projectile-recentf                 nil)
+      ("x"   projectile-remove-known-project    nil)
+      ("X"   projectile-cleanup-known-projects  nil)
+      ("z"   projectile-cache-current-file      nil)
+      ("q"   nil                                "cancel" :color blue))
     (add-to-list 'projectile-globally-ignored-files "node-modules")
-    (projectile-mode))
+    (projectile-mode)
+    :bind
+    (("C-c p" . sync0-hydra-projectile/body)))
 #+END_SRC
 ** 完 swiper
 #+BEGIN_SRC emacs-lisp
@@ -728,7 +813,6 @@ A packate that displays a list of recent files.
      ("M-y" . counsel-yank-pop)
      ("M-b" . counsel-bookmark)
      ("C-x C-f" . counsel-find-file)
-     ("<f5>" . counsel-recentf)
      ("<f1> f" . counsel-describe-function)
      ("<f1> v" . counsel-describe-variable)
      ("<f1> l" . counsel-load-library)
@@ -741,7 +825,8 @@ A packate that displays a list of recent files.
     :custom
     (ivy-use-virtual-buffers t)
     (ivy-count-format "(%d/%d) ")
-    :hook (after-init . ivy-mode))
+    :hook 
+    (after-init . ivy-mode))
 #+END_SRC
 ** 完 epa-file
 #+BEGIN_SRC emacs-lisp
@@ -1244,7 +1329,8 @@ set. Currently I get an empty list with this setting for the variable:
      ;; (setq org-stuck-projects      '("TODO={.+}/-DONE" nil nil "SCHEDULED:\\|DEADLINE:"))
 *** 完 org-clock
 #+BEGIN_SRC emacs-lisp
-  (use-package org-clock :after (org org-agenda)
+  (use-package org-clock 
+:after (org org-agenda hydra)
     :custom
     ;; Set default column view headings: Task Priority Effort Clock_Summary
     (org-columns-default-format "%1PRIORITY %2TODO %DEADLINE %60ITEM(Task) %5EFFORT(Effort){:} %5CLOCKSUM")
@@ -1303,8 +1389,28 @@ set. Currently I get an empty list with this setting for the variable:
     ;; Resume clocking task when emacs is restarted
     (org-clock-persistence-insinuate)
 
-    :bind (("C-c I" . sync0-org-clock-in)
-           ("C-c O" . org-clock-out)))
+ (defhydra sync0-hydra-org-clock (:color blue :hint nil)
+   "
+Clock   In/out^     ^Edit^   ^Summary     (_?_)
+-----------------------------------------
+        _i_n         _e_dit   _g_oto entry
+        _c_ontinue   _q_uit   _d_isplay
+        _o_ut        ^ ^      _r_eport
+      "
+   ("i" org-clock-in)
+   ("p" sync0-org-clock-in)
+   ("o" org-clock-out)
+   ("c" org-clock-in-last)
+   ("e" org-clock-modify-effort-estimate)
+   ("q" org-clock-cancel)
+   ("g" org-clock-goto)
+   ("d" org-clock-display)
+   ("r" org-clock-report)
+   ("?" (org-info "Clocking commands")))
+
+    :bind 
+(("C-c h c" . sync0-hydra-org-clock/body)))
+         
 #+END_SRC 
 *** 完 ox-latex
 Even though, by default, Emacs Org mode has the export keyword
@@ -1321,7 +1427,7 @@ for page breaks add this to org files
 #+BEGIN_SRC emacs-lisp
   (use-package ox-latex :after org
     ;; :defines (org-latex-classes org-export-exclude-tags)
-
+:functions org-latex-export-to-pdf
     :custom
     ;; Export references (to tables, graphics, etc.) properly, evaluating the +NAME property. 
     (org-latex-prefer-user-labels t)
@@ -1409,7 +1515,8 @@ for page breaks add this to org files
 *** 完 org-mu4e
   This package stores org mode links to messages.
 #+BEGIN_SRC emacs-lisp
-  (use-package org-mu4e :after org
+  (use-package org-mu4e 
+:after org
     :config
     ;; Store link to message if in header view, not to header query.
     (setq org-mu4e-link-query-in-headers-mode nil))
@@ -1501,13 +1608,12 @@ for page breaks add this to org files
   #+END_SRC 
 ** 待 evil 
    #+BEGIN_SRC emacs-lisp
-     (use-package evil  :after (org ivy)
-       :bind (:map evil-normal-state-map
+     (use-package evil  
+:after (org ivy)
+       :bind 
+(:map evil-normal-state-map
                    ("M-h" . next-buffer)
                    ("M-l" . previous-buffer)
-                   ("M-2" . split-window-below)
-                   ("M-3" . split-window-right)
-                   ("M-o" . other-window)
                    ("/" . swiper)
                    :map minibuffer-local-map
                    ("ESC" . minibuffer-keyboard-quit)
@@ -1563,17 +1669,12 @@ for page breaks add this to org files
        (evil-visual-state-cursor '(box "#d33682"))
        :config
        (evil-escape-mode 1)
-
+       (unbind-key "M-." evil-normal-state-map)
        (add-to-list 'evil-emacs-state-modes 'cfw:details-mode)
 
        ;; no input method for evil normal state
-       (add-hook 'evil-normal-state-entry-hook
-                 (lambda () (set-input-method 'nil)))
-
-       ;; German 
-       ;; german-postfix for evil insert mode
-       ;;(add-hook 'evil-insert-state-entry-hook
-       ;;(lambda () (set-input-method "german-postfix")))
+       ;; (add-hook 'evil-normal-state-entry-hook
+       ;;           (lambda () (set-input-method 'nil)))
 
        ;; key bindings
        ;; redefinition evils normal mode map
@@ -1700,7 +1801,28 @@ for page breaks add this to org files
 ** 完 bibtex 
 #+BEGIN_SRC emacs-lisp
   (use-package bibtex
-:init
+    :after evil
+    :custom
+    (bibtex-dialect 'biblatex) ;; biblatex as default bib format
+    (bibtex-maintain-sorted-entries t)
+    (bibtex-field-delimiters 'braces)
+    (bibtex-entry-delimiters 'braces)
+    (bibtex-comma-after-last-field t)
+    (bibtex-align-at-equal-sign t)
+    (bibtex-text-indentation 0)
+    (bibtex-autokey-names 1)
+    (bibtex-autokey-names-stretch 1)
+    (bibtex-autokey-additional-names " et al")
+    (bibtex-autokey-name-separator "_")
+    (bibtex-autokey-name-year-separator "")
+    (bibtex-autokey-name-length t)
+    (bibtex-autokey-year-title-separator "")
+    (bibtex-autokey-titleword-length 0)
+    (bibtex-autokey-year-length 4)
+    (bibtex-autokey-titleword-case-convert "uppercase")
+    (bibtex-autokey-titlewords 0)
+    (bibtex-entry-format '(opts-or-alts required-fields numerical-fields page-dashes whitespace braces last-comma delimiters sort-fields))
+    :config
     (defun sync0-bibtex-autokey-get-year ()
       "Return year field contents as a string obeying `bibtex-autokey-year-length'."
       (let ((yearfield (bibtex-autokey-get-field "date")))
@@ -1709,8 +1831,8 @@ for page breaks add this to org files
 
     (defun sync0-bibtex-generate-autokey ()
       "This overwrites the bibtex-generate-autokey function that comes with Emacs.
-        I want my keys to be formatted: authornameYEAR, then a letter
-        if there is already an entry that matches authornameYEAR."
+          I want my keys to be formatted: authornameYEAR, then a letter
+          if there is already an entry that matches authornameYEAR."
       (interactive)
       (let* ((names (bibtex-autokey-get-names))
              (year (sync0-bibtex-autokey-get-year))
@@ -1722,27 +1844,25 @@ for page breaks add this to org files
                    while (assoc ret existing-keys)
                    do (setq ret (format "%s%c" key c)))
           ret)))
-:custom
-    (bibtex-dialect 'biblatex) ;; biblatex as default bib format
-          (bibtex-maintain-sorted-entries t)
-          (bibtex-field-delimiters 'braces)
-          (bibtex-entry-delimiters 'braces)
-          (bibtex-comma-after-last-field t)
-          (bibtex-align-at-equal-sign t)
-          (bibtex-text-indentation 0)
-          (bibtex-autokey-names 1)
-          (bibtex-autokey-names-stretch 1)
-          (bibtex-autokey-additional-names " et al")
-          (bibtex-autokey-name-separator "_")
-          (bibtex-autokey-name-year-separator "")
-          (bibtex-autokey-name-length t)
-          (bibtex-autokey-year-title-separator "")
-          (bibtex-autokey-titleword-length 0)
-          (bibtex-autokey-year-length 4)
-          (bibtex-autokey-titleword-case-convert "uppercase")
-          (bibtex-autokey-titlewords 0)
-          (bibtex-entry-format '(opts-or-alts required-fields numerical-fields page-dashes whitespace braces last-comma delimiters sort-fields))
-    :config
+
+    (defun sync0-bibtex-next-key ()
+      "Print the bibtex key of the document"
+      (interactive)
+      (let ((bibtex-key (re-search-forward "@.+{" nil nil 1)))
+        (goto-char bibtex-key)))
+
+    (defun sync0-bibtex-previous-key ()
+      "Print the bibtex key of the document"
+      (interactive)
+      (let ((bibtex-key (re-search-backward "@.+{" nil nil 2)))
+        (goto-char bibtex-key)
+        (re-search-forward "@.+{" nil nil 1)))
+
+    (with-eval-after-load 'evil
+      (evil-define-key 'normal bibtex-mode-map
+        "K" 'sync0-bibtex-previous-key
+        "J" 'sync0-bibtex-next-key))
+
     (setq bibtex-BibTeX-entry-alist '(
                                       ("Article" "Article in Journal"
                                        ("author")
@@ -1973,58 +2093,111 @@ for page breaks add this to org files
 #+END_SRC 
 ** 無 yasnippets
 #+BEGIN_SRC emacs-lisp
-(use-package yasnippet :defer t 
-  :commands (yas-minor-mode) ; autoload `yasnippet' when `yas-minor-mode' is called
-                                        ; using any means: via a hook or by user
-                                        ; Feel free to add more commands to this
-                                        ; list to suit your needs.
-  :init ; stuff to do before requiring the package
-  :config ; stuff to do after requiring the package
-(progn
-    (yas-reload-all)
-;; annoying warning
-(add-to-list 'warning-suppress-types '(yasnippet backquote-change)))
-:hook ((LaTeX-mode . yas-minor-mode)
-(org-mode . yas-minor-mode)
-(mu4e-mode . yas-minor-mode)
-(bibtex-mode . yas-minor-mode)))
+      (use-package yasnippet 
+       :commands (yas-minor-mode) ; autoload `yasnippet' when `yas-minor-mode' is called
+                                              ; using any means: via a hook or by user
+                                              ; Feel free to add more commands to this
+                                              ; list to suit your needs.
+        ;; :init 
+        ;; :config 
+  ;; :bind
+  ;; (("M-<tab>" . yas-expand))
+      :hook 
+      ((LaTeX-mode . yas-minor-mode)
+      (org-mode . yas-minor-mode)
+      (mu4e-mode . yas-minor-mode)
+      (bibtex-mode . yas-minor-mode)))
 #+END_SRC
 ** 完 anzu
-#+BEGIN_SRC emacs-lisp
   (use-package anzu  
     :config 
     (global-anzu-mode))
+** 完 sumblimity
+#+BEGIN_SRC emacs-lisp
+  (use-package sublimity
+    :custom
+    (sublimity-map-size 30)
+    (sublimity-map-fraction 0.3)
+    (sublimity-map-text-scale -5)
+    :config
+    ;; experimental
+    (require 'sublimity-map)
+    (sublimity-map-set-delay 3)
+    (sublimity-mode 1))
 #+END_SRC 
+** 取 sumblimity
+(use-package sublimity
+:custom
+  (sublimity-scroll-weight 10)
+  (sublimity-scroll-drift-length 6)
+:init
+      (defun sync0-scroll-up ()
+  "Improve scroll up behavior"
+  (interactive)
+        (scroll-down 1))
+
+      (defun sync0-scroll-down ()
+  "Improve scroll down behavior"
+  (interactive)
+        (scroll-up 1))
+      :config
+      ;; (smooth-scrolling-mode 1)
+    (pixel-scroll-mode 1)
+  :config
+  (sublimity-mode 1)
+  ;;(require 'sublimity-map) ;; experimental
+  ;; (require 'sublimity-attractive)
+  (require 'sublimity-scroll)
+      :bind
+      (("M-k" . sync0-scroll-up)
+       ("M-j" . sync0-scroll-down)))
+
+** 取 pixel-scroll-mode
+    (use-package pixel-scroll
+      :init
+      (defun sync0-scroll-up ()
+  "Improve scroll up behavior"
+  (interactive)
+        (scroll-down 1))
+
+      (defun sync0-scroll-down ()
+  "Improve scroll down behavior"
+  (interactive)
+        (scroll-up 1))
+      :config
+      ;; (smooth-scrolling-mode 1)
+    (pixel-scroll-mode 1)
+      :bind
+      (("M-k" . sync0-scroll-up)
+       ("M-j" . sync0-scroll-down)))
 ** 完 smooth-scrolling
 #+BEGIN_SRC emacs-lisp
   (use-package smooth-scrolling 
     :custom
     (smooth-scroll-margin 5)
+    ;; change behavior of org movement
+    ;; (org-special-ctrl-a/e t)
+    :init
+    (defun sync0-scroll-up ()
+"Improve scroll up behavior"
+(interactive)
+      (scroll-down 1))
+
+    (defun sync0-scroll-down ()
+"Improve scroll down behavior"
+(interactive)
+      (scroll-up 1))
     :config
-    (smooth-scrolling-mode 1))
-#+END_SRC      
-*** change behavior of org movent
-#+BEGIN_SRC emacs-lisp
-;(setq org-special-ctrl-a/e t)
-#+END_SRC 
-*** useful scrolling things
-#+BEGIN_SRC emacs-lisp
-(defun gcm-scroll-down ()
-   (interactive)
-   (scroll-up 1))
-
-(global-set-key (kbd "M-j") 'gcm-scroll-down)
-
-(defun gcm-scroll-up ()
-   (interactive)
-   (scroll-down 1))
-
-(global-set-key (kbd "M-k") 'gcm-scroll-up)
+    (smooth-scrolling-mode 1)
+    :bind
+    (("M-k" . sync0-scroll-up)
+     ("M-j" . sync0-scroll-down)))
 #+END_SRC 
 ** 完 hl-line mode
 #+BEGIN_SRC emacs-lisp
   (use-package hl-line 
-    :hook ((text-mode conf-mode) . hl-line-mode)
+    :hook 
+((text-mode conf-mode) . hl-line-mode)
     :custom
     ;; I don't need hl-line showing in other windows. This also offers a small
     ;; speed boost when buffer is displayed in multiple windows.
@@ -2035,7 +2208,11 @@ for page breaks add this to org files
 #+BEGIN_SRC emacs-lisp
   ;; Auto-close delimiters and blocks as you type
   (use-package smartparens
-    :hook (emacs-startup . smartparens-global-mode)
+    :hook 
+((emacs-startup . smartparens-global-mode)
+    ;; Disable smartparens in evil-mode's replace state; they conflict.
+    (evil-replace-state-entry-hook . turn-off-smartparens-mode)
+    (evil-replace-state-exit-hook  . turn-on-smartparens-mode))
     :init
     (defun sp-latex-insert-spaces-inside-pair (_id action _context)
       "ID, ACTION, CONTEXT."
@@ -2187,10 +2364,6 @@ for page breaks add this to org files
     ;; some common wrappings
     ;; (sp-local-tag "\"" "``" "''" :actions '(wrap)))
 
-    ;; disable smartparens in evil-mode's replace state (they conflict)
-    (add-hook 'evil-replace-state-entry-hook #'turn-off-smartparens-mode)
-    (add-hook 'evil-replace-state-exit-hook  #'turn-on-smartparens-mode)
-
     (defhydra hydra-learn-sp (:hint nil)
       "
         _B_ backward-sexp            -----
@@ -2286,6 +2459,22 @@ for page breaks add this to org files
 ** 完 magit
 #+BEGIN_SRC emacs-lisp
   (use-package magit
+    :commands magit-status magit-blame
+    ;; The following configuration has magit use full screen mode.
+    ;; :init
+    ;; (defadvice magit-status (around magit-fullscreen activate)
+    ;;   (window-configuration-to-register :magit-fullscreen)
+    ;;   ad-do-it
+    ;;   (delete-other-windows))
+    :custom
+    (magit-branch-arguments nil)
+    ;; use ido to look for branches
+    ;; (magit-completing-read-function 'magit-ido-completing-read)
+    ;; don't put "origin-" in front of new branch names by default
+    ;; (magit-default-tracking-name-function 'magit-default-tracking-name-branch-only)
+    (magit-push-always-verify nil)
+    ;; Get rid of the previous advice to go into fullscreen
+    (magit-restore-window-configuration t)
     :bind
     ;; bind a quick and dirty shortcut to 
     (("C-x g" . magit-status)
@@ -2347,227 +2536,42 @@ for page breaks add this to org files
 #+END_SRC 
 ** 完 alert (Growl) 
 #+BEGIN_SRC emacs-lisp
-(use-package alert :load-path "~/.emacs.d/sync0_git/alert" :defer t)
+(use-package alert 
+:load-path "~/.emacs.d/sync0_git/alert")
 #+END_SRC 
-** 完 powerline
-#+BEGIN_SRC emacs-lisp
+** 取 powerline
   (use-package powerline
     :if window-system
     :config (setq-default powerline-default-separator 'nil))
-  #+END_SRC 
-** foreign languages
-*** setup
-#+BEGIN_SRC emacs-lisp
-    ;; (defun sync0-toggle-off-input-method ()
-    ;;   (interactive)
-    ;;   (if current-input-method (deactivate-input-method)))
-    (defvar sync0-language-active 
-      "Is a human language minor mode enabled?")
-
-    (setq sync0-language-active nil)
-    ;; (setq sync0-languages-list '(french english spanish))
-    ;; (setq default-input-method nil)
-    ;; (setq sync0-language-modes-list '(rabelais orwell marquez))
-
-  ;;   (defun sync0-toggle-input-method ()
-  ;;     (unless (or (equal sync0-language-active "english")
-  ;; (equal sync0-language-active nil)) 
-  ;; (set-input-method default-input-method)))
-
-  ;;   (defun sync0-toggle-input-method ()
-  ;;     (unless (equal sync0-language-active nil))
-  ;; (activate-input-method default-input-method)))
-
-  ;; add-hook 'evil-insert-state-entry-hook 
-
-    ;; (defun sync0-toggle-input-method ()
-    ;;   (unless (equal default-input-method nil) (activate-input-method default-input-method)))
-    ;; (defun sync0-deactivate-input-method ()
-    ;;   (unless (equal default-input-method nil) (activate-input-method nil)))
-      ;; (unless (equal default-input-method nil) (deactivate-input-method)))
-
-
-    ;; (add-hook 'evil-replace-state-entry-hook 'toggle-input-method)
-    ;; (add-hook 'evil-insert-state-entry-hook (lambda () (set-input-method default-input-method)))
-    ;; (add-hook 'evil-replace-state-entry-hook (lambda () (set-input-method default-input-method)))
-
-    ;; (add-hook 'evil-replace-state-exit-hook 'deactivate-input-method)
-  #+END_SRC 
-*** rabelais-mode
-#+BEGIN_SRC emacs-lisp
-  (define-minor-mode rabelais-mode
-    "Minor mode for editing French text."
-    ;; The initial value.
-    :init-value nil
-    ;; The indicator for the mode line.
-    :lighter " rabelais"
-    ;; Make it a global minor mode. 
-    :global  t
-    (cond 
-     ((equal sync0-language-active "spanish")
-      (progn 
-        (marquez-mode -1)
-         (remove-hook 'evil-insert-state-entry-hook (lambda () (set-input-method "spanish-postfix")))
-         (setq sync0-language-active "french"
-               local-abbrev-table rabelais-mode-abbrev-table)
-         (add-hook 'evil-insert-state-entry-hook (lambda () (set-input-method "french-postfix")))
-         (add-hook 'evil-insert-state-exit-hook (lambda () (set-input-method nil)))
-         (flyspell-mode 1) 
-         (ispell-change-dictionary "fr_FR")
-         (add-to-list 'minor-mode-alist '(rabelais-mode " rabelais"))
-         (abbrev-mode 1)
-        (message "Marquez mode deactivated. Rabelais mode now active")))
-     ((equal sync0-language-active "english")
-      (progn 
-        (orwell-mode -1)
-         (remove-hook 'evil-insert-state-entry-hook (lambda () (set-input-method nil)))
-         (setq sync0-language-active "french"
-               local-abbrev-table rabelais-mode-abbrev-table)
-         (add-hook 'evil-insert-state-entry-hook (lambda () (set-input-method "french-postfix")))
-         (add-hook 'evil-insert-state-exit-hook (lambda () (set-input-method nil)))
-         (flyspell-mode 1) 
-         (ispell-change-dictionary "fr_FR")
-         (add-to-list 'minor-mode-alist '(rabelais-mode " rabelais"))
-         (abbrev-mode 1)
-        (message "Orwell mode deactivated. Rabelais mode now active")))
-  ((or (equal sync0-language-active nil)
-       (equal sync0-language-active "french"))
-         (setq sync0-language-active "french"
-               local-abbrev-table rabelais-mode-abbrev-table)
-         (add-hook 'evil-insert-state-entry-hook (lambda () (set-input-method "french-postfix")))
-         (add-hook 'evil-insert-state-exit-hook (lambda () (set-input-method nil)))
-         (flyspell-mode 1) 
-         (ispell-change-dictionary "fr_FR")
-         (add-to-list 'minor-mode-alist '(rabelais-mode " rabelais"))
-         (abbrev-mode 1))))
-  #+END_SRC 
-*** orwell-mode
-#+BEGIN_SRC emacs-lisp
-  (define-minor-mode orwell-mode
-    "Minor mode for editing French text."
-    ;; The initial value.
-    :init-value nil
-    ;; The indicator for the mode line.
-    :lighter " orwell"
-    ;; Make it a global minor mode. 
-    :global  t
-    (cond 
-     ((equal sync0-language-active "spanish")
-      (progn 
-        (marquez-mode -1)
-         (remove-hook 'evil-insert-state-entry-hook (lambda () (set-input-method "spanish-postfix")))
-         (setq sync0-language-active "english"
-               local-abbrev-table orwell-mode-abbrev-table)
-         (add-hook 'evil-insert-state-entry-hook (lambda () (set-input-method nil)))
-         (add-hook 'evil-insert-state-exit-hook (lambda () (set-input-method nil)))
-         (flyspell-mode 1) 
-         (ispell-change-dictionary "en_US-large")
-         (add-to-list 'minor-mode-alist '(orwell-mode " orwell"))
-         (abbrev-mode 1)
-        (message "Marquez mode deactivated. Orwell mode now active")))
-     ((equal sync0-language-active "french")
-      (progn 
-        (rabelais-mode -1)
-         (remove-hook 'evil-insert-state-entry-hook (lambda () (set-input-method "french-postfix")))
-         (setq sync0-language-active "english"
-               local-abbrev-table orwell-mode-abbrev-table)
-         (add-hook 'evil-insert-state-entry-hook (lambda () (set-input-method nil)))
-         (add-hook 'evil-insert-state-exit-hook (lambda () (set-input-method nil)))
-         (flyspell-mode 1) 
-         (ispell-change-dictionary "en_US-large")
-         (add-to-list 'minor-mode-alist '(orwell-mode " orwell"))
-         (abbrev-mode 1)
-        (message "Rabelais mode deactivated. Orwell mode now active")))
-  ((or (equal sync0-language-active nil)
-       (equal sync0-language-active "english"))
-         (setq sync0-language-active "english"
-               local-abbrev-table orwell-mode-abbrev-table)
-         (add-hook 'evil-insert-state-entry-hook (lambda () (set-input-method nil)))
-         (add-hook 'evil-insert-state-exit-hook (lambda () (set-input-method nil)))
-         (flyspell-mode 1) 
-         (ispell-change-dictionary "en_US-large")
-         (add-to-list 'minor-mode-alist '(orwell-mode " orwell"))
-         (abbrev-mode 1))))
-  #+END_SRC 
-*** marquez-mode
-#+BEGIN_SRC emacs-lisp
-  (define-minor-mode marquez-mode
-    "Minor mode for editing French text."
-    ;; The initial value.
-    :init-value nil
-    ;; The indicator for the mode line.
-    :lighter " marquez"
-    ;; Make it a global minor mode. 
-    :global  t
-    (cond 
-     ((equal sync0-language-active "english")
-      (progn 
-        (orwell-mode -1)
-         (remove-hook 'evil-insert-state-entry-hook (lambda () (set-input-method nil)))
-         (setq sync0-language-active "spanish"
-               local-abbrev-table marquez-mode-abbrev-table)
-         (add-hook 'evil-insert-state-entry-hook (lambda () (set-input-method "spanish-postfix")))
-         (add-hook 'evil-insert-state-exit-hook (lambda () (set-input-method nil)))
-         (flyspell-mode 1) 
-         (ispell-change-dictionary "es_ANY")
-         (add-to-list 'minor-mode-alist '(marquez-mode " marquez"))
-         (abbrev-mode 1)
-        (message "Orwell mode deactivated. Marquez mode now active")))
-     ((equal sync0-language-active "french")
-      (progn 
-        (rabelais-mode -1)
-         (remove-hook 'evil-insert-state-entry-hook (lambda () (set-input-method "french-postfix")))
-         (setq sync0-language-active "spanish"
-               local-abbrev-table marquez-mode-abbrev-table)
-         (add-hook 'evil-insert-state-entry-hook (lambda () (set-input-method "spanish-postfix")))
-         (add-hook 'evil-insert-state-exit-hook (lambda () (set-input-method nil)))
-         (flyspell-mode 1) 
-         (ispell-change-dictionary "es_ANY")
-         (add-to-list 'minor-mode-alist '(marquez-mode " marquez"))
-         (abbrev-mode 1)
-        (message "Rabelais mode deactivated. Marquez mode now active")))
-  ((or (equal sync0-language-active nil)
-       (equal sync0-language-active "spanish"))
-         (setq sync0-language-active "spanish"
-               local-abbrev-table marquez-mode-abbrev-table)
-         (add-hook 'evil-insert-state-entry-hook (lambda () (set-input-method "spanish-postfix")))
-         (add-hook 'evil-insert-state-exit-hook (lambda () (set-input-method nil)))
-         (flyspell-mode 1) 
-         (ispell-change-dictionary "es_ANY")
-         (add-to-list 'minor-mode-alist '(marquez-mode " marquez"))
-         (abbrev-mode 1))))
-  #+END_SRC 
 ** 完 hydra
 #+BEGIN_SRC emacs-lisp
   (use-package hydra
-    ;; In case I later need to wrap defhydra in any special functionality.
     :custom
+    ;; In case I later need to wrap defhydra in any special functionality.
     (lv-use-seperator t))
 #+END_SRC 
 ** 完 git-gutter 
 #+BEGIN_SRC emacs-lisp
-  (use-package git-gutter :after hydra 
-    :commands git-gutter-mode
-    :hook (text-mode . git-gutter-mode)
+  (use-package git-gutter 
+    :after hydra 
+    :hook 
+    (text-mode . git-gutter-mode)
     :custom
     ;; (git-gutter:window-width 1)
     (git-gutter:modified-sign " ") 
     (git-gutter:added-sign " ")    
     (git-gutter:deleted-sign " ")
     :config
-    ;; (setq-default left-fringe-width  10)
-    ;; (setq-default right-fringe-width 10)
-
-    ;;(set-face-background 'git-gutter:modified "orange") ;; background color
     (set-face-background 'git-gutter:modified "#3a81c3") ;; background color
-    ;;(set-face-background 'git-gutter:added "green")
     (set-face-background 'git-gutter:added "#7ccd7c")
+    ;;(set-face-background 'git-gutter:modified "orange") ;; background color
+    ;;(set-face-background 'git-gutter:added "green")
     ;; (set-face-attribute  'git-gutter:added nil :foreground "black")
     ;;(set-face-background 'git-gutter:deleted "red")
-    (set-face-background 'git-gutter:deleted "ee6363")
     ;;  (set-face-attribute  'git-gutter:deleted nil :foreground "black")
+    (set-face-background 'git-gutter:deleted "ee6363")
 
-    (defhydra hydra-git-gutter
+    (defhydra sync0-hydra-git-gutter
       (:body-pre (git-gutter-mode 1) :hint nil)
       "
                                                              ╭─────────────────┐
@@ -2590,13 +2594,14 @@ for page breaks add this to org files
       ("R" git-gutter:set-start-revision)
       ("q" nil :color blue)
       ("Q" (git-gutter-mode -1) :color blue))
-
-    :bind (("M-g M-g" . hydra-git-gutter/body)))
+:bind
+    (("C-c h g" . sync0-hydra-git-gutter/body)))
   #+END_SRC 
 ** 完 git-time-machine
 #+BEGIN_SRC emacs-lisp
   (use-package git-timemachine
-    :commands (git-timemachine git-timemachine-toggle)
+    :commands 
+(git-timemachine git-timemachine-toggle)
     :custom
     (git-timemachine-show-minibuffer-details nil)
     :config
@@ -2614,8 +2619,33 @@ for page breaks add this to org files
   #+END_SRC 
 ** 無 mu
 #+BEGIN_SRC emacs-lisp
-  (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
-      (load-file "~/.emacs.d/mu4econfig.el")
+  (use-package mu4e
+    :load-path "/usr/share/emacs/site-lisp/"
+    ;; (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
+    ;; :custom
+    ;;         ;; don't save message to Sent Messages, GMail/IMAP will take care of this
+    ;;         (mu4e-sent-messages-behavior 'delete)
+    ;;         ;; (mu4e-use-fancy-chars nil)
+    ;;         ;;       (mu4e-attachment-dir "~/Desktop")
+    ;;               (mu4e-headers-results-limit 100)
+    ;;               (mu4e-view-show-images t)
+    ;;               (mu4e-headers-skip-duplicates t)
+    ;;               (mu4e-view-show-addresses t)
+    ;;               (mu4e-headers-fields '((:human-date . 12) (:from-or-to . 22) (:subject)))
+    ;;               (message-kill-buffer-on-exit t)
+    :commands 
+    (mu4e)
+    ;; (mu4e mu4e-headers-search mu4e-compose-new mu4e~proc-add)
+    :init
+    (load-file "~/.emacs.d/mu4econfig.el")
+    :config
+    (defhydra hydra-mail (:color blue)
+      "Mail"
+      ("C" mu4e-compose-new "compose new")
+      ("b" mu4e-headers-search-bookmark "bookmarks")
+      ("q" nil "quit"))
+    :bind 
+    (("C-c m" . hydra-mail/body)))
   #+END_SRC 
 ** 完 ediff
 #+BEGIN_SRC emacs-lisp
@@ -2661,12 +2691,13 @@ some quality voices in the AUR repositories.
   #+END_SRC 
 ** 完 desktop-save mode
 #+BEGIN_SRC emacs-lisp
-  ;; (use-package desktop
-  ;;   :custom
-  ;;   (desktop-auto-save-timeout 300)
-  ;;   (desktop-restore-reuses-frames nil)
-  ;; :config
-  ;;   (desktop-save-mode 1))
+  (use-package desktop
+    :custom
+    (desktop-auto-save-timeout 300)
+    ;; If t, restoring frames reuses existing frames.
+    ;; (desktop-restore-reuses-frames nil)
+    :config
+    (desktop-save-mode 1))
   #+END_SRC 
 ** 完 saveplace
 This is Emacs' default minor mode to save your location in visited
@@ -2746,48 +2777,29 @@ configuration, it's just in case the latter fails.
     :custom
     (doc-view-continuous t)
     :bind 
-(:map doc-view-mode-map
-    ("q" . quit-window)
-    ("+" . doc-view-enlarge)
-    ("=" . doc-view-enlarge)
-    ("-" . doc-view-shrink)
-    ("0" . doc-view-scale-reset)
-    ("G" . doc-view-last-page)
-    ("g" . doc-view-goto-page)
-    ("K" . doc-view-previous-page)
-    ("J" . doc-view-next-page)
-    ("k" . doc-view-scroll-down-or-previous-page)
-    ("j" . doc-view-scroll-up-or-next-page)
-    ("W" . doc-view-fit-width-to-window)
-    ("H" . doc-view-fit-height-to-window)
-    ("P" . doc-view-fit-page-to-window)
-    ("X" . doc-view-kill-proc)
-    ("s s" . doc-view-set-slice)
-    ("s m" . doc-view-set-slice-using-mouse)
-    ("s b" . doc-view-set-slice-from-bounding-box)
-    ("s r" . doc-view-reset-slice)
-    ("/" . doc-view-search)
-    ("?" . doc-view-search-backward)))
+    (:map doc-view-mode-map
+          ("q" . quit-window)
+          ("+" . doc-view-enlarge)
+          ("=" . doc-view-enlarge)
+          ("-" . doc-view-shrink)
+          ("0" . doc-view-scale-reset)
+          ("G" . doc-view-last-page)
+          ("g" . doc-view-goto-page)
+          ("K" . doc-view-previous-page)
+          ("J" . doc-view-next-page)
+          ("k" . doc-view-scroll-down-or-previous-page)
+          ("j" . doc-view-scroll-up-or-next-page)
+          ("W" . doc-view-fit-width-to-window)
+          ("H" . doc-view-fit-height-to-window)
+          ("P" . doc-view-fit-page-to-window)
+          ("X" . doc-view-kill-proc)
+          ("s s" . doc-view-set-slice)
+          ("s m" . doc-view-set-slice-using-mouse)
+          ("s b" . doc-view-set-slice-from-bounding-box)
+          ("s r" . doc-view-reset-slice)
+          ("/" . doc-view-search)
+          ("?" . doc-view-search-backward)))
   #+END_SRC 
-** 完 sentence-highlight
-#+BEGIN_SRC emacs-lisp
-  (use-package sentence-highlight 
-    :load-path "~/.emacs.d/sync0/" 
-    :after cycle-themes
-    :commands sentence-highlight-mode
-    :init
-    (defun sync0-change-sentence-highlight-color ()
-      "Change the sentence hightlight color based on the doom-theme enabled." 
-      (when (boundp 'cycle-themes-last-theme-set)
-        (if (equal cycle-themes-last-theme-set 'doom-spacegrey)
-            ;; solarized-light
-            (set-face-foreground 'sentence-highlight-face "#ECBE7B")
-          ;; space-grey
-          (set-face-foreground 'sentence-highlight-face "#b48ead"))))
-    :config 
-    (set-face-foreground 'sentence-highlight-face "#002b36")
-    (add-hook 'cycle-themes-after-cycle-hook #'sync0-change-sentence-highlight-color))
-#+END_SRC 
 ** 完 which-key
 This package displays available keybindings in a popup. As configured
 herein, ~which-key~ will not show automatically in the minibuffer. That
@@ -2804,10 +2816,10 @@ is the default behavior, which gets annoying rather fast.
   ;; Allow C-h to trigger which-key before it is done automatically.
   (which-key-show-early-on-C-h t)
   ;; (which-key-idle-delay 10000)
-  (which-key-idle-delay 1)
-  ;; (which-key-idle-secondary-delay 0.05)
-  (which-key-allow-evil-operators t)
-  (which-key-show-operator-state-maps t)
+  (which-key-idle-delay 0.05)
+  ;; (which-key-idle-secondary-delay 0.5)
+  ;; (which-key-allow-evil-operators t)
+  ;; (which-key-show-operator-state-maps t)
     :init
     (which-key-mode))
 #+END_SRC 
@@ -2815,12 +2827,42 @@ is the default behavior, which gets annoying rather fast.
 This built-in Emacs package lets you move point from window to window
 using more familiar key combinations than the default ~C-x o~.
 
+I added some functions to improve defaults.
+https://emacs.stackexchange.com/questions/40821/open-new-window-and-switch-to-it
 #+BEGIN_SRC emacs-lisp
   (use-package windmove
-  :bind (("M-." . windmove-left)
-         ;; ("M-<up>" . windmove-up)
-         ;; ("M-<down>" . windmove-down)
-         ("M-," . windmove-right)))
+    :after (hydra counsel ivy)
+    :init
+    (defun sync0-split-and-follow-horizontally ()
+      (interactive)
+      (split-window-below)
+      (balance-windows)
+      (other-window 1))
+
+    (defun sync0-split-and-follow-vertically ()
+      (interactive)
+      (split-window-right)
+      (balance-windows)
+      (other-window 1))
+    :config
+    (defhydra sync0-hydra-file-access (:color amaranth :exit t)
+      "Manage windows and open new files in different ways."
+      ("1" delete-other-windows "Delete other windows")
+      ("2" sync0-split-and-follow-horizontally "Split windows horizontally")
+      ("3" sync0-split-and-follow-vertically "split windows vertically")
+      ("b" ivy-switch-buffer "Open buffer in current window.")
+      ("o" ivy-switch-buffer-other-window "Open buffer in new window.")
+      ("r" counsel-recentf "List recent files.")
+      ("f" counsel-find-file "Find file.")
+      ("q" nil "Quit." :color blue))
+    :bind 
+    (("M-," . windmove-left)
+     ("<f5>" . sync0-hydra-file-access/body)
+     ("C-x 2" . sync0-split-and-follow-horizontally)
+     ("C-x 3" . sync0-split-and-follow-vertically)
+     ;; ("M-<up>" . windmove-up)
+     ;; ("M-<down>" . windmove-down)
+     ("M-." . windmove-right)))
 #+END_SRC 
 ** 完 google-this
 This package provides a set of functions for launching google searches
@@ -2862,31 +2904,181 @@ The long lost Emacs string manipulation library. This is required for
 #+BEGIN_SRC emacs-lisp
   (use-package s)
 #+END_SRC 
-* 無 Custom Tweaks
-** Sync0 hydras
-#+BEGIN_SRC emacs-lisp
-(with-eval-after-load 'org-clock 
- (defhydra hydra-org-clock (:color blue :hint nil)
-   "
-Clock   In/out^     ^Edit^   ^Summary     (_?_)
------------------------------------------
-        _i_n         _e_dit   _g_oto entry
-        _c_ontinue   _q_uit   _d_isplay
-        _o_ut        ^ ^      _r_eport
-      "
-   ("i" org-clock-in)
-   ("p" sync0-org-clock-in)
-   ("o" org-clock-out)
-   ("c" org-clock-in-last)
-   ("e" org-clock-modify-effort-estimate)
-   ("q" org-clock-cancel)
-   ("g" org-clock-goto)
-   ("d" org-clock-display)
-   ("r" org-clock-report)
-   ("?" (org-info "Clocking commands")))
+** 完 company-mode
+Company is a text completion framework for Emacs. It uses pluggable
+back-ends and front-ends to retrieve and display completion
+candidates.
 
- (bind-key "C-c w" 'hydra-org-clock/body))
-  #+END_SRC 
+This configuration was taken from:
+https://github.com/mandarvaze/dot-files/blob/master/emacs.org. 
+
+To avoid the conflict between ~company-mode~ and ~yasnippets~ over the use of
+the tab key, I borrowed the solution from the EmacsWiki page for
+~company-mode~. 
+https://www.emacswiki.org/emacs/CompanyMode#toc11
+
+#+BEGIN_SRC emacs-lisp
+  (use-package company
+    :after yasnippet
+    :custom
+    (company-dabbrev-ignore-case t)
+    (company-show-numbers nil)
+    (company-idle-delay 0.1)
+    (company-minimum-prefix-length 2)
+    (company-selection-wrap-around t)
+    (company-tooltip-align-annotations t)  ; align to the right border
+    ;; company-sort-by-occurrence t (20190410)
+    (company-tooltip-limit 5)
+    ;; (company-backends '(company-ispell
+    ;;                     company-capf
+    ;;                     company-yasnippet
+    ;;                     company-dabbrev
+    ;;                     ;; company-gtags
+    ;;                     ;; company-etags
+    ;;                     company-elisp
+    ;;                     company-files))
+    :config
+    (defun sync0-text-mode-hook-setup ()
+      ;; make `company-backends' local is critcal
+      ;; or else, you will have completion in every major mode, that's very annoying!
+      (make-local-variable 'company-backends)
+      (add-to-list 'company-backends 'company-capf)
+      ;; company-ispell is the plugin to complete words
+      (add-to-list 'company-backends 'company-ispell)
+      (add-to-list 'company-backends 'company-yasnipet))
+    ;; (add-to-list 'company-backends 'company-math-symbols-unicode)
+
+    ;; With this code, yasnippet will expand the snippet if company didn't complete the word
+    ;; replace company-complete-common with company-complete if you're using it
+
+    (advice-add 'company-complete-common :before (lambda () (setq my-company-point (point))))
+    (advice-add 'company-complete-common :after (lambda ()
+                                                  (when (equal my-company-point (point))
+                                                    (yas-expand))))
+    :hook
+    ((after-init . global-company-mode)
+     (text-mode . sync0-text-mode-hook-setup)))
+  ;; :bind 
+  ;; (("<tab>" . sync0-tab-indent-or-complete)))
+
+  ;; To use company-quickhelp, the pos-tip package is necessary.
+  (use-package company-quickhelp
+    :after company
+    :init
+    (use-package pos-tip)
+    :config
+    (company-quickhelp-mode 1))
+#+END_SRC 
+** 完 guess-language
+Emacs minor mode that detects the language you're typing in.
+Automatically switches spell checker. Supports multiple languages per
+document.
+
+#+BEGIN_SRC emacs-lisp
+    (use-package guess-language
+      :after (ispell evil company)
+      :init
+      (set-input-method nil)
+      (setq company-ispell-dictionary  (concat user-emacs-directory "dictionaries/english.txt"))
+     (defvar sync0-language-active 
+       "Is a human language minor mode enabled?")
+      (setq sync0-language-active "english")
+    :custom
+    (guess-language-languages '(en fr es))
+    (guess-language-min-paragraph-length 35)
+    (guess-language-langcodes
+     '((en . ("en_US-large" "english"))
+       ;; (it . ("it_IT" "italian"))
+       ;; (pt . ("pt_PT" "portuguese"))
+       (fr . ("fr_FR" "french"))
+       (es . ("es_ANY" "spanish"))))
+    :config
+    (defun sync0-language-change (lang beginning end)
+      "Set of functions to run after a different language is detected."
+      (unless (string-equal guess-language-current-language lang)
+        (cond 
+         ((string-equal lang "es")
+          (progn
+            (setq sync0-language-active "spanish")
+            (setq local-abbrev-table marquez-mode-abbrev-table)
+            (set-input-method "spanish-postfix")
+            (setq company-ispell-dictionary  (concat user-emacs-directory "dictionaries/spanish.txt"))))
+         ((string-equal lang "fr")
+          (progn
+            (setq sync0-language-active "french")
+            (setq local-abbrev-table rabelais-mode-abbrev-table)
+            (set-input-method "french-postfix")
+            (setq company-ispell-dictionary  (concat user-emacs-directory "dictionaries/french.txt"))))
+         ((string-equal lang "en")
+          (progn
+            (setq sync0-language-active "english")
+            (setq local-abbrev-table orwell-mode-abbrev-table)
+            (set-input-method nil)
+            (setq company-ispell-dictionary  (concat user-emacs-directory "dictionaries/english.txt")))))))
+
+    (defun sync0-lookup-word (word)
+      "Search an online dictionary for the word at point according
+      to the active language minor mode."
+              (interactive (list (save-excursion (car (ispell-get-word nil)))))
+      (cond  ((string-equal sync0-language-active "english") 
+              (browse-url (format "https://www.merriam-webster.com/dictionary/%s" word)))
+            ((string-equal sync0-language-active "french") 
+              (browse-url (format "https://larousse.fr/dictionnaires/francais/%s" word)))
+            ((string-equal sync0-language-active "spanish") 
+              (browse-url (format "https://dle.rae.es/?w=%s" word)))
+             (t "No language minor mode specified")))
+
+    (defun sync0-lookup-conjugation (word)
+      "Search an online dictionary for the word at point according
+      to the active language minor mode."
+              (interactive (list (save-excursion (car (ispell-get-word nil)))))
+      (cond  ((string-equal sync0-language-active "english") 
+              (browse-url (format "https://www.merriam-webster.com/dictionary/%s" word)))
+            ((string-equal sync0-language-active "french") 
+              (browse-url (format "http://la-conjugaison.nouvelobs.com/du/verbe/%s.php" word)))
+            ((string-equal sync0-language-active "spanish") 
+              (browse-url (format "http://conjugador.reverso.net/conjugacion-espanol-verbo-%s.html" word)))
+             (t "No language minor mode specified")))
+
+    ;; German 
+    ;; german-postfix for evil insert mode
+    ;;(add-hook 'evil-insert-state-entry-hook
+    ;;(lambda () (set-input-method "german-postfix")))
+
+    (add-hook 'guess-language-after-detection-functions #'sync0-language-change)
+  :bind
+  (("M-#" . sync0-lookup-word)
+  ("M-$" . sync0-lookup-conjugation))
+    :hook
+    (text-mode . guess-language-mode))
+#+END_SRC 
+** 取 define-word
+define-word is a GNU Emacs package that lets you see the definition of
+a word or a phrase at point, without having to switch to a browser.
+While this package should be awesome in theory, for someone like
+myself that needs precise dictionaries and works with several
+languages simultaneoulsy, this package is not flexible enough because
+it requires writing a function to parse each website, which, while not
+impossible is way too time consuming to be worth it. Maybe one day I
+will bother writing such parsing functions, but since websites can
+change anytime, I just don't think it is worth the effort at this
+point. 
+
+(use-package define-word)
+** 完 focus-mode
+Focus provides focus-mode that dims the text of surrounding sections.
+This mode is perfect for proofreading. Thus, don't abuse it when
+writing drafts.  
+
+The amount of dimness can be customized by setting the focus-dimness
+variable, where a positive integer indicates a more dim color (i.e.
+more blended with the background color of your theme), and a negative
+integer indicates a less dim color.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package focus)
+#+END_SRC 
+* 無 Custom Tweaks
 ** Definitions
 #+BEGIN_SRC emacs-lisp
 (setq sync0-english-parts-speech '("noun" "intransitive verb" "transitive verb" "verb" "conjunction" "adjective" "adverb"))
@@ -2938,6 +3130,11 @@ Clock   In/out^     ^Edit^   ^Summary     (_?_)
    (concat "** [/] Weekly Evaluation " "(" (shell-command-to-string "echo -n $(date +'%d/%m/%Y')") ")")))
 #+END_SRC 
 ** Automatic abbrevs integration with ispell
+This functions was borrowed from Artur Malabarba. See his discussion
+here:
+
+http://endlessparentheses.com/ispell-and-abbrev-the-perfect-auto-correct.html
+
 #+BEGIN_SRC emacs-lisp
 ;;(define-key ctl-x-map "\C-i"
   ;;#'endless/ispell-word-then-abbrev)
@@ -2979,35 +3176,9 @@ abort completely with `C-g'."
 ;; set a faster shortcut
 (define-key global-map (kbd "M-i") 'endless/ispell-word-then-abbrev)
 #+END_SRC 
-** Dictionary look up
-#+BEGIN_SRC emacs-lisp
-  (autoload 'ispell-get-word "ispell")
-
-  (defun sync0-lookup-word (word)
-    "Search an online dictionary for the word at point according
-    to the active language minor mode."
-            (interactive (list (save-excursion (car (ispell-get-word nil)))))
-    (cond  ((bound-and-true-p orwell-mode) 
-            (browse-url (format "https://www.merriam-webster.com/dictionary/%s" word)))
-           ((bound-and-true-p rabelais-mode) 
-            (browse-url (format "https://larousse.fr/dictionnaires/francais/%s" word)))
-           (t "No language minor mode specified")))
-
-  (defun sync0-lookup-conjugation (word)
-    "Search an online dictionary for the word at point according
-    to the active language minor mode."
-            (interactive (list (save-excursion (car (ispell-get-word nil)))))
-    (cond  ((bound-and-true-p orwell-mode) 
-            (browse-url (format "https://www.merriam-webster.com/dictionary/%s" word)))
-           ((bound-and-true-p rabelais-mode) 
-            (browse-url (format "http://la-conjugaison.nouvelobs.com/du/verbe/%s.php" word)))
-           (t "No language minor mode specified")))
-
-  (global-set-key (kbd "M-#") 'sync0-lookup-word)
-  (global-set-key (kbd "M-$") 'sync0-lookup-conjugation)
-  #+END_SRC 
 ** Yasnippet quote 
 #+BEGIN_SRC emacs-lisp
+(with-eval-after-load 'yasnippet
   (defun sync0-print-bibtex-key ()
     "Print the bibtex key of the document"
     (save-excursion 
@@ -3059,10 +3230,11 @@ abort completely with `C-g'."
     (save-excursion
       (when 
           (re-search-backward "cite\\[.*\\]{\\(.+\\)}" nil t 1)
-        (match-string 1))))
+        (match-string 1)))))
   #+END_SRC 
 ** Yasnippet authors
 #+BEGIN_SRC emacs-lisp
+(with-eval-after-load 'yasnippet
     (defun sync0-bibtex-extract-editors ()
     "Extract the author or editor from entry as string"
     (interactive)
@@ -3181,27 +3353,11 @@ abort completely with `C-g'."
 
             (setq sync0-bibtex-types '("Manual" "Patent" "Report" "Thesis" "Article" "Paper"))
 
-            (setq sync0-bibtex-simon-arkseries '("Personal Pappers (1929-1979)" "Schoolwork and Early Career (1929-1943)" "Illinois Institute of Technology (1942-1949)" "RAND Corporation (1949-1973)" "Carnegie Mellon University (1948-2001)" "Consulting (1942-2000)" "Lectures and Talks (1951-2000)" "Publications (1949-2000)" "Correspondence (1940-2001)" "Dissertations (1956-1999)" "Awards (1958-1998)" "Miscellaneous (1942-2003)"))
+            (setq sync0-bibtex-simon-arkseries '("Personal Pappers (1929-1979)" "Schoolwork and Early Career (1929-1943)" "Illinois Institute of Technology (1942-1949)" "RAND Corporation (1949-1973)" "Carnegie Mellon University (1948-2001)" "Consulting (1942-2000)" "Lectures and Talks (1951-2000)" "Publications (1949-2000)" "Correspondence (1940-2001)" "Dissertations (1956-1999)" "Awards (1958-1998)" "Miscellaneous (1942-2003)")))
   #+END_SRC 
 ** Sync0 bibtex
 #+BEGIN_SRC emacs-lisp
-        (defun sync0-bibtex-next-key ()
-        "Print the bibtex key of the document"
-        (interactive)
-        (let ((bibtex-key (re-search-forward "@.+{" nil nil 1)))
-          (goto-char bibtex-key)))
-
-  (defun sync0-bibtex-previous-key ()
-    "Print the bibtex key of the document"
-    (interactive)
-    (let ((bibtex-key (re-search-backward "@.+{" nil nil 2)))
-      (goto-char bibtex-key)
-      (re-search-forward "@.+{" nil nil 1)))
-
-    (with-eval-after-load 'evil
-                             (evil-define-key 'normal bibtex-mode-map
-                               "K" 'sync0-bibtex-previous-key
-                               "J" 'sync0-bibtex-next-key))
+(with-eval-after-load 'bibtex
 
 (defvar sync0-bibtex-reference-keys
   (lazy-completion-table sync0-bibtex-reference-keys
@@ -3273,7 +3429,6 @@ for parsing BibTeX keys.  If parsing fails, try to set this variable to nil."
               ;; successful operation --> return `bibtex-reference-keys'
               (setq bibtex-reference-keys ref-keys)))))))
 
-
 (defun sync0-ivy-bibtex ()
   (interactive)
   (setq ivy-bibtex-default-action 'ivy-bibtex-insert-key)
@@ -3289,7 +3444,7 @@ for parsing BibTeX keys.  If parsing fails, try to set this variable to nil."
               candidates
               :preselect preselect
               :caller 'ivy-bibtex
-              :action ivy-bibtex-default-action)))
+              :action ivy-bibtex-default-action))))
   #+END_SRC 
 ** Exportable time stamps
 #+BEGIN_SRC emacs-lisp
@@ -3316,7 +3471,6 @@ for parsing BibTeX keys.  If parsing fails, try to set this variable to nil."
                                   (sync0-update-timestamp))))
   #+END_SRC 
 ** Auto update Org Modified Property
-#+BEGIN_SRC emacs-lisp
         (defun yant/getentryhash ()
         "Get the hash sum of the text in current entry, except :HASH: and :MODIFIED: property texts."
         (save-excursion
@@ -3346,7 +3500,6 @@ for parsing BibTeX keys.  If parsing fails, try to set this variable to nil."
   (org-forward-heading-same-level (point)))
         (org-set-property "HASH" (format "%s" (yant/getentryhash)))    
         (org-set-property "MODIFIED" (format-time-string "%Y/%m/%d")))))
-  #+END_SRC 
 ** Useful Key Bindings
  #+BEGIN_SRC emacs-lisp
 ;; Kill current buffer and window
@@ -3361,4 +3514,5 @@ for parsing BibTeX keys.  If parsing fails, try to set this variable to nil."
 ;; Quickly work with bookmarks
   (global-set-key (kbd "M-m") 'bookmark-set)
  #+END_SRC
+ 
  
