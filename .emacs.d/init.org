@@ -59,7 +59,9 @@ have the following installed or activated:
 - ~doom-modeline~ (looks good with doom-themes)
 - ~counsel~ (improved versions of useful commands)
 - ~ivy~ (completion frontend. Alternatively, you could use ~helm~)
+- ~hydra~ (only sane method for dealing with keybindings in Emacs.)
 - ~saveplace~ (good luck finding your way around files otherwise)
+- ~smooth-scrolling~ (yeah; default scrolling is /that/ bad.)
 - ~rainbow-delimiters~ (good luck editing those pesky parentheses otherwise)
 - ~smartparens~ (same as above)
 - ~pdf-tools~ (not a must, but comes in handy sometimes)
@@ -109,20 +111,48 @@ These settings configure Emacs package manager and the package
  repositories.
 
    #+BEGIN_SRC emacs-lisp
-          ;; Initialize Emac's package manager.
-          (package-initialize)
+     ;; Load latest versions of all packages. 
+     ;; List packages that will not be loaded. 
+     ;; Set this variable before calling (package-initialize)
+     (setq package-load-list '(all
+                               ;; (projectile nil)
+                               (solaire-mode nil)
+                               (sublimity-mode nil)
+                               (which-key-mode nil)
+                               (org-bullets-mode nil)
+                               (company-mode nil)))
 
-          ;; Set up the package repositories.
-          (add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/"))
-          (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
-          ;;     (add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/"))
-          (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
+     ;; Do not check package signatures when installing new packages. 
+     (setq package-check-signature nil)
 
-          (setq package-check-signature nil)
+     ;; Initialize Emac's package manager.
+     (package-initialize)
+
+     ;; Set up the package repositories.
+     (add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/"))
+     (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+     ;;     (add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/"))
+     (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
      #+END_SRC 
 
 [[https://github.com/jwiegley][jwiegley's]] ~use-package~ macro simplifies package configuration in the ~.emacs~
-startup file for faster startup and easier organization.
+startup file for faster startup and easier organization. Since I use
+a single org-mode file for configuring Emacs, ~use-package~ provides a
+nice way to keep everything organized. 
+
+The alternative way to organize your Emacs configuration is by having
+separate ~whatever-package.el~ files, and calling them when needed.
+Although many seasoned users continue organizing their configurations
+this way, I find it too cumbersome to be worth the trouble. The only
+reason I can think for keeping to the old way is if you want to have
+your configuration rely on the least number of external dependencies
+or if your single configuration file cannot be handled by your current
+machine.
+
+Remember that the ~:disabled~ keyword only disables the use-package
+configuration. If you want to prevent a package from loading, it is
+necessary to add it, as in ~(unwanted-package nil)~, to the list
+~package-load-list~. See above for the code. 
 
    #+BEGIN_SRC emacs-lisp
      ;; Verify that "use-package" is installed.
@@ -136,7 +166,8 @@ startup file for faster startup and easier organization.
 
      ;; Activate "use-package". 
      (require 'use-package)
-     ;; (require 'diminish)
+     ;; Allow mode line shortening of package names.
+     (require 'diminish)
      ;; Necessary to allow use-package to bind keys through ":bind" keyword.
      (require 'bind-key)
  #+END_SRC 
@@ -145,12 +176,11 @@ startup file for faster startup and easier organization.
    #+BEGIN_SRC emacs-lisp
 (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
  #+END_SRC 
-** 完 Scratch message
+** 取 Scratch message
  The following code changes the Emacs welcome message in the ~scratch~
  buffer. I use a fragment from the chapter "Where I Lived, and What I Lived
  for" from Thoreau's /Walden, or, Life in the Woods/ (1854). 
 
- #+BEGIN_SRC emacs-lisp
    (setq initial-scratch-message ";;
    ;; 
    ;; WHERE I LIVED, AND WHAT I LIVED FOR
@@ -171,7 +201,6 @@ startup file for faster startup and easier organization.
    ;; 
    ;; 
    ;; Henry David Thoreau, Walden (1854)")
-   #+END_SRC 
 ** 完 Mode line
 Display time in modeline.
   #+BEGIN_SRC emacs-lisp
@@ -179,13 +208,6 @@ Display time in modeline.
           '((propertize (format-time-string " %H:%M " now) 'face 'bold)))
 
     (display-time-mode 1)
-    #+END_SRC 
-
-Fancy battery. 
-  #+BEGIN_SRC emacs-lisp
-    (use-package fancy-battery
-      :hook 
-(after-init . fancy-battery-mode))
     #+END_SRC 
 ** 完 Toolbars
 Define a function to toggle mode line. 
@@ -209,9 +231,23 @@ Hide tool bar, menu bar, and scroll bar at startup.
 
 In case I need those annoying toolbars back, I bind them:
     #+BEGIN_SRC emacs-lisp
-      (global-set-key (kbd "<f10>") 'sync0-toggle-mode-line)
-      (global-set-key (kbd "<f8>") 'tool-bar-mode)
-      (global-set-key (kbd "<f9>") 'menu-bar-mode)
+    (with-eval-after-load 'hydra
+    (defhydra sync0-hydra-menu-toggle (:color amaranth :hint nil :exit t)
+      "
+^Toolbar toggle^
+^^^----------------
+_l_: Mode line
+_t_: Tool bar
+_m_: Menu bar
+[q] Quit
+
+"
+      ("l" sync0-toggle-mode-line)
+      ("t" tool-bar-mode)
+      ("m" menu-bar-mode)
+      ("q" nil :color blue))
+
+      (global-set-key (kbd "<f8>") 'sync0-hydra-menu-toggle/body))
       #+END_SRC 
 ** 完 Appeareance
     At startup,  maxmize Emacs' window. 
@@ -223,17 +259,26 @@ Other settings.
     #+BEGIN_SRC emacs-lisp
       (setq-default                    
        ;; Avoid ugly problemes with git-gutter.
-       fringes-outside-margins t
-       left-margin-width 0
+       fringes-outside-margins nil
+       left-margin-width 2
        ;; right-margin-width 7
-       left-fringe-width 5
+       ;; left-fringe-width 5
+       left-fringe-width 1
        right-fringe-width 0
        ;; Remove continuation arrow on right fringe.
        fringe-indicator-alist (delq (assq 'continuation fringe-indicator-alist)
                                     fringe-indicator-alist)
        indicate-buffer-boundaries nil
        indicate-empty-lines nil
+       ;; Stop asking whether themes are safe
+       custom-safe-themes t
        max-mini-window-height 0.3)
+
+      (defun sync0-restore-margins ()
+        "Restore margins after they are destroyed by git-gutter"
+        (setq left-margin-width 2))
+
+     (add-hook 'after-save-hook 'sync0-restore-margins)
  #+END_SRC
 
 Configure window dividers. 
@@ -242,13 +287,15 @@ Configure window dividers.
       ;; windows visually.
       (setq-default window-divider-default-places t
                     window-divider-default-bottom-width 0
-                    window-divider-default-right-width 1)
+                    window-divider-default-right-width 5)
       (add-hook 'emacs-startup-hook #'window-divider-mode)
  #+END_SRC
 ** 完 Sane defaults
    Define user information.
  #+BEGIN_SRC emacs-lisp
    (setq user-full-name "Carlos Alberto Rivera Carreño"
+;; Define my Dropbox location
+         sync0-dropbox-directory "~/Dropbox/"
          user-mail-address "carc.sync0@gmail.com")
  #+END_SRC
 
@@ -269,7 +316,8 @@ Configure autosave.
  #+BEGIN_SRC emacs-lisp
    ;; Set CUSTOM directory
    (setq custom-file (expand-file-name "custom_settings.el" user-emacs-directory))
-   (load custom-file t)
+   ;; (load custom-file nil)
+   ;; (load custom-file t)
  #+END_SRC
 
 Configure line numbers
@@ -277,6 +325,17 @@ Configure line numbers
    ;; (when (version<= "26.0.50" emacs-version )
    ;; (global-display-line-numbers-mode))
  #+END_SRC
+
+Configure matching delimiters. 
+ #+BEGIN_SRC emacs-lisp
+   (setq show-paren-delay 0.1
+         show-paren-highlight-openparen t
+         ;; don't blink--too distracting
+         blink-matching-paren nil
+         show-paren-when-point-inside-paren t)
+
+   (show-paren-mode 1)
+  #+END_SRC
 
 Eliminate Emacs' yes-no inconsistency. 
  #+BEGIN_SRC emacs-lisp
@@ -301,14 +360,6 @@ Configure the default encoding system.
      (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
  #+END_SRC
 
-Configure matching delimiters. 
-    #+BEGIN_SRC emacs-lisp
-      (setq show-paren-delay 0.1
-            show-paren-highlight-openparen t
-            show-paren-when-point-inside-paren t)
-      (show-paren-mode 1)
- #+END_SRC
-
 Other settings.
     #+BEGIN_SRC emacs-lisp
       (setq-default                    
@@ -320,8 +371,6 @@ Other settings.
        split-height-threshold nil        
        ;; disable bidirectional text for tiny performance boost
        bidi-display-reordering nil 
-       ;; don't blink--too distracting
-       blink-matching-paren nil    
        ;; hide cursors in other windows
        cursor-in-non-selected-windows nil  
 ;; Don't resize frames implicitly.
@@ -334,20 +383,21 @@ Other settings.
 ** 完 Faces & text
     Adjust font size according to screen resolution (when I use dual monitor setup)
 #+BEGIN_SRC emacs-lisp
-    (if (> (display-pixel-width) 2000)
-        ;; external monitor font size
-        (progn (set-face-attribute 'default nil 
-                              :family "Source Code Pro"
-                              :height 120)
-          (setq line-spacing 0))
-      ;; laptop font size
+  (if (> (display-pixel-width) 2000)
+      ;; external monitor font size
       (progn (set-face-attribute 'default nil 
                             :family "Source Code Pro"
-                            :height 115)
-        (setq line-spacing 0)))
+                            :height 120)
+        (setq line-spacing 0))
+    ;; laptop font size
+    (progn (set-face-attribute 'default nil 
+                          :family "Source Code Pro"
+                          :height 115)
+      (setq line-spacing 0)))
  #+END_SRC
 
 Configure fixed-widht faces. 
+
   #+BEGIN_SRC emacs-lisp
     ;; (defun sync0-buffer-face-mode-fixed ()
     ;;   "Sets a fixed width (monospace) font in current buffer"
@@ -391,15 +441,9 @@ Configure Hooks.
       ;; (add-hook 'LaTeX-mode-hook 'turn-on-auto-fill)
   #+END_SRC
 
-  Other settings.
+    Have sentences end with single espace.
 #+BEGIN_SRC emacs-lisp
-  (setq 
-   ;; Have sentences end with single espace.
-   sentence-end-double-space nil
-   ;; Have org-mode indent elisp sections.
-   org-src-tab-acts-natively t
-   ;; Word wrap in org mode.
-   org-startup-truncated t)
+  (setq sentence-end-double-space nil)
  #+END_SRC
 ** 完 Backups 
  #+BEGIN_SRC emacs-lisp 
@@ -411,7 +455,7 @@ Configure Hooks.
     backup-directory-alist '(("." . "~/.emacs.d/backups"))
     backup-by-copying t
     delete-old-versions t
-    kept-new-versions 10
+    kept-new-versions 5
     kept-old-versions 0
     ;; Use versioned backups.
     version-control t
@@ -471,363 +515,30 @@ that I’ve copied from the web.
                        nil   beg (min end (point-max))))
 #+END_SRC 
 * 中 Packages 
-** 完 auto-fill
- #+BEGIN_SRC emacs-lisp
-   (use-package auto-fill-mode
-     :hook 
-     (text-mode . turn-on-auto-fill)
-     :init 
-     ;; Configure exceptions for auto-fill mode. 
-     (defun sync0-nobreak-p ()
-       (and (looking-at "+[[:alnum:]]")
-            (looking-back "^\\\[A-z]+{.+" (line-beginning-position))))
-     :config
-     ;; Define column width for auto-fill mode. 
-     (setq-default fill-column 75)
-     ;; Respect de la typographie française par auto-fill mode.
-     ;; (setq fill-nobreak-predicate '(fill-french-nobreak-p))
-     ;; Set hook for exceptions to auto-fill-mode.
-     (add-hook 'fill-nobreak-predicate #'sync0-nobreak-p))
-  #+END_SRC
-** 完 abbrev
-#+BEGIN_SRC emacs-lisp
-  (use-package abbrev
-    :custom
-    ;; Tell Emacs where to read abbrevs.  
-    (abbrev-file-name "~/.emacs.d/abbrev_defs")
-    ;; Save abbrevs when files are saved.
-    (save-abbrevs t)
-    ;; Don't notify when abbrevs are saved.
-    (save-abbrevs 'silently)
-    ;; Accept ' as a word constituent. 
-    (dabbrev-abbrev-char-regexp  "\\sw")
-    :config
-    ;; Avoid errors when reading abbrev_defs.
-    (if (file-exists-p abbrev-file-name)
-        (quietly-read-abbrev-file))
+** 完 s
+The long lost Emacs string manipulation library. This is required for
+~simple-secrets~ to work. 
 
-    ;; Avoid expansion character insertion. 
-    ;; Use this function on a per-abbrev basis.
-    ;; This is the "hook" function
-    (defun dont-insert-expansion-char ()  t) 
-    ;; The hook should have a "no-self-insert" property set 
-    (put 'dont-insert-expansion-char 'no-self-insert t) 
-
-    ;; Initialize abbrev-mode by default. 
-    (setq-default abbrev-mode t)
-
-    ;; Add abbrevs manually.
-    (defun sync0-define-local-abbrev (name expansion)
-      "Defines a new abbrev for current local abbrev table."
-      (interactive "sEnter abbrev:\nsEnter expansion:")
-      (when (and name expansion (not (equal name expansion)))
-        (define-abbrev local-abbrev-table name expansion)
-        (message "\"%s\" now expands to \"%s\" %sally"
-                 name expansion "loc")))
-
-    ;; Auto-update abbrev table on save.
-    (add-hook 'after-save-hook (lambda ()
-                                 (when (equal buffer-file-name "/home/sync0/.emacs.d/abbrev_defs")
-                                   (read-abbrev-file)))))
-  #+END_SRC 
-** 完 recentf
-A packate that displays a list of recent files. 
 #+BEGIN_SRC emacs-lisp
-  (use-package recentf
-    :custom
-    (recentf-max-saved-items 100)
-    (recentf-max-menu-items 10)
-    :config
-    (recentf-mode +1)
-    :bind (:map recentf-dialog-mode-map
-                ("j"  . next-line)
-                ("k"  . previous-line)))
-#+END_SRC
-** 取 highlight-indentation
-  (use-package highlight-indentation
-    :commands (highlight-indentation-mode highlight-indentation-current-column-mode))
-  ;; ;; For modes with sub-par number fontification
-  ;; (use-package highlight-numbers :commands highlight-numbers-mode)
-** 完 rainbow-delimiters
-#+BEGIN_SRC emacs-lisp
-  (use-package rainbow-delimiters
-    :hook 
-    ((text-mode . rainbow-delimiters-mode)
-     (prog-mode . rainbow-delimiters-mode))
-    :custom 
-    (rainbow-delimiters-max-face-count 3))
-  #+END_SRC 
-** 完 all-the-icons
-#+BEGIN_SRC emacs-lisp
-  (use-package all-the-icons 
-    :after ivy
-    :custom
-    ;; improve performance 
-    (inhibit-compacting-font-caches t)
-    :config
-    ;; ivy setup
-    (all-the-icons-ivy-setup))
+  (use-package s)
 #+END_SRC 
-** 完 doom-themes
+** 完 simple-secrets
+This package contains a set of functions to manage passwords. After
+defining ~secret-password-file~, you can draw information from this
+file, without revealing the encrypted contents. For example, in this
+file, whenever I use ~(secret-lookup [secret_name])~, I am drawing
+information from my encrypted secrets file (i.e., ~sync0_secrets.gpg~)
+that I don't want to reveal. 
+
 #+BEGIN_SRC emacs-lisp
-  (use-package doom-themes  
-    :init
-    (progn
-      (load-theme 'doom-nord t)
-      (load-theme 'doom-nova t)
-      (load-theme 'doom-solarized-light t)
-      (load-theme 'doom-spacegrey t))
-:custom
-    (doom-themes-enable-bold t) ; if nil, bold is universally disabled
-    (doom-themes-enable-italic t) ; if nil, italics is universally disabled
+  (use-package simple-secrets
+    :load-path "~/.emacs.d/sync0/" 
+    :after s
+    :custom
+    (secret-password-file "~/.emacs.d/sync0_secrets.gpg")
     :config
-    ;; Enable flashing mode-line on errors
-    (doom-themes-visual-bell-config)
-    ;; Enable custom neotree theme (all-the-icons fonts must be installed).
-    ;;    (doom-themes-neotree-config)  
-    ;; Correct org-mode's native fontification.
-    (doom-themes-org-config))
+    (secret-load-keys))
 #+END_SRC 
-
-   Cycle between themes.
-#+BEGIN_SRC emacs-lisp
-  (use-package cycle-themes 
-    :load-path "~/.emacs.d/sync0_git/cycle-themes.el/" 
-    :after doom-themes
-    :config 
-    (setq cycle-themes-theme-list '(doom-nord doom-nova doom-solarized-light doom-spacegrey))
-    (cycle-themes-mode))
-#+END_SRC 
-** 完 solaire-mode
-#+BEGIN_SRC emacs-lisp
-  (use-package solaire-mode 
-    :after doom-themes 
-    :hook 
-    ((change-major-mode after-revert ediff-prepare-buffer) . turn-on-solaire-mode)
-    :config
-    (add-hook 'minibuffer-setup-hook #'solaire-mode-in-minibuffer)
-    ;; (setq solaire-mode-remap-modeline nil)
-    (solaire-mode-swap-bg))
-#+END_SRC 
-** 完 doom-modeline
-#+BEGIN_SRC emacs-lisp
-  (use-package doom-modeline 
-:after doom-themes
-    :hook 
-(after-init . doom-modeline-mode)
-    :custom
-    ;; How tall the mode-line should be. It's only respected in GUI.
-    ;; If the actual char height is larger, it respects the actual height.
-    (doom-modeline-height 25)
-    ;; How wide the mode-line bar should be. It's only respected in GUI.
-    (doom-modeline-bar-width 3)
-    (doom-modeline-buffer-file-name-style 'truncate-upto-project)
-    ;; Whether display icons in mode-line or not.
-    (doom-modeline-icon (display-graphic-p))
-    ;; Whether display the icon for major mode. It respects `doom-modeline-icon'.
-    (doom-modeline-major-mode-icon t)
-    ;; Whether display color icons for `major-mode'. It respects
-    ;; `doom-modeline-icon' and `all-the-icons-color-icons'.
-    (doom-modeline-major-mode-color-icon t)
-    ;; Whether display icons for buffer states. It respects `doom-modeline-icon'.
-    (doom-modeline-buffer-state-icon t)
-    ;; Whether display buffer modification icon. It respects `doom-modeline-icon'
-    ;; and `doom-modeline-buffer-state-icon'.
-    (doom-modeline-buffer-modification-icon t)
-    ;; Whether display minor modes in mode-line or not.
-    ;; (setq doom-modeline-minor-modes (featurep 'minions))
-    ;; If non-nil, a word count will be added to the selection-info modeline segment.
-    (doom-modeline-enable-word-count t)
-    ;; Whether display buffer encoding.
-    (doom-modeline-buffer-encoding t)
-    ;; Whether display indentation information.
-    (doom-modeline-indent-info nil)
-    ;; If non-nil, only display one number for checker information if applicable.
-    (doom-modeline-checker-simple-format t)
-    ;; The maximum displayed length of the branch name of version control.
-    (doom-modeline-vcs-max-length 12)
-    ;; Whether display perspective name or not. Non-nil to display in mode-line.
-    (doom-modeline-persp-name nil)
-    ;; Whether display icon for persp name. Nil to display a # sign. It respects `doom-modeline-icon'
-    (doom-modeline-persp-name-icon nil)
-    ;; Whether display `lsp' state or not. Non-nil to display in mode-line.
-    (doom-modeline-lsp nil)
-    ;; Whether display github notifications or not. Requires `ghub` package.
-    (doom-modeline-github nil)
-    ;; The interval of checking github.
-    ;; (setq doom-modeline-github-interval (* 30 60))
-    ;; Whether display mu4e notifications or not. Requires `mu4e-alert' package.
-    (doom-modeline-mu4e t))
-  #+END_SRC 
-** 完 ispell
- #+BEGIN_SRC emacs-lisp
-   (use-package ispell
-     :custom
-     ;; Save a new word to personal dictionary without asking
-     (ispell-silently-savep t)
-     ;; Set up hunspell dictionaries
-     (ispell-hunspell-dict-paths-alist
-      '(("en_US-large" "/usr/share/hunspell/en_US-large.aff")
-        ;; ("de_DE" "/usr/share/hunspell/de_DE.aff")
-        ;; ("it_IT" "/usr/share/hunspell/it_IT.aff")
-        ("es_ANY" "/usr/share/hunspell/es_ANY.aff")
-        ("fr_FR" "/usr/share/hunspell/fr_FR.aff")))
-     :config
-     ;; if hunspell does NOT exist, use aspell
-     (cond ((executable-find "hunspell")
-            (setq ispell-program-name "hunspell")
-            ;;(setq ispell-local-dictionary "en_US")
-            (setq ispell-local-dictionary-alist '(("en_US-large" "[[:alpha:]]" "[^[:alpha:]]" "['-]" t ("-d" "en_US-large" ) nil utf-8)
-                                                  ;; ("de_DE" "[[:alpha:]ÄÖÜéäöüß]" "[^[:alpha:]ÄÖÜéäöüß]" "['’-]" t ("-d" "de_DE") nil utf-8)
-                                                  ("es_ANY" "[[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "[^[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "['’-]" t ("-d" "es_ANY") nil utf-8)
-                                                  ;; ("it_IT" "[[:alpha:]AEÉIOUàèéìòù]" "[^[:alpha:]AEÉIOUàèéìòù]" "['’-]" t ("-d" "it_IT") "~tex" nil utf-8)
-                                                  ("fr_FR" "[[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[^[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[’'-]" t ("-d" "fr_FR")  nil utf-8))))
-
-           ((executable-find "aspell")
-            (setq ispell-program-name "aspell")
-            ;; Please note ispell-extra-args contains ACTUAL parameters passed to aspell
-            (setq ispell-extra-args '("--sug-mode=ultra"))))
-
-     ;; Ignore sections of files for spellcheck
-     (add-to-list 'ispell-skip-region-alist '(":\\(PROPERTIES\\|LOGBOOK\\):" . ":END:"))
-     (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_SRC" . "#\\+END_SRC"))
-     (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_EXAMPLE" . "#\\+END_EXEMPLE"))
-     (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_equation" . "#\\+END_equation"))
-     (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_labeling" . "#\\+END_labeling"))
-     (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_equation*" . "#\\+END_equation*"))
-     (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_align" . "#\\+END_align"))
-     (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_align*" . "#\\+END_align*"))
-     (add-to-list 'ispell-skip-region-alist '(org-property-drawer-re))
-     (add-to-list 'ispell-skip-region-alist '("\\$" . "\\$")))
- #+END_SRC 
-** 完 flyspell
- #+BEGIN_SRC emacs-lisp
-   (use-package flyspell :after (org ispell)
-     :hook 
-     (text-mode . flyspell-mode)
-     :custom
-     (ispell-parser 'tex)
-     (flyspell-issue-message-flag nil)
-     :config
-     ;; Check next highlighted word custom function.
-     (defun sync0-flyspell-check-next-highlighted-word ()
-       "Custom function to spell check next highlighted word"
-       (interactive)
-       (flyspell-goto-next-error)
-       (ispell-word)))
- #+END_SRC 
-** 完 tex
-#+BEGIN_SRC emacs-lisp
-  (use-package tex
-    :defer t
-    :custom
-    (preview-gs-command "/usr/local/bin/gs")
-    (TeX-PDF-mode t)
-    :config
-    ;; Compile tex documents automatically.
-    (defun sync0-latex-fast-compile ()
-      "Fast compile current file"
-      (TeX-command "LaTeX" 'TeX-master-file))
-
-    ;; Compile tex documents automatically after save.
-    (defun sync0-after-save-actions ()
-      "Used in `after-save-hook'."
-      (when (equal this-command 'save-buffer)
-        (when (equal major-mode 'latex-mode) 
-          (sync0-latex-fast-compile))))
-
-    ;; Set hooks to execute after files are saved. 
-    :hook 
-(after-save . sync0-after-save-actions))
-  #+END_SRC 
-** 完 no-break-fade
-#+BEGIN_SRC emacs-lisp
-  (use-package nobreak-fade 
-    :load-path "~/.emacs.d/sync0/nobreak-fade.el" 
-    :after tex
-    ;; :command nobreak-fade
-    :config
-    (autoload 'nobreak-fade-single-letter-p "nobreak-fade")
-    ;; (add-hook 'tex-mode-hook 'nobreak-fade)
-    (add-hook 'fill-nobreak-predicate 'nobreak-fade-single-letter-p))
-#+END_SRC
-** 完 projectile
-Configuration taken from
-https://github.com/danieroux/emacs/blob/master/mine/djr-hydra.el
-
-#+BEGIN_SRC emacs-lisp
-  (use-package projectile 
-    :after (ivy hydra)
-    :custom
-    ;; (projectile-keymap-prefix (kbd "C-p"))
-    (projectile-completion-system 'ivy)
-    (projectile-enable-caching t)
-    ;;(setq projectile-indexing-method 'alien)
-    :config
-    (defhydra sync0-hydra-projectile (:color teal)
-      "
-    Find File          Search/Tags       Buffers                  Cache
-    ------------------------------------------------------------------------------------------
-    ^^_f_: file dwim       _a_: ag             ^^_i_: Ibuffer               _c_: cache clear
-    ^^_r_: recent file     _g_: update gtags   ^^_K_: Kill all buffers      _x_: remove known project
-    ^^_d_: dir             _o_: multi-occur    ^^_X_: cleanup non-existing  _z_: cache current
-    Operate On
-    ---------------------
-    ^^_D_: Dired
-    ^^_m_: Magit
-    ^^_e_: Eshell
-    "
-      ("a"   projectile-ag                      nil)
-      ("c"   projectile-invalidate-cache        nil)
-      ("d"   projectile-find-dir                nil)
-      ("e"   (eshell '(4))                      nil)
-      ("D"   projectile-dired                   nil)
-      ("f"   projectile-find-file-dwim          nil)
-      ("g"   projectile-regenerate-tags         nil)
-      ("i"   projectile-ibuffer                 nil)
-      ("K"   projectile-kill-buffers            nil)
-      ("m"   (magit-status (projectile-project-root)) nil)
-      ("o"   projectile-multi-occur             nil)
-      ("p"   projectile-switch-project          nil)
-      ("r"   projectile-recentf                 nil)
-      ("x"   projectile-remove-known-project    nil)
-      ("X"   projectile-cleanup-known-projects  nil)
-      ("z"   projectile-cache-current-file      nil)
-      ("q"   nil                                "cancel" :color blue))
-    (add-to-list 'projectile-globally-ignored-files "node-modules")
-    (projectile-mode)
-    :bind
-    (("C-c p" . sync0-hydra-projectile/body)))
-#+END_SRC
-** 完 swiper
-#+BEGIN_SRC emacs-lisp
-  (use-package swiper 
-    :bind
-    (("C-s" . swiper)))
-#+END_SRC
-** 完 counsel
-#+BEGIN_SRC emacs-lisp
-  (use-package counsel 
-    :bind
-    (("M-x" . counsel-M-x)
-     ("M-y" . counsel-yank-pop)
-     ("M-b" . counsel-bookmark)
-     ("C-x C-f" . counsel-find-file)
-     ("<f1> f" . counsel-describe-function)
-     ("<f1> v" . counsel-describe-variable)
-     ("<f1> l" . counsel-load-library)
-     ("<f2> i" . counsel-info-lookup-symbol)
-     ("<f2> u" . counsel-unicode-char)))
-#+END_SRC
-** 完 ivy 
-#+BEGIN_SRC emacs-lisp
-  (use-package ivy
-    :custom
-    (ivy-use-virtual-buffers t)
-    (ivy-count-format "(%d/%d) ")
-    :hook 
-    (after-init . ivy-mode))
-#+END_SRC
 ** 完 epa-file
 #+BEGIN_SRC emacs-lisp
   (use-package epa-file
@@ -837,415 +548,317 @@ https://github.com/danieroux/emacs/blob/master/mine/djr-hydra.el
     :config
     (epa-file-enable))
   #+END_SRC 
+** 完 hydra
+#+BEGIN_SRC emacs-lisp
+  (use-package hydra
+    :custom
+    ;; In case I later need to wrap defhydra in any special functionality.
+    (lv-use-seperator t))
+#+END_SRC 
+** 完 evil 
+   #+BEGIN_SRC emacs-lisp
+          (use-package evil  
+            :diminish evil-mode
+            :preface
+            (defun sync0-insert-line-below ()
+              "Insert an empty line below the current line."
+              (interactive)
+              (save-excursion
+                (end-of-line)
+                (open-line 1)))
+
+            (defun sync0-insert-line-above ()
+              "Insert an empty line above the current line."
+              (interactive)
+              (save-excursion
+                (end-of-line 0)
+                (open-line 1)))
+
+            ;; insert whitespace
+            (defun sync0-insert-whitespace ()
+              " Add a whitespace"
+              (interactive)
+              (insert " "))
+     ;; :hook
+     ;;     (after-init . evil-mode)
+            ;; :init
+            ;; (evil-mode 1)
+            :bind 
+            (:map evil-normal-state-map
+                  ("M-h" . next-buffer)
+                  ("M-l" . previous-buffer)
+                  :map minibuffer-local-map
+                  ("ESC" . minibuffer-keyboard-quit)
+                  :map minibuffer-local-ns-map
+                  ("ESC" . minibuffer-keyboard-quit)
+                  :map minibuffer-local-completion-map
+                  ("ESC" . minibuffer-keyboard-quit)
+                  :map minibuffer-local-must-match-map
+                  ("ESC" . minibuffer-keyboard-quit)
+                  :map minibuffer-local-isearch-map
+                  ("ESC" . minibuffer-keyboard-quit))
+
+            :custom
+            ;; Make horizontal movement cross lines                                    
+            (evil-cross-lines t)
+            ;; turn off auto-indent 
+            (evil-auto-indent nil)
+            ;; Change color of evil cursor
+            (evil-insert-state-cursor '(bar "#dc322f"))
+            (evil-normal-state-cursor '(box "#268bd2"))
+            (evil-visual-state-cursor '(box "#d33682"))
+
+            :config
+            (evil-mode 1)
+            (evil-escape-mode 1)
+
+            ;; key bindings
+            (unbind-key "M-." evil-normal-state-map)
+
+            (evil-define-key 'normal global-map
+              "s" 'fill-paragraph
+              "S" 'sync0-insert-line-below
+              "zc" 'transpose-chars
+              "zl" 'transpose-lines
+              "M" 'bookmark-set
+              "zw" 'transpose-words
+              "zp" 'transpose-paragraphs
+              "zs" 'transpose-sentences
+              (kbd "SPC") 'sync0-insert-whitespace)
+
+            ;; Improve EVIL behavior with visual lines
+            (define-key evil-normal-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
+            (define-key evil-normal-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line)
+            (define-key evil-motion-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
+            (define-key evil-motion-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line))
+         #+END_SRC 
+*** 完 evil-escape
+#+BEGIN_SRC emacs-lisp
+  (use-package evil-escape 
+    :diminish evil-escape-mode
+    :after evil
+    ;; :commands evil-escape-mode
+    :custom
+    (evil-escape-excluded-states '(normal visual multiedit emacs motion))
+    (evil-escape-excluded-major-modes '(neotree-mode))
+    (evil-escape-key-sequence "fd")
+    (evil-escape-unordered-key-sequence t)
+    (evil-escape-delay 0.25)
+    :config
+    ;; no `evil-escape' in minibuffer
+    (push #'minibufferp evil-escape-inhibit-functions)
+    :bind (:map evil-insert-state-map
+                ("C-g"  . evil-escape)
+                :map evil-replace-state-map
+                ("C-g"  . evil-escape)
+                :map evil-visual-state-map
+                ("C-g"  . evil-escape)
+                :map evil-operator-state-map
+                ("C-g"  . evil-escape)))
+#+END_SRC 
+*** 完 evil-multiedit
+#+BEGIN_SRC emacs-lisp
+  (use-package evil-multiedit 
+:defer t
+:diminish evil-multiedit-mode
+:commands 
+(evil-multiedit-and-next evil-multiedit-match-and-next evil-multiedit-toggle-marker-here)
+:after evil
+    :bind (:map evil-visual-state-map
+    ;; Highlights all matches of the selection in the buffer.
+    ("R" . evil-multiedit-match-all)
+    ;; Match selected region.
+    ("M-d" . evil-multiedit-and-next)
+    ("M-D" . evil-multiedit-and-prev)
+    ;; Restore the last group of multiedit regions.
+    ("C-M-D"  . evil-multiedit-restore)
+    :map evil-normal-state-map
+    ;; Match the word under cursor (i.e. make it an edit region). Consecutive presses will
+    ;; incrementally add the next unmatched match.
+    ("M-d"  . evil-multiedit-match-and-next)
+    :map evil-insert-state-map
+    ;; Insert marker at point
+    ("M-d"  . evil-multiedit-toggle-marker-here)
+    :map evil-normal-state-map
+    ;; Same as M-d but in reverse.
+    ("M-D"  . evil-multiedit-match-and-prev)
+    ;; OPTIONAL: If you prefer to grab symbols rather than words, use
+    ;; `evil-multiedit-match-symbol-and-next` (or prev).
+    ;; RET will toggle the region under the cursor
+    :map evil-multiedit-state-map
+    ("RET"  . evil-multiedit-toggle-or-restrict-region)
+    ;; ...and in visual mode, RET will disable all fields outside the selected region
+    ("RET"  . evil-multiedit-toggle-or-restrict-region)
+    ;; For moving between edit regions
+    ("C-n"  . evil-multiedit-next)
+    ("C-p"  . evil-multiedit-prev)
+    ("C-n"  . evil-multiedit-next)
+    ("C-p"  . evil-multiedit-prev)))
+  #+END_SRC 
 ** 完 org 
 #+BEGIN_SRC emacs-lisp
-  (use-package org 
-    :init
-    ;; (defun gs/mark-next-done-parent-tasks-todo ()
-    ;;  ;; "Visit each parent task and change 中 (or 完) states to 無."
-    ;;   ;; Don't change the value if new state is "完"
-    ;;   (let ((mystate (or (and (fboundp 'org-state)
-    ;;                           (member state
-    ;; 				  (list "中" "無")))
-    ;;                      (member (nth 2 (org-heading-components))
-    ;; 			     (list "中" "無")))))
-    ;;     (when mystate
-    ;;       (save-excursion
-    ;;         (while (org-up-heading-safe)
-    ;;           (when (member (nth 2 (org-heading-components)) (list "中" "完"))
-    ;;             (org-todo "無")))))))
+    (use-package org 
+    :load-path "~/.emacs.d/elpa/org-20191111" 
+    :after evil
+      :custom
+      ;; Word wrap in org mode.
+      (org-startup-truncated t)
+      ;; Initial indentation
+      (org-startup-indented nil)         
+      ;; Begin displaying entire trees.
+      (org-startup-folded nil)
+      ;; Better display of italics & bold.
+      (org-hide-emphasis-markers t)
+      ;; Define org-tags.
+      (org-tag-alist '(("Project" . ?p)
+                       ("Examen" . ?e)
+                       ("Lectures" . ?r)
+                       ("Révisions" . ?v)
+                       ("today" . ?h)
+                       ("Idée" . ?i)
+                       ("Question" . ?q)
+                       ("noexport" . ?n)
+                       ("Université" . ?u)))
+      ;; Hide inherited tags from Org's agenda view.
+      ;; org-agenda-show-inherited-tags nil
+      ;; Define todo keywords.
+      (org-todo-keywords '((sequence "無(u)" "次(n)" "中(i)" "待(w)" "完(d)")(sequence "阻(p)" "取(c)")))
+      ;; Set faces for org-todo-keywords
+      (org-todo-keyword-faces '(("無" . (:foreground "#dc322f" :weight bold))
+                                ("完" . (:foreground "#859900" :weight bold))   
+                                ("次" . (:foreground "#d33682" :weight bold))
+                                ("阻" . (:foreground "#268bd2" :weight bold)) 
+                                ("待" . (:foreground "#cb4b16" :weight bold))
+                                ("取" . (:foreground "#6c71c4" :weight bold)) 
+                                ("中" . (:foreground "#b58900" :weight bold))))
+      (org-blank-before-new-entry '((heading . nil)(plain-list-item . nil)))
+      ;; Stop emacs asking for confirmation
+      (org-confirm-babel-evaluate nil)
+      ;; Set path for org default directory (necessary for refile and agenda).
+      (org-directory "~/Dropbox/org")
+      (org-refile-use-outline-path 'file)
+      ;; (org-refile-use-outline-path nil) ;; Sasha-Chua's config
+      (org-outline-path-complete-in-steps nil)
+      ;; (org-reverse-note-order t)
+      (org-refile-allow-creating-parent-nodes 'confirm)
+      ;; (org-blank-before-new-entry nil)
+      (org-refile-use-cache nil)
+      ;; Have org-mode indent elisp sections.
+      (org-src-tab-acts-natively t)
+      ;; Color embeded source code
+      (org-src-fontify-natively t)
+      (org-src-block-faces '(("emacs-lisp" (:height 115 :inherit 'fixed-pitch))
+                             ("python" (:height 115 :inherit 'fixed-pitch))))
 
-    ;; (add-hook 'org-after-todo-state-change-hook 'gs/mark-next-done-parent-tasks-todo 'append)
+      :config
+      ;; (defun gs/mark-next-done-parent-tasks-todo ()
+      ;;   ;; "Visit each parent task and change 中 (or 完) states to 無."
+      ;;   ;; Don't change the value if new state is "完"
+      ;;   (let ((mystate (or (and (fboundp 'org-state)
+      ;;                           (member state
+      ;;                                   (list "中" "無")))
+      ;;                      (member (nth 2 (org-heading-components))
+      ;;                              (list "中" "無")))))
+      ;;     (when mystate
+      ;;       (save-excursion
+      ;;         (while (org-up-heading-safe)
+      ;;           (when (member (nth 2 (org-heading-components)) (list "中" "完"))
+      ;;             (org-todo "無")))))))
 
-    (defun sync0-org-tree-open-in-right-frame ()
-      (interactive)
-      (org-tree-to-indirect-buffer)
-      (windmove-right))
+      ;; (add-hook 'org-after-todo-state-change-hook 'gs/mark-next-done-parent-tasks-todo 'append)
 
-    (defun sync0-call-rebinding-org-blank-behaviour (fn)
-      (let ((org-blank-before-new-entry
-             (copy-tree org-blank-before-new-entry)))
-        (when (org-at-heading-p)
-          (rplacd (assoc 'heading org-blank-before-new-entry) nil))
-        (call-interactively fn)))
+      (defun sync0-org-tree-open-in-right-frame ()
+        (interactive)
+        (org-tree-to-indirect-buffer)
+        (windmove-right))
 
-    (defun sync0-org-meta-return-dwim ()
-      (interactive)
-      (sync0-call-rebinding-org-blank-behaviour 'org-meta-return))
+      (defun sync0-call-rebinding-org-blank-behaviour (fn)
+        (let ((org-blank-before-new-entry
+               (copy-tree org-blank-before-new-entry)))
+          (when (org-at-heading-p)
+            (rplacd (assoc 'heading org-blank-before-new-entry) nil))
+          (call-interactively fn)))
 
-    (defun sync0-org-insert-todo-heading-dwim ()
-      (interactive)
-      (sync0-call-rebinding-org-blank-behaviour 'org-insert-todo-heading))
-    :custom
-    ;; Initial indentation
-    (org-startup-indented nil)         
-    ;; Begin displaying entire trees.
-    ;;  (org-startup-folded nil)
-    ;; Better display of italics & bold.
-    (org-hide-emphasis-markers t)
-    ;; Define org-tags.
-    (org-tag-alist '(("Project" . ?p)
-                     ("Examen" . ?e)
-                     ("Lectures" . ?r)
-                     ("Révisions" . ?v)
-                     ("today" . ?h)
-                     ("Idée" . ?i)
-                     ("thesis" . ?t)
-                     ("Question" . ?q)
-                     ("noexport" . ?n)
-                     ("Université" . ?u)))
-    ;; Hide inherited tags from Org's agenda view.
-    ;; org-agenda-show-inherited-tags nil
-    ;; Define todo keywords.
-    (org-todo-keywords '((sequence "無(u)" "次(n)" "中(i)" "待(w)" "完(d)")(sequence "阻(p)" "取(c)")))
-    ;; Set faces for org-todo-keywords
-    (org-todo-keyword-faces '(("無" . (:foreground "#dc322f" :weight bold))
-                              ("完" . (:foreground "#859900" :weight bold))   
-                              ("次" . (:foreground "#d33682" :weight bold))
-                              ("阻" . (:foreground "#268bd2" :weight bold)) 
-                              ("待" . (:foreground "#cb4b16" :weight bold))
-                              ("取" . (:foreground "#6c71c4" :weight bold)) 
-                              ("中" . (:foreground "#b58900" :weight bold))))
-    (org-blank-before-new-entry '((heading . nil)(plain-list-item . nil)))
-    ;; Color embeded source code
-    (org-src-fontify-natively t)
-    ;; stop emacs asking for confirmation
-    (org-confirm-babel-evaluate nil)
-;; Set path for org default directory (necessary for refile and agenda).
-    (org-directory "~/Dropbox/org")
-    (org-refile-use-outline-path 'file)
-    ;; (org-refile-use-outline-path nil) ;; Sasha-Chua's config
-    (org-outline-path-complete-in-steps nil)
-    ;; (org-reverse-note-order t)
-    (org-refile-allow-creating-parent-nodes 'confirm)
-    ;; (org-blank-before-new-entry nil)
-    (org-refile-use-cache nil)
-    :config
-    ;; org-refile
-    (setq org-refile-targets (quote ((nil :maxlevel . 9)                ;; set default 
-                                     ;; ("m2_notes.org" :maxlevel . 3)
-                                     ;;(org-agenda-files :maxlevel . 9) ;; set for all agenda files
-                                     ("todo.org" :maxlevel . 2))))
+      (defun sync0-org-meta-return-dwim ()
+        (interactive)
+        (sync0-call-rebinding-org-blank-behaviour 'org-meta-return))
 
-    ;; Set default apps.
-    (add-hook 'org-mode-hook
-              '(lambda ()
-                 (delete '("\\.pdf\\'" . default) org-file-apps)
-                 (add-to-list 'org-file-apps '("\\.pdf\\'" . "zathura %s"))))
-    :bind (:map org-mode-map
-                ("M-<return>" . sync0-org-meta-return-dwim)
-                ("M-S-<return>" . sync0-org-insert-todo-heading-dwim)))
+      (defun sync0-org-insert-todo-heading-dwim ()
+        (interactive)
+        (sync0-call-rebinding-org-blank-behaviour 'org-insert-todo-heading))
+
+       (defun sync0-clever-insert-item ()
+         "Clever insertion of org item."
+         (if (not (org-in-item-p))
+             (insert "\n")
+           (org-insert-item)))
+
+       (defun sync0-evil-org-eol-call (fun)
+         "Go to end of line and call provided function. FUN function callback"
+         (end-of-line)
+         (funcall fun)
+         (evil-append nil))
+
+         ;; redefinition evils normal mode map
+         (evil-define-key 'normal org-mode-map
+           "<" 'outline-previous-visible-heading
+           ">" 'outline-next-visible-heading
+           (kbd "C->") 'org-forward-heading-same-level
+           (kbd "C-<") 'org-backward-heading-same-level
+           (kbd "<S-tab>") 'sync0-org-tree-open-in-right-frame 
+           "H" 'org-metaleft
+           "L" 'org-metaright
+           "K" 'org-metaup
+           "J" 'org-metadown
+           "k" 'previous-line
+           "j" 'next-line
+           "U" 'undo-tree-redo
+           ;; "m" 'set-mark-command
+           ;; "s" 'fill-paragraph
+           ;; "S" 'sync0-insert-line-below
+           ;; (kbd "SPC") 'sync0-insert-whitespace
+           "o" '(lambda () (interactive) (sync0-evil-org-eol-call 'sync0-clever-insert-item))
+           "O" '(lambda () (interactive) (sync0-evil-org-eol-call 'org-insert-heading))
+           "$" 'org-end-of-line
+           "^" 'org-beginning-of-line
+           "[" 'backward-sentence
+           "]" 'forward-sentence
+           "{" 'org-backward-paragraph
+           "}" 'org-forward-paragraph
+           "-" 'org-cycle-list-bullet
+           (kbd "<tab>") 'org-cycle)
+
+         (evil-define-key 'visual org-mode-map
+           ;; "q" 'highlight-changes-remove-highlight
+           "e" 'org-emphasize)
+
+      ;; org-refile
+      (setq org-refile-targets (quote ((nil :maxlevel . 9)                ;; set default 
+                                       ;; ("m2_notes.org" :maxlevel . 3)
+                                       ;;(org-agenda-files :maxlevel . 9) ;; set for all agenda files
+                                       ("todo.org" :maxlevel . 2))))
+
+      ;; Set default apps.
+      (add-hook 'org-mode-hook
+                '(lambda ()
+                   (delete '("\\.pdf\\'" . default) org-file-apps)
+                   (add-to-list 'org-file-apps '("\\.pdf\\'" . "zathura %s"))))
+
+      :bind 
+      (:map org-mode-map
+            ("M-<return>" . sync0-org-meta-return-dwim)
+            ("M-S-<return>" . sync0-org-insert-todo-heading-dwim)))
  #+END_SRC 
-*** 完 org-capture
+*** 完 org-crypt
 #+BEGIN_SRC emacs-lisp
-  (use-package org-capture 
-    :after 
-    (org org-journal)
-    :custom
-    (org-default-notes-file "~/Dropbox/org/todo.org")
-    :config 
-    (setq org-capture-templates '(("j" "Journal Entry" entry (function org-journal-find-location)
-                                   "* %(format-time-string org-journal-time-format)%^{Title}\n%i%?")
-
-                                   ;; ("t" "Tache" entry
-                                   ;; (file+olp "~/Dropbox/org/todo.org" "Tâches" "Indéfini")
-                                   ;; "*** 無 %^{Tache} \n:PROPERTIES:\n:ADDED: %<[%Y-%m-%d]>\n:END:" :prepend t)
-
-                                  ("t" "Journal Task" entry (function org-journal-find-location)
-                                   "* 無 %^{Title}\n%i%?")
-
-                                  ("q" "Question" entry (function org-journal-find-location)
-                                   "* 無 %^{Title}\n:PROPERTIES:\n:ADDED: %<[%Y-%m-%d]>\n:TRACE: %a\n:END:%i%?")
-
-                                  ;; ("b" "Book (todo)" entry
-                                  ;;  (file+headline "~/Dropbox/org/notes.org" "Books")
-                                  ;;  "** %^{book_title}\n:ORIGIN:\n%^{Where?}\n:END:\n:PROPERTIES:\n:ADDED: %<[%Y-%m-%d]>\n:TRACE: %a\n:END:\n" :prepend t)
-
-                                  ;; ("r" "New Reading (master)" entry
-                                  ;;  (file "~/Dropbox/research/forschungsbuch.org")
-                                  ;;  "* %^{reading_title}\n:ORIGIN:\n%^{Where?}\n:END:\n:PROPERTIES:\n:YEAR:\n:JOURNAL:\n:VOLUME:\n:ISSUE:\n:PAGES:\n:ADDED: %<[%Y-%m-%d]>\n:TRACE: %a\n:END:\n" :prepend t)
-
-                                  ("m" "Email" entry 
-                                   (file+headline "~/Dropbox/org/todo.org" "Personnelles")
-                                   "*** 無 %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n" :prepend t)))
-
-    :bind 
-    (("\C-c c" . org-capture)))
-#+END_SRC 
-*** 完 org-agenda
-#+BEGIN_SRC emacs-lisp
-  (use-package org-agenda 
+  (use-package org-crypt 
     :after org
-    :init
-    ;; Set of functions to have evil bindings in org-agenda.
-    (defun air-org-agenda-next-header ()
-      "Jump to the next header in an agenda series."
-      (interactive)
-      (air--org-agenda-goto-header))
-
-    (defun air-org-agenda-previous-header ()
-      "Jump to the previous header in an agenda series."
-      (interactive)
-      (air--org-agenda-goto-header t))
-
-    (defun air--org-agenda-goto-header (&optional backwards)
-      "Find the next agenda series header forwards or BACKWARDS."
-      (let ((pos (save-excursion
-                   (goto-char (if backwards
-                                  (line-beginning-position)
-                                (line-end-position)))
-                   (let* ((find-func (if backwards
-                                         'previous-single-property-change
-                                       'next-single-property-change))
-                          (end-func (if backwards 'max 'min))
-                          (all-pos-raw (list (funcall find-func (point) 'org-agenda-structural-header)
-                                             (funcall find-func (point) 'org-agenda-date-header)))
-                          (all-pos (cl-remove-if-not 'numberp all-pos-raw))
-                          (prop-pos (if all-pos (apply end-func all-pos) nil)))
-                     prop-pos))))
-        (if pos (goto-char pos))
-        (if backwards (goto-char (line-beginning-position)))))
-
-    ;; Fast access agenda view.
-    (defun air-pop-to-org-agenda (&optional split)
-      "Visit the org agenda, in the current window or a SPLIT."
-      (interactive "P")
-      (org-agenda nil "h") ;; the h corresponds to the agenda view that will be displayed once this command is called
-      (when (not split)
-        (delete-other-windows)))
-
-    ;; sacha's configuration 
-    (defun sacha/org-agenda-new ()
-      "Create a new note or task at the current agenda item.
-                            Creates it at the same level as the previous task, so it's better to use
-                            this with to-do items than with projects or headings."
-      (interactive)
-      (org-agenda-switch-to)
-      (org-capture 0))
-
-    (defun sacha/org-agenda-mark-done-and-add-followup ()
-      "Mark the current TODO as done and add another task after it.
-                            Creates it at the same level as the previous task, so it's better to use
-                            this with to-do items than with projects or headings."
-      (interactive)
-      (org-agenda-todo "DONE")
-      (org-agenda-switch-to)
-      (org-capture 0 "t"))
-
-    ;; necessary function 1
-    (defun air-org-skip-subtree-if-priority (priority)
-      "Skip an agenda subtree if it has a priority of PRIORITY.
-                            PRIORITY may be one of the characters ?A, ?B, or ?C."
-      (let ((subtree-end (save-excursion (org-end-of-subtree t)))
-            (pri-value (* 1000 (- org-lowest-priority priority)))
-            (pri-current (org-get-priority (thing-at-point 'line t))))
-        (if (= pri-value pri-current)
-            subtree-end
-          nil)))
-
-    ;; necessary function 2
-    (defun air-org-skip-subtree-if-habit ()
-      "Skip an agenda entry if it has a STYLE property equal to \"habit\"."
-      (let ((subtree-end (save-excursion (org-end-of-subtree t))))
-        (if (string= (org-entry-get nil "STYLE") "habit")
-            subtree-end
-          nil)))
-
-:custom
-    (org-agenda-files (list "~/Dropbox/org/gcal.org"
-                                 "~/Dropbox/org/unterrichte.org"
-                                 "~/Dropbox/org/ereignisse.org"
-                                 "~/Dropbox/org/todo.org"))
-          (org-cycle-separator-lines 0)
-          ;; Set property inheritance
-          ;; org-use-property-inheritance '("PRIORITY" "DEADLINE" "SCHEDULED")
-          ;; Choose the placement of org tags in org files.
-          (org-tags-column 100)
-          ;; Place org agenda tags in the same place as org tags.
-          (org-agenda-tags-column org-tags-column)
-          ;; Make org-agenda the only window by default.
-          (org-agenda-window-setup 'only-window )
-          ;; Build agenda manually (to update press "r").
-          (org-agenda-sticky t)
-          ;; Compact the block agenda view. This deletes the section separators.
-          (org-agenda-compact-blocks t)
-          ;; Allow one-key todo selection.
-          (org-use-fast-todo-selection t)
-          ;; Include the todo keywords in fast tag selection buffer.
-          (org-fast-tag-selection-include-todo t)
-          ;; Allow one-key tag selection.
-          (org-fast-tag-selection-single-key t)
-          ;; each habit to show up when it is next scheduled, but no further repetitions
-          (org-agenda-repeating-timestamp-show-all nil)
-          ;; This variable may be set to nil, t, or a number which will then
-          ;; give the number of days before the actual deadline when the
-          ;; prewarnings should resume.
-          (org-agenda-skip-deadline-prewarning-if-scheduled t)
-          (org-agenda-skip-scheduled-if-deadline-is-shown t)
-          ;; Add appointments duration to column view's effort estimates.
-          (org-agenda-columns-add-appointments-to-effort-sum t)
-          ;;  org-agenda-deadline-leaders (quote ("  마감 " "%2d日後 " "%2d日前 "))
-          ;;  org-agenda-scheduled-leaders (quote ("  豫定 " "%2d日前 "))
-          (org-agenda-deadline-leaders (quote ("  豫定 " "%2d日後 " "%2d日前 ")))
-          (org-agenda-scheduled-leaders (quote ("  豫定 " " 再日程 ")))
-
+    :custom
+    (org-crypt-key "carc.sync0@gmail.com")
+    (org-tags-exclude-from-inheritance (quote ("crypt")))
     :config
-    (setq org-agenda-custom-commands
-          '(("d" "Deux semaines" ((tags "PRIORITY=\"A\""
-                                        ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("完" "取" "阻")))
-                                         (org-agenda-prefix-format " %-12t%-6s %-15T ")
-                                         (org-agenda-overriding-header "Tâches prioritaires:")))
-
-                                  (agenda "" 
-                                          ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取" "阻"))
-                                                                          (air-org-skip-subtree-if-priority ?A)))
-                                           (org-agenda-span 'day)
-                                           (org-agenda-start-day "+0d")
-                                           ;; (org-agenda-prefix-format " %-12t%-12s %-15T %l ")
-                                           (org-agenda-prefix-format " %-12t%-6s %-15T ")
-                                           ;; This format calls for two consecutive 12-character fields for time (%t)
-                                           ;; and scheduling information(%s), followed by a 30-character field for the
-                                           ;; breadcrumbs (the path). The reason for using fixed fields is to improve
-                                           ;; readability of the colums. Otherwise, apending and ~?~ character as in
-                                           ;; ~%?t~, only adds the field if the category exists. While this sound like
-                                           ;; a smart idea to save space, its very unreadable, so I advise against
-                                           ;; using it. This format is applied equally to the next two sections,
-                                           ;; precisely to avoid illegible output.
-                                           (org-agenda-start-on-weekday nil)
-                                           (org-agenda-overriding-header "Aujourd'hui:")))
-
-                                  (agenda "" ((org-agenda-overriding-header "Prochains 7 jours:")
-                                              (org-agenda-span 'week)
-                                              (org-agenda-start-day "+1d")
-                                              (org-agenda-start-on-weekday nil)
-                                              ;; (org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled))
-                                              (org-agenda-prefix-format " %-12t%-6s %-15T ")))
-
-                                  (agenda "" ((org-agenda-overriding-header "Prochains 14 jours:")
-                                              (org-agenda-span 'week)
-                                              (org-agenda-start-day "+8d")
-                                              (org-agenda-start-on-weekday nil)
-                                              ;; (org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled))
-                                              (org-agenda-prefix-format " %-12t%-6s %-15T "))))
-             ;; list options for block display
-             ((org-agenda-remove-tags t)
-              (org-agenda-view-columns-initially t)))
-
-            ("w" "Study Planner" ((tags-todo "review/!+次|+待|+中|+無|+阻"
-                                             ((org-agenda-overriding-header "Revisions:")))
-                                  (tags-todo "reading/!+次|+待|+中|+無|+阻"
-                                             ((org-agenda-overriding-header "Lectures:")))
-                                  (tags-todo "project/!+次|+待|+中|+無|+阻"
-                                             ((org-agenda-overriding-header "Projets:")))
-                                  (tags-todo "exam/!+次|+待|+中|+無|+阻"
-                                             ((org-agenda-overriding-header "Examens:"))))
-             ;; list options for block display
-             ((org-agenda-remove-tags t)
-              (org-agenda-view-columns-initially t)))
-
-            ("h" "Tâches d'aujourd'hui" ((tags "PRIORITY=\"A\""
-                                               ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("完" "取" "阻")))
-                                                (org-agenda-prefix-format " %-12t%-6s %-15T ")
-                                                (org-agenda-overriding-header "Tâches prioritaires:")))
-
-                                         (agenda "" 
-                                                 ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取" "阻"))
-                                                                                 (air-org-skip-subtree-if-priority ?A)))
-                                                  (org-agenda-span 'day)
-                                                  (org-agenda-start-on-weekday nil)
-                                                  (org-agenda-start-day "+0d")
-                                                  ;; (org-agenda-prefix-format " %-12t%-12s %-15T %l ")
-                                                  (org-agenda-prefix-format " %-12t%-6s %-15T ")
-                                                  ;; This format calls for two consecutive 12-character fields for time (%t)
-                                                  ;; and scheduling information(%s), followed by a 30-character field for the
-                                                  ;; breadcrumbs (the path). The reason for using fixed fields is to improve
-                                                  ;; readability of the colums. Otherwise, apending and ~?~ character as in
-                                                  ;; ~%?t~, only adds the field if the category exists. While this sound like
-                                                  ;; a smart idea to save space, its very unreadable, so I advise against
-                                                  ;; using it. This format is applied equally to the next two sections,
-                                                  ;; precisely to avoid illegible output.
-                                                  (org-agenda-overriding-header "Tâches d'aujourd'hui:")))
-                                         (alltodo ""
-                                                  ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取" "阻"))
-                                                                                  (org-agenda-skip-entry-if  'scheduled 'deadline)
-                                                                                  (air-org-skip-subtree-if-habit)
-                                                                                  (air-org-skip-subtree-if-priority ?A)))
-                                                   (org-agenda-prefix-format " %-12t%-6s %-15T %l ")
-                                                   (org-agenda-overriding-header "Autres tâches:"))))
-
-             ;; list options for block display
-             ((org-agenda-remove-tags t)
-              (org-agenda-view-columns-initially t)))
-
-            ("p" "Projets" (
-                            (tags-todo "Projet"
-                                       ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取" "阻"))
-                                                                       ;; (air-org-skip-subtree-if-priority ?A)
-                                                                       (air-org-skip-subtree-if-habit)))
-                                        (org-agenda-prefix-format " %-12t%-6s %-15e %?l")
-                                        (org-agenda-overriding-header "Projets"))))
-             ;; list options for block display
-             ((org-agenda-remove-tags t)
-              (org-agenda-view-columns-initially t)))
-
-            ("y" "Placeholder" (
-                                (tags "PRIORITY=\"A\""
-                                      ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取" "阻"))
-                                                                      (air-org-skip-subtree-if-habit)))
-                                       ;; (org-agenda-prefix-format " %-6s %-15T ")
-                                       (org-agenda-prefix-format " %-12t%-6s ")
-                                       (org-agenda-overriding-header "Tâches prioritaires:")))
-                                (alltodo ""
-                                         ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("中" "次"))
-                                                                         (air-org-skip-subtree-if-habit)
-                                                                         (air-org-skip-subtree-if-priority ?A)))
-                                          ;; (org-agenda-prefix-format " %-6s %-15T ")
-                                          (org-agenda-prefix-format " %-12t%-6s ")
-                                          ;;(org-agenda-skip-if nil '(scheduled deadline))
-                                          (org-agenda-overriding-header "Tâches en cours:")))
-                                (tags-todo "Project"
-                                           ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取" "阻"))
-                                                                           (air-org-skip-subtree-if-habit)))
-                                            (org-agenda-prefix-format " %l %-12t%-6s ")
-                                            (org-agenda-overriding-header "Projets")))
-                                (tags-todo "Mémoire"
-                                           ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取" "阻"))
-                                                                           (air-org-skip-subtree-if-habit)))
-                                            (org-agenda-prefix-format " %l %-12t%-6s ")
-                                            (org-agenda-overriding-header "Mémoire")))
-                                (tags-todo "Épistémologie-Project"
-                                           ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取" "阻"))
-                                                                           (air-org-skip-subtree-if-habit)))
-                                            (org-agenda-prefix-format " %l %-12t%-6s ")
-                                            (org-agenda-overriding-header "Épistémologie")))
-                                (tags-todo "SocioEco-Project"
-                                           ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取" "阻"))
-                                                                           (air-org-skip-subtree-if-habit)))
-                                            (org-agenda-prefix-format " %l %-12t%-6s ")
-                                            (org-agenda-overriding-header "Sociologie économique")))
-                                (tags-todo "EcoPsycho-Project"
-                                           ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取" "阻"))
-                                                                           (air-org-skip-subtree-if-habit)))
-                                            (org-agenda-prefix-format " %l %-12t%-6s ")
-                                            (org-agenda-overriding-header "Économie et psychologie"))))
-             ;; list options for block display
-             ((org-agenda-remove-tags t)
-              (org-agenda-view-columns-initially t)))
-            ;; End of custom
-            ))
-
-    :bind 
-           (([f6] . air-pop-to-org-agenda)
-           ;; :map evil-normal-state-map
-           ;;     ("S-SPC" . air-pop-to-org-agenda)
-           :map org-agenda-mode-map
-           ("j" . org-agenda-next-item)
-           ("k" . org-agenda-previous-item)
-           ("J" . air-org-agenda-next-header)
-           ("K" . air-org-agenda-previous-header)
-           ("N" . sacha/org-agenda-new)
-           ("X" . sacha/org-agenda-mark-done-and-add-followup)))
- #+END_SRC
+    (org-crypt-use-before-save-magic))
+  #+END_SRC 
 *** 完 org-journal
 Although, I have been almost entirely paper-less since I started my
 Master's degree, I have struggled to implement a planning workflow
@@ -1263,10 +876,44 @@ do all this within ~org-mode~, and I have, I am not satisfied with the
 implementation so far. 
 
 #+BEGIN_SRC emacs-lisp
-  (use-package org-journal 
+    (use-package org-journal 
+      :after org
+      :custom
+      ;; Set default directory to search for journal files. 
+      (org-journal-dir (concat sync0-dropbox-directory (format-time-string "org/journal/%Y")))
+      ;; (org-journal-dir (concat (file-name-as-directory org-directory) (format-time-string "journal/%Y")))
+      ;; Create one journal file per month. 
+      (org-journal-file-type 'monthly)
+      ;; Change the title of journal files to the format: "YYYY_MM.gpg".
+      (org-journal-file-format "%Y_%m")
+      ;; Change the format of journal entries (org headlines) to "[Day], DD/MM/YYYY".
+      (org-journal-date-format "%A, %d/%m/%Y")
+      ;; (org-journal-date-format "[/] %A, %d/%m/%Y")
+      ;; Encrypt journal files.
+      (org-journal-encrypt-journal t)
+      ;; Don't encript individual entires in journal files. It's too cumbersome. 
+      (org-journal-enable-encryption t)
+      (org-journal-enable-agenda-integration nil)
+      :config
+      ;; This setup prevents slowing down agenda parsing. 
+      ;; I create a variable to stand for the path of the journal file for the current month.  
+      ;; Then, I have org-agenda parse only this path and not all the past journal files.
+      (setq sync0-journal-this-month-file (concat sync0-dropbox-directory "org/journal/" (format-time-string "%Y/%Y_%m") ".gpg"))
+
+  ;; Requires org-journal
+      (add-to-list 'org-agenda-files sync0-journal-this-month-file)
+
+      :bind 
+      (("C-c j" . org-journal-new-entry)))
+  #+END_SRC 
+*** 完 org-capture
+#+BEGIN_SRC emacs-lisp
+  (use-package org-capture 
+    :defer t
     :after 
-    (org org-agenda)
-    :init
+    (org org-journal)
+    :commands org-capture
+    :preface 
     (defun org-journal-find-location ()
       ;; Open today's journal, but specify a non-nil prefix argument in order to
       ;; inhibit inserting the heading; org-capture will insert the heading.
@@ -1275,28 +922,320 @@ implementation so far.
       ;; will add the new entry as a child entry.
       (goto-char (point-min)))
     :custom
-;; Set default directory to search for journal files. 
-    (org-journal-dir (concat (file-name-as-directory org-directory) (format-time-string "journal/%Y")))
-;; Create one journal file per month. 
-    (org-journal-file-type 'monthly)
-;; Change the title of journal files to the format: "YYYY_MM.gpg".
-    (org-journal-file-format "%Y_%m")
-;; Change the format of journal entries (org headlines) to "[Day], DD/MM/YYYY".
-    (org-journal-date-format "%A, %d/%m/%Y")
-;; Encrypt journal files.
-    (org-journal-encrypt-journal t)
-;; Don't encript individual entires in journal files. It's too cumbersome. 
-    (org-journal-enable-encryption nil)
-    (org-journal-enable-agenda-integration t)
-    :config
-;; This setup prevents slowing down agenda parsing. 
-;; I create a variable to stand for the path of the journal file for the current month.  
-;; Then, I have org-agenda parse only this path and not all the past journal files.
-    (setq sync0-journal-this-month-file (concat (file-name-as-directory org-directory) "journal/" (format-time-string "%Y/%Y_%m") ".gpg"))
-    (add-to-list 'org-agenda-files sync0-journal-this-month-file)
+    (org-default-notes-file "~/Dropbox/org/todo.org")
+    :config 
+    (setq org-capture-templates '(("j" "Journal" entry (function org-journal-find-location)
+                                   "* %(format-time-string org-journal-time-format)%^{Title}\n%i%?")
+
+                                  ;; ("t" "Task" entry
+                                  ;; (file+olp "~/Dropbox/org/todo.org" "Tâches" "Indéfini")
+                                  ;; "** 無 %^{Task} \n:PROPERTIES:\n:ADDED: %<[%Y-%m-%d]>\n:END:" :prepend t)
+
+                                  ("t" "Tâche" entry
+                                   (file+headline "~/Dropbox/org/todo.org" "Autres")
+                                   "** 無 %^{Task} \n:PROPERTIES:\n:ADDED: %<%Y-%m-%d>\n:END:" :prepend t)
+
+                                  ("e" "Emacs" entry
+                                   (file+headline "~/Dropbox/org/todo.org" "Emacs")
+                                   "** 無 %^{Task} \n:PROPERTIES:\n:ADDED: %<%Y-%m-%d>\n:END:" :prepend t)
+
+                                  ("r" "Lecture" entry
+                                   (file+headline "~/Dropbox/org/recommendations.org" "Non classé")
+                                   "** 無 %^{Task} \n:PROPERTIES:\n:ADDED: %<%Y-%m-%d>\n:RECOMMENDER: %^{Recommender}\n:END:" :prepend t)
+
+                                  ;; ("t" "Journal Task" entry (function org-journal-find-location)
+                                  ;;  "* 無 %^{Title}\n%i%?")
+
+                                  ("q" "Question" entry (function org-journal-find-location)
+                                   "** 無 %^{Title}\n:PROPERTIES:\n:ADDED: %<%Y-%m-%d>\n:TRACE: %a\n:END:%i%?")
+
+                                  ;; ("b" "Book (todo)" entry
+                                  ;;  (file+headline "~/Dropbox/org/notes.org" "Books")
+                                  ;;  "** %^{book_title}\n:ORIGIN:\n%^{Where?}\n:END:\n:PROPERTIES:\n:ADDED: %<[%Y-%m-%d]>\n:TRACE: %a\n:END:\n" :prepend t)
+
+                                  ;; ("r" "New Reading (master)" entry
+                                  ;;  (file "~/Dropbox/research/forschungsbuch.org")
+                                  ;;  "* %^{reading_title}\n:ORIGIN:\n%^{Where?}\n:END:\n:PROPERTIES:\n:YEAR:\n:JOURNAL:\n:VOLUME:\n:ISSUE:\n:PAGES:\n:ADDED: %<[%Y-%m-%d]>\n:TRACE: %a\n:END:\n" :prepend t)
+
+                                  ("m" "Email" entry 
+                                   (file+headline "~/Dropbox/org/todo.org" "Courriel")
+                                   "** 無 %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n" :prepend t)))
+
     :bind 
-    (("C-c j" . org-journal-new-entry)))
-  #+END_SRC 
+    (("\C-c c" . org-capture)))
+#+END_SRC 
+*** 完 org-agenda
+#+BEGIN_SRC emacs-lisp
+    (use-package org-agenda 
+      :after org
+  :custom
+      (org-agenda-files (list "~/Dropbox/org/gcal.org"
+                                   "~/Dropbox/org/unterrichte.org"
+                                   "~/Dropbox/org/ereignisse.org"
+                                   "~/Dropbox/org/todo.org"))
+            (org-cycle-separator-lines 0)
+            ;; Set property inheritance
+            ;; org-use-property-inheritance '("PRIORITY" "DEADLINE" "SCHEDULED")
+            ;; Choose the placement of org tags in org files.
+            (org-tags-column 100)
+            ;; Place org agenda tags in the same place as org tags.
+            (org-agenda-tags-column org-tags-column)
+            ;; Make org-agenda the only window by default.
+            ;; (org-agenda-window-setup 'only-window )
+            ;; Build agenda manually (to update press "r").
+            (org-agenda-sticky t)
+            ;; Compact the block agenda view. This deletes the section separators.
+            (org-agenda-compact-blocks t)
+            ;; Allow one-key todo selection.
+            (org-use-fast-todo-selection t)
+            ;; Include the todo keywords in fast tag selection buffer.
+            (org-fast-tag-selection-include-todo t)
+            ;; Allow one-key tag selection.
+            (org-fast-tag-selection-single-key t)
+            ;; each habit to show up when it is next scheduled, but no further repetitions
+            (org-agenda-repeating-timestamp-show-all nil)
+            ;; This variable may be set to nil, t, or a number which will then
+            ;; give the number of days before the actual deadline when the
+            ;; prewarnings should resume.
+            (org-agenda-skip-deadline-prewarning-if-scheduled t)
+            (org-agenda-skip-scheduled-if-deadline-is-shown t)
+            ;; Add appointments duration to column view's effort estimates.
+            (org-agenda-columns-add-appointments-to-effort-sum t)
+            ;;  org-agenda-deadline-leaders (quote ("  마감 " "%2d日後 " "%2d日前 "))
+            ;;  org-agenda-scheduled-leaders (quote ("  豫定 " "%2d日前 "))
+            (org-agenda-deadline-leaders (quote ("  豫定 " "%2d日後 " "%2d日前 ")))
+            (org-agenda-scheduled-leaders (quote ("  豫定 " " 再日程 ")))
+      :config
+      (defun air--org-agenda-goto-header (&optional backwards)
+        "Find the next agenda series header forwards or BACKWARDS."
+        (let ((pos (save-excursion
+                     (goto-char (if backwards
+                                    (line-beginning-position)
+                                  (line-end-position)))
+                     (let* ((find-func (if backwards
+                                           'previous-single-property-change
+                                         'next-single-property-change))
+                            (end-func (if backwards 'max 'min))
+                            (all-pos-raw (list (funcall find-func (point) 'org-agenda-structural-header)
+                                               (funcall find-func (point) 'org-agenda-date-header)))
+                            (all-pos (cl-remove-if-not 'numberp all-pos-raw))
+                            (prop-pos (if all-pos (apply end-func all-pos) nil)))
+                       prop-pos))))
+          (if pos (goto-char pos))
+          (if backwards (goto-char (line-beginning-position)))))
+
+      ;; Set of functions to have evil bindings in org-agenda.
+      (defun air-org-agenda-next-header ()
+        "Jump to the next header in an agenda series."
+        (interactive)
+        (air--org-agenda-goto-header))
+
+      (defun air-org-agenda-previous-header ()
+        "Jump to the previous header in an agenda series."
+        (interactive)
+        (air--org-agenda-goto-header t))
+
+      ;; Fast access agenda view.
+      (defun air-pop-to-org-agenda (&optional split)
+        "Visit the org agenda, in the current window or a SPLIT."
+        (interactive "P")
+        (org-agenda nil "h") ;; the h corresponds to the agenda view that will be displayed once this command is called
+        (when (not split)
+          (delete-other-windows)))
+
+      ;; sacha's configuration 
+      (defun sacha/org-agenda-new ()
+        "Create a new note or task at the current agenda item.
+                              Creates it at the same level as the previous task, so it's better to use
+                              this with to-do items than with projects or headings."
+        (interactive)
+        (org-agenda-switch-to)
+        (org-capture 0))
+
+      ;; (defun sacha/org-agenda-mark-done-and-add-followup ()
+      ;;   "Mark the current TODO as done and add another task after it.
+      ;;                         Creates it at the same level as the previous task, so it's better to use
+      ;;                         this with to-do items than with projects or headings."
+      ;;   (interactive)
+      ;;   (org-agenda-todo "DONE")
+      ;;   (org-agenda-switch-to)
+      ;;   (org-capture 0 "t"))
+
+      ;; necessary function 1
+      (defun air-org-skip-subtree-if-priority (priority)
+        "Skip an agenda subtree if it has a priority of PRIORITY.
+                              PRIORITY may be one of the characters ?A, ?B, or ?C."
+        (let ((subtree-end (save-excursion (org-end-of-subtree t)))
+              (pri-value (* 1000 (- org-lowest-priority priority)))
+              (pri-current (org-get-priority (thing-at-point 'line t))))
+          (if (= pri-value pri-current)
+              subtree-end
+            nil)))
+
+      ;; necessary function 2
+      (defun air-org-skip-subtree-if-habit ()
+        "Skip an agenda entry if it has a STYLE property equal to \"habit\"."
+        (let ((subtree-end (save-excursion (org-end-of-subtree t))))
+          (if (string= (org-entry-get nil "STYLE") "habit")
+              subtree-end
+            nil)))
+
+      (setq org-agenda-custom-commands
+            '(("d" "Deux semaines" ((tags "PRIORITY=\"A\""
+                                          ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("完" "取" "阻")))
+                                           (org-agenda-prefix-format " %-12t%-6s %-15T ")
+                                           (org-agenda-overriding-header "Tâches prioritaires:")))
+
+                                    (agenda "" 
+                                            ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取" "阻"))
+                                                                            (air-org-skip-subtree-if-priority ?A)))
+                                             (org-agenda-span 'day)
+                                             (org-agenda-start-day "+0d")
+                                             ;; (org-agenda-prefix-format " %-12t%-12s %-15T %l ")
+                                             (org-agenda-prefix-format " %-12t%-6s %-15T ")
+                                             ;; This format calls for two consecutive 12-character fields for time (%t)
+                                             ;; and scheduling information(%s), followed by a 30-character field for the
+                                             ;; breadcrumbs (the path). The reason for using fixed fields is to improve
+                                             ;; readability of the colums. Otherwise, apending and ~?~ character as in
+                                             ;; ~%?t~, only adds the field if the category exists. While this sound like
+                                             ;; a smart idea to save space, its very unreadable, so I advise against
+                                             ;; using it. This format is applied equally to the next two sections,
+                                             ;; precisely to avoid illegible output.
+                                             (org-agenda-start-on-weekday nil)
+                                             (org-agenda-overriding-header "Aujourd'hui:")))
+
+                                    (agenda "" ((org-agenda-overriding-header "Prochains 7 jours:")
+                                                (org-agenda-span 'week)
+                                                (org-agenda-start-day "+1d")
+                                                (org-agenda-start-on-weekday nil)
+                                                ;; (org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled))
+                                                (org-agenda-prefix-format " %-12t%-6s %-15T ")))
+
+                                    (agenda "" ((org-agenda-overriding-header "Prochains 14 jours:")
+                                                (org-agenda-span 'week)
+                                                (org-agenda-start-day "+8d")
+                                                (org-agenda-start-on-weekday nil)
+                                                ;; (org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled))
+                                                (org-agenda-prefix-format " %-12t%-6s %-15T "))))
+               ;; list options for block display
+               ((org-agenda-remove-tags t)
+                (org-agenda-view-columns-initially t)))
+
+              ("w" "Study Planner" ((tags-todo "review/!+次|+待|+中|+無|+阻"
+                                               ((org-agenda-overriding-header "Revisions:")))
+                                    (tags-todo "reading/!+次|+待|+中|+無|+阻"
+                                               ((org-agenda-overriding-header "Lectures:")))
+                                    (tags-todo "project/!+次|+待|+中|+無|+阻"
+                                               ((org-agenda-overriding-header "Projets:")))
+                                    (tags-todo "exam/!+次|+待|+中|+無|+阻"
+                                               ((org-agenda-overriding-header "Examens:"))))
+               ;; list options for block display
+               ((org-agenda-remove-tags t)
+                (org-agenda-view-columns-initially t)))
+
+              ("h" "Tâches d'aujourd'hui" ((tags "PRIORITY=\"A\""
+                                                 ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("完" "取" "阻")))
+                                                  (org-agenda-prefix-format " %-12t%-6s %-15T ")
+                                                  (org-agenda-overriding-header "Tâches prioritaires:")))
+
+                                           (agenda "" 
+                                                   ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取" "阻"))
+                                                                                   (air-org-skip-subtree-if-priority ?A)))
+                                                    (org-agenda-span 'day)
+                                                    (org-agenda-start-on-weekday nil)
+                                                    (org-agenda-start-day "+0d")
+                                                    ;; (org-agenda-prefix-format " %-12t%-12s %-15T %l ")
+                                                    (org-agenda-prefix-format " %-12t%-6s %-15T ")
+                                                    ;; This format calls for two consecutive 12-character fields for time (%t)
+                                                    ;; and scheduling information(%s), followed by a 30-character field for the
+                                                    ;; breadcrumbs (the path). The reason for using fixed fields is to improve
+                                                    ;; readability of the colums. Otherwise, apending and ~?~ character as in
+                                                    ;; ~%?t~, only adds the field if the category exists. While this sound like
+                                                    ;; a smart idea to save space, its very unreadable, so I advise against
+                                                    ;; using it. This format is applied equally to the next two sections,
+                                                    ;; precisely to avoid illegible output.
+                                                    (org-agenda-overriding-header "Tâches d'aujourd'hui:")))
+                                           (alltodo ""
+                                                    ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取" "阻"))
+                                                                                    (org-agenda-skip-entry-if  'scheduled 'deadline)
+                                                                                    (air-org-skip-subtree-if-habit)
+                                                                                    (air-org-skip-subtree-if-priority ?A)))
+                                                     (org-agenda-prefix-format " %-12t%-6s %-15T %l ")
+                                                     (org-agenda-overriding-header "Autres tâches:"))))
+
+               ;; list options for block display
+               ((org-agenda-remove-tags t)
+                (org-agenda-view-columns-initially t)))
+
+              ("p" "Projets" (
+                              (tags-todo "Projet"
+                                         ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取" "阻"))
+                                                                         ;; (air-org-skip-subtree-if-priority ?A)
+                                                                         (air-org-skip-subtree-if-habit)))
+                                          (org-agenda-prefix-format " %-12t%-6s %-15e %?l")
+                                          (org-agenda-overriding-header "Projets"))))
+               ;; list options for block display
+               ((org-agenda-remove-tags t)
+                (org-agenda-view-columns-initially t)))
+
+              ("y" "Placeholder" (
+                                  (tags "PRIORITY=\"A\""
+                                        ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取" "阻"))
+                                                                        (air-org-skip-subtree-if-habit)))
+                                         ;; (org-agenda-prefix-format " %-6s %-15T ")
+                                         (org-agenda-prefix-format " %-12t%-6s ")
+                                         (org-agenda-overriding-header "Tâches prioritaires:")))
+                                  (alltodo ""
+                                           ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("中" "次"))
+                                                                           (air-org-skip-subtree-if-habit)
+                                                                           (air-org-skip-subtree-if-priority ?A)))
+                                            ;; (org-agenda-prefix-format " %-6s %-15T ")
+                                            (org-agenda-prefix-format " %-12t%-6s ")
+                                            ;;(org-agenda-skip-if nil '(scheduled deadline))
+                                            (org-agenda-overriding-header "Tâches en cours:")))
+                                  (tags-todo "Project"
+                                             ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取" "阻"))
+                                                                             (air-org-skip-subtree-if-habit)))
+                                              (org-agenda-prefix-format " %l %-12t%-6s ")
+                                              (org-agenda-overriding-header "Projets")))
+                                  (tags-todo "Mémoire"
+                                             ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取" "阻"))
+                                                                             (air-org-skip-subtree-if-habit)))
+                                              (org-agenda-prefix-format " %l %-12t%-6s ")
+                                              (org-agenda-overriding-header "Mémoire")))
+                                  (tags-todo "Épistémologie-Project"
+                                             ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取" "阻"))
+                                                                             (air-org-skip-subtree-if-habit)))
+                                              (org-agenda-prefix-format " %l %-12t%-6s ")
+                                              (org-agenda-overriding-header "Épistémologie")))
+                                  (tags-todo "SocioEco-Project"
+                                             ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取" "阻"))
+                                                                             (air-org-skip-subtree-if-habit)))
+                                              (org-agenda-prefix-format " %l %-12t%-6s ")
+                                              (org-agenda-overriding-header "Sociologie économique")))
+                                  (tags-todo "EcoPsycho-Project"
+                                             ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取" "阻"))
+                                                                             (air-org-skip-subtree-if-habit)))
+                                              (org-agenda-prefix-format " %l %-12t%-6s ")
+                                              (org-agenda-overriding-header "Économie et psychologie"))))
+               ;; list options for block display
+               ((org-agenda-remove-tags t)
+                (org-agenda-view-columns-initially t)))
+              ;; End of custom
+              ))
+
+      :bind 
+             (([f6] . air-pop-to-org-agenda)
+             ;; :map evil-normal-state-map
+             ;;     ("S-SPC" . air-pop-to-org-agenda)
+             :map org-agenda-mode-map
+             ("j" . org-agenda-next-item)
+             ("k" . org-agenda-previous-item)
+             ("J" . air-org-agenda-next-header)
+             ("K" . air-org-agenda-previous-header)
+             ("N" . sacha/org-agenda-new)
+             ("X" . sacha/org-agenda-mark-done-and-add-followup)))
+ #+END_SRC
 *** 完 org-habits
 This package is included in ~org-mode~; it simply allows the creation of
 recurring tasks for use in ~org-agenda~. Although this introduces some
@@ -1307,7 +1246,8 @@ change my mind someday.
 Beware! There is a strange inconsistency when habits are enabled. See [[https://emacs.stackexchange.com/questions/26291/not-allowed-in-tags-type-agenda-using-custom-agenda]]
 
 #+BEGIN_SRC emacs-lisp
-  (use-package org-habit :after (org org-agenda)
+  (use-package org-habit 
+    :after (org org-agenda)
     ;; :commands org-bullets-mode
     :config
     (setq org-habit-graph-column 80
@@ -1410,7 +1350,6 @@ Clock   In/out^     ^Edit^   ^Summary     (_?_)
 
     :bind 
 (("C-c h c" . sync0-hydra-org-clock/body)))
-         
 #+END_SRC 
 *** 完 ox-latex
 Even though, by default, Emacs Org mode has the export keyword
@@ -1425,7 +1364,8 @@ for page breaks add this to org files
 # #+ODT: <text:p text:style-name="PageBreak"/>
 
 #+BEGIN_SRC emacs-lisp
-  (use-package ox-latex :after org
+  (use-package ox-latex 
+:after org
     ;; :defines (org-latex-classes org-export-exclude-tags)
 :functions org-latex-export-to-pdf
     :custom
@@ -1447,8 +1387,8 @@ for page breaks add this to org files
     (org-export-odt-preferred-output-format "doc")
     (org-odt-preferred-output-format "doc")
     (org-latex-logfiles-extensions (quote ("lof" "lot" "tex~" "idx" "out" "toc" "nav" "snm" "vrb" "dvi" "fdb_latexmk" "blg" "brf" "fls" "entoc" "ps" "spl" "run.xml")))
-    :config
 
+    :config
     (defun sync0-latex-and-beamer-export ()
       "Export current org file with beamer if it has beamer as latex class."
       (interactive)
@@ -1504,9 +1444,14 @@ for page breaks add this to org files
 (:map org-mode-map 
 ("M-p" . sync0-latex-and-beamer-export)))
 #+END_SRC 
-*** 完 org-bullets
+*** 取 org-bullets
+While this is an amazing package, it terribly slows down org-mode on
+my portable computer when editing large org  files such as this. 
+
 #+BEGIN_SRC emacs-lisp
-  (use-package org-bullets :after org
+  (use-package org-bullets 
+    :disabled t 
+    :after org
     :custom
     (org-bullets-bullet-list '("一" "二" "三" "四" "五"))
     :init
@@ -1516,12 +1461,13 @@ for page breaks add this to org files
   This package stores org mode links to messages.
 #+BEGIN_SRC emacs-lisp
   (use-package org-mu4e 
-:after org
-    :config
+:disabled t
+    :after (org mu4e)
+    :custom
     ;; Store link to message if in header view, not to header query.
-    (setq org-mu4e-link-query-in-headers-mode nil))
+    (org-mu4e-link-query-in-headers-mode nil))
   #+END_SRC 
-*** 完 ox-extra
+*** 取 ox-extra
   ;; (use-package org-plus-contrib :after org)
   ;; (use-package ox :after org)
   (use-package ox-extra :after org 
@@ -1529,9 +1475,21 @@ for page breaks add this to org files
   (ox-extras-activate '(ignore-headlines)))
 *** 完 org-ref 
 #+BEGIN_SRC emacs-lisp
-  (use-package org-ref :after (org ivy bibtex ivy-bibtex)
-;;    :init 
-:functions (org-ref-find-bibliography org-ref-get-bibtex-key-and-file)
+  (use-package org-ref 
+    :after (org ivy bibtex ivy-bibtex hydra)
+    ;;    :init 
+    ;; :functions (org-ref-find-bibliography org-ref-get-bibtex-key-and-file)
+    :preface 
+    (defun sync0-org-ref-open-pdf-at-point ()
+      "Open the pdf for bibtex key under point if it exists."
+      (interactive)
+      (let* ((results (org-ref-get-bibtex-key-and-file))
+             (key (car results))
+             (pdf-file (car(bibtex-completion-find-pdf key))))
+        (if (file-exists-p pdf-file)
+            (org-open-file pdf-file))
+        (message "No PDF found for %s" key)))
+
     :custom
     (reftex-default-bibliography '("~/Dropbox/research/bibliography.bib"))
     ;; see org-ref for use of these variables
@@ -1549,172 +1507,451 @@ for page breaks add this to org files
     ;;         (let ((bibtex-completion-bibliography (org-ref-find-bibliography)))
     ;;           (bibtex-completion-edit-notes
     ;;            (list (car (org-ref-get-bibtex-key-and-file thekey)))))))
-:config
-    ;; Tell org-ref to let helm-bibtex find notes for it
-    ;; (setq org-ref-notes-function 'org-ref-notes-funcion-many-files)
-    ;; Tell org-ref to let helm-bibtex find notes for it
-
-    (defun sync0-org-ref-open-pdf-at-point ()
-      "Open the pdf for bibtex key under point if it exists."
-      (interactive)
-      (let* ((results (org-ref-get-bibtex-key-and-file))
-             (key (car results))
-             (pdf-file (car(bibtex-completion-find-pdf key))))
-        (if (file-exists-p pdf-file)
-            (org-open-file pdf-file))
-        (message "No PDF found for %s" key)))
-
+    :config
     (setq org-ref-notes-function
           (lambda (thekey)
             (let ((bibtex-completion-bibliography (org-ref-find-bibliography)))
               (bibtex-completion-edit-notes
                (list (car (org-ref-get-bibtex-key-and-file thekey)))))))
 
-    :bind (:map org-mode-map
-                ("C-c ["  . org-ref-ivy-insert-cite-link)
-                ;; ("C-c 9"  . org-ref-notes-function)
-                ("C-c 9"  . ivy-bibtex)
-                ("C-c 0"  . org-ref-open-citation-at-point)
-                ("C-c 8"  . sync0-org-ref-open-pdf-at-point)
-                :map bibtex-mode-map
-                ;; ("C-c 9" . org-ref-open-bibtex-notes)
-                ;; ("C-c 0" . ivy-bibtex)
-                ("C-c 9"  . ivy-bibtex)
-                ("C-c 8"  . sync0-org-ref-open-pdf-at-point)))
+    (defhydra sync0-hydra-research-functions (:color amaranth :hint nil :exit t)
+      "
+    ^Research functions^
+    ^^^^-------------------------
+    _i_: Insert org-ref citation
+    _n_: Open notes 
+    _b_: Open bibtex entry 
+    _p_: Open PDF
+    [q] Quit
+    "
+      ("i" org-ref-ivy-insert-cite-link)
+      ("n" ivy-bibtex)
+      ("b" org-ref-open-citation-at-point)
+      ("p" sync0-org-ref-open-pdf-at-point)
+      ("q" nil :color blue))
+
+    :bind 
+    (:map org-mode-map
+          ("C-c [" . org-ref-ivy-insert-cite-link)
+          ;; ("C-c 9"  . org-ref-notes-function)
+          ("<f9>" . sync0-hydra-research-functions/body)
+          :map bibtex-mode-map
+          ("C-c 9"  . ivy-bibtex)
+          ("C-c 8"  . sync0-org-ref-open-pdf-at-point)))
 #+END_SRC 
 *** 完 org-gcal
 #+BEGIN_SRC emacs-lisp
-    (use-package org-gcal 
-      :after (org simple-secrets)
-      :config
-      (setq org-gcal-client-id (secret-lookup "sync0-gcal-client-id")
-            org-gcal-client-secret (secret-lookup "sync0-gcal-client-secret")
-            org-gcal-file-alist '(("carc.sync0@gmail.com" .  "~/Dropbox/org/gcal.org")
-                                  ("5iudo90h5e3nabbubvsj1lov4o@group.calendar.google.com" . "~/Dropbox/org/unterrichte.org")
-                                  ("p9vu3a782nahsma6ud1rdg1qpc@group.calendar.google.com" . "~/Dropbox/org/ereignisse.org")
-                                  ("vbnn8eksqpqun2mbtdlknhh9uk@group.calendar.google.com" . "~/Dropbox/org/gewohnheiten.org")
-                                  ))
-      :custom
-      (org-gcal-auto-archive nil))
-#+END_SRC 
-*** 完 org-crypt
-#+BEGIN_SRC emacs-lisp
-  (use-package org-crypt :after org
+  (use-package org-gcal 
+    :defer t
+    :after (org simple-secrets)
+    :commands (org-gcal-fetch org-gcal-sync)
     :custom
-    (org-crypt-key "carc.sync0@gmail.com")
-    (org-tags-exclude-from-inheritance (quote ("crypt")))
+    (org-gcal-client-id (secret-lookup "sync0-gcal-client-id"))
+    (org-gcal-client-secret (secret-lookup "sync0-gcal-client-secret"))
+    (org-gcal-file-alist '(("carc.sync0@gmail.com" .  "~/Dropbox/org/gcal.org")
+                           ("5iudo90h5e3nabbubvsj1lov4o@group.calendar.google.com" . "~/Dropbox/org/unterrichte.org")
+                           ("p9vu3a782nahsma6ud1rdg1qpc@group.calendar.google.com" . "~/Dropbox/org/ereignisse.org")
+                           ("vbnn8eksqpqun2mbtdlknhh9uk@group.calendar.google.com" . "~/Dropbox/org/gewohnheiten.org")
+                           ))
+    (org-gcal-auto-archive nil))
+#+END_SRC 
+** 完 abbrev
+#+BEGIN_SRC emacs-lisp
+  (use-package abbrev
+    :diminish abbrev-mode
+    :custom
+    ;; Tell Emacs where to read abbrevs.  
+    (abbrev-file-name "~/.emacs.d/abbrev_defs")
+    ;; Save abbrevs when files are saved.
+    (save-abbrevs t)
+    ;; Don't notify when abbrevs are saved.
+    (save-abbrevs 'silently)
+    ;; Accept ' as a word constituent. 
+    (dabbrev-abbrev-char-regexp  "\\sw")
     :config
-    (org-crypt-use-before-save-magic))
+    ;; Avoid errors when reading abbrev_defs.
+    (if (file-exists-p abbrev-file-name)
+        (quietly-read-abbrev-file))
+
+    ;; Avoid expansion character insertion. 
+    ;; Use this function on a per-abbrev basis.
+    ;; This is the "hook" function
+    (defun dont-insert-expansion-char ()  t) 
+    ;; The hook should have a "no-self-insert" property set 
+    (put 'dont-insert-expansion-char 'no-self-insert t) 
+
+    ;; Initialize abbrev-mode by default. 
+    (setq-default abbrev-mode t)
+
+    ;; Add abbrevs manually.
+    (defun sync0-define-local-abbrev (name expansion)
+      "Defines a new abbrev for current local abbrev table."
+      (interactive "sEnter abbrev:\nsEnter expansion:")
+      (when (and name expansion (not (equal name expansion)))
+        (define-abbrev local-abbrev-table name expansion)
+        (message "\"%s\" now expands to \"%s\" %sally"
+                 name expansion "loc")))
+
+    ;; Auto-update abbrev table on save.
+    (add-hook 'after-save-hook (lambda ()
+                                 (when (equal buffer-file-name "/home/sync0/.emacs.d/abbrev_defs")
+                                   (read-abbrev-file)))))
   #+END_SRC 
-** 待 evil 
-   #+BEGIN_SRC emacs-lisp
-     (use-package evil  
-:after (org ivy)
-       :bind 
-(:map evil-normal-state-map
-                   ("M-h" . next-buffer)
-                   ("M-l" . previous-buffer)
-                   ("/" . swiper)
-                   :map minibuffer-local-map
-                   ("ESC" . minibuffer-keyboard-quit)
-                   :map minibuffer-local-ns-map
-                   ("ESC" . minibuffer-keyboard-quit)
-                   :map minibuffer-local-completion-map
-                   ("ESC" . minibuffer-keyboard-quit)
-                   :map minibuffer-local-must-match-map
-                   ("ESC" . minibuffer-keyboard-quit)
-                   :map minibuffer-local-isearch-map
-                   ("ESC" . minibuffer-keyboard-quit))
-       :init
-       (defun sync0-insert-line-below ()
-         "Insert an empty line below the current line."
-         (interactive)
-         (save-excursion
-           (end-of-line)
-           (open-line 1)))
+** 完 auto-fill
+ #+BEGIN_SRC emacs-lisp
+   (use-package auto-fill
+     :diminish auto-fill-mode
+:preface
+     ;; Configure exceptions for auto-fill mode. 
+     (defun sync0-nobreak-p ()
+       (and (looking-at "+[[:alnum:]]")
+            (looking-back "^\\\[A-z]+{.+" (line-beginning-position))))
+:custom
+     ;; Define column width for auto-fill mode. 
+     (fill-column 75)
+     :hook 
+     (text-mode . turn-on-auto-fill)
+     :config
+     ;; Respect de la typographie française par auto-fill mode.
+     ;; (setq fill-nobreak-predicate '(fill-french-nobreak-p))
+     ;; Set hook for exceptions to auto-fill-mode.
+     (add-hook 'fill-nobreak-predicate #'sync0-nobreak-p))
+  #+END_SRC
+** 完 no-break-fade
+#+BEGIN_SRC emacs-lisp
+  (use-package nobreak-fade 
+:after auto-fill
+    :defer t
+    :load-path "~/.emacs.d/sync0/nobreak-fade.el" 
+    :after tex
+    ;; :command nobreak-fade
+    :config
+    (autoload 'nobreak-fade-single-letter-p "nobreak-fade")
+    ;; (add-hook 'tex-mode-hook 'nobreak-fade)
+    (add-hook 'fill-nobreak-predicate 'nobreak-fade-single-letter-p))
+#+END_SRC
+** 完 swiper
+#+BEGIN_SRC emacs-lisp
+  (use-package swiper 
+    :defer t
+    :after evil
+    :commands swiper
+    :config
+    (evil-define-key 'normal global-map
+      "/" 'swiper)
+    :bind
+    (("C-s" . swiper)))
+#+END_SRC
+** 完 counsel
+#+BEGIN_SRC emacs-lisp
+  (use-package counsel 
+    :after (hydra evil)
+    :diminish counsel-mode
+    :config
+    (evil-define-key 'normal global-map
+      "gb" 'counsel-bookmark)
 
-       (defun sync0-insert-line-above ()
-         "Insert an empty line above the current line."
-         (interactive)
-         (save-excursion
-           (end-of-line 0)
-           (open-line 1)))
+    (defhydra sync0-hydra-help (:color amaranth :hint nil :exit t)
+      "
+  ^Help functions^
+  ^^^------------------------
+  _f_: Describe function
+  _v_: Describe variable
+  _k_: Describe keybindings
+  _l_: Load library
+  _i_: Search symbol
+  _u_: Search Unicode char
+  [q] Quit
 
-       ;; setup functions
-       (defun clever-insert-item ()
-         "Clever insertion of org item."
-         (if (not (org-in-item-p))
-             (insert "\n")
-           (org-insert-item)))
+  "
+      ;; Quickly work with bookmarks
+      ("f" counsel-describe-function)
+      ("v" counsel-describe-variable)
+      ("k" describe-key)
+      ("l" counsel-load-library)
+      ("i" counsel-info-lookup-symbol)
+      ("u" counsel-unicode-char)
+      ("q"  nil :color blue))
+    :bind
+    (("M-x" . counsel-M-x)
+     ("M-y" . counsel-yank-pop)
+     ("C-x C-f" . counsel-find-file)
+     ("<f1>" . sync0-hydra-help/body)))
+#+END_SRC
+** 完 ivy 
+#+BEGIN_SRC emacs-lisp
+  (use-package ivy
+    :diminish ivy-mode
+    :custom
+    (ivy-use-virtual-buffers t)
+    (ivy-count-format "(%d/%d) ")
+    :hook 
+    (after-init . ivy-mode))
+#+END_SRC
+** 完 recentf
+A packate that displays a list of recent files. 
+#+BEGIN_SRC emacs-lisp
+  (use-package recentf
+    :diminish recentf-mode
+    :custom
+    (recentf-max-saved-items 100)
+    (recentf-max-menu-items 10)
+    :config
+    (recentf-mode +1)
+    :bind (:map recentf-dialog-mode-map
+                ("j"  . next-line)
+                ("k"  . previous-line)))
+#+END_SRC
+** 完 projectile
+Configuration taken from
+https://github.com/danieroux/emacs/blob/master/mine/djr-hydra.el
 
-       (defun evil-org-eol-call (fun)
-         "Go to end of line and call provided function. FUN function callback"
-         (end-of-line)
-         (funcall fun)
-         (evil-append nil))
+#+BEGIN_SRC emacs-lisp
+  (use-package projectile 
+    ;; :disabled t
+    ;; :defer t
+    :after (ivy hydra)
+    :custom
+    ;; (projectile-keymap-prefix (kbd "C-p"))
+    (projectile-completion-system 'ivy)
+    (projectile-enable-caching t)
+    ;;(setq projectile-indexing-method 'alien)
 
-       ;; insert whitespace
-       (defun sync0-insert-whitespace ()
-         " Add a whitespace"
-         (interactive)
-         (insert " "))
+    :config
+    (defhydra sync0-hydra-projectile (:color teal)
+      "
+        Find File          Search/Tags             Buffers                      Cache
+        ------------------------------------------------------------------------------------------
+        ^^_f_: file dwim       _a_: ag             ^^_i_: Ibuffer               _c_: cache clear
+        ^^_r_: replace regexp  _g_: grep           ^^_K_: Kill all buffers      _x_: remove known project
+        ^^_d_: dir             _o_: multi-occur    ^^_X_: cleanup non-existing  _z_: cache current
+        Operate On
+        ---------------------
+        ^^_D_: Dired
+        ^^_e_: Eshell
+        "
+      ("a"   projectile-ag                      nil)
+      ("c"   projectile-invalidate-cache        nil)
+      ("d"   projectile-find-dir                nil)
+      ("e"   (eshell '(4))                      nil)
+      ("D"   projectile-dired                   nil)
+      ("f"   projectile-find-file-dwim          nil)
+      ;; ("g"   projectile-regenerate-tags         nil)
+      ("g"   projectile-grep         nil)
+      ("i"   projectile-ibuffer                 nil)
+      ("K"   projectile-kill-buffers            nil)
+      ;; ("m"   (magit-status (projectile-project-root)) nil)
+      ("o"   projectile-multi-occur             nil)
+      ("p"   projectile-switch-project          nil)
+      ("r"   projectile-replace-regexp                 nil)
+      ;; ("r"   projectile-recentf                 nil)
+      ("x"   projectile-remove-known-project    nil)
+      ("X"   projectile-cleanup-known-projects  nil)
+      ("z"   projectile-cache-current-file      nil)
+      ("q"   nil                                "cancel" :color blue))
 
-       (evil-mode 1)
-       :custom
-       ;; turn off auto-indent 
-       (evil-auto-indent nil)
-       ;; Change color of evil cursor
-       (evil-insert-state-cursor '(bar "#dc322f"))
-       (evil-normal-state-cursor '(box "#268bd2"))
-       (evil-visual-state-cursor '(box "#d33682"))
-       :config
-       (evil-escape-mode 1)
-       (unbind-key "M-." evil-normal-state-map)
-       (add-to-list 'evil-emacs-state-modes 'cfw:details-mode)
+    (add-to-list 'projectile-globally-ignored-files "node-modules")
 
-       ;; no input method for evil normal state
-       ;; (add-hook 'evil-normal-state-entry-hook
-       ;;           (lambda () (set-input-method 'nil)))
+    (projectile-mode)
+    :bind
+    (("C-c p" . sync0-hydra-projectile/body)))
+#+END_SRC
+** 完 fancy-battery
+Fancy battery. 
+  #+BEGIN_SRC emacs-lisp
+    (use-package fancy-battery
+      :diminish fancy-battery-mode
+      :hook 
+      (after-init . fancy-battery-mode))
+    #+END_SRC 
+** 完 rainbow-delimiters
+#+BEGIN_SRC emacs-lisp
+  (use-package rainbow-delimiters
+    :diminish rainbow-delimiters-mode
+    :hook 
+    ((text-mode . rainbow-delimiters-mode)
+     (prog-mode . rainbow-delimiters-mode))
+    :custom 
+    (rainbow-delimiters-max-face-count 3))
+  #+END_SRC 
+** 完 all-the-icons
+#+BEGIN_SRC emacs-lisp
+  (use-package all-the-icons 
+    :diminish all-the-icons-mode
+    :after ivy
+    :custom
+    ;; improve performance 
+    (inhibit-compacting-font-caches t)
+    :config
+    ;; ivy setup
+    (all-the-icons-ivy-setup))
+#+END_SRC 
+** 完 doom-themes
+The best themes in Emacs. 
+#+BEGIN_SRC emacs-lisp
+  (use-package doom-themes  
+    :init
+    (progn
+      (load-theme 'doom-nord t)
+      (load-theme 'doom-nova t)
+      ;; (load-theme 'doom-spacegrey t)
+      (load-theme 'doom-solarized-light t))
+    ;; :custom
+    ;; (doom-themes-enable-bold t) ; if nil, bold is universally disabled
+    ;; (doom-themes-enable-italic t) ; if nil, italics is universally disabled
+    :config
+    ;; Enable flashing mode-line on errors
+    (doom-themes-visual-bell-config)
+    ;; Enable custom neotree theme (all-the-icons fonts must be installed).
+    (doom-themes-neotree-config))
+    ;; Correct org-mode's native fontification.
+    ;; (doom-themes-org-config))
+#+END_SRC 
 
-       ;; key bindings
-       ;; redefinition evils normal mode map
-       (evil-define-key 'normal org-mode-map
-         "<" 'outline-previous-visible-heading
-         ">" 'outline-next-visible-heading
-         (kbd "C->") 'org-forward-heading-same-level
-         (kbd "C-<") 'org-backward-heading-same-level
-         (kbd "<S-tab>") 'sync0-org-tree-open-in-right-frame 
-         "H" 'org-metaleft
-         "L" 'org-metaright
-         "K" 'org-metaup
-         "J" 'org-metadown
-         "k" 'previous-line
-         "j" 'next-line
-         "U" 'undo-tree-redo
-         ;; "m" 'set-mark-command
-         ;; "s" 'fill-paragraph
-         ;; "S" 'sync0-insert-line-below
-         ;; (kbd "SPC") 'sync0-insert-whitespace
-         "o" '(lambda () (interactive) (evil-org-eol-call 'clever-insert-item))
-         "O" '(lambda () (interactive) (evil-org-eol-call 'org-insert-heading))
-         "$" 'org-end-of-line
-         "^" 'org-beginning-of-line
-         "[" 'backward-sentence
-         "]" 'forward-sentence
-         "{" 'org-backward-paragraph
-         "}" 'org-forward-paragraph
-         "-" 'org-cycle-list-bullet
-         (kbd "<tab>") 'org-cycle)
+   Cycle between themes.
+#+BEGIN_SRC emacs-lisp
+  (use-package cycle-themes 
+    :load-path "~/.emacs.d/sync0_git/cycle-themes.el/" 
+    :after doom-themes
+    :config 
+    (setq cycle-themes-theme-list '(doom-nord doom-nova doom-solarized-light))
+    (cycle-themes-mode))
+#+END_SRC 
+** 完 doom-modeline
+#+BEGIN_SRC emacs-lisp
+  (use-package doom-modeline 
+    ;; :after doom-themes
+    :diminish doom-modeline-mode
+    :hook 
+    (after-init . doom-modeline-mode)
+    :custom
+    ;; How tall the mode-line should be. It's only respected in GUI.
+    ;; If the actual char height is larger, it respects the actual height.
+    (doom-modeline-height 25)
+    ;; How wide the mode-line bar should be. It's only respected in GUI.
+    (doom-modeline-bar-width 2)
+    ;; Whether display the `evil' state icon.
+    (doom-modeline-evil-state-icon t)
+    (doom-modeline-buffer-file-name-style 'truncate-upto-project)
+    ;; Whether display icons in mode-line or not.
+    (doom-modeline-icon (display-graphic-p))
+    ;; Whether display the icon for major mode. It respects `doom-modeline-icon'.
+    (doom-modeline-major-mode-icon t)
+    ;; Whether display minor modes in mode-line or not.
+    ;; (setq doom-modeline-minor-modes (featurep 'minions))
+    (doom-modeline-minor-modes nil)
+    ;; Whether display color icons for `major-mode'. It respects
+    ;; `doom-modeline-icon' and `all-the-icons-color-icons'.
+    (doom-modeline-major-mode-color-icon t)
+    ;; Whether display icons for buffer states. It respects `doom-modeline-icon'.
+    (doom-modeline-buffer-state-icon t)
+    ;; Whether display buffer modification icon. It respects `doom-modeline-icon'
+    ;; and `doom-modeline-buffer-state-icon'.
+    (doom-modeline-buffer-modification-icon t)
+    ;; If non-nil, a word count will be added to the selection-info modeline segment.
+    (doom-modeline-enable-word-count t)
+    ;; Whether display buffer encoding.
+    (doom-modeline-buffer-encoding t)
+    ;; Whether display indentation information.
+    (doom-modeline-indent-info nil)
+    ;; If non-nil, only display one number for checker information if applicable.
+    (doom-modeline-checker-simple-format t)
+    ;; The maximum displayed length of the branch name of version control.
+    ;; (doom-modeline-vcs-max-length 12)
+    ;; Whether display perspective name or not. Non-nil to display in mode-line.
+    (doom-modeline-persp-name nil)
+    ;; Whether display icon for persp name. Nil to display a # sign. It respects `doom-modeline-icon'
+    (doom-modeline-persp-name-icon nil)
+    ;; Whether display `lsp' state or not. Non-nil to display in mode-line.
+    (doom-modeline-lsp nil)
+    ;; Whether display github notifications or not. Requires `ghub` package.
+    (doom-modeline-github nil)
+    ;; The interval of checking github.
+    ;; (setq doom-modeline-github-interval (* 30 60))
+    ;; Whether display mu4e notifications or not. Requires `mu4e-alert' package.
+    (doom-modeline-mu4e nil))
+  #+END_SRC 
+** 完 ispell
+ #+BEGIN_SRC emacs-lisp
+   (use-package ispell
+     :diminish ispell-mode
+     :custom
+     ;; Save a new word to personal dictionary without asking
+     (ispell-silently-savep t)
+     ;; Set up hunspell dictionaries
+     (ispell-hunspell-dict-paths-alist
+      '(("en_US-large" "/usr/share/hunspell/en_US-large.aff")
+        ;; ("de_DE" "/usr/share/hunspell/de_DE.aff")
+        ;; ("it_IT" "/usr/share/hunspell/it_IT.aff")
+        ("es_ANY" "/usr/share/hunspell/es_ANY.aff")
+        ("fr_FR" "/usr/share/hunspell/fr_FR.aff")))
+     :config
+     ;; if hunspell does NOT exist, use aspell
+     (cond ((executable-find "hunspell")
+            (setq ispell-program-name "hunspell")
+            ;;(setq ispell-local-dictionary "en_US")
+            (setq ispell-local-dictionary-alist '(("en_US-large" "[[:alpha:]]" "[^[:alpha:]]" "['-]" t ("-d" "en_US-large" ) nil utf-8)
+                                                  ;; ("de_DE" "[[:alpha:]ÄÖÜéäöüß]" "[^[:alpha:]ÄÖÜéäöüß]" "['’-]" t ("-d" "de_DE") nil utf-8)
+                                                  ("es_ANY" "[[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "[^[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "['’-]" t ("-d" "es_ANY") nil utf-8)
+                                                  ;; ("it_IT" "[[:alpha:]AEÉIOUàèéìòù]" "[^[:alpha:]AEÉIOUàèéìòù]" "['’-]" t ("-d" "it_IT") "~tex" nil utf-8)
+                                                  ("fr_FR" "[[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[^[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[’'-]" t ("-d" "fr_FR")  nil utf-8))))
 
-       (evil-define-key 'normal global-map
-         "s" 'fill-paragraph
-         "S" 'sync0-insert-line-below
-         "zc" 'transpose-chars
-         "zl" 'transpose-lines
-         "zw" 'transpose-words
-         "zp" 'transpose-paragraphs
-         "zs" 'transpose-sentences
-         (kbd "SPC") 'sync0-insert-whitespace)
+           ((executable-find "aspell")
+            (setq ispell-program-name "aspell")
+            ;; Please note ispell-extra-args contains ACTUAL parameters passed to aspell
+            (setq ispell-extra-args '("--sug-mode=ultra"))))
+
+     ;; Ignore sections of files for spellcheck
+     (add-to-list 'ispell-skip-region-alist '(":\\(PROPERTIES\\|LOGBOOK\\):" . ":END:"))
+     (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_SRC" . "#\\+END_SRC"))
+     (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_EXAMPLE" . "#\\+END_EXEMPLE"))
+     (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_equation" . "#\\+END_equation"))
+     (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_labeling" . "#\\+END_labeling"))
+     (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_equation*" . "#\\+END_equation*"))
+     (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_align" . "#\\+END_align"))
+     (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_align*" . "#\\+END_align*"))
+     (add-to-list 'ispell-skip-region-alist '(org-property-drawer-re))
+     (add-to-list 'ispell-skip-region-alist '("\\$" . "\\$")))
+ #+END_SRC 
+** 完 flyspell
+ #+BEGIN_SRC emacs-lisp
+   (use-package flyspell 
+     :after (org ispell)
+     :diminish flyspell-mode
+     :hook 
+     (text-mode . flyspell-mode)
+     :custom
+     (ispell-parser 'tex)
+     (flyspell-issue-message-flag nil)
+     :config
+     ;; Check next highlighted word custom function.
+     (defun sync0-flyspell-check-next-highlighted-word ()
+       "Custom function to spell check next highlighted word"
+       (interactive)
+       (flyspell-goto-next-error)
+       (ispell-word)))
+ #+END_SRC 
+** 完 tex
+#+BEGIN_SRC emacs-lisp
+  (use-package tex
+    :defer t
+    :after evil
+    :diminish tex-mode
+    :custom
+    (preview-gs-command "/usr/local/bin/gs")
+    (TeX-PDF-mode t)
+    :config
+    ;; Compile tex documents automatically.
+    (defun sync0-latex-fast-compile ()
+      "Fast compile current file"
+      (TeX-command "LaTeX" 'TeX-master-file))
+
+    ;; Compile tex documents automatically after save.
+    (defun sync0-after-save-actions ()
+      "Used in `after-save-hook'."
+      (when (equal this-command 'save-buffer)
+        (when (equal major-mode 'latex-mode) 
+          (sync0-latex-fast-compile))))
 
        (evil-define-key 'normal LaTeX-mode-map
          "k" 'previous-line
@@ -1728,79 +1965,14 @@ for page breaks add this to org files
 
        (evil-define-key 'visual LaTeX-mode-map
          "q" 'highlight-changes-remove-highlight)
-
-       (evil-define-key 'visual org-mode-map
-         "q" 'highlight-changes-remove-highlight
-         "e" 'org-emphasize)
-
-       ;; Improve EVIL behavior with visual lines
-       (define-key evil-normal-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
-       (define-key evil-normal-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line)
-       (define-key evil-motion-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
-       (define-key evil-motion-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line)
-
-       ;; Make horizontal movement cross lines                                    
-       (setq-default evil-cross-lines t))
-         #+END_SRC 
-** 完 evil-escape
-#+BEGIN_SRC emacs-lisp
-  (use-package evil-escape :after evil
-    ;; :commands evil-escape-mode
-    :custom
-    (evil-escape-excluded-states '(normal visual multiedit emacs motion))
-    ;; (evil-escape-excluded-major-modes '(neotree-mode))
-    (evil-escape-key-sequence "fd")
-    (evil-escape-unordered-key-sequence t)
-    (evil-escape-delay 0.25)
-    :config
-    ;; no `evil-escape' in minibuffer
-    (push #'minibufferp evil-escape-inhibit-functions)
-    :bind (:map evil-insert-state-map
-                ("C-g"  . evil-escape)
-                :map evil-replace-state-map
-                ("C-g"  . evil-escape)
-                :map evil-visual-state-map
-                ("C-g"  . evil-escape)
-                :map evil-operator-state-map
-                ("C-g"  . evil-escape)))
-#+END_SRC 
-** 完 evil-multiedit
-#+BEGIN_SRC emacs-lisp
-  (use-package evil-multiedit :after evil
-    :bind (:map evil-visual-state-map
-    ;; Highlights all matches of the selection in the buffer.
-    ("R" . evil-multiedit-match-all)
-    ;; Match selected region.
-    ("M-d" . evil-multiedit-and-next)
-    ("M-D" . evil-multiedit-and-prev)
-    ;; Restore the last group of multiedit regions.
-    ("C-M-D"  . evil-multiedit-restore)
-    :map evil-normal-state-map
-    ;; Match the word under cursor (i.e. make it an edit region). Consecutive presses will
-    ;; incrementally add the next unmatched match.
-    ("M-d"  . evil-multiedit-match-and-next)
-    :map evil-insert-state-map
-    ;; Insert marker at point
-    ("M-d"  . evil-multiedit-toggle-marker-here)
-    :map evil-normal-state-map
-    ;; Same as M-d but in reverse.
-    ("M-D"  . evil-multiedit-match-and-prev)
-    ;; OPTIONAL: If you prefer to grab symbols rather than words, use
-    ;; `evil-multiedit-match-symbol-and-next` (or prev).
-    ;; RET will toggle the region under the cursor
-    :map evil-multiedit-state-map
-    ("RET"  . evil-multiedit-toggle-or-restrict-region)
-    ;; ...and in visual mode, RET will disable all fields outside the selected region
-    ("RET"  . evil-multiedit-toggle-or-restrict-region)
-    ;; For moving between edit regions
-    ("C-n"  . evil-multiedit-next)
-    ("C-p"  . evil-multiedit-prev)
-    ("C-n"  . evil-multiedit-next)
-    ("C-p"  . evil-multiedit-prev)))
+    :hook 
+    ;; Set hooks to execute after files are saved. 
+    (after-save . sync0-after-save-actions))
   #+END_SRC 
 ** 完 bibtex 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp 
   (use-package bibtex
+:defer t
     :after evil
     :custom
     (bibtex-dialect 'biblatex) ;; biblatex as default bib format
@@ -1822,6 +1994,7 @@ for page breaks add this to org files
     (bibtex-autokey-titleword-case-convert "uppercase")
     (bibtex-autokey-titlewords 0)
     (bibtex-entry-format '(opts-or-alts required-fields numerical-fields page-dashes whitespace braces last-comma delimiters sort-fields))
+
     :config
     (defun sync0-bibtex-autokey-get-year ()
       "Return year field contents as a string obeying `bibtex-autokey-year-length'."
@@ -2061,7 +2234,9 @@ for page breaks add this to org files
   #+END_SRC 
 ** 完 ivy-bibtex
 #+BEGIN_SRC emacs-lisp
-  (use-package ivy-bibtex :after (org ivy bibtex)
+  (use-package ivy-bibtex 
+:diminish ivy-bitex-mode
+:after (org ivy bibtex)
     :custom 
     (bibtex-completion-bibliography '("~/Dropbox/research/bibliography.bib")) ;; writing completion
     (bibtex-completion-notes-path '"~/Dropbox/research")
@@ -2091,101 +2266,46 @@ for page breaks add this to org files
   # \\printbibliography[title=bibliographie]")
     (ivy-bibtex-default-action 'ivy-bibtex-edit-notes))
 #+END_SRC 
-** 無 yasnippets
+** 完 yasnippets
 #+BEGIN_SRC emacs-lisp
-      (use-package yasnippet 
-       :commands (yas-minor-mode) ; autoload `yasnippet' when `yas-minor-mode' is called
-                                              ; using any means: via a hook or by user
-                                              ; Feel free to add more commands to this
-                                              ; list to suit your needs.
-        ;; :init 
-        ;; :config 
-  ;; :bind
-  ;; (("M-<tab>" . yas-expand))
-      :hook 
-      ((LaTeX-mode . yas-minor-mode)
-      (org-mode . yas-minor-mode)
-      (mu4e-mode . yas-minor-mode)
-      (bibtex-mode . yas-minor-mode)))
-#+END_SRC
-** 完 anzu
-  (use-package anzu  
-    :config 
-    (global-anzu-mode))
-** 完 sumblimity
-#+BEGIN_SRC emacs-lisp
-  (use-package sublimity
-    :custom
-    (sublimity-map-size 30)
-    (sublimity-map-fraction 0.3)
-    (sublimity-map-text-scale -5)
+  (use-package yasnippet 
+    :defer t
+    :commands yas-minor-mode 
     :config
-    ;; experimental
-    (require 'sublimity-map)
-    (sublimity-map-set-delay 3)
-    (sublimity-mode 1))
-#+END_SRC 
-** 取 sumblimity
-(use-package sublimity
-:custom
-  (sublimity-scroll-weight 10)
-  (sublimity-scroll-drift-length 6)
-:init
-      (defun sync0-scroll-up ()
-  "Improve scroll up behavior"
-  (interactive)
-        (scroll-down 1))
-
-      (defun sync0-scroll-down ()
-  "Improve scroll down behavior"
-  (interactive)
-        (scroll-up 1))
-      :config
-      ;; (smooth-scrolling-mode 1)
-    (pixel-scroll-mode 1)
-  :config
-  (sublimity-mode 1)
-  ;;(require 'sublimity-map) ;; experimental
-  ;; (require 'sublimity-attractive)
-  (require 'sublimity-scroll)
-      :bind
-      (("M-k" . sync0-scroll-up)
-       ("M-j" . sync0-scroll-down)))
-
-** 取 pixel-scroll-mode
-    (use-package pixel-scroll
-      :init
-      (defun sync0-scroll-up ()
-  "Improve scroll up behavior"
-  (interactive)
-        (scroll-down 1))
-
-      (defun sync0-scroll-down ()
-  "Improve scroll down behavior"
-  (interactive)
-        (scroll-up 1))
-      :config
-      ;; (smooth-scrolling-mode 1)
-    (pixel-scroll-mode 1)
-      :bind
-      (("M-k" . sync0-scroll-up)
-       ("M-j" . sync0-scroll-down)))
+    (yas-reload-all)
+    ;; :bind
+    ;; (:map yas-minor-mode-map
+    ;;       ;; ("<tab>". nil)
+    ;;       ;; ("TAB"  . nil)
+    ;;       ("M-e" . yas-expand))
+    ;; (define-key yas-minor-mode-map (kbd "<tab>") nil)
+    ;; (define-key yas-minor-mode-map (kbd "TAB") nil)
+    ;; (define-key yas-minor-mode-map (kbd "<C-tab>") 'yas-expand)
+    :hook 
+    ((LaTeX-mode . yas-minor-mode)
+     (text-mode . yas-minor-mode)
+     (mu4e-mode . yas-minor-mode)
+     (bibtex-mode . yas-minor-mode)))
+#+END_SRC
 ** 完 smooth-scrolling
 #+BEGIN_SRC emacs-lisp
   (use-package smooth-scrolling 
+    :defer t
+    :commands (sync0-scroll-up sync0-scroll-down)
+    :diminish smooth-scrolling-mode
     :custom
     (smooth-scroll-margin 5)
     ;; change behavior of org movement
     ;; (org-special-ctrl-a/e t)
-    :init
+    :preface
     (defun sync0-scroll-up ()
-"Improve scroll up behavior"
-(interactive)
+      "Improve scroll up behavior"
+      (interactive)
       (scroll-down 1))
 
     (defun sync0-scroll-down ()
-"Improve scroll down behavior"
-(interactive)
+      "Improve scroll down behavior"
+      (interactive)
       (scroll-up 1))
     :config
     (smooth-scrolling-mode 1)
@@ -2196,8 +2316,9 @@ for page breaks add this to org files
 ** 完 hl-line mode
 #+BEGIN_SRC emacs-lisp
   (use-package hl-line 
+    :diminish hl-line-mode
     :hook 
-((text-mode conf-mode) . hl-line-mode)
+    ((text-mode conf-mode prog-mode) . hl-line-mode)
     :custom
     ;; I don't need hl-line showing in other windows. This also offers a small
     ;; speed boost when buffer is displayed in multiple windows.
@@ -2206,260 +2327,267 @@ for page breaks add this to org files
 #+END_SRC 
 ** 完 smartparens 
 #+BEGIN_SRC emacs-lisp
-  ;; Auto-close delimiters and blocks as you type
-  (use-package smartparens
-    :hook 
-((emacs-startup . smartparens-global-mode)
-    ;; Disable smartparens in evil-mode's replace state; they conflict.
-    (evil-replace-state-entry-hook . turn-off-smartparens-mode)
-    (evil-replace-state-exit-hook  . turn-on-smartparens-mode))
-    :init
-    (defun sp-latex-insert-spaces-inside-pair (_id action _context)
-      "ID, ACTION, CONTEXT."
-      (when (eq action 'insert)
-        (insert "  ")
-        (backward-char 1))
-      (when (and (eq action 'wrap)
-                 (save-excursion
-                   (goto-char (sp-get sp-last-wrapped-region :beg-in))
-                   (not (sp--looking-back-p "[[{(]"))))
-        (save-excursion
-          (goto-char (sp-get sp-last-wrapped-region :end-in))
-          (insert " ")
-          (goto-char (sp-get sp-last-wrapped-region :beg-in))
-          (insert " "))))
+    ;; Auto-close delimiters and blocks as you type
+    (use-package smartparens
+:after evil
+  :diminish smartparens-mode
+      :hook 
+  ((emacs-startup . smartparens-global-mode)
+  ;; (emacs-startup . show-smartparens-global-mode)
+      ;; Disable smartparens in evil-mode's replace state; they conflict.
+      (evil-replace-state-entry-hook . turn-off-smartparens-mode)
+      (evil-replace-state-exit-hook  . turn-on-smartparens-mode))
 
-    (defun sp-latex-skip-match-apostrophe (ms _mb me)
-      "MS, MB, ME."
-      (when (equal ms "'")
-        (save-excursion
-          (goto-char me)
-          (looking-at-p "\\sw"))))
+      :custom
+      (sp-autowrap-region nil) ; let evil-surround handle this
+      (sp-highlight-pair-overlay nil)
+      (sp-cancel-autoskip-on-backward-movement nil)
+      (sp-show-pair-delay 0)
+      (sp-max-pair-length 3)
 
-    (defun sp-latex-skip-double-quote (_id action _context)
-      "ID, ACTION, CONTEXT."
-      (when (eq action 'insert)
-        (when (looking-at-p "''''")
-          (delete-char -2)
-          (delete-char 2)
-          (forward-char 2))))
+      :config
+      (require 'smartparens-config)
 
-    (defun sp-latex-point-after-backslash (id action _context)
-      "Return t if point follows a backslash, nil otherwise.
-    This predicate is only tested on \"insert\" action.
-    ID, ACTION, CONTEXT."
-      (when (eq action 'insert)
-        (let ((trigger (sp-get-pair id :trigger)))
-          (looking-back (concat "\\\\" (regexp-quote (if trigger trigger id))) nil))))
-    :custom
-    (sp-autowrap-region nil) ; let evil-surround handle this
-    (sp-highlight-pair-overlay nil)
-    (sp-cancel-autoskip-on-backward-movement nil)
-    (sp-show-pair-delay 0)
-    (sp-max-pair-length 3)
-    :config
-    (require 'smartparens-config)
+      (defun sp-latex-insert-spaces-inside-pair (_id action _context)
+        "ID, ACTION, CONTEXT."
+        (when (eq action 'insert)
+          (insert "  ")
+          (backward-char 1))
+        (when (and (eq action 'wrap)
+                   (save-excursion
+                     (goto-char (sp-get sp-last-wrapped-region :beg-in))
+                     (not (sp--looking-back-p "[[{(]"))))
+          (save-excursion
+            (goto-char (sp-get sp-last-wrapped-region :end-in))
+            (insert " ")
+            (goto-char (sp-get sp-last-wrapped-region :beg-in))
+            (insert " "))))
 
-    ;; Add custom pairs
-    ;; (require 'smartparens-latex)
+      (defun sp-latex-skip-match-apostrophe (ms _mb me)
+        "MS, MB, ME."
+        (when (equal ms "'")
+          (save-excursion
+            (goto-char me)
+            (looking-at-p "\\sw"))))
 
-    (add-to-list 'sp-navigate-skip-match
-                 '((tex-mode plain-tex-mode latex-mode) . sp--backslash-skip-match))
+      (defun sp-latex-skip-double-quote (_id action _context)
+        "ID, ACTION, CONTEXT."
+        (when (eq action 'insert)
+          (when (looking-at-p "''''")
+            (delete-char -2)
+            (delete-char 2)
+            (forward-char 2))))
 
-    (sp-with-modes '(tex-mode
-                     org-mode
-                     plain-tex-mode
-                     latex-mode
-                     LaTeX-mode)
+      (defun sp-latex-point-after-backslash (id action _context)
+        "Return t if point follows a backslash, nil otherwise.
+      This predicate is only tested on \"insert\" action.
+      ID, ACTION, CONTEXT."
+        (when (eq action 'insert)
+          (let ((trigger (sp-get-pair id :trigger)))
+            (looking-back (concat "\\\\" (regexp-quote (if trigger trigger id))) nil))))
 
-      (sp-local-pair "`" "'"
-                     ;; :actions '(:rem autoskip)
-                     ;; :skip-match 'sp-latex-skip-match-apostrophe
-                     :unless '(sp-latex-point-after-backslash))
 
-      ;; math modes, yay.  The :actions are provided automatically if
-      ;; these pairs do not have global definitions.
+      ;; Add custom pairs
+      ;; (require 'smartparens-latex)
 
-      (sp-local-pair "$" "$")
-      (sp-local-pair "\\[" "\\]"
-                     :unless '(sp-latex-point-after-backslash))
+      ;; (add-to-list 'sp-navigate-skip-match
+      ;;              '((tex-mode plain-tex-mode latex-mode) . sp--backslash-skip-match))
 
-      ;; disable useless pairs.
-      (sp-local-pair "\\\\(" nil :actions nil)
-      (sp-local-pair "'" nil :actions nil)
-      (sp-local-pair "\\\"" nil :actions nil)
+      (sp-with-modes '(tex-mode
+                       org-mode
+                       latex-mode
+                       LaTeX-mode)
 
-      ;; quote should insert ``'' instead of double quotes.  If we ever
-      ;; need to insert ", C-q is our friend.
-      ;; (sp-local-pair "``" "''"
-      ;;                :trigger "\""
-      ;;                :unless '(sp-latex-point-after-backslash)
-      ;;                :post-handlers '(sp-latex-skip-double-quote))
+        (sp-local-pair "`" "'"
+                       ;; :actions '(:rem autoskip)
+                       ;; :skip-match 'sp-latex-skip-match-apostrophe
+                       :unless '(sp-latex-point-after-backslash))
 
-      ;; add the prefix function sticking to {} pair
-      (sp-local-pair "{" nil :prefix "\\\\\\(\\sw\\|\\s_\\)*")
+        ;; math modes, yay.  The :actions are provided automatically if
+        ;; these pairs do not have global definitions.
 
-      ;; do not add more space when slurping
-      (sp-local-pair "{" "}")
-      (sp-local-pair "(" ")")
-      (sp-local-pair "[" "]")
+        (sp-local-pair "$" "$")
+        (sp-local-pair "\\[" "\\]"
+                       :unless '(sp-latex-point-after-backslash))
 
-      ;; pairs for big brackets.  Needs more research on what pairs are
-      ;; useful to add here.  Post suggestions if you know some.
-      (sp-local-pair "\\left(" "\\right)"
-                     :trigger "\\l("
-                     :when '(sp-in-math-p)
-                     :post-handlers '(sp-latex-insert-spaces-inside-pair))
-      (sp-local-pair "\\left[" "\\right]"
-                     :trigger "\\l["
-                     :when '(sp-in-math-p)
-                     :post-handlers '(sp-latex-insert-spaces-inside-pair))
-      (sp-local-pair "\\left\\{" "\\right\\}"
-                     :trigger "\\l{"
-                     :when '(sp-in-math-p)
-                     :post-handlers '(sp-latex-insert-spaces-inside-pair))
-      (sp-local-pair "\\left|" "\\right|"
-                     :trigger "\\l|"
-                     :when '(sp-in-math-p)
-                     :post-handlers '(sp-latex-insert-spaces-inside-pair))
-      (sp-local-pair "\\bigl(" "\\bigr)"
-                     :post-handlers '(sp-latex-insert-spaces-inside-pair))
-      (sp-local-pair "\\biggl(" "\\biggr)"
-                     :post-handlers '(sp-latex-insert-spaces-inside-pair))
-      (sp-local-pair "\\Bigl(" "\\Bigr)"
-                     :post-handlers '(sp-latex-insert-spaces-inside-pair))
-      (sp-local-pair "\\Biggl(" "\\Biggr)"
-                     :post-handlers '(sp-latex-insert-spaces-inside-pair))
-      (sp-local-pair "\\bigl[" "\\bigr]"
-                     :post-handlers '(sp-latex-insert-spaces-inside-pair))
-      (sp-local-pair "\\biggl[" "\\biggr]"
-                     :post-handlers '(sp-latex-insert-spaces-inside-pair))
-      (sp-local-pair "\\Bigl[" "\\Bigr]"
-                     :post-handlers '(sp-latex-insert-spaces-inside-pair))
-      (sp-local-pair "\\Biggl[" "\\Biggr]"
-                     :post-handlers '(sp-latex-insert-spaces-inside-pair))
-      (sp-local-pair "\\bigl\\{" "\\bigr\\}"
-                     :post-handlers '(sp-latex-insert-spaces-inside-pair))
-      (sp-local-pair "\\biggl\\{" "\\biggr\\}"
-                     :post-handlers '(sp-latex-insert-spaces-inside-pair))
-      (sp-local-pair "\\Bigl\\{" "\\Bigr\\}"
-                     :post-handlers '(sp-latex-insert-spaces-inside-pair))
-      (sp-local-pair "\\Biggl\\{" "\\Biggr\\}"
-                     :post-handlers '(sp-latex-insert-spaces-inside-pair))
-      (sp-local-pair "\\lfloor" "\\rfloor"
-                     :post-handlers '(sp-latex-insert-spaces-inside-pair))
-      (sp-local-pair "\\lceil" "\\rceil"
-                     :post-handlers '(sp-latex-insert-spaces-inside-pair))
-      (sp-local-pair "\\langle" "\\rangle"
-                     :post-handlers '(sp-latex-insert-spaces-inside-pair))
-      (sp-local-pair  "\\lVert" "\\rVert"
-                      :when '(sp-in-math-p)
-                      :trigger "\\lVert"
-                      :post-handlers '(sp-latex-insert-spaces-inside-pair))
-      (sp-local-pair  "\\lvert" "\\rvert"
-                      :when '(sp-in-math-p)
-                      :trigger "\\lvert"
-                      :post-handlers '(sp-latex-insert-spaces-inside-pair)))
+        ;; disable useless pairs.
+        (sp-local-pair "\\\\(" nil :actions nil)
+        (sp-local-pair "'" nil :actions nil)
+        (sp-local-pair "\\\"" nil :actions nil)
 
-    ;; some common wrappings
-    ;; (sp-local-tag "\"" "``" "''" :actions '(wrap)))
+        ;; quote should insert ``'' instead of double quotes.  If we ever
+        ;; need to insert ", C-q is our friend.
+        ;; (sp-local-pair "``" "''"
+        ;;                :trigger "\""
+        ;;                :unless '(sp-latex-point-after-backslash)
+        ;;                :post-handlers '(sp-latex-skip-double-quote))
 
-    (defhydra hydra-learn-sp (:hint nil)
-      "
-        _B_ backward-sexp            -----
-        _F_ forward-sexp               _s_ splice-sexp
-        _L_ backward-down-sexp         _df_ splice-sexp-killing-forward
-        _H_ backward-up-sexp           _db_ splice-sexp-killing-backward
-      ^^------                         _da_ splice-sexp-killing-around
-        _k_ down-sexp                -----
-        _j_ up-sexp                    _C-s_ select-next-thing-exchange
-      -^^-----                         _C-p_ select-previous-thing
-        _n_ next-sexp                  _C-n_ select-next-thing
-        _p_ previous-sexp            -----
-        _a_ beginning-of-sexp          _C-f_ forward-symbol
-        _z_ end-of-sexp                _C-b_ backward-symbol
-      --^^-                          -----
-        _t_ transpose-sexp             _c_ convolute-sexp
-      -^^--                            _g_ absorb-sexp
-        _x_ delete-char                _q_ emit-sexp
-        _dw_ kill-word               -----
-        _dd_ kill-sexp                 _,b_ extract-before-sexp
-      -^^--                            _,a_ extract-after-sexp
-        _S_ unwrap-sexp              -----
-      -^^--                            _AP_ add-to-previous-sexp
-        _C-h_ forward-slurp-sexp       _AN_ add-to-next-sexp
-        _C-l_ forward-barf-sexp      -----
-        _C-S-h_ backward-slurp-sexp    _ join-sexp
-        _C-S-l_ backward-barf-sexp     _|_ split-sexp
-      "
-      ;; TODO: Use () and [] - + * | <space>
-      ("B" sp-backward-sexp );; similiar to VIM b
-      ("F" sp-forward-sexp );; similar to VIM f
-      ;;
-      ("L" sp-backward-down-sexp )
-      ("H" sp-backward-up-sexp )
-      ;;
-      ("k" sp-down-sexp ) ; root - towards the root
-      ("j" sp-up-sexp )
-      ;;
-      ("n" sp-next-sexp )
-      ("p" sp-previous-sexp )
-      ;; a..z
-      ("a" sp-beginning-of-sexp )
-      ("z" sp-end-of-sexp )
-      ;;
-      ("t" sp-transpose-sexp )
-      ;;
-      ("x" sp-delete-char )
-      ("dw" sp-kill-word )
-      ;;("ds" sp-kill-symbol ) ;; Prefer kill-sexp
-      ("dd" sp-kill-sexp )
-      ;;("yy" sp-copy-sexp ) ;; Don't like it. Pref visual selection
-      ;;
-      ("S" sp-unwrap-sexp ) ;; Strip!
-      ;;("wh" sp-backward-unwrap-sexp ) ;; Too similar to above
-      ;;
-      ("C-h" sp-forward-slurp-sexp )
-      ("C-l" sp-forward-barf-sexp )
-      ("C-S-h" sp-backward-slurp-sexp )
-      ("C-S-l" sp-backward-barf-sexp )
-      ;;
-      ;;("C-[" (bind (sp-wrap-with-pair "[")) ) ;;FIXME
-      ;;("C-(" (bind (sp-wrap-with-pair "(")) )
-      ;;
-      ("s" sp-splice-sexp )
-      ("df" sp-splice-sexp-killing-forward )
-      ("db" sp-splice-sexp-killing-backward )
-      ("da" sp-splice-sexp-killing-around )
-      ;;
-      ("C-s" sp-select-next-thing-exchange )
-      ("C-p" sp-select-previous-thing )
-      ("C-n" sp-select-next-thing )
-      ;;
-      ("C-f" sp-forward-symbol )
-      ("C-b" sp-backward-symbol )
-      ;;
-      ;;("C-t" sp-prefix-tag-object)
-      ;;("H-p" sp-prefix-pair-object)
-      ("c" sp-convolute-sexp )
-      ("g" sp-absorb-sexp )
-      ("q" sp-emit-sexp )
-      ;;
-      (",b" sp-extract-before-sexp )
-      (",a" sp-extract-after-sexp )
-      ;;
-      ("AP" sp-add-to-previous-sexp );; Difference to slurp?
-      ("AN" sp-add-to-next-sexp )
-      ;;
-      ("_" sp-join-sexp ) ;;Good
-      ("|" sp-split-sexp )) 
+        ;; add the prefix function sticking to {} pair
+        (sp-local-pair "{" nil :prefix "\\\\\\(\\sw\\|\\s_\\)*")
 
-    :bind (("M-g M-p" . hydra-learn-sp/body)))
+        ;; do not add more space when slurping
+        (sp-local-pair "{" "}")
+        (sp-local-pair "(" ")")
+        (sp-local-pair "[" "]")
+
+        ;; pairs for big brackets.  Needs more research on what pairs are
+        ;; useful to add here.  Post suggestions if you know some.
+        ;; (sp-local-pair "\\left(" "\\right)"
+        ;;                :trigger "\\l("
+        ;;                :when '(sp-in-math-p)
+        ;;                :post-handlers '(sp-latex-insert-spaces-inside-pair))
+        ;; (sp-local-pair "\\left[" "\\right]"
+        ;;                :trigger "\\l["
+        ;;                :when '(sp-in-math-p)
+        ;;                :post-handlers '(sp-latex-insert-spaces-inside-pair))
+        ;; (sp-local-pair "\\left\\{" "\\right\\}"
+        ;;                :trigger "\\l{"
+        ;;                :when '(sp-in-math-p)
+        ;;                :post-handlers '(sp-latex-insert-spaces-inside-pair))
+        ;; (sp-local-pair "\\left|" "\\right|"
+        ;;                :trigger "\\l|"
+        ;;                :when '(sp-in-math-p)
+        ;;                :post-handlers '(sp-latex-insert-spaces-inside-pair))
+        ;; (sp-local-pair "\\bigl(" "\\bigr)"
+        ;;                :post-handlers '(sp-latex-insert-spaces-inside-pair))
+        ;; (sp-local-pair "\\biggl(" "\\biggr)"
+        ;;                :post-handlers '(sp-latex-insert-spaces-inside-pair))
+        ;; (sp-local-pair "\\Bigl(" "\\Bigr)"
+        ;;                :post-handlers '(sp-latex-insert-spaces-inside-pair))
+        ;; (sp-local-pair "\\Biggl(" "\\Biggr)"
+        ;;                :post-handlers '(sp-latex-insert-spaces-inside-pair))
+        ;; (sp-local-pair "\\bigl[" "\\bigr]"
+        ;;                :post-handlers '(sp-latex-insert-spaces-inside-pair))
+        ;; (sp-local-pair "\\biggl[" "\\biggr]"
+        ;;                :post-handlers '(sp-latex-insert-spaces-inside-pair))
+        ;; (sp-local-pair "\\Bigl[" "\\Bigr]"
+        ;;                :post-handlers '(sp-latex-insert-spaces-inside-pair))
+        ;; (sp-local-pair "\\Biggl[" "\\Biggr]"
+        ;;                :post-handlers '(sp-latex-insert-spaces-inside-pair))
+        ;; (sp-local-pair "\\bigl\\{" "\\bigr\\}"
+        ;;                :post-handlers '(sp-latex-insert-spaces-inside-pair))
+        ;; (sp-local-pair "\\biggl\\{" "\\biggr\\}"
+        ;;                :post-handlers '(sp-latex-insert-spaces-inside-pair))
+        ;; (sp-local-pair "\\Bigl\\{" "\\Bigr\\}"
+        ;;                :post-handlers '(sp-latex-insert-spaces-inside-pair))
+        ;; (sp-local-pair "\\Biggl\\{" "\\Biggr\\}"
+        ;;                :post-handlers '(sp-latex-insert-spaces-inside-pair))
+        ;; (sp-local-pair "\\lfloor" "\\rfloor"
+        ;;                :post-handlers '(sp-latex-insert-spaces-inside-pair))
+        ;; (sp-local-pair "\\lceil" "\\rceil"
+        ;;                :post-handlers '(sp-latex-insert-spaces-inside-pair))
+        ;; (sp-local-pair "\\langle" "\\rangle"
+        ;;                :post-handlers '(sp-latex-insert-spaces-inside-pair))
+        ;; (sp-local-pair  "\\lVert" "\\rVert"
+        ;;                 :when '(sp-in-math-p)
+        ;;                 :trigger "\\lVert"
+        ;;                 :post-handlers '(sp-latex-insert-spaces-inside-pair))
+        ;; (sp-local-pair  "\\lvert" "\\rvert"
+        ;;                 :when '(sp-in-math-p)
+        ;;                 :trigger "\\lvert"
+        ;;                 :post-handlers '(sp-latex-insert-spaces-inside-pair)))
+
+      ;; some common wrappings
+      (sp-local-tag "\"" "``" "''" :actions '(wrap)))
+
+      (defhydra hydra-learn-sp (:hint nil)
+        "
+          _B_ backward-sexp            -----
+          _F_ forward-sexp               _s_ splice-sexp
+          _L_ backward-down-sexp         _df_ splice-sexp-killing-forward
+          _H_ backward-up-sexp           _db_ splice-sexp-killing-backward
+        ^^------                         _da_ splice-sexp-killing-around
+          _k_ down-sexp                -----
+          _j_ up-sexp                    _C-s_ select-next-thing-exchange
+        -^^-----                         _C-p_ select-previous-thing
+          _n_ next-sexp                  _C-n_ select-next-thing
+          _p_ previous-sexp            -----
+          _a_ beginning-of-sexp          _C-f_ forward-symbol
+          _z_ end-of-sexp                _C-b_ backward-symbol
+        --^^-                          -----
+          _t_ transpose-sexp             _c_ convolute-sexp
+        -^^--                            _g_ absorb-sexp
+          _x_ delete-char                _q_ emit-sexp
+          _dw_ kill-word               -----
+          _dd_ kill-sexp                 _,b_ extract-before-sexp
+        -^^--                            _,a_ extract-after-sexp
+          _S_ unwrap-sexp              -----
+        -^^--                            _AP_ add-to-previous-sexp
+          _C-h_ forward-slurp-sexp       _AN_ add-to-next-sexp
+          _C-l_ forward-barf-sexp      -----
+          _C-S-h_ backward-slurp-sexp    _ join-sexp
+          _C-S-l_ backward-barf-sexp     _|_ split-sexp
+        "
+        ;; TODO: Use () and [] - + * | <space>
+        ("B" sp-backward-sexp );; similiar to VIM b
+        ("F" sp-forward-sexp );; similar to VIM f
+        ;;
+        ("L" sp-backward-down-sexp )
+        ("H" sp-backward-up-sexp )
+        ;;
+        ("k" sp-down-sexp ) ; root - towards the root
+        ("j" sp-up-sexp )
+        ;;
+        ("n" sp-next-sexp )
+        ("p" sp-previous-sexp )
+        ;; a..z
+        ("a" sp-beginning-of-sexp )
+        ("z" sp-end-of-sexp )
+        ;;
+        ("t" sp-transpose-sexp )
+        ;;
+        ("x" sp-delete-char )
+        ("dw" sp-kill-word )
+        ;;("ds" sp-kill-symbol ) ;; Prefer kill-sexp
+        ("dd" sp-kill-sexp )
+        ;;("yy" sp-copy-sexp ) ;; Don't like it. Pref visual selection
+        ;;
+        ("S" sp-unwrap-sexp ) ;; Strip!
+        ;;("wh" sp-backward-unwrap-sexp ) ;; Too similar to above
+        ;;
+        ("C-h" sp-forward-slurp-sexp )
+        ("C-l" sp-forward-barf-sexp )
+        ("C-S-h" sp-backward-slurp-sexp )
+        ("C-S-l" sp-backward-barf-sexp )
+        ;;
+        ;;("C-[" (bind (sp-wrap-with-pair "[")) ) ;;FIXME
+        ;;("C-(" (bind (sp-wrap-with-pair "(")) )
+        ;;
+        ("s" sp-splice-sexp )
+        ("df" sp-splice-sexp-killing-forward )
+        ("db" sp-splice-sexp-killing-backward )
+        ("da" sp-splice-sexp-killing-around )
+        ;;
+        ("C-s" sp-select-next-thing-exchange )
+        ("C-p" sp-select-previous-thing )
+        ("C-n" sp-select-next-thing )
+        ;;
+        ("C-f" sp-forward-symbol )
+        ("C-b" sp-backward-symbol )
+        ;;
+        ;;("C-t" sp-prefix-tag-object)
+        ;;("H-p" sp-prefix-pair-object)
+        ("c" sp-convolute-sexp )
+        ("g" sp-absorb-sexp )
+        ("q" sp-emit-sexp )
+        ;;
+        (",b" sp-extract-before-sexp )
+        (",a" sp-extract-after-sexp )
+        ;;
+        ("AP" sp-add-to-previous-sexp );; Difference to slurp?
+        ("AN" sp-add-to-next-sexp )
+        ;;
+        ("_" sp-join-sexp ) ;;Good
+        ("|" sp-split-sexp )) 
+
+      :bind (("M-g M-p" . hydra-learn-sp/body)))
   #+END_SRC 
 ** 完 magit
 #+BEGIN_SRC emacs-lisp
   (use-package magit
-    :commands magit-status magit-blame
+    :defer t
+    :diminish magit-mode
+    :commands (magit-status magit-blame)
     ;; The following configuration has magit use full screen mode.
     ;; :init
     ;; (defadvice magit-status (around magit-fullscreen activate)
@@ -2486,122 +2614,121 @@ for page breaks add this to org files
   (use-package calendar 
     :custom
     (calendar-date-style 'european) 
-          (european-calendar-style t)
-          (calendar-week-start-day 0)    ; week starts on monday
-          (calendar-day-name-array     ["Dimanche" "Lundi" "Mardi" "Mercredi" "Jeudi" "Vendredi" "Samedi"])
-          (calendar-day-abbrev-array   ["dim" "lun" "mar" "mer" "jeu" "ven" "sam"])
-          (calendar-month-name-array   ["Janvier" "Février" "Mars" "Avril" "Mai" "Juin" "Juillet"
-                                       "Août" "Septembre" "Octobre" "Novembre" "Décembre"])
-          (calendar-month-abbrev-array ["jan" "fév" "mar" "avr" "mai" "jun" "jul" "aoû" "sep" "oct" "nov" "déc"]))
+    (european-calendar-style t)
+    (calendar-week-start-day 0)    ; week starts on monday
+    (calendar-day-name-array     ["Dimanche" "Lundi" "Mardi" "Mercredi" "Jeudi" "Vendredi" "Samedi"])
+    (calendar-day-abbrev-array   ["dim" "lun" "mar" "mer" "jeu" "ven" "sam"])
+    (calendar-month-name-array   ["Janvier" "Février" "Mars" "Avril" "Mai" "Juin" "Juillet"
+                                  "Août" "Septembre" "Octobre" "Novembre" "Décembre"])
+    (calendar-month-abbrev-array ["jan" "fév" "mar" "avr" "mai" "jun" "jul" "aoû" "sep" "oct" "nov" "déc"]))
 
-    (use-package holidays :after calendar
-      :custom
-      (calendar-holidays
-            '((holiday-easter-etc 0 "Pâques")
-              (holiday-easter-etc 1 "Lundi de Pâques")
-              (holiday-easter-etc 39 "Ascension")
-              (holiday-easter-etc 49 "Pentecôte")
-              (holiday-easter-etc -47 "Mardi gras"))))
+  (use-package holidays 
+    :after calendar
+    :custom
+    (calendar-holidays
+     '((holiday-easter-etc 0 "Pâques")
+       (holiday-easter-etc 1 "Lundi de Pâques")
+       (holiday-easter-etc 39 "Ascension")
+       (holiday-easter-etc 49 "Pentecôte")
+       (holiday-easter-etc -47 "Mardi gras"))))
 
 #+END_SRC 
 ** 完 calfw
 #+BEGIN_SRC emacs-lisp
-(use-package calfw :after calendar
-:init
-(require 'calfw-org)
-;;(require 'calfw-gcal)
-;;(require 'calfw-cal)
-(defun my-open-calendar ()
-    (interactive)
-    (let ((buf (get-buffer "*cfw-calendar*")))
-      (if buf
-          (pop-to-buffer buf nil)
-        (cfw:open-calendar-buffer
-         :contents-sources
-         (list (cfw:org-create-source "#c0c5ce")) :view 'week))))
-:custom
-  (cfw:fchar-junction ?╋)
+  (use-package calfw 
+    :defer t
+    :after (calendar evil)
+    :preface
+    (require 'calfw-org)
+    ;;(require 'calfw-gcal)
+    ;;(require 'calfw-cal)
+    (defun sync0-open-calendar ()
+      (interactive)
+      (let ((buf (get-buffer "*cfw-calendar*")))
+        (if buf
+            (pop-to-buffer buf nil)
+          (cfw:open-calendar-buffer
+           :contents-sources
+           (list (cfw:org-create-source "#c0c5ce")) :view 'week))))
+    :commands sync0-open-calendar
+    :config
+    (add-to-list 'evil-emacs-state-modes 'cfw:details-mode)
+    :custom
+    (cfw:fchar-junction ?╋)
     (cfw:fchar-vertical-line ?┃)
-        (cfw:fchar-horizontal-line ?━)
-        (cfw:fchar-left-junction ?┣)
-        (cfw:fchar-right-junction ?┫)
-        (cfw:fchar-top-junction ?┯)
-        (cfw:fchar-top-left-corner ?┏)
-        (cfw:fchar-top-right-corner ?┓)
-:bind
-(("<f7>" . my-open-calendar)
- ;; ("<f7>" . cfw:open-org-calendar)
-:map cfw:details-mode-map
-("SPC"  . cfw:details-kill-buffer-command)))
+    (cfw:fchar-horizontal-line ?━)
+    (cfw:fchar-left-junction ?┣)
+    (cfw:fchar-right-junction ?┫)
+    (cfw:fchar-top-junction ?┯)
+    (cfw:fchar-top-left-corner ?┏)
+    (cfw:fchar-top-right-corner ?┓)
+    :bind
+    (("<f7>" . sync0-open-calendar)
+     ;; ("<f7>" . cfw:open-org-calendar)
+     :map cfw:details-mode-map
+     ("SPC"  . cfw:details-kill-buffer-command)))
 #+END_SRC 
 ** 完 alert (Growl) 
 #+BEGIN_SRC emacs-lisp
 (use-package alert 
 :load-path "~/.emacs.d/sync0_git/alert")
 #+END_SRC 
-** 取 powerline
-  (use-package powerline
-    :if window-system
-    :config (setq-default powerline-default-separator 'nil))
-** 完 hydra
-#+BEGIN_SRC emacs-lisp
-  (use-package hydra
-    :custom
-    ;; In case I later need to wrap defhydra in any special functionality.
-    (lv-use-seperator t))
-#+END_SRC 
 ** 完 git-gutter 
 #+BEGIN_SRC emacs-lisp
-  (use-package git-gutter 
-    :after hydra 
-    :hook 
-    (text-mode . git-gutter-mode)
-    :custom
-    ;; (git-gutter:window-width 1)
-    (git-gutter:modified-sign " ") 
-    (git-gutter:added-sign " ")    
-    (git-gutter:deleted-sign " ")
-    :config
-    (set-face-background 'git-gutter:modified "#3a81c3") ;; background color
-    (set-face-background 'git-gutter:added "#7ccd7c")
-    ;;(set-face-background 'git-gutter:modified "orange") ;; background color
-    ;;(set-face-background 'git-gutter:added "green")
-    ;; (set-face-attribute  'git-gutter:added nil :foreground "black")
-    ;;(set-face-background 'git-gutter:deleted "red")
-    ;;  (set-face-attribute  'git-gutter:deleted nil :foreground "black")
-    (set-face-background 'git-gutter:deleted "ee6363")
+    (use-package git-gutter 
+      :diminish git-gutter-mode
+      :after hydra 
+      :hook 
+      (text-mode . git-gutter-mode)
+      (prog-mode . git-gutter-mode)
+      :custom
+      (git-gutter:window-width 1)
+      (git-gutter:modified-sign " ") 
+      (git-gutter:added-sign " ")    
+      (git-gutter:deleted-sign " ")
+      :config
+      (set-face-background 'git-gutter:modified "#3a81c3") ;; background color
+      (set-face-background 'git-gutter:added "#7ccd7c")
+      ;;(set-face-background 'git-gutter:modified "orange") ;; background color
+      ;;(set-face-background 'git-gutter:added "green")
+      ;; (set-face-attribute  'git-gutter:added nil :foreground "black")
+      ;;(set-face-background 'git-gutter:deleted "red")
+      ;;  (set-face-attribute  'git-gutter:deleted nil :foreground "black")
+      (set-face-background 'git-gutter:deleted "ee6363")
 
-    (defhydra sync0-hydra-git-gutter
-      (:body-pre (git-gutter-mode 1) :hint nil)
-      "
-                                                             ╭─────────────────┐
-                          Movement   Hunk Actions     Misc.  │ gg: +%-4s(car (git-gutter:statistic))/ -%-3s(cdr (git-gutter:statistic)) │
-                          ╭──────────────────────────────────┴─────────────────╯
-                             ^_g_^       [_s_] stage        [_R_] set start Rev
-                             ^_k_^       [_r_] revert
-                             ^↑ ^      [_m_] mark
-                             ^↓ ^      [_p_] popup          ╭──────────────────────
-                             ^_j_^                          │[_q_] quit
-                             ^_G_^                          │[_Q_] Quit and disable"
-      ("j" (progn (git-gutter:next-hunk 1) (recenter)))
-      ("k" (progn (git-gutter:previous-hunk 1) (recenter)))
-      ("g" (progn (goto-char (point-min)) (git-gutter:next-hunk 1)))
-      ("G" (progn (goto-char (point-min)) (git-gutter:previous-hunk 1)))
-      ("s" git-gutter:stage-hunk)
-      ("r" git-gutter:revert-hunk)
-      ("m" git-gutter:mark-hunk)
-      ("p" git-gutter:popup-hunk)
-      ("R" git-gutter:set-start-revision)
-      ("q" nil :color blue)
-      ("Q" (git-gutter-mode -1) :color blue))
-:bind
-    (("C-c h g" . sync0-hydra-git-gutter/body)))
+      (defhydra sync0-hydra-git-gutter
+        (:body-pre (git-gutter-mode 1) :hint nil)
+        "
+                                                               ╭─────────────────┐
+                            Movement   Hunk Actions     Misc.  │ gg: +%-4s(car (git-gutter:statistic))/ -%-3s(cdr (git-gutter:statistic)) │
+                            ╭──────────────────────────────────┴─────────────────╯
+                               ^_g_^       [_s_] stage        [_R_] set start Rev
+                               ^_k_^       [_r_] revert
+                               ^↑ ^      [_m_] mark
+                               ^↓ ^      [_p_] popup          ╭──────────────────────
+                               ^_j_^                          │[_q_] quit
+                               ^_G_^                          │[_Q_] Quit and disable"
+        ("j" (progn (git-gutter:next-hunk 1) (recenter)))
+        ("k" (progn (git-gutter:previous-hunk 1) (recenter)))
+        ("g" (progn (goto-char (point-min)) (git-gutter:next-hunk 1)))
+        ("G" (progn (goto-char (point-min)) (git-gutter:previous-hunk 1)))
+        ("s" git-gutter:stage-hunk)
+        ("r" git-gutter:revert-hunk)
+        ("m" git-gutter:mark-hunk)
+        ("p" git-gutter:popup-hunk)
+        ("R" git-gutter:set-start-revision)
+        ("q" nil :color blue)
+        ("Q" (git-gutter-mode -1) :color blue))
+  :bind
+      (("C-c h g" . sync0-hydra-git-gutter/body)))
   #+END_SRC 
 ** 完 git-time-machine
 #+BEGIN_SRC emacs-lisp
   (use-package git-timemachine
+    :defer t
+    :after evil
     :commands 
-(git-timemachine git-timemachine-toggle)
+    (git-timemachine git-timemachine-toggle)
     :custom
     (git-timemachine-show-minibuffer-details nil)
     :config
@@ -2617,35 +2744,28 @@ for page breaks add this to org files
     ;; Force evil to rehash keybindings for the current state
     (add-hook 'git-timemachine-mode-hook #'evil-force-normal-state))
   #+END_SRC 
-** 無 mu
+** 完 mu4e
 #+BEGIN_SRC emacs-lisp
   (use-package mu4e
+:disabled t
     :load-path "/usr/share/emacs/site-lisp/"
-    ;; (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
-    ;; :custom
-    ;;         ;; don't save message to Sent Messages, GMail/IMAP will take care of this
-    ;;         (mu4e-sent-messages-behavior 'delete)
-    ;;         ;; (mu4e-use-fancy-chars nil)
-    ;;         ;;       (mu4e-attachment-dir "~/Desktop")
-    ;;               (mu4e-headers-results-limit 100)
-    ;;               (mu4e-view-show-images t)
-    ;;               (mu4e-headers-skip-duplicates t)
-    ;;               (mu4e-view-show-addresses t)
-    ;;               (mu4e-headers-fields '((:human-date . 12) (:from-or-to . 22) (:subject)))
-    ;;               (message-kill-buffer-on-exit t)
-    :commands 
-    (mu4e)
+    :defer t
+    :after hydra
+    :commands (mu4e)
     ;; (mu4e mu4e-headers-search mu4e-compose-new mu4e~proc-add)
+
     :init
     (load-file "~/.emacs.d/mu4econfig.el")
+
     :config
-    (defhydra hydra-mail (:color blue)
+    (defhydra sync0-hydra-mail (:color blue)
       "Mail"
-      ("C" mu4e-compose-new "compose new")
+      ("c" mu4e-compose-new "compose new")
       ("b" mu4e-headers-search-bookmark "bookmarks")
       ("q" nil "quit"))
+
     :bind 
-    (("C-c m" . hydra-mail/body)))
+    (("C-c m" . sync0-hydra-mail/body)))
   #+END_SRC 
 ** 完 ediff
 #+BEGIN_SRC emacs-lisp
@@ -2668,12 +2788,13 @@ some quality voices in the AUR repositories.
 
 #+BEGIN_SRC emacs-lisp
   (use-package festival 
-:load-path "~/.emacs.d/sync0/" 
-:commands say-minor-mode
-:functions festival-send-command
+    :defer t
+    :after evil
+    :load-path "~/.emacs.d/sync0/" 
+    :commands say-minor-mode
     :config
     (autoload 'say-minor-mode "festival" "Menu for using Festival." t)
-    (say-minor-mode t)
+    ;; (say-minor-mode t)
 
     (defun sync0-festival-el () 
       (interactive)
@@ -2686,8 +2807,9 @@ some quality voices in the AUR repositories.
     (defun sync0-festival-english-female () 
       (interactive)
       (festival-send-command '(voice_nitech_us_slt_arctic_hts)))
-
-    :bind (("M-r" . festival-say-region)))
+    :bind 
+    (:map evil-visual-state-map 
+          ("s" . festival-say-region)))
   #+END_SRC 
 ** 完 desktop-save mode
 #+BEGIN_SRC emacs-lisp
@@ -2696,7 +2818,7 @@ some quality voices in the AUR repositories.
     (desktop-auto-save-timeout 300)
     ;; If t, restoring frames reuses existing frames.
     ;; (desktop-restore-reuses-frames nil)
-    :config
+    :init
     (desktop-save-mode 1))
   #+END_SRC 
 ** 完 saveplace
@@ -2706,7 +2828,7 @@ its last location.
 
 #+BEGIN_SRC emacs-lisp
   (use-package saveplace
-    :init
+    :preface
     (defun sync0-save-place-reposition ()
       "Force windows to recenter current line (with saved position)."
       (run-with-timer 0 nil
@@ -2715,6 +2837,7 @@ its last location.
                           (dolist (win (get-buffer-window-list buf nil t))
                             (with-selected-window win (recenter)))))
                       (current-buffer)))
+    :init 
     ;; Start save-place-mode.
     (save-place-mode)
     :hook
@@ -2774,6 +2897,7 @@ configuration, it's just in case the latter fails.
 
 #+BEGIN_SRC emacs-lisp
   (use-package doc-view 
+:disabled t
     :custom
     (doc-view-continuous t)
     :bind 
@@ -2800,29 +2924,85 @@ configuration, it's just in case the latter fails.
           ("/" . doc-view-search)
           ("?" . doc-view-search-backward)))
   #+END_SRC 
-** 完 which-key
-This package displays available keybindings in a popup. As configured
-herein, ~which-key~ will not show automatically in the minibuffer. That
-is the default behavior, which gets annoying rather fast.
-
+** 完 neotree
 #+BEGIN_SRC emacs-lisp
-  (use-package which-key
-  :after evil
-  :custom
-  ;; Use minibuffer instead of opening another buffer to the side.
-  (which-key-popup-type 'minibuffer)
-  (which-key-sort-order 'which-key-key-order-alpha)
-  ;; (which-key-popup-type 'side-window)
-  ;; Allow C-h to trigger which-key before it is done automatically.
-  (which-key-show-early-on-C-h t)
-  ;; (which-key-idle-delay 10000)
-  (which-key-idle-delay 0.05)
-  ;; (which-key-idle-secondary-delay 0.5)
-  ;; (which-key-allow-evil-operators t)
-  ;; (which-key-show-operator-state-maps t)
-    :init
-    (which-key-mode))
+  (use-package neotree
+    :after (projectile evil)
+    ;; :commands
+    ;; (neotree-show neotree-hide neotree-dir neotree-find)
+    ;; :custom
+    ;; (neo-theme 'nerd2)
+    ;; :bind
+    ;; ("<f8>" . neotree-current-dir-toggle)
+    ;; ("<f9>" . neotree-projectile-toggle)
+    :custom
+    (neo-smart-open t)
+    (projectile-switch-project-action 'neotree-projectile-action)
+    :config
+    ;; (neotree-show)
+    (evil-define-key 'normal neotree-mode-map (kbd "TAB") 'neotree-enter)
+    (evil-define-key 'normal neotree-mode-map (kbd "SPC") 'neotree-quick-look)
+    (evil-define-key 'normal neotree-mode-map (kbd "q") 'neotree-hide)
+    (evil-define-key 'normal neotree-mode-map (kbd "RET") 'neotree-enter)
+    (evil-define-key 'normal neotree-mode-map (kbd "r") 'neotree-refresh)
+    (evil-define-key 'normal neotree-mode-map (kbd "h") 'neotree-select-up-node)
+    (evil-define-key 'normal neotree-mode-map (kbd "l") 'neotree-select-down-node)
+    (evil-define-key 'normal neotree-mode-map (kbd "j") 'neotree-next-line)
+    (evil-define-key 'normal neotree-mode-map (kbd "c") 'neotree-create-node)
+    (evil-define-key 'normal neotree-mode-map (kbd "d") 'neotree-delete-node)
+    (evil-define-key 'normal neotree-mode-map (kbd "k") 'neotree-previous-line)
+    (evil-define-key 'normal neotree-mode-map (kbd "A") 'neotree-stretch-toggle)
+    (evil-define-key 'normal neotree-mode-map (kbd "H") 'neotree-hidden-file-toggle)
+
+    (defun sync0-neotree-project-dir-toggle ()
+      "Open NeoTree using the git root."
+      (interactive)
+      (let ((project-dir (projectile-project-root))
+            (file-name (buffer-file-name)))
+        (neotree-toggle)
+        (if project-dir
+            (if (neo-global--window-exists-p)
+                (progn
+                  (neotree-dir project-dir)
+                  (neotree-find file-name)))
+          (message "Could not find git project root.")))))
 #+END_SRC 
+
+    (defun neotree-projectile-toggle ()
+      (interactive)
+      (let ((project-dir
+             (ignore-errors
+             ;;; Pick one: projectile or find-file-in-project
+               (projectile-project-root)
+               ))
+            (file-name (buffer-file-name))
+            (neo-smart-open t))
+        (if (and (fboundp 'neo-global--window-exists-p)
+                 (neo-global--window-exists-p))
+            (neotree-hide)
+          (progn
+            (neotree-show)
+            (if project-dir
+                (neotree-dir project-dir))
+            (if file-name
+                (neotree-find file-name)))))))
+    (defun neotree-current-dir-toggle ()
+      (interactive)
+      (let ((project-dir
+             (ignore-errors
+               (ffip-project-root)
+               ))
+            (file-name (buffer-file-name))
+            (neo-smart-open t))
+        (if (and (fboundp 'neo-global--window-exists-p)
+                 (neo-global--window-exists-p))
+            (neotree-hide)
+          (progn
+            (neotree-show)
+            (if project-dir
+                (neotree-dir project-dir))
+            (if file-name
+                (neotree-find file-name)))))))
 ** 完 windmove
 This built-in Emacs package lets you move point from window to window
 using more familiar key combinations than the default ~C-x o~.
@@ -2831,8 +3011,9 @@ I added some functions to improve defaults.
 https://emacs.stackexchange.com/questions/40821/open-new-window-and-switch-to-it
 #+BEGIN_SRC emacs-lisp
   (use-package windmove
-    :after (hydra counsel ivy)
-    :init
+    :after 
+    (hydra counsel ivy neotree)
+    :preface
     (defun sync0-split-and-follow-horizontally ()
       (interactive)
       (split-window-below)
@@ -2844,17 +3025,44 @@ https://emacs.stackexchange.com/questions/40821/open-new-window-and-switch-to-it
       (split-window-right)
       (balance-windows)
       (other-window 1))
+
     :config
-    (defhydra sync0-hydra-file-access (:color amaranth :exit t)
-      "Manage windows and open new files in different ways."
-      ("1" delete-other-windows "Delete other windows")
-      ("2" sync0-split-and-follow-horizontally "Split windows horizontally")
-      ("3" sync0-split-and-follow-vertically "split windows vertically")
-      ("b" ivy-switch-buffer "Open buffer in current window.")
-      ("o" ivy-switch-buffer-other-window "Open buffer in new window.")
-      ("r" counsel-recentf "List recent files.")
-      ("f" counsel-find-file "Find file.")
-      ("q" nil "Quit." :color blue))
+    (defhydra sync0-hydra-file-access (:color amaranth :hint nil :exit t)
+      "
+  ^Windows^                   ^Buffers^          ^Search^
+  ^^^^^^---------------------------------------------------------------
+  _1_: Delete others       _w_: Write         _r_: Recent
+  _2_: Split horizontally  _a_: Write as      _f_: Find
+  _3_: Split vertically    _b_: Open           
+  ^ ^                      _k_: Kill
+  ^ ^                      _o_: Other window  
+  ^^^^^^---------------------------------------------------------------
+  ^Bookmarks^                 ^Neotree^                
+  ^^^^^^---------------------------------------------------------------
+  _j_: Jump to bookmark    _d_: Toggle          [q] Quit    
+  _m_: Set bookmark        
+  _l_: List bookmarks
+  _g_: Go bk otr window
+
+  "
+      ("1" delete-other-windows)
+      ("2" sync0-split-and-follow-horizontally)
+      ("3" sync0-split-and-follow-vertically)
+      ("b" ivy-switch-buffer)
+      ;; Quickly save
+      ("w" save-buffer)
+      ("a" write-file)
+      ;; Kill current buffer and window
+      ("k" kill-buffer-and-window)
+      ("o" ivy-switch-buffer-other-window)
+      ("r" counsel-recentf)
+      ("f" counsel-find-file)
+      ("m" bookmark-set)
+      ("j" counsel-bookmark)
+      ("g" bookmark-jump-other-window)
+      ("l" bookmark-bmenu-list)
+      ("d" sync0-neotree-project-dir-toggle)
+      ("q" nil :color blue))
     :bind 
     (("M-," . windmove-left)
      ("<f5>" . sync0-hydra-file-access/body)
@@ -2870,104 +3078,18 @@ from within emacs.
 
 #+BEGIN_SRC emacs-lisp
   (use-package google-this 
+    :defer t
+    :diminish google-this-mode
+    :commands (google-this-search google-this)
     :after evil
-    :init
-    (google-this-mode 1)
+    ;; :init
+    ;; (google-this-mode 1)
     :bind 
     ;; Search selection with google.
     ;; Query google search. 
     (("C-c g" . google-this-search)
      :map evil-visual-state-map
      ("g"  . google-this)))
-#+END_SRC 
-** 完 simple-secrets
-This package contains a set of functions to manage passwords. After
-defining ~secret-password-file~, you can draw information from this
-file, without revealing the encrypted contents. For example, in this
-file, whenever I use ~(secret-lookup [secret_name])~, I am drawing
-information from my encrypted secrets file (i.e., ~sync0_secrets.gpg~)
-that I don't want to reveal. 
-
-#+BEGIN_SRC emacs-lisp
-  (use-package simple-secrets
-    :load-path "~/.emacs.d/sync0/" 
-    :after s
-    :custom
-    (secret-password-file "~/.emacs.d/sync0_secrets.gpg")
-    :config
-    (secret-load-keys))
-#+END_SRC 
-** 完 s
-The long lost Emacs string manipulation library. This is required for
-~simple-secrets~ to work. 
-
-#+BEGIN_SRC emacs-lisp
-  (use-package s)
-#+END_SRC 
-** 完 company-mode
-Company is a text completion framework for Emacs. It uses pluggable
-back-ends and front-ends to retrieve and display completion
-candidates.
-
-This configuration was taken from:
-https://github.com/mandarvaze/dot-files/blob/master/emacs.org. 
-
-To avoid the conflict between ~company-mode~ and ~yasnippets~ over the use of
-the tab key, I borrowed the solution from the EmacsWiki page for
-~company-mode~. 
-https://www.emacswiki.org/emacs/CompanyMode#toc11
-
-#+BEGIN_SRC emacs-lisp
-  (use-package company
-    :after yasnippet
-    :custom
-    (company-dabbrev-ignore-case t)
-    (company-show-numbers nil)
-    (company-idle-delay 0.1)
-    (company-minimum-prefix-length 2)
-    (company-selection-wrap-around t)
-    (company-tooltip-align-annotations t)  ; align to the right border
-    ;; company-sort-by-occurrence t (20190410)
-    (company-tooltip-limit 5)
-    ;; (company-backends '(company-ispell
-    ;;                     company-capf
-    ;;                     company-yasnippet
-    ;;                     company-dabbrev
-    ;;                     ;; company-gtags
-    ;;                     ;; company-etags
-    ;;                     company-elisp
-    ;;                     company-files))
-    :config
-    (defun sync0-text-mode-hook-setup ()
-      ;; make `company-backends' local is critcal
-      ;; or else, you will have completion in every major mode, that's very annoying!
-      (make-local-variable 'company-backends)
-      (add-to-list 'company-backends 'company-capf)
-      ;; company-ispell is the plugin to complete words
-      (add-to-list 'company-backends 'company-ispell)
-      (add-to-list 'company-backends 'company-yasnipet))
-    ;; (add-to-list 'company-backends 'company-math-symbols-unicode)
-
-    ;; With this code, yasnippet will expand the snippet if company didn't complete the word
-    ;; replace company-complete-common with company-complete if you're using it
-
-    (advice-add 'company-complete-common :before (lambda () (setq my-company-point (point))))
-    (advice-add 'company-complete-common :after (lambda ()
-                                                  (when (equal my-company-point (point))
-                                                    (yas-expand))))
-    :hook
-    ((after-init . global-company-mode)
-     (text-mode . sync0-text-mode-hook-setup)))
-  ;; :bind 
-  ;; (("<tab>" . sync0-tab-indent-or-complete)))
-
-  ;; To use company-quickhelp, the pos-tip package is necessary.
-  (use-package company-quickhelp
-    :after company
-    :init
-    (use-package pos-tip)
-    :config
-    (company-quickhelp-mode 1))
 #+END_SRC 
 ** 完 guess-language
 Emacs minor mode that detects the language you're typing in.
@@ -2976,10 +3098,10 @@ document.
 
 #+BEGIN_SRC emacs-lisp
     (use-package guess-language
-      :after (ispell evil company)
+      :after (ispell evil)
       :init
       (set-input-method nil)
-      (setq company-ispell-dictionary  (concat user-emacs-directory "dictionaries/english.txt"))
+
      (defvar sync0-language-active 
        "Is a human language minor mode enabled?")
       (setq sync0-language-active "english")
@@ -3002,19 +3124,22 @@ document.
             (setq sync0-language-active "spanish")
             (setq local-abbrev-table marquez-mode-abbrev-table)
             (set-input-method "spanish-postfix")
-            (setq company-ispell-dictionary  (concat user-emacs-directory "dictionaries/spanish.txt"))))
+            (when (bound-and-true-p company-mode)
+             (setq company-ispell-dictionary  (concat user-emacs-directory "dictionaries/spanish.txt")))))
          ((string-equal lang "fr")
           (progn
             (setq sync0-language-active "french")
             (setq local-abbrev-table rabelais-mode-abbrev-table)
             (set-input-method "french-postfix")
-            (setq company-ispell-dictionary  (concat user-emacs-directory "dictionaries/french.txt"))))
+            (when (bound-and-true-p company-mode)
+            (setq company-ispell-dictionary  (concat user-emacs-directory "dictionaries/french.txt")))))
          ((string-equal lang "en")
           (progn
             (setq sync0-language-active "english")
             (setq local-abbrev-table orwell-mode-abbrev-table)
             (set-input-method nil)
-            (setq company-ispell-dictionary  (concat user-emacs-directory "dictionaries/english.txt")))))))
+            (when (bound-and-true-p company-mode)
+            (setq company-ispell-dictionary  (concat user-emacs-directory "dictionaries/english.txt"))))))))
 
     (defun sync0-lookup-word (word)
       "Search an online dictionary for the word at point according
@@ -3052,19 +3177,6 @@ document.
     :hook
     (text-mode . guess-language-mode))
 #+END_SRC 
-** 取 define-word
-define-word is a GNU Emacs package that lets you see the definition of
-a word or a phrase at point, without having to switch to a browser.
-While this package should be awesome in theory, for someone like
-myself that needs precise dictionaries and works with several
-languages simultaneoulsy, this package is not flexible enough because
-it requires writing a function to parse each website, which, while not
-impossible is way too time consuming to be worth it. Maybe one day I
-will bother writing such parsing functions, but since websites can
-change anytime, I just don't think it is worth the effort at this
-point. 
-
-(use-package define-word)
 ** 完 focus-mode
 Focus provides focus-mode that dims the text of surrounding sections.
 This mode is perfect for proofreading. Thus, don't abuse it when
@@ -3076,7 +3188,147 @@ more blended with the background color of your theme), and a negative
 integer indicates a less dim color.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package focus)
+  (use-package focus
+    :defer t
+    :commands focus-mode)
+#+END_SRC 
+** 完 solaire-mode
+solaire-mode is an aesthetic plugin that helps visually distinguish
+file-visiting windows from other types of windows (like popups or
+sidebars) by giving them a slightly different -- often brighter --
+background.
+
+Currently, I have it disabled because it conflicts with
+~buffer-face-mode~. 
+
+#+BEGIN_SRC emacs-lisp
+  (use-package solaire-mode 
+    :disabled t
+    :diminish solaire-mode
+    :after doom-themes 
+    :hook 
+    ((change-major-mode after-revert ediff-prepare-buffer) . turn-on-solaire-mode)
+    (minibuffer-setup . solaire-mode-in-minibuffer)
+    :config
+    ;; (setq solaire-mode-remap-modeline nil)
+    (solaire-global-mode +1)
+    (solaire-mode-swap-bg))
+#+END_SRC 
+** 完 sumblimity
+#+BEGIN_SRC emacs-lisp
+  (use-package sublimity
+:disabled t 
+    :defer t
+    :diminish sublimity-mode
+    :commands sublimity-mode
+    :custom
+    (sublimity-map-size 30)
+    (sublimity-map-fraction 0.3)
+    (sublimity-map-text-scale -5)
+    :init
+    (require 'sublimity-map)
+    :config
+    ;; experimental
+    ;; (sublimity-mode 1)
+    (sublimity-map-set-delay 2))
+#+END_SRC
+** 完 company-mode
+Company is a text completion framework for Emacs. It uses pluggable
+back-ends and front-ends to retrieve and display completion
+candidates.
+
+This configuration was taken from:
+https://github.com/mandarvaze/dot-files/blob/master/emacs.org. 
+
+To avoid the conflict between ~company-mode~ and ~yasnippets~ over the use of
+the tab key, I borrowed the solution from the EmacsWiki page for
+~company-mode~. 
+https://www.emacswiki.org/emacs/CompanyMode#toc11
+
+#+BEGIN_SRC emacs-lisp
+      (use-package company
+  :disabled t
+        :defer t
+  :diminish company-mode
+        :after (yasnippet ispell)
+        :commands company-mode
+        :custom
+        (company-dabbrev-ignore-case t)
+        (company-show-numbers nil)
+        (company-idle-delay 0.1)
+        (company-minimum-prefix-length 2)
+        (company-selection-wrap-around t)
+        (company-tooltip-align-annotations t)  ; align to the right border
+        ;; company-sort-by-occurrence t (20190410)
+        (company-tooltip-limit 5)
+          (company-ispell-dictionary  (concat user-emacs-directory "dictionaries/english.txt"))
+        ;; (company-backends '(company-ispell
+        ;;                     company-capf
+        ;;                     company-yasnippet
+        ;;                     company-dabbrev
+        ;;                     ;; company-gtags
+        ;;                     ;; company-etags
+        ;;                     company-elisp
+        ;;                     company-files))
+        :config
+    ;; (with-eval-after-load 'company
+    ;;       (setq company-ispell-dictionary  (concat user-emacs-directory "dictionaries/english.txt")))
+
+      (use-package company-quickhelp
+        :init
+         (use-package pos-tip)
+        :config
+        (company-quickhelp-mode 1))
+
+        (defun sync0-text-mode-hook-setup ()
+          ;; make `company-backends' local is critcal
+          ;; or else, you will have completion in every major mode, that's very annoying!
+          (make-local-variable 'company-backends)
+          (add-to-list 'company-backends 'company-capf)
+          ;; company-ispell is the plugin to complete words
+          (add-to-list 'company-backends 'company-ispell)
+          (add-to-list 'company-backends 'company-yasnipet)))
+        ;; (add-to-list 'company-backends 'company-math-symbols-unicode)
+
+        ;; With this code, yasnippet will expand the snippet if company didn't complete the word
+        ;; replace company-complete-common with company-complete if you're using it
+
+        ;; (advice-add 'company-complete-common :before (lambda () (setq my-company-point (point))))
+        ;; (advice-add 'company-complete-common :after (lambda ()
+        ;;                                               (when (equal my-company-point (point))
+        ;;                                                 (yas-expand)))))
+
+        ;; :hook
+        ;; ((after-init . global-company-mode)
+        ;;  (text-mode . sync0-text-mode-hook-setup)))
+      ;; :bind 
+      ;; (("<tab>" . sync0-tab-indent-or-complete)))
+
+      ;; To use company-quickhelp, the pos-tip package is necessary.
+#+END_SRC 
+** 完 which-key
+This package displays available keybindings in a popup. As configured
+herein, ~which-key~ will not show automatically in the minibuffer. That
+is the default behavior, which gets annoying rather fast.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package which-key
+    :disabled t
+    :after evil
+    :custom
+    ;; Use minibuffer instead of opening another buffer to the side.
+    (which-key-popup-type 'minibuffer)
+    (which-key-sort-order 'which-key-key-order-alpha)
+    ;; (which-key-popup-type 'side-window)
+    ;; Allow C-h to trigger which-key before it is done automatically.
+    (which-key-show-early-on-C-h t)
+    ;; (which-key-idle-delay 10000)
+    (which-key-idle-delay 0.05)
+    ;; (which-key-idle-secondary-delay 0.5)
+    ;; (which-key-allow-evil-operators t)
+    ;; (which-key-show-operator-state-maps t)
+    :init
+    (which-key-mode))
 #+END_SRC 
 * 無 Custom Tweaks
 ** Definitions
@@ -3470,49 +3722,20 @@ for parsing BibTeX keys.  If parsing fails, try to set this variable to nil."
                                            (equal default-directory "/home/sync0/Dropbox/research/"))
                                   (sync0-update-timestamp))))
   #+END_SRC 
-** Auto update Org Modified Property
-        (defun yant/getentryhash ()
-        "Get the hash sum of the text in current entry, except :HASH: and :MODIFIED: property texts."
-        (save-excursion
-          (let* ((beg (point-min))
-             (end (point-max))
-             (full-str (buffer-substring beg end))
-             (str-nohash (if (string-match "^ *:HASH:.+\n" full-str)
-                     (replace-match "" nil nil full-str)
-                   full-str))
-             (str-nohash-nomod (if (string-match "^ *:MODIFIED:.+\n" str-nohash)
-                       (replace-match "" nil nil str-nohash)
-                         str-nohash))
-             (str-nohash-nomod-nopropbeg (if (string-match "^ *:PROPERTIES:\n" str-nohash-nomod)
-                             (replace-match "" nil nil str-nohash-nomod)
-                           str-nohash-nomod))
-             (str-nohash-nomod-nopropbeg-end (if (string-match "^ *:END:\n" str-nohash-nomod-nopropbeg)
-                                 (replace-match "" nil nil str-nohash-nomod-nopropbeg)
-                               str-nohash-nomod-nopropbeg)))
-            (sxhash str-nohash-nomod-nopropbeg-end))))
-
-      (defun yant/update-modification-time ()
-        "Set the :MODIFIED: property of the current entry to '%Y/%m/%d' and update :HASH: property."
-  (save-excursion
-  (goto-char (point-min))
-  (progn
-  (unless (looking-at "\* .+")
-  (org-forward-heading-same-level (point)))
-        (org-set-property "HASH" (format "%s" (yant/getentryhash)))    
-        (org-set-property "MODIFIED" (format-time-string "%Y/%m/%d")))))
 ** Useful Key Bindings
  #+BEGIN_SRC emacs-lisp
-;; Kill current buffer and window
- (define-key global-map (kbd "M-q") 'kill-buffer-and-window)
-;; Font size change
- (define-key global-map (kbd "C-=") 'text-scale-increase)
- (define-key global-map (kbd "C--") 'text-scale-decrease)
-;; Cycle through buffers
- (global-set-key (kbd "<C-tab>") 'bury-buffer)
-;; Quickly save
- (global-set-key "\M-w" 'save-buffer)
-;; Quickly work with bookmarks
-  (global-set-key (kbd "M-m") 'bookmark-set)
+   ;; Font size change
+    (define-key global-map (kbd "C-=") 'text-scale-increase)
+    (define-key global-map (kbd "C--") 'text-scale-decrease)
+   ;; Cycle through buffers
+    (global-set-key (kbd "<C-tab>") 'bury-buffer)
+   ;; EVIL friendly keybindings for next-buffer
+    (global-set-key (kbd "M-h") 'next-buffer)
+   ;; Quickly save
+    (global-set-key (kbd "M-w") 'save-buffer)
+   ;; EVIL friendly keybindings for previous-buffer
+    (global-set-key (kbd "M-l") 'previous-buffer)
  #+END_SRC
+ 
  
  
