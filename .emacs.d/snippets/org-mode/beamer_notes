@@ -2,7 +2,8 @@
 # name: notes_beamer 
 # key: beamer
 # --
-   :PROPERTIES:
-   :BEAMER_env: note
-   :END:
-   $0
+*** Note
+ :PROPERTIES:
+ :BEAMER_ENV: note
+ :END:
+$0
