@@ -37,4 +37,5 @@ export SSH_AUTH_SOCK
 
 # [[ -f ~/.Xmodmap ]] && xmodmap ~/.Xmodmap
 
+# xrandr --dpi 125.37
 exec startxfce4 

@@ -1,0 +1,788 @@
+* auctex
+#+BEGIN_SRC emacs-lisp
+  (use-package latex
+:straight nil
+    :defer t
+    :after evil
+    :diminish latex-mode
+    :mode
+    ("\\.tex\\'" . latex-mode)
+    :bind
+    (:map LaTeX-mode-map
+          ("M-<delete>" . TeX-remove-macro)
+          ("C-c C-r" . reftex-query-replace-document))
+    ;; ("C-c C-g" . reftex-grep-document)
+    :init
+    ;; A function to delete the current macro in AUCTeX.
+    ;; Note: keybinds won't be added to TeX-mode-hook if not kept at the end of the AUCTeX setup!
+    (defun TeX-remove-macro ()
+      "Remove current macro and return TRUE, If no macro at point, return Nil."
+      (interactive)
+      (when (TeX-current-macro)
+        (let ((bounds (TeX-find-macro-boundaries))
+              (brace  (save-excursion
+                        (goto-char (1- (TeX-find-macro-end)))
+                        (TeX-find-opening-brace))))
+          (delete-region (1- (cdr bounds)) (cdr bounds))
+          (delete-region (car bounds) (1+ brace)))
+        t))
+    :custom
+    (TeX-auto-save t)
+;; Don't prompt for saving the .tex file
+    (TeX-save-query nil)       
+    (TeX-parse-self t)
+;; If `t`, automatically shows compilation log
+    (TeX-show-compilation nil)         
+;; Disable language-specific hyphen insertion.
+    (LaTeX-babel-hyphen nil)
+    ;; `"` expands into csquotes macros (for this to work, babel pkg must be loaded after csquotes pkg).
+    (LaTeX-csquotes-close-quote "}")
+    (LaTeX-csquotes-open-quote "\\autoquote{")
+    (TeX-file-extensions '("Rnw" "rnw" "Snw" "snw" "tex" "sty" "cls" "ltx" "texi" "texinfo" "dtx"))
+    (preview-gs-command "/usr/local/bin/gs")
+    ;; Activate forward/reverse search
+    (TeX-source-correlate-mode t)        
+    (TeX-PDF-mode t)
+    :config
+    (define-key LaTeX-mode-map (kbd "M-p")
+      (lambda ()
+        "Save the buffer and run `TeX-command-run-all`."
+        (interactive)
+        (save-buffer)
+        (TeX-command-run-all nil)))
+
+    ;; Zathura settings
+    (add-to-list 'TeX-view-program-list  '("Zathura"     ("zathura "
+                                                          (mode-io-correlate " --synctex-forward %n:0:%b -x \"emacsclient +%{line} %{input}\" ")
+                                                          " %o") "zathura"))
+
+    (add-to-list 'TeX-view-program-selection
+                 '(output-pdf "Zathura"))
+
+    (evil-define-key 'normal LaTeX-mode-map
+      "k" 'previous-line
+      "j" 'next-line
+      ;;  "m" 'set-mark-command
+      "q" 'fill-paragraph
+      "Q" 'sync0-insert-line-below
+      (kbd "SPC") 'sync0-insert-whitespace
+      "[" 'backward-sentence
+      "]" 'forward-sentence)
+
+  ;; (add-to-list 'TeX-command-list
+  ;;              '("Makeglossaries" "makeglossaries %s" TeX-run-command nil
+  ;;                (latex-mode)
+  ;;                :help "Run makeglossaries script, which will choose xindy or makeindex") t)
+
+  (setq-default TeX-master nil ; by each new fie AUCTEX will ask for a master fie.
+                TeX-PDF-mode t
+                TeX-engine 'luatex)     ; optional
+
+  ;; Font-lock for AuCTeX
+  ;; Note: '«' and '»' is by pressing 'C-x 8 <' and 'C-x 8 >', respectively
+  (font-lock-add-keywords 'latex-mode (list (list "\\(«\\(.+?\\|\n\\)\\)\\(+?\\)\\(»\\)" '(1 'font-latex-string-face t) '(2 'font-latex-string-face t) '(3 'font-latex-string-face t))))
+  ;; Add standard Sweave file extensions to the list of files recognized  by AuCTeX.
+  (add-hook 'TeX-mode-hook (lambda () (reftex-isearch-minor-mode))))
+  #+END_SRC 
+
+* 取 tex
+#+BEGIN_SRC emacs-lisp
+    (use-package tex
+      :defer t
+      :after evil
+      :diminish tex-mode
+      :custom
+      (preview-gs-command "/usr/local/bin/gs")
+      ;; Activate forward/reverse search
+      (TeX-source-correlate-mode t)        
+      (TeX-PDF-mode t)
+      :config
+  (define-key LaTeX-mode-map (kbd "M-p")
+    (lambda ()
+      "Save the buffer and run `TeX-command-run-all`."
+      (interactive)
+      (save-buffer)
+      (TeX-command-run-all nil)))
+
+  ;; (define-key LaTeX-mode-map (kbd "C-SPC")
+  ;;   (lambda ()
+  ;;     "Save the buffer and run `TeX-command-run-all`."
+  ;;     (interactive)
+  ;;     (let (TeX-save-query) (TeX-save-document (TeX-master-file)))
+  ;;     (TeX-command-run-all nil)))
+
+      ;; Zathura settings
+      (add-to-list 'TeX-view-program-list  '("Zathura"     ("zathura "
+                                                            (mode-io-correlate " --synctex-forward %n:0:%b -x \"emacsclient +%{line} %{input}\" ")
+                                                            " %o") "zathura"))
+
+      (add-to-list 'TeX-view-program-selection
+                   '(output-pdf "Zathura"))
+
+      ;; Compile tex documents automatically.
+      (defun sync0-latex-fast-compile ()
+        "Fast compile current file"
+        (TeX-command "LaTeX" 'TeX-master-file))
+
+      ;; Compile tex documents automatically after save.
+      (defun sync0-latex-after-save-actions ()
+        "Used in `after-save-hook'."
+        (when (equal this-command 'save-buffer)
+          (when (equal major-mode 'latex-mode) 
+            (sync0-latex-fast-compile))))
+
+      (evil-define-key 'normal LaTeX-mode-map
+        "k" 'previous-line
+        "j" 'next-line
+        ;;  "m" 'set-mark-command
+        "q" 'fill-paragraph
+        "Q" 'sync0-insert-line-below
+        (kbd "SPC") 'sync0-insert-whitespace
+        "[" 'backward-sentence
+        "]" 'forward-sentence))
+
+    ;;      (evil-define-key 'visual LaTeX-mode-map
+    ;;         "q" 'highlight-changes-remove-highlight)
+    ;; :hook 
+    ;; Set hooks to execute after files are saved. 
+    ;; (after-save . sync0-after-save-actions)
+  #+END_SRC 
+
+* bibtex 
+#+BEGIN_SRC emacs-lisp
+  (use-package bibtex
+:straight nil
+    :defer t
+    :after evil
+    :custom
+    (bibtex-dialect 'biblatex) ;; biblatex as default bib format
+    (bibtex-maintain-sorted-entries t)
+    (bibtex-field-delimiters 'braces)
+    (bibtex-entry-delimiters 'braces)
+    (bibtex-comma-after-last-field t)
+    (bibtex-align-at-equal-sign t)
+    (bibtex-text-indentation 0)
+    (bibtex-autokey-names 1)
+    (bibtex-autokey-names-stretch 1)
+    (bibtex-autokey-additional-names "_et_al")
+    (bibtex-autokey-name-separator "_")
+    (bibtex-autokey-name-year-separator "")
+    (bibtex-autokey-name-length t)
+    (bibtex-autokey-year-title-separator "")
+    (bibtex-autokey-titleword-length 0)
+    (bibtex-autokey-year-length 4)
+    (bibtex-autokey-titleword-case-convert "uppercase")
+    (bibtex-autokey-titlewords 0)
+    (bibtex-entry-format '(opts-or-alts required-fields numerical-fields page-dashes whitespace braces last-comma delimiters sort-fields))
+
+    :config
+
+    (defvar sync0-bibtex-reference-keys
+      (lazy-completion-table sync0-bibtex-reference-keys
+                             (lambda () (sync0-bibtex-parse-keys nil t)))
+      "Completion table for BibTeX reference keys.
+  The CDRs of the elements are t for header keys and nil for crossref keys.")
+
+    (defun sync0-bibtex-autokey-get-year ()
+      "Return year field contents as a string obeying `bibtex-autokey-year-length'."
+      (let ((yearfield (bibtex-autokey-get-field "date")))
+        (substring yearfield (max 0 (- (length yearfield)
+                                       bibtex-autokey-year-length)))))
+
+    (defun sync0-bibtex-generate-autokey ()
+      "This overwrites the bibtex-generate-autokey function that comes with Emacs.
+            I want my keys to be formatted: authornameYEAR, then a letter
+            if there is already an entry that matches authornameYEAR."
+      (interactive)
+      (let* ((names (bibtex-autokey-get-names))
+             (year (sync0-bibtex-autokey-get-year))
+             (existing-keys (bibtex-parse-keys)) key)
+        (setq key (format "%s%s" names year))
+        (let ((ret key))
+          (cl-loop for c
+                   from ?a to ?z
+                   while (assoc ret existing-keys)
+                   do (setq ret (format "%s%c" key c)))
+          ret)))
+
+    (defun sync0-bibtex-parse-keys (&optional abortable verbose)
+      "Set `bibtex-reference-keys' to the keys used in the whole buffer.
+  Find both entry keys and crossref entries.  If ABORTABLE is non-nil abort
+  on user input.  If VERBOSE is non-nil give messages about progress.
+  Return alist of keys if parsing was completed, `aborted' otherwise.
+  If `bibtex-parse-keys-fast' is non-nil, use fast but simplified algorithm
+  for parsing BibTeX keys.  If parsing fails, try to set this variable to nil."
+      (if (eq major-mode 'bibtex-mode)
+          (let (ref-keys crossref-keys)
+            (save-excursion
+              (save-match-data
+                (if verbose
+                    (bibtex-progress-message
+                     (concat (buffer-name) ": parsing reference keys")))
+                (catch 'userkey
+                  (goto-char (point-min))
+                  (if bibtex-parse-keys-fast
+                      (let ((case-fold-search t)
+                            (re (concat bibtex-entry-head "\\|"
+                                        ",[ \t\n]*crossref[ \t\n]*=[ \t\n]*"
+                                        "\\(\"[^\"]*\"\\|{[^}]*}\\)[ \t\n]*[,})]")))
+                        (while (re-search-forward re nil t)
+                          (if (and abortable (input-pending-p))
+                              ;; user has aborted by typing a key: return `aborted'
+                              (throw 'userkey 'aborted))
+                          (cond ((match-end 3)
+                                 ;; This is a crossref.
+                                 (let ((key (buffer-substring-no-properties
+                                             (1+ (match-beginning 3)) (1- (match-end 3)))))
+                                   (unless (assoc key crossref-keys)
+                                     (push (list key) crossref-keys))))
+                                ;; only keys of known entries
+                                ((assoc-string (bibtex-type-in-head)
+                                               bibtex-entry-alist t)
+                                 ;; This is an entry.
+                                 (let ((key (bibtex-key-in-head)))
+                                   (unless (assoc key ref-keys)
+                                     (push (cons key t) ref-keys)))))))
+
+                    (let (;; ignore @String entries because they are handled
+                          ;; separately by `bibtex-parse-strings'
+                          (bibtex-sort-ignore-string-entries t)
+                          bounds)
+                      (bibtex-map-entries
+                       (lambda (key _beg end)
+                         (if (and abortable
+                                  (input-pending-p))
+                             ;; user has aborted by typing a key: return `aborted'
+                             (throw 'userkey 'aborted))
+                         (if verbose (bibtex-progress-message))
+                         (unless (assoc key ref-keys)
+                           (push (cons key t) ref-keys))
+                         (if (and (setq bounds (bibtex-search-forward-field "crossref" end))
+                                  (setq key (bibtex-text-in-field-bounds bounds t))
+                                  (not (assoc key crossref-keys)))
+                             (push (list key) crossref-keys))))))
+
+                  (dolist (key crossref-keys)
+                    (unless (assoc (car key) ref-keys) (push key ref-keys)))
+                  (if verbose
+                      (bibtex-progress-message 'done))
+                  ;; successful operation --> return `bibtex-reference-keys'
+                  (setq bibtex-reference-keys ref-keys)))))))
+
+    (defun sync0-bibtex-next-key ()
+      "Print the bibtex key of the document"
+      (interactive)
+      (let ((bibtex-key (re-search-forward "@.+{" nil nil 1)))
+        (goto-char bibtex-key)))
+
+    (defun sync0-bibtex-previous-key ()
+      "Print the bibtex key of the document"
+      (interactive)
+      (let ((bibtex-key (re-search-backward "@.+{" nil nil 2)))
+        (goto-char bibtex-key)
+        (re-search-forward "@.+{" nil nil 1)))
+
+    (with-eval-after-load 'evil
+      (evil-define-key 'normal bibtex-mode-map
+        "K" 'sync0-bibtex-previous-key
+        "J" 'sync0-bibtex-next-key))
+
+    ;; Define default fields.
+    (setq bibtex-BibTeX-entry-alist '(("Article" "Article in Journal"
+                                       ("author")
+                                       ("date")
+                                       ("title" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("subtitle" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("journaltitle")
+                                       ("journalsubtitle")
+                                       ("volume" "Volume of the journal")
+                                       ("number" "Number of the journal (only allowed if entry contains volume)")
+                                       ("issue" "Issue in the journal")
+                                       ("pages" "Pages in the journal")
+                                       ("url" "Pages in the journal")
+                                       ("urldate" "Pages in the journal")
+                                       ("doi" "Pages in the journal")
+                                       ("library" "Pages in the journal")
+                                       ("language" "Pages in the journal")
+                                       ("langid" "Pages in the journal")
+                                       ("langidopts" "Pages in the journal")
+                                       ("file" "Pages in the journal")
+                                       ("addendum" "Pages in the journal")
+                                       ("keywords"))
+                                      ("InProceedings" "Article in Conference Proceedings"
+                                       ("author")
+                                       ("date")
+                                       ("title" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("subtitle" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("crossref")
+                                       ("booktitle" "Name of the conference proceedings")
+                                       ("booksubtitle" "Name of the conference proceedings")
+                                       ("organization")
+                                       ("eventdate")
+                                       ("eventtitle")
+                                       ("venue")
+                                       ("series")
+                                       ("volume" "Volume of the conference proceedings in the series")
+                                       ("number" "Number of the conference proceedings in a small series (overwritten by volume)")
+                                       ("pages" "Pages in the conference proceedings")
+                                       ("edition" "Pages in the conference proceedings")
+                                       ("publisher" "Publishing company, its location")
+                                       ("editor" "Publishing company, its location")
+                                       ("translator" "Publishing company, its location")
+                                       ("location" "Publishing company, its location")
+                                       ("url" "Publishing company, its location")
+                                       ("urldate" "Publishing company, its location")
+                                       ("doi" "Pages in the journal")
+                                       ("library" "Pages in the journal")
+                                       ("language" "Pages in the journal")
+                                       ("langid" "Pages in the journal")
+                                       ("langidopts" "Pages in the journal")
+                                       ("file" "Pages in the journal")
+                                       ("addendum")
+                                       ("keywords"))
+                                      ("InCollection" "Article in a Collection"
+                                       (("author")
+                                        ("title" "Title of the article (BibTeX converts it to lowercase)"))
+                                       (("subtitle" "Title of the article (BibTeX converts it to lowercase)")
+                                        ("date")
+                                        ("crossref" "Title of the article (BibTeX converts it to lowercase)")
+                                        ("booktitle" "Name of the conference proceedings")
+                                        ("booksubtitle" "Name of the conference proceedings")
+                                        ("series")
+                                        ("volume" "Volume of the conference proceedings in the series")
+                                        ("number" "Number of the conference proceedings in a small series (overwritten by volume)")
+                                        ("chapter" "Number of the conference proceedings in a small series (overwritten by volume)")
+                                        ("pages" "Pages in the conference proceedings")
+                                        ("edition" "Publishing company, its location")
+                                        ("publisher" "Publishing company, its location")
+                                        ("editor" "Publishing company, its location")
+                                        ("translator" "Publishing company, its location")
+                                        ("location" "Publishing company, its location")
+                                        ("url" "Publishing company, its location")
+                                        ("urldate" "Publishing company, its location")
+                                        ("doi" "Pages in the journal")
+                                        ("library" "Pages in the journal")
+                                        ("language" "Pages in the journal")
+                                        ("langid" "Pages in the journal")
+                                        ("langidopts" "Pages in the journal")
+                                        ("file" "Pages in the journal")
+                                        ("addendum")
+                                        ("keywords")))
+                                      ("InBook" "Chapter or Pages in a Book"
+                                       (("title" "Title of the article (BibTeX converts it to lowercase)"))
+                                       (("author")
+                                        ("subtitle" "Title of the article (BibTeX converts it to lowercase)")
+                                        ("date")
+                                        ("origdate")
+                                        ("origtitle")
+                                        ("crossref" "Title of the article (BibTeX converts it to lowercase)")
+                                        ("booktitle" "Name of the conference proceedings")
+                                        ("booksubtitle" "Name of the conference proceedings")
+                                        ("series")
+                                        ("volume" "Volume of the conference proceedings in the series")
+                                        ("number" "Number of the conference proceedings in a small series (overwritten by volume)")
+                                        ("chapter" "Number of the conference proceedings in a small series (overwritten by volume)")
+                                        ("pages" "Pages in the conference proceedings")
+                                        ("edition" "Publishing company, its location")
+                                        ("publisher" "Publishing company, its location")
+                                        ("editor" "Publishing company, its location")
+                                        ("translator" "Publishing company, its location")
+                                        ("location" "Publishing company, its location")
+                                        ("url" "Publishing company, its location")
+                                        ("urldate" "Publishing company, its location")
+                                        ("doi" "Pages in the journal")
+                                        ("library" "Pages in the journal")
+                                        ("language" "Pages in the journal")
+                                        ("langid" "Pages in the journal")
+                                        ("langidopts" "Pages in the journal")
+                                        ("file" "Pages in the journal")
+                                        ("addendum")
+                                        ("keywords")))
+                                      ("Proceedings" "Conference Proceedings"
+                                       ("title" "Title of the conference proceedings")
+                                       ("date")
+                                       nil
+                                       ("booktitle" "Title of the proceedings for cross references")
+                                       ("editor")
+                                       ("volume" "Volume of the conference proceedings in the series")
+                                       ("number" "Number of the conference proceedings in a small series (overwritten by volume)")
+                                       ("series" "Series in which the conference proceedings appeared")
+                                       ("address")
+                                       ("month")
+                                       ("organization" "Sponsoring organization of the conference")
+                                       ("publisher" "Publishing company, its location")
+                                       ("note"))
+                                      ("Book" "Book"
+                                       ("author")
+                                       ("date")
+                                       ("origdate")
+                                       ("origtitle")
+                                       ("title" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("subtitle" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("booktitle" "Name of the conference proceedings")
+                                       ("booksubtitle" "Name of the conference proceedings")
+                                       ("series")
+                                       ("volume" "Volume of the conference proceedings in the series")
+                                       ("number" "Number of the conference proceedings in a small series (overwritten by volume)")
+                                       ("edition" "Publishing company, its location")
+                                       ("publisher" "Publishing company, its location")
+                                       ("editor" "Publishing company, its location")
+                                       ("translator" "Publishing company, its location")
+                                       ("location" "Publishing company, its location")
+                                       ("url" "Publishing company, its location")
+                                       ("urldate" "Publishing company, its location")
+                                       ("doi" "Pages in the journal")
+                                       ("library" "Pages in the journal")
+                                       ("isbn" "Pages in the journal")
+                                       ("origlanguage" "Pages in the journal")
+                                       ("language" "Pages in the journal")
+                                       ("langid" "Pages in the journal")
+                                       ("langidopts" "Pages in the journal")
+                                       ("file" "Pages in the journal")
+                                       ("addendum")
+                                       ("keywords"))
+                                      ("Unpublished" "Unpublished"
+                                       ("author")
+                                       ("date")
+                                       ("title" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("subtitle" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("type" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("eventdate" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("eventtitle" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("venue" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("location" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("url" "Publishing company, its location")
+                                       ("urldate" "Publishing company, its location")
+                                       ("doi" "Pages in the journal")
+                                       ("library" "Pages in the journal")
+                                       ("origlanguage" "Pages in the journal")
+                                       ("language" "Pages in the journal")
+                                       ("langid" "Pages in the journal")
+                                       ("langidopts" "Pages in the journal")
+                                       ("file" "Pages in the journal")
+                                       ("addendum")
+                                       ("keywords"))
+                                      ("Misc" "Miscellaneous" nil nil
+                                       (("title" "Title of the article (BibTeX converts it to lowercase)"))
+                                       (("author")
+                                        ("date")
+                                        ("subtitle" "Title of the article (BibTeX converts it to lowercase)")
+                                        ("organization" "Title of the article (BibTeX converts it to lowercase)")
+                                        ("type" "Title of the article (BibTeX converts it to lowercase)")
+                                        ("version" "Title of the article (BibTeX converts it to lowercase)")
+                                        ("location" "Title of the article (BibTeX converts it to lowercase)")
+                                        ("url" "Publishing company, its location")
+                                        ("urldate" "Publishing company, its location")
+                                        ("doi" "Pages in the journal")
+                                        ("library" "Pages in the journal")
+                                        ("origlanguage" "Pages in the journal")
+                                        ("language" "Pages in the journal")
+                                        ("langid" "Pages in the journal")
+                                        ("langidopts" "Pages in the journal")
+                                        ("file" "Pages in the journal")
+                                        ("addendum")
+                                        ("keywords"))))))
+#+END_SRC 
+
+* 取 ivy-bibtex
+#+BEGIN_SRC emacs-lisp
+  (use-package ivy-bibtex 
+    :diminish ivy-bitex-mode
+    :after (ivy bibtex)
+    :custom 
+  ;;  (bibtex-completion-bibliography '("~/Dropbox/org/annotations/bibliography.bib")) ;; writing completion
+   ;; (bibtex-completion-notes-path '"~/Dropbox/org/annotations")
+    ;; (bibtex-completion-library-path '("~/Dropbox/org/annotations/"))
+    (bibtex-completion-bibliography '("~/Dropbox/org/etc/bibliography.bib")) ;; writing completion
+    (bibtex-completion-notes-path '"~/Dropbox/org")
+    (bibtex-completion-library-path '("~/Dropbox/org/"))
+    (bibtex-completion-pdf-field "file")
+    (bibtex-completion-pdf-symbol "⌘")
+    (bibtex-completion-notes-symbol "✎")
+    (ivy-bibtex-default-action 'ivy-bibtex-edit-notes)
+    :config 
+    (setq bibtex-completion-notes-template-multiple-files  
+     "
+,#+TITLE: ${title}
+,#+AUTHOR: ${author-or-editor}
+,#+ROAM_KEY: cite:${=key=}
+,#+CREATED: %(sync0-insert-today-timestamp)
+,#+DATE: %(sync0-insert-today-timestamp)
+,#+ROAM_TAGS: annotations ${keywords}
+,#+INTERLEAVE_PDF: ${file}
+,#+LATEX_CLASS: scrartcl-section
+,#+EXPORT_FILE_NAME: /home/sync0/Dropbox/annotations/${key}
+,#+SETUPFILE: ~/Documents/typography/settings_notetaking-scrartcl-fr.org
+
+,#+BEGIN_modified
+fullcite:${=key=}
+\\tcblower
+\\begin{tabular}{lr}
+Created: & %(sync0-insert-today-timestamp) \\\\
+Last modified: & 
+\\end{tabular}
+,#+END_modified
+
+# \\printbibliography[title=Bibliographie,heading=subbibliography]
+# \\printbibliography[title=Bibliographie]")
+
+(defun sync0-ivy-bibtex-extractor ()
+  (interactive)
+ (let*   ((pre-entry   (ivy-completing-read "Select from list: " (bibtex-completion-candidates)))
+           (key   (progn (string-match "[[:blank:]]\\([[:graph:]]+$\\)" pre-entry)
+                  (match-string 1 pre-entry)))
+         (entry (bibtex-completion-get-entry1 key))
+         (entity (ivy-completing-read "Choose one: " '("=key=" "title" "author" "journal" "date" "editor")))
+         (extraction (bibtex-completion-get-value entity entry)))
+       (insert  extraction)))
+
+    (defun sync0-ivy-bibtex ()
+      (interactive)
+      (setq ivy-bibtex-default-action 'ivy-bibtex-insert-key)
+      (bibtex-completion-init)
+      (let* ((candidates (bibtex-completion-candidates))
+             (key (bibtex-completion-key-at-point))
+             (preselect (and key
+                             (cl-position-if (lambda (cand)
+                                               (member (cons "=key=" key)
+                                                       (cdr cand)))
+                                             candidates))))
+
+        (ivy-read "BibTeX entries%s: "
+                  candidates
+                  :preselect preselect
+                  :caller 'ivy-bibtex
+                  :action ivy-bibtex-default-action))))
+#+END_SRC 
+
+* ivy-bibtex
+#+BEGIN_SRC emacs-lisp
+  (use-package ivy-bibtex 
+    :diminish ivy-bitex-mode
+    :after (ivy bibtex)
+    :custom 
+  ;;  (bibtex-completion-bibliography '("~/Dropbox/org/annotations/bibliography.bib")) ;; writing completion
+   ;; (bibtex-completion-notes-path '"~/Dropbox/org/annotations")
+    ;; (bibtex-completion-library-path '("~/Dropbox/org/annotations/"))
+    (bibtex-completion-bibliography '("~/Dropbox/org/etc/bibliography.bib")) ;; writing completion
+    (bibtex-completion-notes-path '"~/Dropbox/org/references")
+    (bibtex-completion-library-path '("~/Dropbox/org/references/"))
+    (bibtex-completion-pdf-field "file")
+    (bibtex-completion-pdf-symbol "⌘")
+    (bibtex-completion-notes-symbol "✎")
+    (ivy-bibtex-default-action 'ivy-bibtex-edit-notes)
+    :config 
+    (setq bibtex-completion-notes-template-multiple-files  
+     "
+,#+TITLE: ${title}
+,#+SUBTITLE: ${subtitle}
+,#+AUTHOR: ${author-or-editor}
+,#+ROAM_KEY: cite:${=key=}
+,#+CREATED: %(sync0-insert-today-timestamp)
+,#+DATE: %(sync0-insert-today-timestamp)
+,#+ROAM_TAGS: ${=key=} references ${keywords} 
+,#+INTERLEAVE_PDF: ${file}
+
+
+")
+
+(defun sync0-ivy-bibtex-extractor ()
+  (interactive)
+ (let*   ((pre-entry   (ivy-completing-read "Select from list: " (bibtex-completion-candidates)))
+           (key   (progn (string-match "[[:blank:]]\\([[:graph:]]+$\\)" pre-entry)
+                  (match-string 1 pre-entry)))
+         (entry (bibtex-completion-get-entry1 key))
+         (entity (ivy-completing-read "Choose one: " '("=key=" "title" "author" "journal" "date" "editor")))
+         (extraction (bibtex-completion-get-value entity entry)))
+       (insert  extraction)))
+
+    (defun sync0-ivy-bibtex ()
+      (interactive)
+      (setq ivy-bibtex-default-action 'ivy-bibtex-insert-key)
+      (bibtex-completion-init)
+      (let* ((candidates (bibtex-completion-candidates))
+             (key (bibtex-completion-key-at-point))
+             (preselect (and key
+                             (cl-position-if (lambda (cand)
+                                               (member (cons "=key=" key)
+                                                       (cdr cand)))
+                                             candidates))))
+
+        (ivy-read "BibTeX entries%s: "
+                  candidates
+                  :preselect preselect
+                  :caller 'ivy-bibtex
+                  :action ivy-bibtex-default-action))))
+#+END_SRC 
+
+* 取 pdf-tools
+  (use-package pdf-tools
+    :after (evil outline-mode)
+    :pin manual ;; manually update
+ ;;   :functions pdf-view-midnight-minor-mode
+    :custom
+    ;; automatically annotate highlights
+;;    (pdf-annot-activate-created-annotations t)
+    ;; more fine-grained zooming
+    (pdf-view-resize-factor 1.1)
+    (pdf-view-midnight-colors '("#C0C5CE" . "#4F5B66" ))
+    :config
+    ;; initialise
+    (pdf-tools-install)
+    (add-to-list 'evil-emacs-state-modes 'pdf-view-mode)
+    (add-to-list 'evil-emacs-state-modes 'pdf-outline-buffer-mode)
+    ;; open pdfs scaled to fit page
+    (setq-default pdf-view-display-size 'fit-page)
+
+    ;; change midnite mode colours functions
+    (defun bms/pdf-midnite-original ()
+      "Set pdf-view-midnight-colors to original colours."
+      (interactive)
+      (setq pdf-view-midnight-colors '("#839496" . "#002b36" )) ; original values
+      (pdf-view-midnight-minor-mode))
+
+    (defun sync0-pdf-view-dark-colors ()
+      "Set pdf-view-midnight-colors to amber on dark slate blue."
+      (interactive)
+      (setq pdf-view-midnight-colors '("#C0C5CE" . "#4F5B66" )) ; amber
+      (pdf-view-midnight-minor-mode))
+
+;;    :hook
+    ;; Use dark mode. 
+;;    (pdf-tools-enabled . pdf-view-midnight-minor-mode)
+
+    :bind ((:map pdf-view-mode-map
+                ("C-s" . isearch-forward)
+                ("j" . pdf-view-next-line-or-next-page)
+                ("J" . pdf-view-scroll-up-or-next-page)
+               ;; ("j" . pdf-view-scroll-up-or-next-page)
+                ;; ("j" . pdf-view-next-line-or-next-page)
+                ("k" . pdf-view-previous-line-or-previous-page)
+                 ("K" . pdf-view-scroll-down-or-previous-page)
+                ;; ("k" . pdf-view-previous-page-command)
+               ;; ("K" . pdf-view-previous-page-command)
+                 ("H" . pdf-annot-add-highlight-markup-annotation)
+                ("l" . image-forward-hscroll)
+                ("h" . image-backward-hscroll)
+                ("t" . pdf-annot-add-text-annotation)
+                ("g" . pdf-view-first-page)
+                ("G" . pdf-view-last-page)
+                ("D" . pdf-view-dark-minor-mode)
+                ("d" . pdf-annot-delete)
+:map pdf-outline-buffer-mode-map
+                ("j" . next-line)
+                ("k" . previous-line))))
+
+* pdf-tools
+#+BEGIN_SRC emacs-lisp
+  (use-package pdf-tools
+    ;; :load-path "site-lisp/pdf-tools/lisp"
+    :after evil
+    ;; :after (evil outline-mode)
+    :magic ("%PDF" . pdf-view-mode)
+    :custom
+    ;; automatically annotate highlights
+    ;; (pdf-annot-activate-created-annotations t)
+    ;; more fine-grained zooming
+    (pdf-view-resize-factor 1.1)
+    (pdf-view-midnight-colors '("#C0C5CE" . "#4F5B66" ))
+    :config
+    (pdf-tools-install :no-query)
+    (add-to-list 'evil-emacs-state-modes 'pdf-view-mode)
+    (add-to-list 'evil-emacs-state-modes 'pdf-outline-buffer-mode)
+    ;; open pdfs scaled to fit page
+    (setq-default pdf-view-display-size 'fit-page)
+
+    ;; change midnite mode colours functions
+    (defun bms/pdf-midnite-original ()
+      "Set pdf-view-midnight-colors to original colours."
+      (interactive)
+      (setq pdf-view-midnight-colors '("#839496" . "#002b36" )) ; original values
+      (pdf-view-midnight-minor-mode))
+
+    (defun sync0-pdf-view-dark-colors ()
+      "Set pdf-view-midnight-colors to amber on dark slate blue."
+      (interactive)
+      (setq pdf-view-midnight-colors '("#C0C5CE" . "#4F5B66" )) ; amber
+      (pdf-view-midnight-minor-mode))
+
+    :bind ((:map pdf-view-mode-map
+                 ("C-s" . isearch-forward)
+                 ("j" . pdf-view-next-line-or-next-page)
+                 ("J" . pdf-view-scroll-up-or-next-page)
+                 ("k" . pdf-view-previous-line-or-previous-page)
+                 ("K" . pdf-view-scroll-down-or-previous-page)
+                 ("y" . pdf-view-kill-ring-save)
+                 ("+" . pdf-view-enlarge)
+                 ("=" . pdf-view-enlarge)
+                 ("-" . pdf-view-shrink)
+                 ("/" . isearch-forward)
+                 ("?" . isearch-backward)
+                 ("n" . isearch-repeat-forward)
+                 ("N" . isearch-repeat-backward)
+                 ("0" . pdf-view-scale-reset)
+                 ("H" . pdf-annot-add-highlight-markup-annotation)
+                 ("l" . image-forward-hscroll)
+                 ("h" . image-backward-hscroll)
+                 ("t" . pdf-annot-add-text-annotation)
+                 ("g" . pdf-view-goto-page)
+                 ("G" . pdf-view-last-page)
+                 ("D" . pdf-view-dark-minor-mode)
+                 ("d" . pdf-annot-delete))))
+  #+END_SRC 
+
+Configure ~pdf-outline~, which is a submode of ~pdf-tools~ to view the
+oultine of a pdf using ~outline-mode~.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package pdf-outline
+:straight nil
+    ;; :load-path "site-lisp/pdf-tools/lisp"
+    :after pdf-tools
+    :bind ((:map pdf-outline-buffer-mode-map
+                 ("j" . next-line)
+                 ("k" . previous-line))))
+  #+END_SRC 
+
+* interleave
+#+BEGIN_SRC emacs-lisp
+(use-package interleave
+:after pdf-tools
+  ;; :ensure t
+  ;; :bind* (("M-m o n" . interleave))
+  :commands (interleave-mode interleave-pdf-mode))
+#+END_SRC 
+
+* 取 docview
+This package is Emacs' default major mode for viewing DVI, PostScript,
+PDF, OpenDocument, and Microsoft Office documents. This package is, in
+a sense, a poor man's version of ~pdf-tools~; if I keep its
+configuration, it's just in case the latter fails.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package doc-view 
+    :disabled t
+    :custom (doc-view-continuous t)
+    :bind (:map doc-view-mode-map
+                ("q" . quit-window)
+                ("+" . doc-view-enlarge)
+                ("=" . doc-view-enlarge)
+                ("-" . doc-view-shrink)
+                ("0" . doc-view-scale-reset)
+                ("G" . doc-view-last-page)
+                ("g" . doc-view-goto-page)
+                ("K" . doc-view-previous-page)
+                ("J" . doc-view-next-page)
+                ("k" . doc-view-scroll-down-or-previous-page)
+                ("j" . doc-view-scroll-up-or-next-page)
+                ("W" . doc-view-fit-width-to-window)
+                ("H" . doc-view-fit-height-to-window)
+                ("P" . doc-view-fit-page-to-window)
+                ("X" . doc-view-kill-proc)
+                ("s s" . doc-view-set-slice)
+                ("s m" . doc-view-set-slice-using-mouse)
+                ("s b" . doc-view-set-slice-from-bounding-box)
+                ("s r" . doc-view-reset-slice)
+                ("/" . doc-view-search)
+                ("?" . doc-view-search-backward)))
+  #+END_SRC 

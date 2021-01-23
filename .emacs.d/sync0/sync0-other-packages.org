@@ -1,0 +1,1297 @@
+* evil mode
+   #+BEGIN_SRC emacs-lisp
+     (use-package evil  
+       :diminish evil-mode
+       :hook (after-init . evil-mode)
+       :custom
+       ;; Make horizontal movement cross lines                                    
+       (evil-cross-lines t)
+       ;; turn off auto-indent 
+       (evil-auto-indent nil)
+       ;; Change color of evil cursor
+       (evil-insert-state-cursor '(bar "#dc322f"))
+       (evil-normal-state-cursor '(box "#268bd2"))
+       (evil-visual-state-cursor '(box "#d33682"))
+
+       :bind (("M-H" . next-buffer)
+              ("M-L" . previous-buffer)
+              (:map evil-normal-state-map
+                    :map minibuffer-local-map
+                    ("ESC" . minibuffer-keyboard-quit)
+                    :map minibuffer-local-ns-map
+                    ("ESC" . minibuffer-keyboard-quit)
+                    :map minibuffer-local-completion-map
+                    ("ESC" . minibuffer-keyboard-quit)
+                    :map minibuffer-local-must-match-map
+                    ("ESC" . minibuffer-keyboard-quit)
+                    :map minibuffer-local-isearch-map
+                    ("ESC" . minibuffer-keyboard-quit)))
+
+       :config 
+
+       (defun sync0-insert-line-below ()
+         "Insert an empty line below the current line."
+         (interactive)
+         (save-excursion
+           (end-of-line)
+           (open-line 1)))
+
+       (defun sync0-insert-line-above ()
+         "Insert an empty line above the current line."
+         (interactive)
+         (save-excursion
+           (end-of-line 0)
+           (open-line 1)))
+
+       ;; insert whitespace
+       (defun sync0-insert-whitespace ()
+         " Add a whitespace"
+         (interactive)
+         (insert " "))
+
+       (defun sync0-delete-current-text-block ()
+         "Delete the current text block and also copy to `kill-ring'.
+          URL `http://ergoemacs.org/emacs/emacs_delete_block.html'
+          Version 2016-07-22"
+         (interactive)
+         (let (-p1 -p2)
+           (progn
+             (if (re-search-backward "\n[ \t]*\n" nil "NOERROR")
+                 (progn (re-search-forward "\n[ \t]*\n")
+                        (setq -p1 (point)))
+               (setq -p1 (point)))
+             (re-search-forward "\n[ \t]*\n" nil "NOERROR")
+             (setq -p2 (point)))
+           (kill-region -p1 -p2)))
+
+       (defun sync0-delete-text-block ()
+         "Delete selection or current or next text block and also copy to `kill-ring'.
+          URL `http://ergoemacs.org/emacs/emacs_delete_block.html'
+          Version 2016-08-13"
+         (interactive)
+         (if (use-region-p)
+             (kill-region (region-beginning) (region-end))
+           (progn
+             (beginning-of-line)
+             (if (search-forward-regexp "[[:graph:]]" (line-end-position) 'NOERROR )
+                 (sync0-delete-current-text-block)
+               (when (search-forward-regexp "[[:graph:]]" )
+                 (sync0-delete-current-text-block))))))
+
+       ;; Turn on evil mode when enabled.
+       (evil-mode 1)
+       ;; Turn on evil-escape mode when enabled.
+       (evil-escape-mode 1)
+
+       ;; Change global key bindings
+       (unbind-key "C-m" evil-normal-state-map)
+       (unbind-key "M-." evil-normal-state-map)
+       (unbind-key "C-d" evil-motion-state-map)
+
+       (evil-define-key 'normal global-map
+          "U" 'undo-tree-redo
+         "s" 'fill-paragraph
+         "S" 'sync0-insert-line-below
+         "M" 'bookmark-set
+         "zc" 'transpose-chars
+         "zb" 'sync0-delete-text-block
+         "zl" 'transpose-lines
+         "zw" 'transpose-words
+         "zp" 'transpose-paragraphs
+         "zs" 'transpose-sentences
+         (kbd "SPC") 'sync0-insert-whitespace)
+
+       ;; (evil-set-initial-state 'package-menu-mode 'normal)
+       ;;        (evil-define-key 'normal 'package-menu-mode-map
+       ;;                                    "i" 'package-menu-mark-install
+       ;;                                    "U" 'package-menu-mark-upgrades
+       ;;                                    "d" 'package-menu-mark-delete
+       ;;                                    "gr" 'revert-buffer
+       ;;                                    "u" 'package-menu-mark-unmark
+       ;;                                    ;; execute
+       ;;                                    "x" 'package-menu-execute
+       ;;                                    "g?" 'package-menu-describe-package
+       ;;                                    "q" 'quit-window ;; FIXME: Can macros make sense here?
+       ;;                                    "ZQ" 'evil-quit
+       ;;                                    "ZZ" 'quit-window)
+
+       ;; Improve EVIL behavior with visual lines (visual-line-mode).
+       (define-key evil-normal-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
+       (define-key evil-normal-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line)
+       (define-key evil-motion-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
+       (define-key evil-motion-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line))
+   #+END_SRC 
+
+** evil-escape
+#+BEGIN_SRC emacs-lisp
+  (use-package evil-escape 
+    :diminish evil-escape-mode
+    :after evil
+    ;; :commands evil-escape-mode
+    :custom
+    (evil-escape-excluded-states '(normal visual multiedit emacs motion))
+    ;;(evil-escape-excluded-major-modes '(neotree-mode))
+    (evil-escape-key-sequence "fd")
+    (evil-escape-unordered-key-sequence t)
+    (evil-escape-delay 0.25)
+    :config
+    ;; no `evil-escape' in minibuffer
+    (push #'minibufferp evil-escape-inhibit-functions)
+    :bind (:map evil-insert-state-map
+                ("C-g"  . evil-escape)
+                :map evil-replace-state-map
+                ("C-g"  . evil-escape)
+                :map evil-visual-state-map
+                ("C-g"  . evil-escape)
+                :map evil-operator-state-map
+                ("C-g"  . evil-escape)))
+#+END_SRC 
+
+** 取 evil-multiedit
+#+BEGIN_SRC emacs-lisp
+  (use-package evil-multiedit 
+:disabled t
+    :defer t
+    :diminish evil-multiedit-mode
+    :commands 
+    (evil-multiedit-and-next evil-multiedit-match-and-next evil-multiedit-toggle-marker-here)
+    :after evil
+    :bind (:map evil-visual-state-map
+                ;; Highlights all matches of the selection in the buffer.
+                ("R" . evil-multiedit-match-all)
+                ;; Match selected region.
+                ("M-d" . evil-multiedit-and-next)
+                ("M-D" . evil-multiedit-and-prev)
+                ;; Restore the last group of multiedit regions.
+                ("C-M-D"  . evil-multiedit-restore)
+                :map evil-normal-state-map
+                ;; Match the word under cursor (i.e. make it an edit region). Consecutive presses will
+                ;; incrementally add the next unmatched match.
+                ("M-d"  . evil-multiedit-match-and-next)
+                :map evil-insert-state-map
+                ;; Insert marker at point
+                ("M-d"  . evil-multiedit-toggle-marker-here)
+                :map evil-normal-state-map
+                ;; Same as M-d but in reverse.
+                ("M-D"  . evil-multiedit-match-and-prev)
+                ;; OPTIONAL: If you prefer to grab symbols rather than words, use
+                ;; `evil-multiedit-match-symbol-and-next` (or prev).
+                ;; RET will toggle the region under the cursor
+                :map evil-multiedit-state-map
+                ("RET"  . evil-multiedit-toggle-or-restrict-region)
+                ;; ...and in visual mode, RET will disable all fields outside the selected region
+                ("RET"  . evil-multiedit-toggle-or-restrict-region)
+                ;; For moving between edit regions
+                ("C-n"  . evil-multiedit-next)
+                ("C-p"  . evil-multiedit-prev)
+                ("C-n"  . evil-multiedit-next)
+                ("C-p"  . evil-multiedit-prev)))
+  #+END_SRC 
+
+* simple-secrets
+The long lost Emacs string manipulation library. This is required for
+~simple-secrets~ to work. 
+
+#+BEGIN_SRC emacs-lisp
+  (use-package s)
+#+END_SRC 
+
+The ~simple-secrets~ package contains a set of functions to manage
+passwords. After defining ~secret-password-file~, you can draw
+information from this file, without revealing the encrypted
+contents. For example, in this file, whenever I use ~(secret-lookup
+[secret_name])~, I am drawing information from my encrypted secrets
+file (i.e., ~sync0_secrets.gpg~) that I don't want to reveal.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package simple-secrets
+:straight nil
+    :load-path "~/.emacs.d/sync0/" 
+    :after s
+    :config 
+    (setq secret-password-file "~/.emacs.d/sync0_secrets.gpg")
+     (secret-load-keys))
+#+END_SRC 
+
+* epa-file
+#+BEGIN_SRC emacs-lisp
+  (use-package epa-file
+:straight nil
+  :load-path "~/.emacs.d/sync0/" 
+    :custom
+    (epa-file-encrypt-to '("carc.sync0@gmail.com"))
+    (epa-file-select-keys 'silent)
+    :config (epa-file-enable))
+  #+END_SRC 
+  
+* ivy 
+#+BEGIN_SRC emacs-lisp
+  (use-package ivy
+    :diminish ivy-mode
+    :hook 
+    (after-init . ivy-mode)
+    :custom
+    (ivy-use-virtual-buffers t)
+    (ivy-count-format "(%d/%d) "))
+#+END_SRC
+
+* deft
+#+BEGIN_SRC emacs-lisp
+  (use-package el-patch)
+    ;; :straight (:host github
+    ;;            :repo "raxod502/el-patch"
+    ;;            :branch "develop")
+
+  (eval-when-compile
+    (require 'el-patch))
+
+  (use-package deft
+    ;; same as above...
+      :after org
+      ;; :bind
+      ;; ("C-c r d" . deft)
+      :custom
+      (deft-recursive t)
+;;      (deft-use-filter-string-for-filename t)
+      (deft-default-extension "org")
+      (deft-directory "~/Dropbox/org")
+ (deft-new-file-format "%Y%m%d%H%M%S")
+(deft-file-naming-rules
+      '((noslash . "-")
+        (nospace . "_")
+        (case-fn . downcase)))
+    :config/el-patch
+    (defun deft-parse-title (file contents)
+      "Parse the given FILE and CONTENTS and determine the title.
+  If `deft-use-filename-as-title' is nil, the title is taken to
+  be the first non-empty line of the FILE.  Else the base name of the FILE is
+  used as title."
+      (el-patch-swap (if deft-use-filename-as-title
+                         (deft-base-filename file)
+                       (let ((begin (string-match "^.+$" contents)))
+                         (if begin
+                             (funcall deft-parse-title-function
+                                      (substring contents begin (match-end 0))))))
+                     (org-roam-db--get-title file)))
+
+    (defhydra sync0-hydra-deft-functions (:color amaranth :hint nil :exit t)
+      "
+   ^Deft^
+   ^------------------
+   _n_: New file
+   _f_: Filter
+   _c_: Clear filter
+   _d_: Delete file
+                                                   
+   [q] Quit
+        "
+      ("f" deft-filter)
+      ("c" deft-filter-clear)
+      ("n" deft-new-file)
+      ("d" deft-delete-file)
+      ("q" nil :color blue))
+
+    :bind 
+    (:map deft-mode-map
+          ("<f9>" . sync0-hydra-deft-functions/body)))
+#+END_SRC 
+
+    (use-package deft
+      ;; :straight (deft
+      ;;             :type git :host github
+      ;;             :repo "jrblevin/deft"
+      ;;             :fork (:host github
+      ;;                    :repo "credmp/deft"))
+      :after org
+      :bind
+      ("C-c r d" . deft)
+      :custom
+      (deft-recursive t)
+      (deft-use-filter-string-for-filename t)
+      (deft-default-extension "org")
+      (deft-directory "~/Dropbox/org/" ))
+
+* hydra
+#+BEGIN_SRC emacs-lisp
+  (use-package hydra)
+    ;; In case I later need to wrap defhydra in any special functionality.
+    ;; :custom (lv-use-seperator t)
+#+END_SRC 
+
+* recentf
+A packate that displays a list of recent files. 
+#+BEGIN_SRC emacs-lisp
+  (use-package recentf
+:straight nil
+    :diminish recentf-mode
+    :custom
+    (recentf-max-saved-items 100)
+    (recentf-max-menu-items 10)
+    :config (recentf-mode +1)
+(require 'dired-x)
+    :bind (:map recentf-dialog-mode-map
+                ("j"  . next-line)
+                ("k"  . previous-line)))
+#+END_SRC
+
+* 取 projectile
+Configuration taken from
+https://github.com/danieroux/emacs/blob/master/mine/djr-hydra.el
+
+#+BEGIN_SRC emacs-lisp
+  (use-package projectile 
+:disabled t
+
+    :custom
+    ;; (projectile-keymap-prefix (kbd "C-p"))
+    (projectile-completion-system 'ivy)
+    (projectile-enable-caching t)
+    (projectile-project-search-path '("~/Dropbox/projects/"))
+    ;;(setq projectile-indexing-method 'alien)
+
+    :config
+    (defhydra sync0-hydra-projectile (:color teal)
+      "
+        Find File          Search/Tags             Buffers                      Cache
+        ------------------------------------------------------------------------------------------
+        ^^_f_: file dwim       _a_: ag             ^^_i_: Ibuffer               _c_: cache clear
+        ^^_r_: replace regexp  _g_: grep           ^^_K_: Kill all buffers      _x_: remove known project
+        ^^_d_: dir             _o_: multi-occur    ^^_X_: cleanup non-existing  _z_: cache current
+        Operate On
+        ---------------------
+        ^^_D_: Dired
+        ^^_e_: Eshell
+        "
+      ("a"   projectile-ag                      nil)
+      ("c"   projectile-invalidate-cache        nil)
+      ("d"   projectile-find-dir                nil)
+      ("e"   (eshell '(4))                      nil)
+      ("D"   projectile-dired                   nil)
+      ("f"   projectile-find-file-dwim          nil)
+      ;; ("g"   projectile-regenerate-tags         nil)
+      ("g"   projectile-grep         nil)
+      ("i"   projectile-ibuffer                 nil)
+      ("K"   projectile-kill-buffers            nil)
+      ;; ("m"   (magit-status (projectile-project-root)) nil)
+      ("o"   projectile-multi-occur             nil)
+      ("p"   projectile-switch-project          nil)
+      ("r"   projectile-replace-regexp                 nil)
+      ;; ("r"   projectile-recentf                 nil)
+      ("x"   projectile-remove-known-project    nil)
+      ("X"   projectile-cleanup-known-projects  nil)
+      ("z"   projectile-cache-current-file      nil)
+      ("q"   nil                                "cancel" :color blue))
+
+    (add-to-list 'projectile-globally-ignored-files "node-modules")
+
+    (projectile-mode)
+    :bind (("C-c p" . sync0-hydra-projectile/body)))
+#+END_SRC
+
+* counsel
+
+#+BEGIN_SRC emacs-lisp
+  (use-package counsel 
+    :after evil
+    :diminish counsel-mode
+    :config
+    (evil-define-key 'normal global-map "gb" 'counsel-bookmark)
+
+    (defhydra sync0-hydra-help (:color amaranth :hint nil :exit t)
+      "
+  ^Help functions^
+  ^^^------------------------
+  _f_: Describe function
+  _v_: Describe variable
+  _k_: Describe keybindings
+  _l_: Load library
+  _i_: Search symbol
+  _u_: Search Unicode char
+  [q] Quit
+
+  "
+      ;; Quickly work with bookmarks
+      ("f" counsel-describe-function)
+      ("v" counsel-describe-variable)
+      ("k" describe-key)
+      ("l" counsel-load-library)
+      ("i" counsel-info-lookup-symbol)
+      ("u" counsel-unicode-char)
+      ("q"  nil :color blue))
+    :bind
+    (("M-x" . counsel-M-x)
+     ("M-y" . counsel-yank-pop)
+     ("C-x C-f" . counsel-find-file)
+     ("<f1>" . sync0-hydra-help/body)))
+#+END_SRC
+
+* swiper
+
+#+BEGIN_SRC emacs-lisp
+  (use-package swiper 
+    :after evil
+    :commands swiper
+    :config 
+    (evil-define-key 'normal global-map "/" 'swiper)
+    (evil-define-key 'normal package-menu-mode-map "/" 'swiper)
+    :bind (("C-s" . swiper)))
+#+END_SRC
+
+* saveplace
+This is Emacs' default minor mode to save your location in visited
+files. With ~saveplace~ enabled, when you open a file, the point goes to
+its last location. 
+
+#+BEGIN_SRC emacs-lisp
+  (use-package saveplace
+:straight nil
+    :preface
+    (defun sync0-save-place-reposition ()
+      "Force windows to recenter current line (with saved position)."
+      (run-with-timer 0 nil
+                      (lambda (buf)
+                        (when (buffer-live-p buf)
+                          (dolist (win (get-buffer-window-list buf nil t))
+                            (with-selected-window win (recenter)))))
+                      (current-buffer)))
+    ;; Start save-place-mode.
+    :init (save-place-mode)
+    :hook (find-file . sync0-save-place-reposition))
+#+END_SRC 
+
+* 取 windmove
+This built-in Emacs package lets you move point from window to window
+using more familiar key combinations than the default ~C-x o~.
+
+I added some functions to improve defaults.
+https://emacs.stackexchange.com/questions/40821/open-new-window-and-switch-to-it
+#+BEGIN_SRC emacs-lisp
+  (use-package windmove
+    :config 
+    (require 'projectile)
+    (require 'org)
+    (require 'org-agenda)
+    (require 'org-journal)
+ 
+    (defun sync0-split-and-follow-horizontally ()
+      (interactive)
+(progn
+      (split-window-below)
+      (balance-windows)
+                (setq truncate-lines t)
+                (setq truncate-partial-width-windows t)
+      (other-window 1)
+(sync0-restore-margins)))
+
+    (defun sync0-split-and-follow-vertically ()
+      (interactive)
+(progn
+      (split-window-right)
+      (balance-windows)
+                (setq truncate-lines t)
+                (setq truncate-partial-width-windows t)
+;;      (other-window 1)
+(sync0-restore-margins)))
+
+    (defhydra sync0-hydra-file-access (:color amaranth :hint nil :exit t)
+      "
+       ^Windows^                ^Buffers^             ^Search^
+    ^^^^^^---------------------------------------------------------------
+    _1_: Delete others       _w_: Write           _r_: Recent
+    _2_: Split horizontally  _a_: Write as        _f_: Find
+    _3_: Split vertically    _b_: Open           
+    ^ ^                      _k_: Kill
+    ^ ^                      _M_: Move file  
+    ^^^^^^---------------------------------------------------------------
+       ^Bookmarks^               ^Projectile^         ^Planning^ 
+    ^^^^^^---------------------------------------------------------------
+    _j_: Jump to bookmark    _R_: Recent files    _h_: Today
+    _g_: Bookmark o. window  _d_: Find directory  _t_: Planning files
+    _m_: Set bookmark        _B_: Browse & jump   _A_: Agenda
+    _l_: List bookmarks      _p_: Switch project  _J_: org-journal
+    ^ ^                      _D_: Dired           
+    [q] Quit                 ^ ^
+    "
+      ("1" delete-other-windows)
+      ("2" sync0-split-and-follow-horizontally)
+      ("3" sync0-split-and-follow-vertically)
+      ("b" ivy-switch-buffer)
+      ;; Quickly save
+      ("w" save-buffer)
+      ("a" write-file)
+      ;; Kill current buffer and window
+      ("k" kill-buffer-and-window)
+      ;; ("o" ivy-switch-buffer-other-window)
+      ("M" sync0-move-file)
+      ("r" counsel-recentf)
+      ("f" counsel-find-file)
+      ("m" bookmark-set)
+      ("j" counsel-bookmark)
+      ("g" bookmark-jump-other-window)
+      ("l" bookmark-bmenu-list)
+      ("d" projectile-find-dir)
+      ("B" projectile-find-file-dwim)
+      ("p" projectile-switch-project)
+      ("D" projectile-dired)
+      ("R" projectile-recentf)
+      ("A" org-agenda)
+      ("J" sync0-org-journal-new-scheduled-entry)
+      ("t" sync0-org-find-planning-file)
+      ("h" sync0-pop-to-org-agenda)
+      ("q" nil :color blue))
+    :bind (("M-," . windmove-left)
+           ("<f5>" . sync0-hydra-file-access/body)
+           ("C-x 2" . sync0-split-and-follow-horizontally)
+           ("C-x 3" . sync0-split-and-follow-vertically)
+           ("M-." . windmove-right)))
+#+END_SRC 
+
+* windmove
+This built-in Emacs package lets you move point from window to window
+using more familiar key combinations than the default ~C-x o~.
+
+I added some functions to improve defaults.
+https://emacs.stackexchange.com/questions/40821/open-new-window-and-switch-to-it
+#+BEGIN_SRC emacs-lisp
+    (use-package windmove
+:straight nil
+      :config 
+      (require 'org)
+      (require 'org-agenda)
+      (require 'org-journal)
+ 
+      (defun sync0-split-and-follow-horizontally ()
+        (interactive)
+  (progn
+        (split-window-below)
+        (balance-windows)
+                  (setq truncate-lines t)
+                  (setq truncate-partial-width-windows t)
+        (other-window 1)
+  (sync0-restore-margins)))
+
+      (defun sync0-split-and-follow-vertically ()
+        (interactive)
+  (progn
+        (split-window-right)
+        (balance-windows)
+                  (setq truncate-lines t)
+                  (setq truncate-partial-width-windows t)
+  ;;      (other-window 1)
+  (sync0-restore-margins)))
+
+      (defhydra sync0-hydra-file-access (:color amaranth :hint nil :exit t)
+        "
+         ^Windows^                ^Buffers^             ^Search^
+      ^^^^^^---------------------------------------------------------------
+      _1_: Delete others       _w_: Write           _r_: Recent
+      _2_: Split horizontally  _a_: Write as        _f_: Find
+      _3_: Split vertically    _b_: Open           
+      ^ ^                      _k_: Kill
+      ^ ^                      _M_: Move file  
+      ^^^^^^---------------------------------------------------------------
+         ^Bookmarks^           ^Planning^ 
+      ^^^^^^---------------------------------------------------------------
+      _j_: Jump to bookmark    _h_: Today
+      _g_: Bookmark o. window  _t_: Planning files
+      _m_: Set bookmark        _A_: Agenda
+      _l_: List bookmarks      _J_: org-journal
+      ^ ^                      
+      [q] Quit                 ^ ^
+      "
+        ("1" delete-other-windows)
+        ("2" sync0-split-and-follow-horizontally)
+        ("3" sync0-split-and-follow-vertically)
+        ("b" ivy-switch-buffer)
+        ;; Quickly save
+        ("w" save-buffer)
+        ("a" write-file)
+        ;; Kill current buffer and window
+        ("k" kill-buffer-and-window)
+        ;; ("o" ivy-switch-buffer-other-window)
+        ("M" sync0-move-file)
+        ("r" counsel-recentf)
+        ("f" counsel-find-file)
+        ("m" bookmark-set)
+        ("j" counsel-bookmark)
+        ("g" bookmark-jump-other-window)
+        ("l" bookmark-bmenu-list)
+        ("A" org-agenda)
+        ("J" sync0-org-journal-new-scheduled-entry)
+        ("t" sync0-org-find-planning-file)
+        ("h" sync0-pop-to-org-agenda)
+        ("q" nil :color blue))
+      :bind (("M-," . windmove-left)
+             ("<f5>" . sync0-hydra-file-access/body)
+             ("C-x 2" . sync0-split-and-follow-horizontally)
+             ("C-x 3" . sync0-split-and-follow-vertically)
+             ("M-." . windmove-right)))
+#+END_SRC 
+
+* smooth-scrolling
+#+BEGIN_SRC emacs-lisp
+  (use-package smooth-scrolling 
+    :commands (sync0-scroll-up sync0-scroll-down)
+    :diminish smooth-scrolling-mode
+    :custom
+    (smooth-scroll-margin 5)
+    ;; change behavior of org movement
+    ;; (org-special-ctrl-a/e t)
+    ;; prevent ugly jumps when cursor is near the end of the screen
+    (scroll-conservatively 101)
+    :preface
+    (defun sync0-scroll-up ()
+      "Improve scroll up behavior"
+      (interactive)
+      (scroll-down 1))
+
+    (defun sync0-scroll-down ()
+      "Improve scroll down behavior"
+      (interactive)
+      (scroll-up 1))
+
+    (defun sync0-scroll-right ()
+      "Improve scroll down behavior"
+      (interactive)
+      (scroll-right 1))
+
+    (defun sync0-scroll-left ()
+      "Improve scroll down behavior"
+      (interactive)
+      (scroll-left 1))
+
+    :config (smooth-scrolling-mode 1)
+    :bind (("M-k" . sync0-scroll-up)
+           ("M-h" . sync0-scroll-right)
+           ("M-l" . sync0-scroll-left)
+           ("M-j" . sync0-scroll-down)))
+#+END_SRC 
+
+* alert (Growl) 
+#+BEGIN_SRC emacs-lisp
+  (use-package alert
+  :straight (alert :type git :host github :repo "jwiegley/alert"))
+#+END_SRC 
+
+* warnings
+#+BEGIN_SRC emacs-lisp
+  (use-package warnings
+:straight nil
+    :config
+;; Remove annoying message when expanding yasnippets. 
+    (add-to-list 'warning-suppress-types '(yasnippet backquote-change)))
+#+END_SRC 
+
+* google-this
+This package provides a set of functions for launching google searches
+from within emacs.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package google-this 
+    :defer t
+    :diminish google-this-mode
+    :commands (google-this-search google-this)
+    :after evil
+    ;; :init
+    ;; (google-this-mode 1)
+    ;; Query google search. 
+    :bind (("C-c g" . google-this-search)
+           ;; Search selection with google.
+           :map evil-visual-state-map ("g"  . google-this)))
+#+END_SRC 
+
+* mu4e
+    
+#+BEGIN_SRC emacs-lisp
+    (use-package mu4e
+      :after (hydra evil)
+      :defer t
+      :commands mu4e
+      :init  (require 'smtpmail)
+      :custom
+      (user-full-name "Carlos Alberto Rivera Carreño")
+      ;; (user-mail-address "carc.sync0@gmail.com")
+      ;; (mu4e-reply-to-address "carc.sync0@gmail.com")
+      (mu4e-root-maildir "~/Mail")
+      (mu4e-attachment-dir "~/Downloads")
+      (message-signature-file "~/.emacs.d/sync0/.sync0_signature") 
+      (mu4e-compose-signature-auto-include t)
+      ;; get mail
+      (mu4e-get-mail-command "mbsync -V -c ~/.emacs.d/sync0/.mbsyncrc -a")
+      (mu4e-update-interval nil)
+      ;; show images
+      (mu4e-show-images t)
+      (mu4e-view-show-images t)
+      (mu4e-view-show-addresses t)
+      (mu4e-headers-auto-update t)
+      (mu4e-use-fancy-chars t)
+      ;; This allows me to use 'ivy' to select mailboxes
+      (mu4e-completing-read-function 'ivy-completing-read)
+      ;; Don't ask for a 'context' upon opening mu4e
+      (mu4e-context-policy 'pick-first)
+      (mu4e-compose-context-policy nil)
+      ;; don't save message to Sent Messages, IMAP takes care of this
+      ;; GMail already adds sent mail to the Sent Mail folder.
+      (mu4e-sent-messages-behavior 'delete)
+      ;; Don't ask to quit... why is this the default?
+      (mu4e-confirm-quit nil)
+      ;; Why would I want to leave my message open after I've sent it?
+      (message-kill-buffer-on-exit t)
+      ;; Rename files when moving
+      (mu4e-change-filenames-when-moving t)
+      ;; Needed for mbsync
+      ;; Configure smtpmail
+      (message-send-mail-function 'smtpmail-send-it)
+      ;; (starttls-use-gnutls t)
+      (smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil)))
+      (smtpmail-auth-credentials "~/.authinfo.gpg")
+      (smtpmail-default-smtp-server "smtp.gmail.com")
+      (smtpmail-smtp-server "smtp.gmail.com")
+      (smtpmail-smtp-service 587)
+      (smtpmail-debug-info t)
+
+      :config
+      (add-to-list 'evil-emacs-state-modes 'mu4e-main-mode)
+      (add-to-list 'evil-emacs-state-modes 'mu4e-headers-mode)
+      (evil-set-initial-state 'mu4e-compose-mode 'insert)
+
+      (setq mu4e-headers-fields
+            '( (:date          .  25)    ;; alternatively, use :human-date
+               (:flags         .   10)
+               (:from          .  30)
+               (:subject       .  nil))) ;; alternatively, use :thread-subject
+
+      ;; Configure contexts
+      (require 'mu4e-context)
+
+      (setq mu4e-contexts
+            `( ,(make-mu4e-context
+                 :name "Principal (carc.sync0)"
+                 :enter-func (lambda () (mu4e-message "Entering carc.sync0"))
+                 :leave-func (lambda () (mu4e-message "Leaving carc.sync0"))
+                 :match-func (lambda (msg)
+                               (when msg
+                                 (mu4e-message-contact-field-matches
+                                  msg '(:from :to :cc :bcc) "carc.sync0@gmail.com")))
+                 :vars '(
+                         (user-mail-address . "carc.sync0@gmail.com")
+                         (mu4e-trash-folder . "/carc.sync0/[carc.sync0]/Trash")
+                         (mu4e-refile-folder . "/carc.sync0/[carc.sync0]/All Mail")
+                         (mu4e-sent-folder . "/carc.sync0/[carc.sync0]/Sent Mail")
+                         (mu4e-drafts-folder . "/carc.sync0/[carc.sync0]/Drafts")
+                         (mu4e-maildir-shortcuts . (("/carc.sync0/[carc.sync0]/Trash"       . ?t)
+                                                    ("/carc.sync0/[carc.sync0]/Sent Mail" . ?s)
+                                                    ("/carc.sync0/INBOX"            . ?i)
+                                                    ("/carc.sync0/[carc.sync0]/Drafts"    . ?d)
+                                                  ;; ("/carc.sync0/[carc.sync0]/Starred"   . ?r)
+                                                    ("/carc.sync0/[carc.sync0]/All Mail"  . ?a)))))
+
+               ,(make-mu4e-context
+                 :name "Backup (cantorlunae)"
+                 :enter-func (lambda () (mu4e-message "Entering cantorlunae"))
+                 :leave-func (lambda () (mu4e-message "Leaving cantorlunae"))
+                 :match-func (lambda (msg)
+                               (when msg
+                                 (mu4e-message-contact-field-matches
+                                  msg '(:from :to :cc :bcc) "cantorlunae@gmail.com")))
+                 :vars '(
+                         (user-mail-address . "cantorlunae@gmail.com")
+                         (mu4e-trash-folder . "/cantorlunae/[cantorlunae]/Trash")
+                         (mu4e-refile-folder . "/cantorlunae/[cantorlunae]/All Mail")
+                         (mu4e-sent-folder . "/cantorlunae/[cantorlunae]/Sent Mail")
+                         (mu4e-drafts-folder . "/cantorlunae/[cantorlunae]/Drafts")
+                         (mu4e-maildir-shortcuts . (("/cantorlunae/[cantorlunae]/Trash"       . ?t)
+                                                    ("/cantorlunae/[cantorlunae]/Sent Mail" . ?s)
+                                                    ("/cantorlunae/INBOX"            . ?i)
+                                                    ("/cantorlunae/[cantorlunae]/Drafts"    . ?d)
+                                                    ("/cantorlunae/[cantorlunae]/All Mail"  . ?a)))))))
+
+
+      ;; Use imagemagick, if available.
+      (when (fboundp 'imagemagick-register-types)
+        (imagemagick-register-types))
+
+      (setq mu4e-bookmarks `(;; ("\\\\Inbox" "Inbox" ?i)
+                             ("flag:flagged" "Flagged messages" ?f)
+                             ("flag:unread AND NOT flag:trashed" "Unread messages" ?u)
+                             ("date:today..now" "Today's messages" ?t)
+                             ("date:7d..now" "Last 7 days" ?w)
+                             ("mime:image/*" "Messages with images" ?p)
+                             ("maildir:/cantorlunae/INBOX OR maildir:/carc.sync0/INBOX" "All inboxes" ?i)))
+
+                             ;; (,(mapconcat 'identity
+                             ;;              (mapcar
+                             ;;               (lambda (maildir)
+                             ;;                 (concat "maildir:" (car maildir)))
+                             ;;               mu4e-maildir-shortcuts) " OR ")
+                             ;;  "All inboxes" ?i)
+
+  ;; (add-hook 'mu4e-mark-execute-pre-hook
+  ;; (lambda (mark msg)
+  ;; (cond ((member mark '(refile trash)) (mu4e-action-retag-message msg
+  ;; "-\\Inbox"))
+  ;; ((equal mark 'flag) (mu4e-action-retag-message msg "\\Starred"))
+  ;; ((equal mark 'unflag) (mu4e-action-retag-message msg "-\\Starred"
+  ;; )))))
+
+
+      (add-to-list 'mu4e-view-actions '("ViewInBrowser" . mu4e-action-view-in-browser) t)
+
+      (evil-define-key 'normal mu4e-compose-mode-map
+        "$" 'evil-end-of-visual-line
+        "^" 'evil-beginning-of-visual-line
+        "gg" 'mu4e-compose-goto-top
+        "G" 'mu4e-compose-goto-bottom
+        "]" 'evil-next-visual-line
+        "[" 'evil-previous-visual-line)
+
+      ;; we seem to need this to fix the org-store-link issue
+      ;; (org-link-set-parameters "mu4e" :follow #'org-mu4e-open :store 
+      ;; #'org-mu4e-store-link)
+
+      :bind  (( 
+               :map mu4e-main-mode-map
+               ("J" . mu4e~headers-jump-to-maildir)
+               ("j" . next-line)
+               ("k" . previous-line)
+               ("u" . mu4e-update-mail-and-index)
+               ("b" . mu4e-headers-search-bookmark)
+               ("B" . mu4e-headers-search-bookmark-edit)
+               ("N" . mu4e-news)
+               (";" . mu4e-context-switch)
+               ("H" . mu4e-display-manual)
+               ("C" . mu4e-compose-new)
+               ;; ("cc" . mu4e-compose-new)
+               ("x" . mu4e-kill-update-mail)
+               ("A" . mu4e-about)
+               ("f" . smtpmail-send-queued-mail)
+               ("m" . mu4e~main-toggle-mail-sending-mode)
+               ("s" . mu4e-headers-search)
+               ("q" . mu4e-quit)
+               :map mu4e-headers-mode-map
+               ("q" . mu4e~headers-quit-buffer)
+               ("J" . mu4e~headers-jump-to-maildir)
+               ("C" . mu4e-compose-new)
+               ("E" . mu4e-compose-edit)
+               ("F" . mu4e-compose-forward)
+               ("R" . mu4e-compose-reply)
+               ("o" .   mu4e-headers-change-sorting)
+               ("j" . mu4e-headers-next)
+               ("k" . mu4e-headers-prev)
+               ("b" . mu4e-headers-search-bookmark)
+               ("B" . mu4e-headers-search-bookmark-edit)
+               (";" . mu4e-context-switch)
+               ("/" . mu4e-headers-search-narrow)
+               ("s" . mu4e-headers-search)
+               ("S" . mu4e-headers-search-edit)
+               ("x" . mu4e-mark-execute-all)
+               ("a" . mu4e-headers-action)
+               ("*" . mu4e-headers-mark-for-something) 
+               ("&" . mu4e-headers-mark-custom)
+               ("A" . mu4e-headers-mark-for-action)
+               ("m" . mu4e-headers-mark-for-move)
+               ("r" . mu4e-headers-mark-for-refile)
+               ("D" . mu4e-headers-mark-for-delete)
+               ("d" . mu4e-headers-mark-for-trash)
+               ("=" . mu4e-headers-mark-for-untrash)
+               ("u" . mu4e-headers-mark-for-unmark)
+               ("U" . mu4e-mark-unmark-all)
+               ("?" . mu4e-headers-mark-for-unread)
+               ("!" . mu4e-headers-mark-for-read)
+               ("%" . mu4e-headers-mark-pattern)
+               ("+" . mu4e-headers-mark-for-flag)
+               ("-" . mu4e-headers-mark-for-unflag)
+               ("[" . mu4e-headers-prev-unread)
+               ("]" . mu4e-headers-next-unread)
+               ("C-j" . mu4e-headers-next)
+               ("C-k" . mu4e-headers-prev)
+               :map mu4e-view-mode-map
+               ("j" . next-line)
+               ("k" . previous-line)
+               ("l" . evil-forward-char)
+               ("h" . evil-backward-char)
+               ("v" . evil-visual-char)
+               ("$" . evil-end-of-visual-line)
+               ("^" . evil-beginning-of-visual-line)
+               ("]" . evil-next-visual-line)
+               ("[" . evil-previous-visual-line)
+               (" " . mu4e-view-scroll-up-or-next)
+               ([tab] . shr-next-link)
+               ([backtab] . shr-previous-link)
+               ("q" . mu4e~view-quit-buffer)
+               ("C" . mu4e-compose-new)
+               ("H" . mu4e-view-toggle-html)
+               ("R" . mu4e-compose-reply)
+               ("p" . mu4e-view-save-attachment)
+               ("P" . mu4e-view-save-attachment-multi) 
+               ("O" . mu4e-headers-change-sorting)
+               ("o" . mu4e-view-open-attachment)
+               ("A" . mu4e-view-attachment-action)
+               ("a" . mu4e-view-action)
+               ("J" . mu4e~headers-jump-to-maildir)
+               ("C-j" . mu4e-view-headers-next)
+               ("C-k" . mu4e-view-headers-prev)
+               ("x" . mu4e-view-marked-execute)
+               ("&" . mu4e-view-mark-custom)
+               ("*" . mu4e-view-mark-for-something)   
+               ("m" . mu4e-view-mark-for-move)
+               ("r" . mu4e-view-mark-for-refile)
+               ("D" . mu4e-view-mark-for-delete)
+               ("d" . mu4e-view-mark-for-trash)
+               ("=" . mu4e-view-mark-for-untrash)
+               ("u" . mu4e-view-unmark)
+               ("U" . mu4e-view-unmark-all)
+               ("?" . mu4e-view-mark-for-unread)
+               ("!" . mu4e-view-mark-for-read)
+               ("%" . mu4e-view-mark-pattern)
+               ("+" . mu4e-view-mark-for-flag)
+               ("-" . mu4e-view-mark-for-unflag)
+               ("s" . mu4e-view-search-edit)
+               ("|" . mu4e-view-pipe)
+               ("." . mu4e-view-raw-message)
+               ("C--" . mu4e-headers-split-view-shrink)
+               ("C-+" . mu4e-headers-split-view-grow))))
+  #+END_SRC 
+
+** 取 mu4e-alert
+#+BEGIN_SRC emacs-lisp
+      (use-package mu4e-alert
+      :disabled t
+      :hook ((after-init . mu4e-alert-enable-mode-line-display)
+             (after-init . mu4e-alert-enable-notifications))
+      :config
+      (setq mu4e-alert-interesting-mail-query
+            (concat
+             "flag:unread maildir:/carc.sync0/INBOX"
+             "OR"
+             "flag:unread maildir:/cantorlunae/INBOX"))
+      (mu4e-alert-set-default-style 'libnotify))
+  #+END_SRC 
+
+** mu4e-conversation
+#+BEGIN_SRC emacs-lisp
+  (use-package mu4e-conversation
+  :disabled t
+  :load-path "~/.emacs.d/sync0")
+  ;;:disabled t
+  ;;:config (global-mu4e-conversation-mode)
+    ;; :commands mu4e-conversation-toggle-view
+    ;; :config
+    ;; ;;   (global-mu4e-conversation-mode 1)
+    ;; (evil-define-key 'normal mu4e-headers-mode-map "cc" 'mu4e-conversation)
+  #+END_SRC 
+
+* calendars
+** calendar 
+
+#+BEGIN_SRC emacs-lisp
+  (use-package calendar 
+    :custom
+    (calendar-date-style 'european) 
+    (european-calendar-style t)
+    ;; Week starts on monday.
+    (calendar-week-start-day 0)    
+    (calendar-day-name-array     ["Dimanche" "Lundi" "Mardi" "Mercredi" "Jeudi" "Vendredi" "Samedi"])
+    (calendar-day-abbrev-array   ["Dim." "Lun." "Mar." "Mer." "Jeu." "Ven." "Sam."])
+    (calendar-month-name-array   ["Janvier" "Février" "Mars" "Avril" "Mai" "Juin" "Juillet"
+                                  "Août" "Septembre" "Octobre" "Novembre" "Décembre"])
+    (calendar-month-abbrev-array ["Jan." "Fév." "Mars" "Avr." "Mai" "Juin" "Jul." "Août" "Sep." "Oct." "Nov." "Déc."]))
+  #+END_SRC 
+
+** holiday
+#+BEGIN_SRC emacs-lisp
+  (use-package holidays 
+:straight nil
+    :after calendar
+    :custom
+    (holiday-christian-holidays nil)
+    (holiday-hebrew-holidays nil)
+    (holiday-islamic-holidays nil)
+    (holiday-bahai-holidays nil)
+    (holiday-oriental-holidays nil)
+    :config
+    (defvar holiday-korean-holidays nil "Korean holidays")
+    (defvar holiday-french-holidays nil "French holidays")
+    (defvar holiday-colombian-holidays nil "Colombian holidays")
+
+    (setq holiday-korean-holidays
+          '((holiday-fixed 1 1          "신정")
+            ;; (holiday-lunar-ko 1 nil 1   "설날" -1)
+            ;; (holiday-lunar-ko 1 nil 1   "설날")
+            ;; (holiday-lunar-ko 1 nil 1   "설날" 1)
+            (holiday-fixed 3 1          "3.1절")
+            ;; (holiday-lunar-ko 4 nil 8   "석가탄신일")
+            (holiday-fixed 5 5          "어린이날")
+            (holiday-fixed 6 6          "현충일")
+            (holiday-fixed 8 15         "광복절")
+            (holiday-fixed 10 3         "개천절")
+            (holiday-fixed 10 9         "한글날")
+            ;; (holiday-lunar-ko 8 nil 15  "추석" -1)
+            ;; (holiday-lunar-ko 8 nil 15  "추석")
+            ;; (holiday-lunar-ko 8 nil 15  "추석" 1)
+            (holiday-fixed 12 25        "성탄절")))
+
+    (setq holiday-french-holidays
+          '((holiday-fixed 1 1 "Jour de l'an")
+            (holiday-fixed 1 6 "Épiphanie")
+            (holiday-fixed 2 2 "Chandeleur")
+            (holiday-fixed 2 14 "Saint Valentin")
+            (holiday-fixed 5 1 "Fête du travail")
+            (holiday-fixed 5 8 "Commémoration de la capitulation de l'Allemagne en 1945")
+            (holiday-fixed 6 21 "Fête de la musique")
+            (holiday-fixed 7 14 "Fête nationale - Prise de la Bastille")
+            (holiday-fixed 8 15 "Assomption (Religieux)")
+            (holiday-fixed 11 11 "Armistice de 1918")
+            (holiday-fixed 11 1 "Toussaint")
+            (holiday-fixed 11 2 "Commémoration des fidèles défunts")
+            (holiday-fixed 12 25 "Noël")
+            ;; fetes a date variable
+            (holiday-easter-etc 0 "Pâques")
+            (holiday-easter-etc 1 "Lundi de Pâques")
+            (holiday-easter-etc 39 "Ascension")
+            (holiday-easter-etc 49 "Pentecôte")
+            (holiday-easter-etc -47 "Mardi gras")
+            (holiday-float 5 0 4 "Fête des mères")
+            ;; dernier dimanche de mai ou premier dimanche de juin si c'est le
+            ;; même jour que la pentecôte TODO
+            (holiday-float 6 0 3 "Fête des pères")))
+    ;; troisième dimanche de juin
+
+    (setq holiday-colombian-holidays 
+          '((holiday-fixed 1 1 "Año nuevo")
+            (holiday-sexp '(calendar-nth-named-day 1 1 1 year 6) "Día de Reyes")
+            (holiday-sexp '(calendar-nth-named-day 1 1 3 year 19) "Día de San José")
+            (holiday-easter-etc -3 "Jueves Santo")
+            (holiday-easter-etc -2 "Viernes Santo")
+            (holiday-fixed 5 1 "Día del trabajo")
+            (holiday-easter-etc +43 "Día de la ascención")
+            (holiday-sexp '(calendar-nth-named-day 1 1 6 year 29)
+                          "San Pedro y San Pablo")
+            (holiday-easter-etc +64 "Corpus Christi")
+            (holiday-easter-etc +71 "Sagrado corazón")
+            (holiday-fixed 7 20 "Día de la independencia")
+            (holiday-fixed 8 7 "Batalla de Boyacá")
+            (holiday-sexp '(calendar-nth-named-day 1 1 8 year 15)
+                          "Asunción de la virgen")
+            (holiday-sexp '(calendar-nth-named-day 1 1 10 year 12) "Día de la raza")
+            (holiday-sexp '(calendar-nth-named-day 1 1 11 year 1)
+                          "Todos los santos")
+            (holiday-sexp '(calendar-nth-named-day 1 1 11 year 11)
+                          "Independencia de Cartagena")
+            (holiday-fixed 12 25 "Navidad")
+            (holiday-fixed 12 8 "Inmaculada concepción")))
+
+    (setq holiday-other-holidays
+          (append holiday-colombian-holidays holiday-french-holidays holiday-korean-holidays))
+
+    (setq calendar-holidays
+          (append holiday-general-holidays holiday-other-holidays)))
+#+END_SRC 
+
+** 取 calfw
+
+#+BEGIN_SRC emacs-lisp
+  (use-package calfw 
+:disabled t
+    :defer t
+    :commands sync0-open-calendar
+    :after (calendar evil)
+    :preface
+    (require 'calfw-org)
+    ;; (require 'calfw-gcal)
+    ;; (require 'calfw-cal)
+
+    (defun sync0-open-calendar ()
+      (interactive)
+      (let ((buf (get-buffer "*cfw-calendar*")))
+        (if buf
+            (pop-to-buffer buf nil)
+          (cfw:open-calendar-buffer
+           :contents-sources
+           (list (cfw:org-create-source "#c0c5ce")) :view 'week))))
+
+    :custom
+    (cfw:fchar-junction ?╋)
+    (cfw:fchar-vertical-line ?┃)
+    (cfw:fchar-horizontal-line ?━)
+    (cfw:fchar-left-junction ?┣)
+    (cfw:fchar-right-junction ?┫)
+    (cfw:fchar-top-junction ?┯)
+    (cfw:fchar-top-left-corner ?┏)
+    (cfw:fchar-top-right-corner ?┓)
+
+    :config 
+    (add-to-list 'evil-emacs-state-modes 'cfw:details-mode)
+
+    (setq sync0-org-agenda-files 
+          (let ((agenda-files   (org-agenda-files nil 'ifmode)))
+            (delete "~/Dropbox/org/etc/Habits.org"  agenda-files)
+            (delete "~/Dropbox/org/messages"  agenda-files)))
+
+    ;; Redefinition
+    (eval-after-load "calfw-org"
+      '(defun cfw:org-collect-schedules-period (begin end)
+         "[internal] Return org schedule items between BEGIN and END."
+         (let ((org-agenda-prefix-format " ")
+               (span 'day))
+           (setq org-agenda-buffer
+                 (when (buffer-live-p org-agenda-buffer)
+                   org-agenda-buffer))
+           (org-compile-prefix-format nil)
+           (loop for date in (cfw:enumerate-days begin end) append
+                 (loop for file in sync0-org-agenda-files 
+                       append
+                       (progn
+                         (org-check-agenda-file file)
+                         (apply 'org-agenda-get-day-entries
+                                file date
+                                cfw:org-agenda-schedule-args)))))))
+
+    :bind (("<f7>" . sync0-open-calendar)
+           :map cfw:details-mode-map
+           ("SPC"  . cfw:details-kill-buffer-command)))
+#+END_SRC 
+
+* version control
+** magit
+
+#+BEGIN_SRC emacs-lisp
+  (use-package magit
+    :defer t
+    :diminish magit-mode
+    :commands (magit-status magit-blame)
+    ;; The following configuration has magit use full screen mode.
+    ;; :init
+    ;; (defadvice magit-status (around magit-fullscreen activate)
+    ;;   (window-configuration-to-register :magit-fullscreen)
+    ;;   ad-do-it
+    ;;   (delete-other-windows))
+    :custom
+    (magit-branch-arguments nil)
+    ;; use ido to look for branches
+    ;; (magit-completing-read-function 'magit-ido-completing-read)
+    ;; don't put "origin-" in front of new branch names by default
+    ;; (magit-default-tracking-name-function 'magit-default-tracking-name-branch-only)
+    (magit-push-always-verify nil)
+    ;; Get rid of the previous advice to go into fullscreen
+    (magit-restore-window-configuration t)
+    :bind (("C-x g" . magit-status)
+           ("C-x M-g" . magit-dispatch)))
+#+END_SRC 
+
+** 取 magithub
+
+#+BEGIN_SRC emacs-lisp
+  (use-package magithub
+    :after magit
+    :config
+    (magithub-feature-autoinject t)
+    (setq magithub-clone-default-directory "~/github"))
+#+END_SRC 
+
+** 取 magit-todos
+
+#+BEGIN_SRC emacs-lisp
+  (use-package magit-todos
+    :commands (magit-todos-mode)
+    :hook (magit-mode . magit-todos-mode)
+    :custom 
+    (magit-todos-keywords-list (list "無" "次" "中" "待"))
+    (magit-todos-recursive t)
+    (magit-todos-depth 100))
+#+END_SRC 
+
+** 無 git-gutter 
+The only two reasons to use git-gutter, despite its flaws, are
+that it is easy to customize the icons displayed on the fringe,
+and that there is a very useful hydra I found on the internet to
+navigate the modified chunks. Unfortunately, git-gutter does not
+work as well as I would like because it resets my margins in a
+really ugly way that I haven't been able to fix. 
+
+#+BEGIN_SRC emacs-lisp
+    (use-package git-gutter 
+      :after hydra
+      :diminish git-gutter-mode
+      ;; :init
+      ;; (global-git-gutter-mode +1)
+      ;; :hook 
+      ;; (text-mode . git-gutter-mode)
+      ;; (prog-mode . git-gutter-mode)
+      :custom
+      (git-gutter:hide-gutter nil)
+      (git-gutter:window-width 1)
+      (git-gutter:modified-sign " ") 
+      (git-gutter:added-sign " ")    
+      (git-gutter:deleted-sign " ")
+
+      :custom-face
+      (git-gutter:modified ((t (:background "#3a81c3"))))
+      (git-gutter:added    ((t (:background "#7ccd7c"))))
+      (git-gutter:deleted  ((t (:background "ee6363"))))
+
+      :config
+  (setq git-gutter:disabled-modes '(asm-mode image-mode mu4e-view-mode mu4e-main-mode mu4e-headers-mode mu4e-compose-mode))
+
+      (defhydra sync0-hydra-git-gutter
+        (:body-pre (git-gutter-mode 1) :hint nil)
+        "
+                                                                   ╭─────────────────┐
+                                Movement   Hunk Actions     Misc.  │ gg: +%-4s(car (git-gutter:statistic))/ -%-3s(cdr (git-gutter:statistic)) │
+                                ╭──────────────────────────────────┴─────────────────╯
+                                   ^_g_^       [_s_] stage        [_R_] set start Rev
+                                   ^_k_^       [_r_] revert
+                                   ^↑ ^      [_m_] mark
+                                   ^↓ ^      [_p_] popup          ╭──────────────────────
+                                   ^_j_^                          │[_q_] quit
+                                   ^_G_^                          │[_Q_] Quit and disable"
+        ("j" (progn (git-gutter:next-hunk 1) (recenter)))
+        ("k" (progn (git-gutter:previous-hunk 1) (recenter)))
+        ("g" (progn (goto-char (point-min)) (git-gutter:next-hunk 1)))
+        ("G" (progn (goto-char (point-min)) (git-gutter:previous-hunk 1)))
+        ("s" git-gutter:stage-hunk)
+        ("r" git-gutter:revert-hunk)
+        ("m" git-gutter:mark-hunk)
+        ("p" git-gutter:popup-hunk)
+        ("R" git-gutter:set-start-revision)
+        ("q" nil :color blue)
+        ("Q" (git-gutter-mode -1) :color blue))
+      :bind
+      (("C-c h g" . sync0-hydra-git-gutter/body)))
+#+END_SRC 
+
+** git-time-machine
+
+#+BEGIN_SRC emacs-lisp
+  (use-package git-timemachine
+    :defer t
+    :after evil
+    :commands 
+    (git-timemachine git-timemachine-toggle)
+    :custom
+    (git-timemachine-show-minibuffer-details nil)
+    :config
+    (require 'magit-blame)
+
+    ;; Sometimes I forget `git-timemachine' is enabled in a buffer, so instead of
+    ;; showing revision details in the minibuffer, show them in
+    ;; `header-line-format', which has better visibility.
+
+    ;; (add-hook 'git-timemachine-mode-hook #'+vcs|init-header-line)
+    ;; (advice-add #'git-timemachine-show-revision :after #'+vcs*update-header-line)
+
+    ;; Force evil to rehash keybindings for the current state
+    (add-hook 'git-timemachine-mode-hook #'evil-force-normal-state))
+#+END_SRC 
+
+** ediff
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ediff
+    :defer t
+    :custom
+    ;; No separate frame for ediff control buffer
+    (ediff-window-setup-function #'ediff-setup-windows-plain)
+    ;; Split windows horizontally in ediff (instead of vertically)
+    (ediff-split-window-function #'split-window-vertically))
+#+END_SRC 

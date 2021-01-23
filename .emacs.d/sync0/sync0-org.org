@@ -1,0 +1,2975 @@
+* core 
+#+BEGIN_SRC emacs-lisp
+      (use-package org 
+        :after evil
+        :custom
+        (org-hide-leading-stars t)
+        ;; Leave one line between headlines 
+        (org-cycle-separator-lines 1)
+        ;; Don't fontify the whole damn line
+        (org-fontify-whole-block-delimiter-line t)
+        ;; Disable word wrap in org mode.
+        ;; (org-startup-truncated t)
+        ;; Initial indentation
+        (org-startup-indented nil)         
+        ;; Necessary to avoid crazy inconsistenscies using org-download and org-roam
+        (org-link-file-path-type 'absolute)
+        ;; Begin displaying entire trees.
+        (org-startup-folded nil)
+        ;; Better display of italics & bold.
+        (org-hide-emphasis-markers t)
+        ;; Define org-tags.
+        (org-tag-alist '(("projects" . ?p)
+                         ;; ("noexport" . ?n)
+                         ("readings" . ?r)
+                         ;; ("reviews" . ?r)
+                         ("exams" . ?e)
+                         ("urgent" . ?u)
+                         ("this_week" . ?t)
+                         ("this_month" . ?m)
+                         ("next_week" . ?n)
+                         ("short_term" . ?s)
+                         ("long_term" . ?l)
+                         ;; ("university" . ?u)
+                         ("important" . ?i)))
+        ;; Hide inherited tags from Org's agenda view.
+        ;; org-agenda-show-inherited-tags nil
+        ;; Define todo keywords.
+        ;; (org-todo-keywords '((sequence "無(1)" "次(2)" "中(3)" "|" "完(4)")
+        ;;                      (sequence "見(5)" "待(6)" "阻(7)" "|" "取(8)")))
+        (org-todo-keywords '((sequence "無(1)" "次(2)" "中(3)" "見(4)" "待(5)" "阻(6)" "|" "完(7)" "取(8)")))
+        ;; Set faces for org-todo-keywords
+        (org-todo-keyword-faces '(("無" . (:foreground "#dc322f" :weight semi-bold :height 0.8))
+                                  ("次" . (:foreground "#d33682" :weight semi-bold :height 0.8))
+                                  ("完" . (:foreground "#859900" :weight semi-bold :height 0.8))   
+                                  ("待" . (:foreground "#cb4b16" :weight semi-bold :height 0.8))
+                                  ("阻" . (:foreground "#268bd2" :weight semi-bold :height 0.8)) 
+                                  ("取" . (:foreground "#6c71c4" :weight semi-bold :height 0.8)) 
+                                  ("見" . (:foreground "#268bd2" :weight semi-bold :height 0.8)) 
+                                  ("中" . (:foreground "#b58900" :weight semi-bold :height 0.8))))
+        (org-blank-before-new-entry '((heading . nil)(plain-list-item . nil)))
+        ;; Stop emacs asking for confirmation
+        (org-confirm-babel-evaluate nil)
+        (org-ellipsis "  ⌄ ") ;; folding symbol
+        ;; Do not show export buffer.
+        (org-export-show-temporary-export-buffer nil)
+        ;; Define file to initialize external export process.
+        ;; (org-export-async-init-file "~/.emacs.d/init.elc")
+        ;; Set path for org default directory (necessary for refile and agenda).
+        (org-directory (concat (getenv "HOME") "/Dropbox/org"))
+        (org-refile-use-outline-path 'file)
+        ;; (org-refile-use-outline-path nil) ;; Sasha-Chua's config
+        (org-refile-targets '((org-agenda-files :maxlevel . 4)))
+        (org-outline-path-complete-in-steps nil)
+        ;; (org-indent-indentation-per-level 1)
+        (org-startup-with-inline-images t)
+        ;; (org-reverse-note-order t)
+        ;; (org-refile-allow-creating-parent-nodes 'confirm)
+        ;; (org-blank-before-new-entry nil)
+        (org-refile-use-cache nil)
+        ;; Have org-mode indent elisp sections.
+        (org-src-tab-acts-natively nil)
+        ;; Color embeded source code
+        (org-src-fontify-natively t)
+        (org-hide-emphasis-markers t)
+        (org-fontify-done-headline t) 
+        (org-fontify-whole-heading-line t)
+        ;; (org-highlight-latex-and-related '(latex))
+        ;; (org-highlight-latex-fragments-and-specials t)
+        (org-fontify-quote-and-verse-blocks t)
+        ;; Don't fontify sub and superscripts.
+        (org-pretty-entities-include-sub-superscripts nil)
+        ;; Change font used in src blocks. This feature slows down Emacs tremendously. 
+        ;; (org-src-block-faces '(("emacs-lisp" (:height 115 :inherit 'fixed-pitch))
+        ;;                        ("python" (:height 115 :inherit 'fixed-pitch))))
+        ;; Limit inheritance for certain tags. 
+        (org-tags-exclude-from-inheritance (quote ("crypt" "ignore")))
+        :config 
+        (require 'org-pdftools)
+
+        ;; Free this keybinding for cycle-themes
+        (unbind-key "C-c C-t" org-mode-map)
+        (unbind-key "M-h" org-mode-map)
+
+    (defun sync0-overview-tree-window ()
+      "Open a clone of the current buffer to the left, resize it to 30 columns, and bind <mouse-1> to jump to the same position in the base buffer."
+      (interactive)
+      (let ((new-buffer-name (concat "<tree>" (buffer-name))))
+        ;; Create tree buffer
+        (split-window-right 30)
+        (if (get-buffer new-buffer-name)
+            (switch-to-buffer new-buffer-name)  ; Use existing tree buffer
+          ;; Make new tree buffer
+          (progn  (clone-indirect-buffer new-buffer-name nil t)
+                  (switch-to-buffer new-buffer-name)
+                  (read-only-mode)
+                  (hide-body)
+                  (toggle-truncate-lines)
+
+                  ;; Do this twice in case the point is in a hidden line
+                  (dotimes (_ 2 (forward-line 0)))
+
+                  ;; Map keys
+                  (use-local-map (copy-keymap outline-mode-map))
+                  (local-set-key (kbd "q") 'delete-window)
+                  (mapc (lambda (key) (local-set-key (kbd key) 'my/jump-to-point-and-show))
+                        '("<mouse-1>" "RET"))))))
+
+    (defun sync0-jump-to-overview-and-show ()
+      "Switch to a cloned buffer's base buffer and move point to the cursor position in the clone."
+      (interactive)
+      (let ((buf (buffer-base-buffer)))
+        (unless buf
+          (error "You need to be in a cloned buffer!"))
+        (let ((pos (point))
+              (win (car (get-buffer-window-list buf))))
+          (if win
+              (select-window win)
+            (other-window 1)
+            (switch-to-buffer buf))
+          (goto-char pos)
+          (when (invisible-p (point))
+            (show-branches)))))
+
+  ;; (defun sync0-org-open-buffer-in-split ()
+  ;; (interactive)
+  ;;     (when (string= (file-name-extension buffer-file-name) "org")
+  ;;   (unless (equal (current-buffer) (buffer-name (window-buffer)))
+  ;;     (display-buffer (current-buffer) (if (one-window-p)
+  ;;                                      'display-buffer-pop-up-window
+  ;;                                    'display-buffer-reuse-window)))))
+
+  ;;       (add-hook 'find-file-hook #'sync0-org-open-buffer-in-split)
+
+        (defun sync0-org-tree-open-in-right-frame ()
+          "Open headline in the next window as a separate tree."
+          (interactive)
+          (org-tree-to-indirect-buffer)
+          (windmove-right))
+
+        (defun sync0-call-rebinding-org-blank-behaviour (fn)
+          (let ((org-blank-before-new-entry
+                 (copy-tree org-blank-before-new-entry)))
+            (when (org-at-heading-p)
+              (rplacd (assoc 'heading org-blank-before-new-entry) nil))
+            (call-interactively fn)))
+
+        (defun sync0-org-meta-return-dwim ()
+          "Improved version of default org-meta-return"
+          (interactive)
+          (sync0-call-rebinding-org-blank-behaviour 'org-meta-return))
+
+        (defun sync0-org-insert-todo-heading-dwim ()
+          "Improved version of org-insert-todo-heading"
+          (interactive)
+          (sync0-call-rebinding-org-blank-behaviour 'org-insert-todo-heading))
+
+        (defun sync0-clever-insert-item ()
+          "Clever insertion of org item."
+          (if (not (org-in-item-p))
+              (insert "\n")
+            (org-insert-item)))
+
+        (defun sync0-evil-org-eol-call (fun)
+          "Go to end of line and call provided function. FUN function callback"
+          (end-of-line)
+          (funcall fun)
+          (evil-append nil))
+
+        ;; redefinition evils normal mode map
+        (evil-define-key 'normal org-mode-map
+          "<" 'outline-previous-visible-heading
+          ">" 'outline-next-visible-heading
+          (kbd "C->") 'org-forward-heading-same-level
+          (kbd "C-<") 'org-backward-heading-same-level
+          (kbd "<S-tab>") 'sync0-org-tree-open-in-right-frame 
+          "H" 'org-metaleft
+          "L" 'org-metaright
+          "K" 'org-metaup
+          "J" 'org-metadown
+          "k" 'previous-line
+          "j" 'next-line
+          "o" '(lambda () (interactive) (sync0-evil-org-eol-call 'sync0-clever-insert-item))
+          "O" '(lambda () (interactive) (sync0-evil-org-eol-call 'org-insert-heading))
+          "$" 'org-end-of-line
+          "^" 'org-beginning-of-line
+          "[" 'backward-sentence
+          "]" 'forward-sentence
+          "{" 'org-backward-paragraph
+          "}" 'org-forward-paragraph
+          "-" 'org-cycle-list-bullet
+          (kbd "<tab>") 'org-cycle)
+
+        (evil-define-key 'visual org-mode-map
+          ;; "q" 'highlight-changes-remove-highlight
+          "z" 'org-emphasize)
+
+        ;; List of files considered for org-refile.
+        (setq org-refile-targets (quote ((nil :maxlevel . 9)                ;; Default value.
+                                         ;;(org-agenda-files :maxlevel . 9) ;; set for all agenda files
+                                         ("todo.org" :maxlevel . 2))))
+
+        ;; Set default application to open pdfs.
+        ;; (add-hook 'org-mode-hook
+        ;;           '(lambda ()
+        ;;              (delete '("\\.pdf\\'" . default) org-file-apps)
+        ;;              (add-to-list 'org-file-apps '("\\.pdf\\'" . "zathura %s"))))
+
+        ;; (add-hook 'org-mode-hook
+        ;;           '(lambda ()
+        ;;              (delete '("\\.pdf\\'" . default) org-file-apps)
+        ;;              (add-to-list 'org-file-apps '("\\.pdf\\'" . "PDF Tools %s"))))
+
+        ;;    (add-hook 'org-mode-hook
+        ;;              '(lambda ()
+        ;;                 (delete '("\\.pdf\\'" . default) org-file-apps)
+        ;; (add-to-list 'org-file-apps 
+        ;;              '("\\.pdf\\'" . (lambda (file link)
+        ;;                                      (org-pdftools-open link))))))
+
+        ;; Avoid annoying space in mode line when no clock is defined.
+        (add-hook 'org-clock-out-hook
+                  '(lambda ()
+                     (setq org-mode-line-string nil)))
+
+        (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+
+        ;; (add-hook 'org-mode-hook
+        ;;           '(lambda ()
+        ;;              (delete '("\\.pdf\\'" . default) org-file-apps)
+        ;;              (add-to-list 'org-file-apps '("\\.pdf\\'" . org-pdftools-open))))
+
+
+        (setq org-src-block-faces    '(("emacs-lisp" (:family "Fira Code"  :height 0.75))
+                                       ("python" (:family "Fira Code"  :height 0.75))
+                                       ("latex" (:family "Fira Code"  :height 0.75))))
+
+        :bind ((:map org-mode-map
+                     ("M-<return>" . sync0-org-meta-return-dwim)
+                     ("M-S-<return>" . sync0-org-insert-todo-heading-dwim))))
+#+END_SRC 
+
+* org-pdftools                                                                  
+#+BEGIN_SRC emacs-lisp
+      (use-package org-pdftools
+:straight nil
+      :config (org-pdftools-setup-link))
+#+END_SRC 
+
+* 取 org-pdftools
+      (use-package org-pdftools
+      :hook (org-load . org-pdftools-setup-link)
+  :config
+    (add-to-list 'org-file-apps 
+                 '("\\.pdf\\'" . (lambda (file link)
+                                         (org-pdftools-open link)))))
+
+* org-crypt
+Allow encryption of org trees and sub trees. 
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org-crypt 
+:straight nil
+    :after org
+    :custom
+    (org-crypt-key "carc.sync0@gmail.com")
+    :config
+    (org-crypt-use-before-save-magic))
+  #+END_SRC 
+
+* 取 org-journal
+Although, I have been almost entirely paper-less since I started my
+Master's degree, I have struggled to implement a planning workflow
+(calendar, task list, etc.) that is both easy to maintain and easy to
+use. After all, the litmus test of an efficient and consistent
+planning workflow is daily use. The ~org-journal~ package contains a set
+of functions to maintain a personal diary, using ~org-mode~ and Emacs.
+For my daily planning needs, this is the package I currently use,
+alongside the proverbial ~org-agenda~ and Google calendar.
+
+Caveat: Unfortunately, I have been unable to coordinate my Emacs
+workflow with my mobile phone; therefore, I sometimes require ~Todoist~
+for things such as grocery shopping and recurring tasks. While you can
+do all this within ~org-mode~, and I have, I am not satisfied with the
+implementation so far. 
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org-journal 
+    :after org
+    :custom
+    ;; Set default directory to search for journal files. 
+    (org-journal-dir (concat sync0-dropbox-directory "org"))
+    ;; (org-journal-dir (concat sync0-dropbox-directory "org/journal"))
+    ;; (org-journal-dir (concat (file-name-as-directory org-directory) (format-time-string "journal/%Y")))
+    ;; Delete the date prefix to new journal entries.
+    (org-journal-time-format "")
+    ;; Create one journal file per month. 
+    ;; (org-journal-file-type 'monthly)
+    (org-journal-file-type 'daily)
+    ;; Change the title of journal files to the format: "YYYY_MM.gpg".
+    ;; (org-journal-file-format "%Y_%m.org")
+    (org-journal-file-format "journal_%Y%m%d.org")
+    ;; Change the format of journal entries (org headlines) to "[Day], DD/MM/YYYY".
+    (org-journal-date-format "%A, %Y/%m/%d")
+    ;; Encrypt journal files.
+    (org-journal-encrypt-journal nil)
+    ;; Don't encript individual entires in journal files. It's too cumbersome. 
+    (org-journal-enable-encryption nil)
+    (org-journal-carryover-items "TODO=\"無\"|TODO=\"次\"|TODO=\"中\"|TODO=\"待\"|TODO=\"阻\"")
+    (org-journal-enable-agenda-integration nil)
+    (org-journal-file-header "#+TITLE: %B, %Y\n#+ROAM_TAGS: journal %Y %B\n\n")
+    :config
+    ;; This setup prevents slowing down agenda parsing. 
+    ;; I create a variable to stand for the path of the journal file for the current month.  
+    ;; Then, I have org-agenda parse only this path and not all the past journal files.
+    (setq sync0-journal-this-month-file 
+          (concat sync0-dropbox-directory "org/" (format-time-string "journal_%Y%m%d") ".org"))
+
+          ;;(concat sync0-dropbox-directory "org/journal/" (format-time-string "%Y/%Y_%m") ".org")
+
+    (add-to-list 'org-agenda-files sync0-journal-this-month-file)
+
+    ;;       (require 'sync0-org-journal)
+
+  ;;   (defun sync0-org-journal-new-entry (prefix &optional time)
+  ;;     "Open today's journal file and start a new entry.
+
+  ;; With a PREFIX arg, open the today's file, create a heading if it doesn't exist yet,
+  ;; but do not create a new entry.
+
+  ;; If given a TIME, create an entry for the time's day. If no TIME was given,
+  ;; use the current time (which is interpreted as belonging to yesterday if
+  ;; smaller than `org-extend-today-until`).
+
+  ;; Whenever a journal entry is created the `org-journal-after-entry-create-hook'
+  ;; hook is run."
+  ;;     (interactive "P")
+  ;;     (org-journal-dir-check-or-create)
+
+  ;;     ;; if time is before org-extend-today-until, interpret it as
+  ;;     ;; part of the previous day:
+  ;;     (let (oetu-active-p) ;; org-extend-today-until-active-p
+  ;;       (let ((now (decode-time nil)))
+  ;;         (if (and (not time) ; time was not given
+  ;;                  (< (nth 2 now)
+  ;;                     org-extend-today-until))
+  ;;             (setq oetu-active-p t
+  ;;                   time (encode-time (nth 0 now)      ; second
+  ;;                                     (nth 1 now)      ; minute
+  ;;                                     (nth 2 now)      ; hour
+  ;;                                     (1- (nth 3 now)) ; day
+  ;;                                     (nth 4 now)      ; month
+  ;;                                     (nth 5 now)      ; year
+  ;;                                     (nth 8 now)))))  ; timezone
+
+  ;;       (let* ((entry-path (org-journal-get-entry-path time))
+  ;;              (should-add-entry-p (not prefix))
+  ;;              match)
+
+  ;;         ;; Open journal file
+  ;;         (unless (string= entry-path (buffer-file-name))
+  ;;           (funcall org-journal-find-file entry-path))
+
+  ;;         ;; Create new journal entry if there isn't one.
+  ;;         (let ((entry-header
+  ;;                (if (functionp org-journal-date-format)
+  ;;                    (funcall org-journal-date-format time)
+  ;;                  (concat org-journal-date-prefix
+  ;;                          (format-time-string org-journal-date-format time)))))
+  ;;           (goto-char (point-min))
+  ;;           (unless (search-forward entry-header nil t)
+  ;;             ;; Insure we insert the new journal header at the correct location
+  ;;             (unless (org-journal-daily-p)
+  ;;               (let ((date (decode-time time))
+  ;;                     (dates (sort (org-journal-file->calendar-dates (buffer-file-name))
+  ;;                                  (lambda (a b)
+  ;;                                    (calendar-date-compare (list b) (list a))))))
+  ;;                 (setq date (list (nth 4 date) (nth 3 date) (nth 5 date)))
+  ;;                 (while dates
+  ;;                   (when (calendar-date-compare dates (list date))
+  ;;                     (org-journal-search-forward-created (car dates))
+  ;;                     (outline-end-of-subtree)
+  ;;                     (insert "\n")
+  ;;                     (setq match t
+  ;;                           dates nil))
+  ;;                   (setq dates (cdr dates)))))
+  ;;             ;; True if entry must be inserted at the end of the journal file.
+  ;;             (unless match
+  ;;               (goto-char (point-max))
+  ;;               (forward-line))
+
+  ;;             (when  (looking-back "[^\t ]" (point-at-bol))
+  ;;               (re-search-backward "\\*\\*\\* .+ Aujourd'hui" nil nil 1)
+  ;;               (end-of-line)
+  ;;               (insert "\n")
+  ;;               (beginning-of-line)
+  ;;               (insert entry-header))
+  ;;             ;; For 'weekly, 'monthly and 'yearly journal entries
+  ;;             ;; create a "CREATED" property with the current date.
+  ;;             (unless (org-journal-daily-p)
+  ;;               (org-set-property "CREATED" (format-time-string "%Y%m%d" time)))
+  ;;             (when org-journal-enable-encryption
+  ;;               (unless (member org-crypt-tag-matcher (org-get-tags))
+  ;;                 (org-set-tags org-crypt-tag-matcher)))))
+  ;;         (org-journal-decrypt)
+
+  ;;         ;; move TODOs from previous day here
+  ;;         (when (and org-journal-carryover-items
+  ;;                    (not (string-blank-p org-journal-carryover-items))
+  ;;                    (string= entry-path (org-journal-get-entry-path (current-time))))
+  ;;           (org-journal-carryover))
+
+  ;;         (if (org-journal-org-heading-p)
+  ;;             (outline-end-of-subtree)
+  ;;           (goto-char (point-max)))
+
+  ;;         ;; insert the header of the entry
+  ;;         (when should-add-entry-p
+  ;;           (unless (eq (current-column) 0) (insert "\n"))
+  ;;           (let* ((day-discrepancy (- (time-to-days (current-time)) (time-to-days time)))
+  ;;                  (timestamp (cond
+  ;;                              ;; “time” is today, use normal timestamp format
+  ;;                              ((= day-discrepancy 0)
+  ;;                               (format-time-string org-journal-time-format))
+  ;;                              ;; “time” is yesterday with org-extend-today-until,
+  ;;                              ;; use different timestamp format if available
+  ;;                              ((and (= day-discrepancy 1) oetu-active-p)
+  ;;                               (if (not (string-equal org-journal-time-format-post-midnight ""))
+  ;;                                   (format-time-string org-journal-time-format-post-midnight)
+  ;;                                 (format-time-string org-journal-time-format)))
+  ;;                              ;; “time” is on some other day, use blank timestamp
+  ;;                              (t ""))))
+  ;;             (insert org-journal-time-prefix timestamp))
+  ;;           (run-hooks 'org-journal-after-entry-create-hook))
+
+  ;;         (if (and org-journal-hide-entries-p (org-journal-time-entry-level))
+  ;;             (outline-hide-sublevels (org-journal-time-entry-level))
+  ;;           (save-excursion (org-journal-finalize-view)))
+
+  ;;         (when should-add-entry-p
+  ;;           (outline-show-entry)))))
+
+
+            ;; (let ((scheduled-time (or scheduled-time (org-read-date nil nil nil "Date:")))
+
+    (defun sync0-org-journal-new-scheduled-entry (prefix &optional scheduled-time)
+      "Create a new entry in the future."
+      (interactive "P")
+      (let ((scheduled-time (or scheduled-time (org-read-date nil nil nil "%Y-%m-%d %a")))
+            (raw (prefix-numeric-value prefix)))
+        (org-journal-new-entry (= raw 16) (org-time-string-to-time scheduled-time))
+        (unless (= raw 16)
+          (if (not prefix)
+              (insert "")))))
+
+    ;; (defun sync0-org-journal-new-scheduled-entry (prefix &optional scheduled-time)
+    ;;   "Create a new entry in the future."
+    ;;   (interactive "P")
+    ;;   (let ((scheduled-time (or scheduled-time (org-read-date nil nil nil "%Y-%m-%d %a")))
+    ;;         (raw (prefix-numeric-value prefix)))
+    ;;     (org-journal-new-entry (= raw 16) (org-time-string-to-time scheduled-time))
+    ;;     (unless (= raw 16)
+    ;;       (if (not prefix)
+    ;;           (insert "無 "))
+    ;;       (save-excursion
+    ;;         (insert "\nSCHEDULED: <" scheduled-time ">")))))
+
+
+    ;; (defun org-journal-date-format-func (time)
+    ;;   "Custom function to insert journal date header.
+    ;;   When buffer is empty prepend a header in front the entry header."
+    ;;   (concat (when (= (buffer-size) 0)
+    ;;             (concat
+    ;;              (pcase org-journal-file-type
+    ;;                (`daily "#+CATEGORY: Journal")
+    ;;                (`weekly "#+CATEGORY: Journal")
+    ;;                (`monthly "#+CATEGORY: Journal")
+    ;;                (`yearly "#+CATEGORY: Journal"))))
+    ;;           org-journal-date-prefix
+    ;;           (format-time-string "%A, %x" time)))
+
+    ;; (setq org-journal-date-format 'org-journal-date-format-func)
+
+    :bind (("C-c j" . sync0-org-journal-new-scheduled-entry)
+           :map org-journal-mode-map
+           ("C-c C-s" . org-schedule)))
+  #+END_SRC 
+
+* org-journal
+Although, I have been almost entirely paper-less since I started my
+Master's degree, I have struggled to implement a planning workflow
+(calendar, task list, etc.) that is both easy to maintain and easy to
+use. After all, the litmus test of an efficient and consistent
+planning workflow is daily use. The ~org-journal~ package contains a set
+of functions to maintain a personal diary, using ~org-mode~ and Emacs.
+For my daily planning needs, this is the package I currently use,
+alongside the proverbial ~org-agenda~ and Google calendar.
+
+Caveat: Unfortunately, I have been unable to coordinate my Emacs
+workflow with my mobile phone; therefore, I sometimes require ~Todoist~
+for things such as grocery shopping and recurring tasks. While you can
+do all this within ~org-mode~, and I have, I am not satisfied with the
+implementation so far. 
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org-journal 
+    :after org
+    :custom
+    ;; Set default directory to search for journal files. 
+    ;;(org-journal-dir (concat sync0-dropbox-directory "org"))
+    (org-journal-dir (concat sync0-dropbox-directory "org/journal"))
+    ;; Delete the date prefix to new journal entries.
+    (org-journal-time-format "")
+    ;; Create one journal file per month. 
+    ;; (org-journal-file-type 'monthly)
+    (org-journal-file-type 'daily)
+    ;; Change the title of journal files to the format: "YYYY_MM.gpg".
+    (org-journal-file-format "%Y%m%d.org")
+    ;; Change the format of journal entries (org headlines) to "[Day], DD/MM/YYYY".
+    ;; (org-journal-date-format "%A, %Y/%m/%d")
+    (org-journal-date-format "%A")
+    ;; Encrypt journal files.
+    (org-journal-encrypt-journal nil)
+    ;; Don't encript individual entires in journal files. It's too cumbersome. 
+    (org-journal-enable-encryption nil)
+    (org-journal-carryover-items "TODO=\"無\"|TODO=\"次\"|TODO=\"中\"|TODO=\"待\"|TODO=\"阻\"")
+    (org-journal-enable-agenda-integration nil)
+    (org-journal-file-header "#+TITLE: %A, %d %B %Y\n#+CREATED: %Y/%m/%d\n#+DATE: %Y/%m/%d\n#+ROAM_TAGS: journal %Y %B\n\n")
+    :config
+    ;; This setup prevents slowing down agenda parsing. 
+    ;; I create a variable to stand for the path of the journal file for the current month.  
+    ;; Then, I have org-agenda parse only this path and not all the past journal files.
+    (setq sync0-journal-this-month-file 
+          (concat sync0-dropbox-directory "org/" (format-time-string "%Y%m%d") ".org"))
+
+          ;;(concat sync0-dropbox-directory "org/journal/" (format-time-string "%Y/%Y_%m") ".org")
+
+    (add-to-list 'org-agenda-files sync0-journal-this-month-file)
+
+    (defun sync0-org-journal-new-scheduled-entry (prefix &optional scheduled-time)
+      "Create a new entry in the future."
+      (interactive "P")
+      (let ((scheduled-time (or scheduled-time (org-read-date nil nil nil "%Y-%m-%d %a")))
+            (raw (prefix-numeric-value prefix)))
+        (org-journal-new-entry (= raw 16) (org-time-string-to-time scheduled-time))
+        (unless (= raw 16)
+          (if (not prefix)
+              (insert "")))))
+
+    :bind (("C-c j" . sync0-org-journal-new-scheduled-entry)
+           :map org-journal-mode-map
+           ("C-c C-s" . org-schedule)))
+  #+END_SRC 
+
+* 取 org-capture
+#+BEGIN_SRC emacs-lisp
+          (use-package org-capture 
+            :after org 
+            :commands org-capture
+            :preface 
+            (defun org-journal-find-location ()
+              ;; Open today's journal, but specify a non-nil prefix argument in order to
+              ;; inhibit inserting the heading; org-capture will insert the heading.
+              (org-journal-new-entry t)
+              ;; Position point on the journal's top-level heading so that org-capture
+              ;; will add the new entry as a child entry.
+              (goto-char (point-min)))
+
+        ;;     (defun sync0-org-journal-find-location ()
+        ;; "Search the current journal file for today's tasks and add a new one"
+        ;;       ;; Open today's journal, but specify a non-nil prefix argument in order to
+        ;;       ;; inhibit inserting the heading; org-capture will insert the heading.
+        ;;       (org-journal-new-entry t)
+        ;;       ;; Position point on the journal's top-level heading so that org-capture
+        ;;      (goto-char (point-min))
+        ;;      (re-search-forward "\\*\\*\\* .+ Aujourd'hui" nil nil 1))
+            :custom
+            (org-default-notes-file "~/Dropbox/inbox/notes.org")
+            :config 
+
+      ;; See https://emacs.stackexchange.com/questions/40749/using-user-prompted-file-name-for-org-capture-in-template
+
+      (defun sync0-generate-spontaneous-note-name ()
+        (let ((time (format-time-string "%Y%m%d%H%M%S")))
+          (expand-file-name (format "writing_spontaneous_%s.org" time) "~/Dropbox/org/projects/")))
+
+      (defun sync0-generate-inbox-note-name ()
+        (let ((time (format-time-string "%Y%m%d%H%M%S")))
+          (expand-file-name (format "%s.org" time) "~/Dropbox/org/inbox/")))
+
+      (defun sync0-generate-zettel-name ()
+        (let ((time (format-time-string "%Y%m%d%H%M%S")))
+          (expand-file-name (format "%s.org" time) "~/Dropbox/org/")))
+
+    ;;   (defun sync0-generate-writing-note-name ()
+    ;;     (let ((time (format-time-string "%Y%m%d%H%M%S")))
+    ;;       (expand-file-name (format "%s.org" time) "~/Dropbox/org/projects/")))
+
+    ;;   (defun sync0-generate-project-name ()
+    ;; (setq sync0-project-name (read-string "Project name: "))
+    ;; (setq sync0-project-time (format-time-string "%Y%m%d%H%M%S"))
+    ;; (setq sync0-project-time-ordered (format-time-string "%Y/%m/%d"))
+    ;;       (expand-file-name (format "%s_%s.org" sync0-project-name sync0-project-time) "~/Dropbox/org/projects/"))
+
+      (defun sync0-generate-project-note-name ()
+    (setq sync0-project-name (read-string "Project name: "))
+    (setq sync0-project-name-upcase (upcase sync0-project-name))
+    (setq sync0-project-time (format-time-string "%Y%m%d%H%M%S"))
+    (setq sync0-project-time-ordered (format-time-string "%Y/%m/%d"))
+          (expand-file-name (format "%s_%s.org" sync0-project-name sync0-project-time) "~/Dropbox/org/projects/"))
+
+      (defun sync0-generate-zettelkasten-name ()
+    (setq sync0-zettelkasten-name (read-string "Zettelkasten name: "))
+    (setq sync0-zettelkasten-time (format-time-string "%Y%m%d%H%M%S"))
+    (setq sync0-zettelkasten-time-ordered (format-time-string "%Y/%m/%d"))
+          (expand-file-name (format "%s_zettelkasten.org" sync0-zettelkasten-name) "~/Dropbox/org/projects/"))
+
+      (defun sync0-generate-fiche-name ()
+  (progn 
+    (setq sync0-fiche-name (read-string "Fiche created for: "))
+    (setq sync0-fiche-name-uppercase 
+        (let* ((author_list (split-string sync0-fiche-name "_"))
+              (last_name (nth 0 author_list))
+              (first_name (nth 1 author_list))
+              (author_string (format "%s %s" first_name last_name)))
+        (upcase-initials author_string)))
+    (setq sync0-fiche-time (format-time-string "%Y/%m/%d"))
+          (expand-file-name (format "fiche_%s.org" sync0-fiche-name) "~/Dropbox/org/")))
+
+            (setq org-capture-templates 
+                  '(("j" "Journal" entry (function org-journal-find-location)
+                     "* %(format-time-string org-journal-time-format)\n\n%?"
+                                   :jump-to-captured t :immediate-finish t)
+                   ("z" "Zettelkasten" plain 
+                   (file sync0-generate-zettelkasten-name)
+                   "%(format \"#+TITLE: Zettelkasten sur %s\n#+CREATED: %s\n#+DATE: \n#+ROAM_TAGS: zettelkasten %s\" sync0-zettelkasten-name sync0-zettelkasten-time-ordered sync0-zettelkasten-name)\n\n%?"
+                   :jump-to-captured t)
+                   ("f" "Fiche" plain 
+                   (file sync0-generate-fiche-name)
+                   "%(format \"#+TITLE: %s\n#+CREATED: %s\n#+DATE: \n#+ROAM_TAGS: fiches %s\" sync0-fiche-name-uppercase sync0-fiche-time sync0-fiche-name)\n\nOrigin: %a\n\n%?"
+                   :jump-to-captured t)
+                  ;;  :unnarrowed t
+                   ("p" "Note de projet" plain 
+                   (file sync0-generate-project-note-name)
+                   "%(format \"#+TITLE: \n#+CREATED: %s\n#+DATE: \n#+ROAM_TAGS: projects %s %s\" sync0-project-time-ordered sync0-project-name sync0-current-year)\n\nOrigin: %a\n\n%?"
+                   :jump-to-captured t)
+                     ("t" "Liste de tâches" plain
+                     (file sync0-generate-project-note-name)
+                     "%(format \"#+TITLE: Tâches de %s\n#+CATEGORY: %s\" sync0-project-name sync0-project-name-upcase)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: projects todo %(format \"%s\n#+FILETAGS: :projects:todo:%s:\" sync0-project-name sync0-project-name)\n\nOrigin: %a\n\n%?"
+                   :unnarrowed t)
+                   ("a" "Annotation" plain 
+                    (file sync0-generate-zettel-name)
+                     "#+TITLE: %(format \"%s\" sync0-annotations-key)\n#+AUTHOR: %(format \"%s\" sync0-annotations-author)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y> %(format \"%s\" sync0-current-month-downcase) %(format \"%s\" sync0-annotations-key) annotations\n\nOrigin: %a\n\nDans la page %?"
+                   :unnarrowed t)
+                     ;; "#+TITLE: %(buffer-name (plist-get org-caputre-plist :orginial-buffer))\n#+AUTHOR: %(format \"%s\" sync0-annotations-author)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y> %(format \"%s\" sync0-current-month-downcase) %(buffer-name (plist-get org-caputre-plist :orginial-buffer)) annotations\n\nOrigin: %a\n\nDans la page "
+                ("e" "Pensée éphémère" plain
+                 (file sync0-generate-inbox-note-name)
+               "#+TITLE: \n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y>  %<%B>\n\nOrigin: %a\n\n%?"
+                   :unnarrowed t)
+                    ("r" "Recommendation" entry
+                     (file+headline "~/Dropbox/org/recommendations.org" "Non classé")
+                     "** 無 %^{author_lastname, title} \n:PROPERTIES:\n:CREATED: %<%Y-%m-%d>\n:RECOMMENDER: %^{Recommender}\n:END:" :prepend t)
+                    ("l" "Lecture du doctorat" entry
+                     (file+headline "~/Dropbox/org/projects/doctorat_readings.org" "Non-classées")
+                     "** %^{lastname, title} \n:PROPERTIES:\n:CREATED: %<<%Y-%m-%d>>\n:ORIGIN: %a\n:END:" :prepend t)
+              ("n" "Numérotée" plain 
+                 (file sync0-generate-zettel-name)
+             "#+TITLE: %^{Title}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y>  %<%B>\n\nOrigin: %a\n\n%?"
+             :unnarrowed t)
+                  ("s" "Écriture spontanée" plain
+                 (file sync0-generate-spontaneous-note-name)
+                   "#+TITLE: Divertisements du %<%d> %<%B> %<%Y>\n#+ROAM_TAGS: writings spontaneous %<%Y> %<%B>\n\n%?")
+                    ;; ("q" "Question" entry (function org-journal-find-location)
+                    ;;  "** 無 %^{question}\n:PROPERTIES:\n:ADDED: %<%Y-%m-%d>\n:ORIGIN: %a\n:END:%i%?")
+                    ("m" "Email" entry 
+                     (file+headline "~/Dropbox/org/messages.org" "Courriel")
+                     "** 無 %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n" :prepend t)))
+
+            :bind 
+            (("\C-c c" . org-capture)))
+#+END_SRC 
+
+* org-capture
+#+BEGIN_SRC emacs-lisp
+          (use-package org-capture 
+           :straight nil
+            :after org 
+            :commands org-capture
+            :preface 
+            (defun org-journal-find-location ()
+              ;; Open today's journal, but specify a non-nil prefix argument in order to
+              ;; inhibit inserting the heading; org-capture will insert the heading.
+              (org-journal-new-entry t)
+              ;; Position point on the journal's top-level heading so that org-capture
+              ;; will add the new entry as a child entry.
+              (goto-char (point-min)))
+
+            :custom
+            (org-default-notes-file "~/Dropbox/etc/notes.org")
+
+            :config 
+;; The following two functions are necessary to replicate the functionality of org-roam into org-capture.
+;; https://emacs.stackexchange.com/questions/27620/orgmode-capturing-original-document-title
+(defun sync0-org-get-title (file)
+  (let (title)
+    (when file
+      (with-current-buffer
+          (get-file-buffer file)
+        (pcase (org-collect-keywords '("TITLE"))
+          (`(("TITLE" . ,val))
+           (setq title (car val)))))
+      title)))
+
+(defun sync0-org-get-abbreviated-path (file)
+(interactive)
+  (let (path)
+    (when file
+      (with-current-buffer
+          (get-file-buffer file)
+          (setq path (abbreviate-file-name file)))
+      path)))
+
+      ;; See https://emacs.stackexchange.com/questions/40749/using-user-prompted-file-name-for-org-capture-in-template
+
+      ;; (defun sync0-generate-zettel-name ()
+      ;;   (let ((time (format-time-string "%Y%m%d%H%M%S")))
+      ;;     (expand-file-name (format "%s.org" time) "~/Dropbox/org/")))
+
+      (defun sync0-generate-inbox-zettel-name ()
+    (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
+    (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
+          (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/inbox/"))
+
+      (defun sync0-generate-spontaneous-zettel-name ()
+    (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
+    (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
+          (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/spontaneous/"))
+
+      ;; (defun sync0-generate-zettel-name ()
+    ;; (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
+    ;; (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
+          ;; (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/"))
+
+      (defun sync0-generate-zettel-name ()
+    (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
+    (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
+   ;; (setq sync0-zettel-parent-title (org-roam--extract-titles-title (org-capture-get :original-buffer)))
+          (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/"))
+
+
+      (defun sync0-generate-reference-name ()
+    (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
+    (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
+          (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/references/"))
+
+      (defun sync0-generate-project-name ()
+    (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
+    (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
+    (setq sync0-project-name (read-string "Nom du projet: "))
+          (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/projects/"))
+
+      (defun sync0-generate-fiche-name ()
+    (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
+    (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
+    (setq sync0-fiche-name (read-string "Fiche created for: "))
+    (setq sync0-fiche-name-uppercase 
+        (let* ((author_list (split-string sync0-fiche-name "_"))
+              (last_name (nth 0 author_list))
+              (first_name (nth 1 author_list))
+              (author_string (format "%s %s" first_name last_name)))
+        (upcase-initials author_string)))
+          (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/"))
+
+            (setq org-capture-templates 
+                  '(("j" "Journal" entry (function org-journal-find-location)
+                     "* %(format-time-string org-journal-time-format)\n%?"
+                                   :jump-to-captured t :immediate-finish t)
+                   ("z" "Zettelkasten" plain 
+                   (file sync0-generate-zettel-name)
+                   "%(format \"#+TITLE: Zettelkasten sur \n#+CREATED: %s\n#+DATE: \n#+ROAM_TAGS: zettelkasten \n\n\" sync0-zettel-time-ordered)"
+                   :jump-to-captured t)
+                   ("f" "Fiche" plain 
+                   (file sync0-generate-fiche-name)
+                   "%(format \"#+TITLE: Fiche sur %s\n#+CREATED: %s\n#+DATE: \n#+ROAM_TAGS: fiches %s\" sync0-fiche-name-uppercase sync0-zettel-time-ordered sync0-fiche-name)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title (org-capture-get :original-file))]]\n\n"
+                   :jump-to-captured t)
+                  ;;  :unnarrowed t
+                   ("p" "Note de projet" plain 
+                   (file sync0-generate-project-name)
+                   "%(format \"#+TITLE: \n#+CREATED: %s\n#+DATE: \n#+ROAM_TAGS: projects %s %s\" sync0-zettel-time-ordered sync0-project-name sync0-current-year)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title (org-capture-get :original-file))]]\n\n"
+                   :jump-to-captured t)
+                     ;; ("t" "Tâche" entry
+                      ;; (file+headline "~/Dropbox/org/etc/todo.org" "Autres")
+                     ;; "** 無 %^{Task} \n:PROPERTIES:\n:CREATED: %<<%Y-%m-%d>>\n:END:" :prepend t)
+                ("e" "Pensée éphémère" plain
+                 (file sync0-generate-inbox-zettel-name)
+               "#+TITLE: \n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: inbox %<%Y> %<%B>\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title (org-capture-get :original-file))]]\n\n")
+                     ("t" "Liste de tâches" plain
+                     (file sync0-generate-project-note-name)
+                     "%(format \"#+TITLE: Tâches de %s\n#+CATEGORY: %s\" sync0-project-name sync0-project-name-upcase)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: projects todo %(format \"%s\n#+FILETAGS: :projects:todo:%s:\" sync0-project-name sync0-project-name)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title (org-capture-get :original-file))]]\n\n%?"
+                   :unnarrowed t)
+                   ("a" "Annotation" plain 
+                    (file sync0-generate-zettel-name)
+                     "#+TITLE: %(format \"%s\" sync0-annotations-key)\n#+AUTHOR: %(format \"%s\" sync0-annotations-author)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y> %(format \"%s\" sync0-current-month-downcase) %(format \"%s\" sync0-annotations-key) annotations\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title (org-capture-get :original-file))]]\n\nDans la page %?"
+                   :unnarrowed t)
+                    ;; ("r" "Recommendation" entry
+                     ;; (file+headline "~/Dropbox/org/recommendations.org" "Non classé")
+                     ;; "** 無 %^{author_lastname, title} \n:PROPERTIES:\n:CREATED: %<%Y-%m-%d>\n:RECOMMENDER: %^{Recommender}\n:END:" :prepend t)
+                   ("l" "Note de lecture" plain 
+                    (file sync0-generate-reference-name)
+                   "#+TITLE: %^{Title}\n#+SUBTITLE: %^{Subtitle}\n#+AUTHOR: %^{Author}\n#+ROAM_KEY: cite:%^{Cite key}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %4 references %?\n#+INTERLEAVE_PDF:\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title (org-capture-get :original-file))]]\n\n"
+                   :unnarrowed t)
+                    ;; ("l" "Lecture du doctorat" entry
+                    ;;  (file+headline "~/Dropbox/org/doctorat_readings.org" "Non-classées")
+                    ;;  "** %^{lastname, title} \n:PROPERTIES:\n:CREATED: %<<%Y-%m-%d>>\n:ORIGIN: %a\n:END:" :prepend t)
+              ("w" "Site web" plain 
+                 (file sync0-generate-zettel-name)
+             "#+TITLE: %^{Title}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y> %<%B> annotations\n#+ROAM_KEY: \n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title (org-capture-get :original-file))]]\n\n%?"
+             :unnarrowed t)
+              ("n" "Numérotée" plain 
+                 (file sync0-generate-zettel-name)
+             ;; "#+TITLE: %^{Title}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y>  %<%B>\n\nOrigin: %F\n\n"
+             ;; "#+TITLE: %^{Title}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y>  %<%B>\n\nOrigin: %(sync0-org-get-title (org-capture-get :original-file))\n\n"
+              "#+TITLE: %^{Title}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y>  %<%B>\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title (org-capture-get :original-file))]]\n\n"
+             :unnarrowed t)
+              ;; ("n" "Numérotée" plain 
+              ;;    (file sync0-generate-zettel-name)
+             ;; "#+TITLE: %^{Title}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y>  %<%B>\n\nOrigin: %a\n\n"
+             ;; :unnarrowed t)
+                  ("s" "Écriture spontanée" plain
+                 (file sync0-generate-spontaneous-zettel-name)
+                   "#+TITLE: Divertisements du %<%d> %<%B> %<%Y>\n#+ROAM_TAGS: spontaneous %<%Y> %<%B>\n\n")
+                    ("m" "Email" entry 
+                     (file+headline "~/Dropbox/org/messages.org" "Courriel")
+                     "** 無 %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n" :prepend t)))
+
+            :bind 
+            (("\C-c c" . org-capture)))
+#+END_SRC 
+
+* org-agenda
+#+BEGIN_SRC emacs-lisp
+      (use-package org-agenda 
+:straight nil
+        :after (org all-the-icons)
+  :commands       (sync0-pop-to-org-agenda org-agenda)
+        :custom
+        (org-agenda-todo-keyword-format "%-1s ")
+        (org-agenda-include-diary t)
+        (org-agenda-inhibit-startup t)
+        (org-agenda-dim-blocked-tasks nil)
+        (org-cycle-separator-lines 0)
+        ;; Set property inheritance
+        ;; (org-use-property-inheritance '("PRIORITY" "DEADLINE" "SCHEDULED"))
+        ;; Choose the placement of org tags in org files.
+        (org-tags-column 80)
+        ;; Place org agenda tags in the same place as org tags.
+        (org-agenda-tags-column 0)
+        ;; Make org-agenda the only window by default.
+        (org-agenda-window-setup 'only-window )
+        (org-agenda-block-separator (string-to-char " "))
+        ;; Build agenda manually (to update press "r").
+        (org-agenda-sticky t)
+        ;; Compact the block agenda view. This deletes the section separators.
+        (org-agenda-compact-blocks nil)
+        ;; Allow one-key todo selection.
+        (org-use-fast-todo-selection t)
+        ;; Include the todo keywords in fast tag selection buffer.
+        (org-fast-tag-selection-include-todo t)
+        ;; Allow one-key tag selection.
+        (org-fast-tag-selection-single-key t)
+        ;; each habit to show up when it is next scheduled, but no further repetitions
+        (org-agenda-repeating-timestamp-show-all nil)
+        ;; This variable may be set to nil, t, or a number which will then
+        ;; give the number of days before the actual deadline when the
+        ;; prewarnings should resume.
+        ;; (org-agenda-skip-deadline-prewarning-if-scheduled 'post-deadline)
+        (org-agenda-skip-scheduled-if-deadline-is-shown t)
+        ;; (org-agenda-skip-scheduled-if-deadline-is-shown t)
+        ;; Add appointments duration to column view's effort estimates.
+        (org-agenda-columns-add-appointments-to-effort-sum t)
+        (org-agenda-ignore-drawer-properties '(effort appt category))
+        (org-agenda-deadline-leaders (quote ("!" "%-1d日<" "%-1d日>")))
+        (org-agenda-scheduled-leaders (quote ("!" "?")))
+
+        :preface
+
+        (defun sync0--org-agenda-goto-header (&optional backwards)
+          "Find the next agenda series header forwards or BACKWARDS."
+          (let ((pos (save-excursion
+                       (goto-char (if backwards
+                                      (line-beginning-position)
+                                    (line-end-position)))
+                       (let* ((find-func (if backwards
+                                             'previous-single-property-change
+                                           'next-single-property-change))
+                              (end-func (if backwards 'max 'min))
+                              (all-pos-raw (list (funcall find-func (point) 'org-agenda-structural-header)
+                                                 (funcall find-func (point) 'org-agenda-date-header)))
+                              (all-pos (cl-remove-if-not 'numberp all-pos-raw))
+                              (prop-pos (if all-pos (apply end-func all-pos) nil)))
+                         prop-pos))))
+            (if pos (goto-char pos))
+            (if backwards (goto-char (line-beginning-position)))))
+
+        (defun sync0-number-to-month (arg &optional no-abbrev)
+          "Helper function to convert a number into the month name"
+          (if no-abbrev
+              (cond ((equal 1 arg) "Janvier")
+                    ((equal 2 arg) "Février")
+                    ((equal 3 arg) "Mars")
+                    ((equal 4 arg) "Avril")
+                    ((equal 5 arg) "Mai")
+                    ((equal 6 arg) "Juin")
+                    ((equal 7 arg) "Juillet")
+                    ((equal 8 arg) "Août")
+                    ((equal 9 arg) "Septembre")
+                    ((equal 10 arg) "Octobre")
+                    ((equal 11 arg) "Novembre")
+                    ((equal 12 arg) "Décembre")
+                    (t "nil"))
+            (cond ((equal 1 arg) "Jan.")
+                  ((equal 2 arg) "Fév.")
+                  ((equal 3 arg) "Mars")
+                  ((equal 4 arg) "Avr.")
+                  ((equal 5 arg) "Mai")
+                  ((equal 6 arg) "Juin")
+                  ((equal 7 arg) "Jul.")
+                  ((equal 8 arg) "Août")
+                  ((equal 9 arg) "Sep.")
+                  ((equal 10 arg) "Oct.")
+                  ((equal 11 arg) "Nov.")
+                  ((equal 12 arg) "Déc.")
+                  (t "nil"))))
+
+        (defun sync0-number-to-day (arg &optional no-abbrev)
+          "Helper function to convert a number into the day name"
+          (if no-abbrev
+              (cond ((equal 1 arg) "Dimanche")
+                    ((equal 2 arg) "Lundi")
+                    ((equal 3 arg) "Mardi")
+                    ((equal 4 arg) "Mercredi")
+                    ((equal 5 arg) "Jeudi")
+                    ((equal 6 arg) "Vendredi")
+                    ((equal 7 arg) "Samedi")
+                    (t "nil"))
+            (cond ((equal 1 arg) "Dim.")
+                  ((equal 2 arg) "Lun.")
+                  ((equal 3 arg) "Mar.")
+                  ((equal 4 arg) "Mer.")
+                  ((equal 5 arg) "Jeu.")
+                  ((equal 6 arg) "Ven.")
+                  ((equal 7 arg) "Sam.")
+                  (t "nil"))))
+
+        :config
+
+        ;; workaround developed by some smart user to circumvent org-agenda's slow performance
+        ;; (run-with-idle-timer 5 nil (lambda () (org-agenda-list) (delete-window)))
+
+        ;; Set icons for use in agenda views. 
+        (setq org-agenda-category-icon-alist `(
+                                               ("[Tt][aâ]ches" ,(list (all-the-icons-material "check_box" :height 1.2)) nil nil :ascent center)
+                                               ("[Tt]asks" ,(list (all-the-icons-material "check_box" :height 1.2)) nil nil :ascent center)
+                                               ("[Cc]hores" ,(list (all-the-icons-material "home" :height 1.2)) nil nil :ascent center)
+                                               ("[Mh][ée]nage" ,(list (all-the-icons-material "home" :height 1.2)) nil nil :ascent center)
+                                               ("[Hh]abitudes" ,(list (all-the-icons-material "date_range" :height 1.2)) nil nil :ascent center)
+                                               ("[Hh]abits" ,(list (all-the-icons-material "date_range" :height 1.2)) nil nil :ascent center)
+                                               ("[ÉEée]tudes" ,(list (all-the-icons-material "account_balance" :height 1.2)) nil nil :ascent center)
+                                               ("[Hh]historiographie" ,(list (all-the-icons-material "account_balance" :height 1.2)) nil nil :ascent center)
+                                               ("[Cc]lasses" ,(list (all-the-icons-material "account_balance" :height 1.2)) nil nil :ascent center)
+                                               ("[ÉEée]v[eé]nements" ,(list (all-the-icons-material "group" :height 1.2)) nil nil :ascent center)
+                                               ("[Ee]vents" ,(list (all-the-icons-material "group" :height 1.2)) nil nil :ascent center)
+                                               ("[Ee]macs" ,(list (all-the-icons-material "code" :height 1.2)) nil nil :ascent center)
+                                               ("[Ll]yon" ,(list (all-the-icons-material "pageview" :height 1.2)) nil nil :ascent center)
+                                               ("[Ss]ocialism" ,(list (all-the-icons-material "build" :height 1.2)) nil nil :ascent center)
+                                               ("[Ss]ocialisme" ,(list (all-the-icons-material "build" :height 1.2)) nil nil :ascent center)
+                                               ("[Oo]utils" ,(list (all-the-icons-material "find_in_page" :height 1.2)) nil nil :ascent center)
+                                               ("[Tt]ools" ,(list (all-the-icons-material "find_in_page" :height 1.2)) nil nil :ascent center)
+                                               ("[Tt]ravail" ,(list (all-the-icons-material "business_center" :height 1.2)) nil nil :ascent center)
+                                               ("[Dd]octorat" ,(list (all-the-icons-material "school" :height 1.2)) nil nil :ascent center)
+                                               ("[Ss]efardi" ,(list (all-the-icons-material "timeline" :height 1.2)) nil nil :ascent center)
+                                               ("[Dd]iary" ,(list (all-the-icons-material "today" :height 1.2)) nil nil :ascent center)
+                                               ("[Mm]essages" ,(list (all-the-icons-material "mail_outline" :height 1.2)) nil nil :ascent center)
+                                               ("[Mm]essages ([[:graph:]]+)" ,(list (all-the-icons-material "mail_outline" :height 1.2)) nil nil :ascent center)
+                                               ("[Mm]\. ([[:graph:]]+)" ,(list (all-the-icons-material "mail_outline" :height 1.2)) nil nil :ascent center)
+                                               ("[EÉée]criture" ,(list (all-the-icons-material "create" :height 1.2)) nil nil :ascent center)
+                                               ("[Ww]riting" ,(list (all-the-icons-material "create" :height 1.2)) nil nil :ascent center)
+                                               ("[Pp]ortuguês" ,(list (all-the-icons-material "translate" :height 1.2)) nil nil :ascent center)
+                                               ("[Ff]rançais" ,(list (all-the-icons-material "translate" :height 1.2)) nil nil :ascent center)
+                                               ("[Ee]spañol" ,(list (all-the-icons-material "translate" :height 1.2)) nil nil :ascent center)
+                                               ("[Ee]nglish" ,(list (all-the-icons-material "translate" :height 1.2)) nil nil :ascent center)
+                                               ("[Bb]log" ,(list (all-the-icons-material "speaker_notes" :height 1.2)) nil nil :ascent center)))
+
+        (defun sync0-org-agenda-format-date-aligned (date)
+          "Format a DATE string for display in the daily/weekly agenda, or timeline.
+                         This function makes sure that dates are aligned for easy reading."
+          (require 'cal-iso)
+          (let* ((dayname (calendar-day-name date nil nil))
+                 (day (cadr date))
+                 ;; (french (calendar-french-date-string date))
+                 ;; (french (substring (calendar-french-date-string date) 0 -6))
+                 (day-of-week (calendar-day-of-week date))
+                 (month (car date))
+                 (monthname (calendar-month-name month nil))
+                 (year (nth 2 date))
+                 (iso-week (org-days-to-iso-week
+                            (calendar-absolute-from-gregorian date)))
+                 (weekyear (cond ((and (= month 1) (>= iso-week 52))
+                                  (1- year))
+                                 ((and (= month 12) (<= iso-week 1))
+                                  (1+ year))
+                                 (t year)))
+                 (weekstring (if (= day-of-week 1)
+                                 (format " W%02d" iso-week)
+                               "")))
+            (format "%-2s %2d %s"
+                    dayname day monthname)))
+
+        (setq org-agenda-format-date 'sync0-org-agenda-format-date-aligned)
+
+        ;; Set of functions to have evil bindings in org-agenda.
+        (defun sync0-org-agenda-next-header ()
+          "Jump to the next header in an agenda series."
+          (interactive)
+          (sync0--org-agenda-goto-header))
+
+        (defun sync0-org-agenda-previous-header ()
+          "Jump to the previous header in an agenda series."
+          (interactive)
+          (sync0--org-agenda-goto-header t))
+
+        ;; Fast access agenda view.
+        ;;(defun sync0-pop-to-org-agenda (&optional split)
+        ;; "Visit the org agenda, in the current window or a SPLIT."
+        ;;(interactive "P")
+        ;;(org-agenda nil "h")) 
+
+        ;; Fast access agenda view.
+        (defun sync0-pop-to-org-agenda (&optional split)
+          "Visit the org agenda, in the current window or a SPLIT."
+          (interactive "P")
+          (org-agenda nil "h")
+          (when (not split)
+            (delete-other-windows)))
+
+        (defun sync0-org-agenda-get-timestamp-time ()
+          "Get timestamp from current org-agenda time"
+          ;; Firs, determine whether the headline has both a schedule and
+          ;; deadeline?
+          ;; 
+          ;; NOTE: The first part of the conditional (the "((and ...)"
+          ;; part) has schedules take precedence over deadelines based on
+          ;; the assumption that headlines are scheduled so as to be
+          ;; accomplished before the deadline. Therefore, although
+          ;; deadlines coudl occur before schedules, displaying this
+          ;; information in the org-agenda would not offer any useful
+          ;; information for planning purpose. In such cases, for real
+          ;; tasks the headline would be eventually re-scheduled so as to
+          ;; observe the rule that schedules take precedence over
+          ;; deadlines. 
+          ;;  
+          ;;  When both a schedule and a deadline have been defined:
+          (cond ((and (org-get-scheduled-time (point))
+                      (org-get-deadline-time (point)))
+                 (let* ((schedule (org-get-scheduled-time (point)))
+                        (tomorrow-string  (shell-command-to-string "echo -n $(date -d tomorrow +'%Y-%m-%d')"))
+                        (org-schedule-string  (format-time-string "%Y-%m-%d" schedule))
+                        (month-start-name (capitalize (format-time-string "%b" schedule)))
+                        (day-start (format-time-string "%d" schedule))
+                        (day-start-name (capitalize (format-time-string "%a" schedule)))
+                        (time-start-test (format-time-string "%H:%M" schedule))
+                        (time-start (if (string= "00" (format-time-string "%M" schedule)) 
+                                        (format-time-string "%Hh" schedule)
+                                      (format-time-string "%H:%M" schedule)))
+                        (deadline (org-get-deadline-time (point)))
+                        (org-deadline-string (format-time-string "%Y-%m-%d" deadline))
+                          (day-end-raw (format-time-string "%d" deadline))
+                          (day-end (if (string-match "0\\([[:digit:]]$\\)" day-end-raw)
+                                      (match-string 1 day-end-raw) day-end-raw))
+                        ;; (day-end  (format-time-string "%d" deadline))
+                        (day-end-name (capitalize (format-time-string "%a" deadline)))
+                        (time-end-test (format-time-string "%H:%M" deadline))
+                        (time-end (if (string= "00" (format-time-string "%M" deadline)) 
+                                      (format-time-string "%Hh" deadline)
+                                    (format-time-string "%H:%M" deadline))))
+                   ;; Test whether the hour and minute "%H:%M" string is
+                   ;; relevant and, thus, should be included in org-agenda
+                   ;; views.
+                   (cond ((and  (string= "00:00" time-start-test)
+                                (string= "00:00" time-end-test))
+                          (if (or (string= tomorrow-string org-schedule-string)
+                                  (string= tomorrow-string org-deadline-string))
+                              (concat "Demain" "-" day-end " " month-start-name)
+                            (concat day-start-name " " day-start "-" day-end " " month-start-name)))
+                         ((or (not (string= "00:00" time-start-test))
+                              (not (string= "00:00" time-end-test)))
+                          (if (or (string= tomorrow-string org-schedule-string)
+                                  (string= tomorrow-string org-deadline-string))
+                              (concat "Demain" "-" day-end " " month-start-name ", " time-start "-" time-end)
+                            (concat day-start "-" day-end " " month-start-name ", " time-start "-" time-end))))))
+                ;; Second part, when either schedule or deadline have been
+                ;; defined:
+                ((or (org-get-scheduled-time (point))
+                     (org-get-deadline-time (point)))
+                 ;; Follow the convention that schedules take precedence
+                 ;; over deadlines. If schedule has been defined:
+                 (if (org-get-scheduled-time (point))
+                     (let* ((schedule (org-get-scheduled-time (point)))
+                            (tomorrow-string  (shell-command-to-string "echo -n $(date -d tomorrow +'%Y-%m-%d')"))
+                            (org-schedule-string (format-time-string "%Y-%m-%d" schedule))
+                            ;; Define the object "scheduled" containing the date
+                            ;; information from which all the other variables wiil be
+                            ;; defined.
+                            (element (org-element-at-point))
+                            (scheduled (org-element-property :scheduled element))
+                            (year-start (org-element-property :year-start scheduled))
+                            (year-start-string (number-to-string year-start))  
+                            (year-end (org-element-property :year-end scheduled))
+                            (year-end-string (if year-end (number-to-string year-end) year-start-string))
+                            (month-start (org-element-property :month-start scheduled))
+                            (month-start-string (number-to-string month-start))
+                            (month-start-name (sync0-number-to-month month-start))
+                            (month-start-name-full (sync0-number-to-month month-start t))
+                            (month-end (org-element-property :month-end scheduled))
+                            (month-end-string (if month-end (number-to-string month-end) "0"))
+                            (month-end-name (sync0-number-to-month month-end))
+                            (month-end-name-full (sync0-number-to-month month-end t))
+                            (day-start  (org-element-property :day-start scheduled))
+                            (day-start-string (number-to-string day-start)) 
+                            ;; (day-start-string (if (<= day-start 9) 
+                            ;;                       (concat "0" (number-to-string day-start))
+                            ;;                               (number-to-string day-start)))
+                            (day-start-name   (calendar-day-name (list month-start day-start year-start)))
+                            (day-start-name-abbrev   (calendar-day-name (list month-start day-start year-start) t))
+                            (day-end (org-element-property :day-end scheduled))
+                            (day-end-string (when day-end (number-to-string day-end)))
+                            (day-end-name  (calendar-day-name (list month-end day-end year-end)))
+                            (day-end-name-abbrev  (calendar-day-name (list month-end day-end year-end) t))
+                            (hour-start (org-element-property :hour-start scheduled))
+                            (hour-start-string (if hour-start (number-to-string hour-start) "0"))
+                            (hour-end (org-element-property :hour-end scheduled))
+                            (hour-end-string (if hour-end (number-to-string hour-end) "0"))
+                            (minute-start (org-element-property :minute-start scheduled))
+                            (minute-start-string (if minute-start (number-to-string minute-start) "0"))
+                            (minute-end (org-element-property :minute-end scheduled)) 
+                            (minute-end-string (if minute-end (number-to-string minute-end) "0"))
+                            (time-end-test (concat hour-end-string ":" minute-end-string))
+                            (time-end (if (string= "0" minute-end-string) 
+                                          (concat hour-end-string "h")
+                                        (concat hour-end-string ":" minute-end-string)))
+                            (time-start-test (concat hour-start-string ":" minute-start-string))
+                            (time-start (if (string= "0" minute-start-string) 
+                                            (if time-end (concat hour-start-string "")
+                                              (concat hour-start-string "h"))
+                                          (concat hour-start-string ":" minute-start-string))))
+                       ;; First, let's see what to do when the schedule is not on the same day 
+                       (cond 
+                        ((and (string= month-start-string month-end-string)
+                              (not (string= day-start-string day-end-string))
+                              (not (string= time-start-test "0:0"))
+                              (not (string= time-end-test "0:0")))
+                         ;; same-month, different-day, time-start, time-end
+                         (if (string= tomorrow-string org-schedule-string)
+                             (concat "Demain, " time-start "-" time-end)
+                           (concat day-start-string "-" day-end-string " " month-start-name ", " time-start "-" time-end)))
+                        ((and (string= month-start-string month-end-string)
+                              (not (string= day-start-string day-end-string))
+                              (not (string= time-start-test "0:0"))
+                              (string= time-end-test "0:0"))
+                         (if (string= tomorrow-string org-schedule-string)
+                             (concat "Demain - " day-end-string ", " time-start "-" time-end)
+                           ;; same-month, different-day, time-start
+                           (concat day-start-string "-" day-end-string " " month-start-name ", " time-start "-" time-end)))
+                        ((and (string= month-start-string month-end-string)
+                              (not (string= day-start-string day-end-string))
+                              (string= time-start-test "0:0")
+                              (string= time-end-test "0:0"))
+                         ;; same-month, different-day
+                         (if (string= tomorrow-string org-schedule-string)
+                             (concat "Demain - " day-end-string " " month-start-name-full)
+                           (concat day-start-name-abbrev " " day-start-string "-" day-end-string " " month-start-name-full)))
+                        ((and (string= month-start-string month-end-string)
+                              (string= day-start-string day-end-string)
+                              (not (string= time-start-test "0:0"))
+                              (not (string= time-end-test "0:0")))
+                         (if (string= tomorrow-string org-schedule-string)
+                             (concat "Demain, " time-start "-" time-end)
+                           ;; same-month, same-day, time-start, time-end 
+                           (concat day-start-name-abbrev " " day-start-string " " month-start-name ", " time-start "-" time-end)))
+                        ((and (string= month-start-string month-end-string)
+                              (string= day-start-string day-end-string)
+                              (not (string= time-start-test "0:0"))
+                              (string= time-end-test "0:0"))
+                         (if (string= tomorrow-string org-schedule-string)
+                             (concat "Demain, " time-start)
+                           ;; same-month, same-day, time-start
+                           (concat day-start-name-abbrev " " day-start-string " " month-start-name ", " time-start)))
+                        ((and (string= month-start-string month-end-string)
+                              (string= day-start-string day-end-string)
+                              (string= time-start-test "0:0")
+                              (string= time-end-test "0:0"))
+                         (if (string= tomorrow-string org-schedule-string)
+                             (concat "Demain")
+                           ;; same-month, same-day, same-year
+                           (concat day-start-name-abbrev " " day-start-string " " month-start-name-full)))
+                        ((and (not (string= month-start-string month-end-string))
+                              (not (string= day-start-string day-end-string))
+                              (not (string= time-start-test "0:0"))
+                              (not (string= time-end-test "0:0")))
+                         (if (string= tomorrow-string org-schedule-string)
+                             (concat "Demain, " time-start " " day-end-string " " month-end-name ", " time-end)
+                           ;; different-month, different-day, time-start, time-end
+                           (concat day-start-string " " month-start-name ", " time-start " - " day-end-string " " month-end-name ", " time-end)))
+                        ((and (not (string= month-start-string month-end-string))
+                              (not (string= day-start-string day-end-string))
+                              (not (string= time-start-test "0:0"))
+                              (string= time-end-test "0:0"))
+                         (if (string= tomorrow-string org-schedule-string)
+                             (concat "Demain, " time-start " - " day-end-string " " month-end-name)
+                           ;; different-month, different-day, time-start
+                           (concat day-start-string " " month-start-name ", " time-start " " day-end-string " " month-end-name)))
+                        ((and (not (string= month-start-string month-end-string))
+                              (not (string= day-start-string day-end-string))
+                              (string= time-start-test "0:0")
+                              (string= time-end-test "0:0"))
+                         (if (string= tomorrow-string org-schedule-string)
+                             (concat "Demain"  " - " day-end-name-abbrev " " day-end-string " " month-end-name)
+                           ;; different-month, different-day
+                           (concat day-start-name-abbrev " " day-start-string " " month-start-name " - " day-end-name-abbrev " " day-end-string " " month-end-name)))))
+                   ;; If deadline has been defined:
+                   (let* ((deadline (org-get-deadline-time (point)))
+                          (org-deadline-string  (format-time-string "%Y-%m-%d" deadline))
+                          (tomorrow-string  (shell-command-to-string "echo -n $(date -d tomorrow +'%Y-%m-%d')"))
+    ;; Eliminate the annoying zeroes at the beginning
+                          (day-end-raw (format-time-string "%d" deadline))
+                          (day-end (if (string-match "0\\([[:digit:]]$\\)" day-end-raw)
+                                      (match-string 1 day-end-raw) day-end-raw))
+                          (month-end-name-abbrev  (capitalize (format-time-string "%b" deadline)))
+                          (month-end-name  (capitalize (format-time-string "%B" deadline)))
+                          (day-end-name  (capitalize (format-time-string "%a" deadline)))
+                          (time-end-test (format-time-string "%H:%M" deadline))
+                          (time-end (if (string= "00" (format-time-string "%M" deadline)) 
+                                        (format-time-string "%Hh" deadline)
+                                      (format-time-string "%H:%M" deadline))))
+                     (cond ((and (string= "00:00" time-end-test)
+                                 (string= tomorrow-string org-deadline-string))
+                            (concat "Demain")) 
+                           ((and (not (string= "00:00" time-end-test))
+                                 (string= tomorrow-string org-deadline-string))
+                            (concat "Demain, " time-end)) 
+                           ((and  (string= "00:00" time-end-test)
+                                  (not (string= tomorrow-string org-deadline-string)))
+                            (concat day-end-name " " day-end " " month-end-name)) 
+                           ((and (not (string= "00:00" time-end-test))
+                                 (not (string= tomorrow-string org-deadline-string)))
+                            (concat day-end-name " " day-end " " month-end-name ", " time-end))))))
+                ;; If neither schedule nor deadline have been defined:
+                (t " ")))
+
+
+        (defun sync0-org-agenda-get-project-timestamp-time-today ()
+          "Get timestamp from current org-agenda time"
+          ;; Check whether both schedule and deadline are defined.
+          (cond ((and (org-get-scheduled-time (point))
+                      (org-get-deadline-time (point)))
+                 (let* ((schedule (org-get-scheduled-time (point)))
+                        (month-start-name (capitalize (format-time-string "%b" schedule)))
+                        (day-start (capitalize (format-time-string "%d" schedule)))
+                        (day-start-name (capitalize (format-time-string "%a" schedule)))
+                        (time-start-test (format-time-string "%H:%M" schedule))
+                        (time-start (if (string= "00" (format-time-string "%M" schedule)) 
+                                        (format-time-string "%Hh" schedule)
+                                      (format-time-string "%H:%M" schedule)))
+                        (deadline (org-get-deadline-time (point)))
+                        (month-end-name (capitalize (format-time-string "%b" deadline)))
+                        (day-end (capitalize (format-time-string "%d" deadline)))
+                        (day-end-name (capitalize (format-time-string "%a" deadline)))
+                        (time-end-test (format-time-string "%H:%M" deadline))
+                        (time-end (if (string= "00" (format-time-string "%M" deadline)) 
+                                      (format-time-string "%Hh" deadline)
+                                    (format-time-string "%H:%M" deadline))))
+                   ;; Stylize the date output
+                   (cond ((and  (string= "00:00" time-start-test)
+                                (string= "00:00" time-end-test))
+                          (if (equal month-start-name month-end-name)
+                              (concat day-start-name " " day-start "-" day-end " " month-start-name)
+                            (concat day-start " " month-start-name " - " day-end " " month-end-name)))
+                         ((or (not (string= "00:00" time-start-test))
+                              (not (string= "00:00" time-end-test)))
+                          (if (equal month-start-name month-end-name)
+                              (concat day-start "-" day-end " " month-start-name ", " time-start "-" time-end)
+                            (concat day-start " " month-start-name ", " time-start " " day-end " " month-end-name ", "time-end))))))
+                ;; If either schedule or deadline have been defined. 
+                ((or (org-get-scheduled-time (point))
+                     (org-get-deadline-time (point)))
+                 ;; If schedule has been defined.
+                 (if (org-get-scheduled-time (point))
+                     (let* ((element (org-element-at-point))
+                            (scheduled (org-element-property :scheduled element))
+                            ;; Get current year (from shell) and convert to number for conditional comparisons
+                            (current-year (string-to-number (shell-command-to-string "echo -n $(date +'%Y')")))
+                            (year-start (org-element-property :year-start scheduled))
+                            (year-start-string (when year-start (number-to-string year-start)))
+                            (year-end (org-element-property :year-end scheduled))
+                            (year-end-string (if year-end (number-to-string year-end) year-start-string))
+                            (month-start (org-element-property :month-start scheduled))
+                            (month-start-string (if month-start (number-to-string month-start) "0"))
+                            (month-start-name (sync0-number-to-month month-start))
+                            (month-start-name-full (sync0-number-to-month month-start t))
+                            (month-end (org-element-property :month-end scheduled))
+                            (month-end-string (if month-end (number-to-string month-end) "0"))
+                            (month-end-name (sync0-number-to-month month-end))
+                            (month-end-name-full (sync0-number-to-month month-end t))
+                            (day-start (org-element-property :day-start scheduled))
+                            (day-start-string (when day-start (number-to-string day-start)))
+                            (day-start-name   (calendar-day-name (list month-start day-start year-start)))
+                            (day-start-name-abbrev   (calendar-day-name (list month-start day-start year-start) t))
+                            (day-end (org-element-property :day-end scheduled))
+                            (day-end-string (when day-end (number-to-string day-end)))
+                            (day-end-name  (calendar-day-name (list month-end day-end year-end)))
+                            (day-end-name-abbrev  (calendar-day-name (list month-end day-end year-end) t))
+                            (hour-start (org-element-property :hour-start scheduled))
+                            (hour-start-string (if hour-start (number-to-string hour-start) "0"))
+                            (hour-end (org-element-property :hour-end scheduled))
+                            (hour-end-string (if hour-end (number-to-string hour-end) "0"))
+                            (minute-start (org-element-property :minute-start scheduled))
+                            (minute-start-string (if minute-start (number-to-string minute-start) "0"))
+                            (minute-end (org-element-property :minute-end scheduled)) 
+                            (minute-end-string (if minute-end (number-to-string minute-end) "0"))
+                            (time-end-test (concat hour-end-string ":" minute-end-string))
+                            (time-end (if (string= "0" minute-end-string) 
+                                          (concat hour-end-string "h")
+                                        (concat hour-end-string ":" minute-end-string)))
+                            (time-start-test (concat hour-start-string ":" minute-start-string))
+                            (time-start (if (string= "0" minute-start-string) 
+                                            (if time-end (concat hour-start-string "")
+                                              (concat hour-start-string "h"))
+                                          (concat hour-start-string ":" minute-start-string))))
+
+                       ;; First, let's see what to do when the schedule is not on the same day 
+                       (cond 
+                        ((and (= month-start month-end)
+                              (not (= day-start day-end))
+                              (not (string= time-start-test "0:0"))
+                              (not (string= time-end-test "0:0")))
+                         ;; same-month, different-day, time-start, time-end
+                         (concat day-start-string "-" day-end-string " " month-start-name ", " time-start "-" time-end))
+                        ((and (= month-start month-end)
+                              (= current-year year-end)
+                              (not (= day-start day-end))
+                              (not (string= time-start-test "0:0"))
+                              (string= time-end-test "0:0"))
+                         ;; same-month, different-day, time-start, same-year
+                         (concat day-start-string "-" day-end-string " " month-start-name ", " time-start))
+                        ((and (= month-start month-end)
+                              (not (= current-year year-end))
+                              (not (= day-start day-end))
+                              (not (string= time-start-test "0:0"))
+                              (string= time-end-test "0:0"))
+                         ;; same-month, different-day, time-start, different-year
+                         (concat day-start-string "-" day-end-string " " month-start-name ", " time-start year-end-string))
+                        ((and (= month-start month-end)
+                              (not (= day-start day-end))
+                              (= current-year year-end)
+                              (string= time-start-test "0:0")
+                              (string= time-end-test "0:0"))
+                         ;; same-month, different-day, same-year
+                         (concat day-start-name-abbrev " " day-start-string "-" day-end-string " " month-start-name-full))
+                        ((and (= month-start month-end)
+                              (not (= day-start day-end))
+                              (not (= current-year year-end))
+                              (string= time-start-test "0:0")
+                              (string= time-end-test "0:0"))
+                         ;; same-month, different-day, different-year
+                         (concat day-start-name-abbrev " " day-start-string "-" day-end-string " " month-start-name-full " " year-end-string))
+                        ((and (= month-start month-end)
+                              (= day-start day-end)
+                              (not (string= time-start-test "0:0"))
+                              (not (string= time-end-test "0:0")))
+                         ;; same-month, same-day, time-start, time-end 
+                         (concat day-start-name-abbrev " " day-start-string " " month-start-name ", " time-start "-" time-end))
+                        ((and (= month-start month-end)
+                              (= day-start day-end)
+                              (not (string= time-start-test "0:0"))
+                              (string= time-end-test "0:0"))
+                         ;; same-month, same-day, time-start
+                         (concat day-start-name-abbrev " " day-start-string " " month-start-name ", " time-start))
+                        ((and (= month-start month-end)
+                              (= day-start day-end)
+                              (= current-year year-end)
+                              (string= time-start-test "0:0")
+                              (string= time-end-test "0:0"))
+                         ;; same-month, same-day, same-year
+                         (concat day-start-name-abbrev " " day-start-string " " month-start-name-full))
+                        ((and (= month-start month-end)
+                              (= day-start day-end)
+                              (not (= current-year year-end))
+                              (string= time-start-test "0:0")
+                              (string= time-end-test "0:0"))
+                         ;; same-month, same-day
+                         (concat day-start-name-abbrev " " day-start-string " " month-start-name-full " " year-end-string))
+                        ((and (not (= month-start month-end))
+                              (not (= day-start day-end))
+                              (not (string= time-start-test "0:0"))
+                              (not (string= time-end-test "0:0")))
+                         ;; different-month, different-day, time-start, time-end
+                         (concat day-start-string " " month-start-name ", " time-start " " day-end-string " " month-end-name ", " time-end))
+                        ((and (not (= month-start month-end))
+                              (not (= day-start day-end))
+                              (not (string= time-start-test "0:0"))
+                              (string= time-end-test "0:0"))
+                         ;; different-month, different-day, time-start
+                         (concat day-start-string " " month-start-name ", " time-start " " day-end-string " " month-end-name))
+                        ((and (not (= month-start month-end))
+                              (not (= day-start day-end))
+                              (string= time-start-test "0:0")
+                              (string= time-end-test "0:0"))
+                         ;; different-month, different-day
+                         (concat day-start-name-abbrev " " day-start-string " " month-start-name " - " day-end-name-abbrev " " day-end-string " " month-end-name))))
+
+                   ;; If deadline has been defined
+                   (let* ((deadline (org-get-deadline-time (point)))
+                          (element (org-element-at-point))
+                          (deadlined (org-element-property :deadline element))
+                          (day-end (org-element-property :day-end deadlined))
+                          (day-end-string (when day-end (number-to-string day-end)))
+                          (month-end-name-abbrev  (capitalize (format-time-string "%b" deadline)))
+                          (month-end-name  (capitalize (format-time-string "%B" deadline)))
+                          (day-end-name  (capitalize (format-time-string "%a" deadline)))
+                          (time-end-test (format-time-string "%H:%M" deadline))
+                          (time-end (if (string= "00" (format-time-string "%M" deadline)) 
+                                        (format-time-string "%Hh" deadline)
+                                      (format-time-string "%H:%M" deadline))))
+                     (if (string= "00:00" time-end-test)
+                         (concat day-end-name " " day-end-string " " month-end-name) 
+                       (concat day-end-name " " day-end-string " " month-end-name ", " time-end)))))
+                (t " ")))
+
+        (defun sync0-org-agenda-get-project-timestamp-time ()
+          "Get timestamp from current org-agenda time"
+          (let* ((schedule (org-get-scheduled-time (point)))
+                 (deadline (org-get-deadline-time (point)))
+                 (schedule-date (when schedule (let ((time (capitalize (format-time-string "%a %d %b (%H:%M) %Y" schedule)))
+                                                     (hour (format-time-string "%H:%M" schedule))
+                                                     (time-no-hour (capitalize (format-time-string "%a %d %B %Y" schedule))))
+                                                 (if (not (string= "00:00" hour)) time time-no-hour))))
+                 ;; For the second block, I use "if" instead of "when" to print a
+                 ;; blank when neither "schedules" nor "deadlines" are set.
+                 (deadline-date (if deadline (let ((time (capitalize (format-time-string "%a %d %b (%H:%M) %Y" deadline)))
+                                                   (hour (format-time-string "%H:%M" deadline))
+                                                   (time-no-hour (capitalize (format-time-string "%a %d %B %Y" deadline))))
+                                               (if (not (string= "00:00" hour)) time time-no-hour)) "")))
+            (if schedule (princ schedule-date) (princ deadline-date))))
+
+        ;; This function was borrowed from Sacha Chua's configuration. 
+        (defun sync0-org-agenda-new ()
+          "Create a new note or task at the current agenda item. Creates it
+                                                                 at
+                                                                 the
+                                                                 same
+                                                                 level
+                                                                 as
+                                                                 the
+                                                                 previous
+                                                                 task,
+                                                                 so
+                                                                 it's
+                                                                 better
+                                                                 to
+                                                                 use
+                                                                 this
+                                                                 with
+                                                                 to-do
+                                                                 items
+                                                                 than
+                                                                 with
+                                                                 projects
+                                                                 or
+                                                                 headings."
+          (interactive)
+          (org-agenda-switch-to)
+          (org-capture 0))
+
+        ;; necessary function 1
+        (defun sync0-org-skip-subtree-if-priority (priority)
+          "Skip an agenda subtree if it has a priority of PRIORITY. PRIORITY may be one of the characters ?A, ?B, or ?C."
+          (let ((subtree-end (save-excursion (org-end-of-subtree t)))
+                (pri-value (* 1000 (- org-lowest-priority priority)))
+                (pri-current (org-get-priority (thing-at-point 'line t))))
+            (if (= pri-value pri-current)
+                subtree-end
+              nil)))
+
+        ;; necessary function 2
+        (defun sync0-org-skip-subtree-if-habit ()
+          "Skip an agenda entry if it has a STYLE property equal to \"habit\"."
+          (let ((subtree-end (save-excursion (org-end-of-subtree t))))
+            (if (string= (org-entry-get nil "STYLE") "habit")
+                subtree-end
+              nil)))
+
+        ;; org-agenda configuration
+
+        ;; Include all my Zetteln
+         (setq org-agenda-files (list ;;"~/Dropbox/org/"
+                                      "~/Dropbox/org/projects/"
+         ))
+
+         ;; (setq org-agenda-files (list "~/Dropbox/org/projects/"))
+
+          (let ((my-agenda-files (list "~/Dropbox/org/etc/Gcal.org"
+                                      "~/Dropbox/org/etc/Events.org"
+                                      "~/Dropbox/org/etc/Classes.org"
+                                      ;; "~/Dropbox/org/etc/Habits.org"
+                                       "~/Dropbox/org/etc/todo.org"
+                                      "~/Dropbox/org/etc/menage.org")))
+                  (setq org-agenda-files (append org-agenda-files my-agenda-files)))
+
+        ;; (setq sync0-org-agenda-todo-files
+        ;;       (let ((sans-todo (cl-remove-if
+        ;;                         (lambda (k) (string-match-p "etc/etodo.org$" k)) org-agenda-files)))
+        ;;         (seq-difference org-agenda-files sans-todo)))
+
+        ;; (setq org-agenda-files (list "~/Dropbox/org/etc/calendar_gcal.org"
+        ;;                              "~/Dropbox/org/etc/calendar_events.org"
+        ;;                              "~/Dropbox/org/etc/calendar_classes.org"
+        ;;                              "~/Dropbox/org/etc/calendar_habits.org"
+        ;;                               "~/Dropbox/org/etc/todo.org"
+        ;;                              "~/Dropbox/org/etc/menage.org"))
+
+
+        ;; ;; Add files to arg-agenda-files recursively.
+        ;; (let ((zettel (directory-files-recursively "~/Dropbox/org/" "\.org$")))
+        ;;          (setq org-agenda-files (append org-agenda-files zettel)))
+
+        ;; ;; Add files to arg-agenda-files recursively.
+        ;; (let ((zettel (directory-files-recursively "~/Dropbox/org/" "\.org$"))
+        ;;          (repetitions (cl-remove-if  (lambda (k) (string-match-p "etc/[[:graph:]]+\.org$" k)) org-agenda-files)))
+        ;;          (seq-difference org-agenda-files repetitions)
+        ;;          (setq org-agenda-files (append org-agenda-files zettel)))
+
+        ;; ;; ;; Add files to arg-agenda-files recursively.
+        ;; (let ((todos (directory-files-recursively "~/Dropbox/org/" "todo\.org$"))
+        ;;        (messages (directory-files-recursively "~/Dropbox/org/" "messages\.org$"))
+        ;;        (readings (directory-files-recursively "~/Dropbox/org/projects/" "readings\.org$"))
+        ;;        (stages (directory-files-recursively "~/Dropbox/org/projects/" "stages\.org$")))
+        ;;        ;; (gestion (directory-files-recursively "~/Dropbox/projects/" "gestion\.org$"))
+        ;;       ;; (projects (directory-files-recursively "~/Dropbox/projects/" "\.org$"))
+        ;;    ;; (setq org-agenda-files (append org-agenda-files todos readings))
+        ;;    (setq org-agenda-files (append org-agenda-files todos messages readings stages)))
+
+        ;; Add files to journal files
+      ;;  (setq sync0-org-journal-files (directory-files-recursively "~/Dropbox/projects/" "journal.org$")) 
+
+        ;; (let ((messages (directory-files-recursively "~/Dropbox/org/messages/" "\.org$")))
+        ;;   (setq sync0-message-files messages))
+
+        ;; (setq sync0-org-agenda-todo-files
+        ;;       (let ((sans-todo (cl-remove-if
+        ;;                         (lambda (k) (string-match-p "todo.org$" k)) org-agenda-files)))
+        ;;         (seq-difference org-agenda-files sans-todo)))
+
+        ;; (defvar sync0-org-planning-files-alist
+        ;;   '((?1 "To-do"
+        ;;         (lambda ()
+        ;;           (find-file (ivy-completing-read "Select a to-do file: " sync0-org-agenda-todo-files))))
+        ;;     (?2 "Journal"
+        ;;         (lambda ()
+        ;;           (find-file (ivy-completing-read "Select a journal file: " sync0-org-journal-files))))
+        ;;     (?3 "Message"
+        ;;         (lambda ()
+        ;;           (find-file (ivy-completing-read "Select a message file: " sync0-message-files)))))
+        ;;   "List that associates number letters to descriptions and actions.")
+
+        ;; (defun sync0-org-find-planning-file ()
+        ;;   "Lets the user choose the animal and takes the corresponding action.
+        ;;   Returns whatever the action returns."
+        ;;   (interactive)
+        ;;   (let ((choice
+        ;;          (read-char-choice
+        ;;           (mapconcat
+        ;;            (lambda (item) (format "[%c] %s" (car item) (cadr item)))
+        ;;            sync0-org-planning-files-alist " ")
+        ;;           (mapcar #'car sync0-org-planning-files-alist))))
+        ;;     (funcall (nth 2 (assoc choice sync0-org-planning-files-alist)))))
+
+        ;; ;; (defun sync0-org-agenda-find-todo-file ()
+        ;;   "Find a to-do list from within my list of todo-files included in org-agenda-files"
+        ;;   (interactive)
+        ;;   (let ((file
+        ;;          (ivy-completing-read "Select a to-do file: " sync0-org-agenda-todo-files)))
+        ;;     (find-file file)))
+
+        ;; (defun sync0-org-find-journal-file ()
+        ;;   "Find a to-do list from within my list of todo-files included in org-agenda-files"
+        ;;   (interactive)
+        ;;   (let ((file
+        ;;          (ivy-completing-read "Select a journal file: " sync0-org-journal-files)))
+        ;;     (find-file file)))
+
+        ;; (defun sync0-org-agenda-find-message-file ()
+        ;;   "Find a to-do list from within my list of todo-files included in org-agenda-files"
+        ;;   (interactive)
+        ;;   (let ((file
+        ;;          (ivy-completing-read "Select a to-do file: " sync0-message-files)))
+        ;;     (find-file file)))
+
+        (setq org-agenda-custom-commands
+              '(("d" "Deux semaines"
+                 ((tags-todo "today|urgent|PRIORITY=\"A\""
+                             ((org-agenda-overriding-header "Tâches prioritaires:")
+                              (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取"))
+                                                             (org-agenda-skip-entry-if 'deadline 'scheduled)))
+                              (org-agenda-prefix-format " %-12t%-8s %-15c ")))
+                  (agenda "" 
+                          ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取" "阻"))
+                                                          (sync0-org-skip-subtree-if-priority ?A)))
+                           (org-agenda-span 'day)
+                           (org-agenda-start-day "+0d")
+                           ;; (org-agenda-prefix-format " %-12t%-12s %-15c %l ")
+                           (org-deadline-warning-days 2)
+                           (org-agenda-prefix-format " %-12t%-8s %-15c ")
+                           ;; This format calls for two consecutive 12-character fields for time (%t)
+                           ;; and scheduling information(%s). The reason for using fixed fields is to improve
+                           ;; readability of the colums. Otherwise, apending an ~?~ character as in
+                           ;; ~%?t~, only adds the field if the category exists. While this sound like
+                           ;; a smart idea to save space, its very unreadable, so I advise against
+                           ;; using it. This format is applied equally to the next two sections,
+                           ;; precisely to avoid illegible output.
+                           (org-agenda-start-on-weekday nil)))
+                  (tags-todo "+this_week-urgent"
+                             ((org-agenda-overriding-header "Sept jours :")
+                              (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取"))
+                                                             (org-agenda-skip-entry-if 'deadline 'scheduled)
+                                                             (sync0-org-skip-subtree-if-priority ?A)))
+                              (org-agenda-prefix-format " %-12t%-8s %-15c ")))
+                  (agenda "" ((org-agenda-span 6)
+                              (org-agenda-start-day "+1d")
+                              (org-agenda-start-on-weekday nil)
+                              ;; (org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled))
+                              (org-agenda-prefix-format " %-12t%-8s %-15c ")))
+                  (tags-todo "+next_week-urgent"
+                             ((org-agenda-overriding-header "Quatorze jours :")
+                              (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取"))
+                                                             (org-agenda-skip-entry-if 'deadline 'scheduled)
+                                                             (sync0-org-skip-subtree-if-priority ?A)))
+                              (org-agenda-prefix-format " %-12t%-8s %-15c ")))
+                  (agenda "" ((org-agenda-span 6)
+                              (org-agenda-start-day "+7d")
+                              (org-agenda-start-on-weekday nil)
+                              ;; (org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled))
+                              (org-agenda-prefix-format " %-12t%-8s %-15c "))))
+                 ;; list options for block display
+                 ((org-agenda-remove-tags t)
+                  (org-agenda-view-columns-initially t)))
+
+                ("w" "Study Planner"
+                 ((tags-todo "reviews-ignore"
+                             ((org-agenda-overriding-header "Revisions :")
+                              (org-agenda-skip-function '(and (org-agenda-skip-entry-if 'todo '("完" "取"))
+                                                              (org-agenda-skip-entry-if 'nottodo 'any)))
+                              (org-agenda-sorting-strategy '(timestamp-up category-keep tag-up todo-state-up))
+                              (org-agenda-prefix-format "  %-29(sync0-org-agenda-get-timestamp-time)  %-3i  %-20c  ")))
+                  (tags-todo "readings-ignore"
+                             ((org-agenda-overriding-header "Lectures :")
+                              (org-agenda-skip-function '(and (org-agenda-skip-entry-if 'todo '("完" "取"))
+                                                              (org-agenda-skip-entry-if 'nottodo 'any)))
+                              (org-agenda-sorting-strategy '(timestamp-up category-keep tag-up todo-state-up))
+                              (org-agenda-prefix-format "  %-29(sync0-org-agenda-get-timestamp-time)  %-3i  %-20c  ")))
+                  (tags-todo "projects-ignore"
+                             ((org-agenda-overriding-header "Projets :")
+                              (org-agenda-skip-function '(and (org-agenda-skip-entry-if 'todo '("完" "取"))
+                                                              (org-agenda-skip-entry-if 'nottodo 'any)))
+                              (org-agenda-sorting-strategy '(timestamp-up category-keep tag-up todo-state-up))
+                              (org-agenda-prefix-format "  %-29(sync0-org-agenda-get-timestamp-time)  %-3i  %-20c  ")))
+                  (tags-todo "exam-ignore"
+                             ((org-agenda-overriding-header "Examens :")
+                              (org-agenda-skip-function '(and (org-agenda-skip-entry-if 'todo '("完" "取"))
+                                                              (org-agenda-skip-entry-if 'nottodo 'any)))
+                              (org-agenda-sorting-strategy '(timestamp-up category-keep tag-up todo-state-up))
+                              (org-agenda-prefix-format "  %-29(sync0-org-agenda-get-timestamp-time)  %-3i  %-20c  "))))
+                 ;; list options for block display
+                 ((org-agenda-remove-tags t)
+                  (org-agenda-view-columns-initially t)))
+
+                ("o" "Objectifs"
+                 ((tags-todo "today|urgent|PRIORITY=\"A\"|DEADLINE=\"<today>\"|SCHEDULED=\"<today>\""
+                             ((org-agenda-overriding-header "Aujourd'hui :")
+                              (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("完" "取")))
+                              (org-agenda-prefix-format " %-12t%-8s %-15c ")))
+                  (tags-todo "+this_week-urgent|DEADLINE>=\"<+1d>\"&DEADLINE<=\"<+7d>\""
+                             ((org-agenda-overriding-header "Cette semaine :")
+                              (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取"))
+                                                             (sync0-org-skip-subtree-if-priority ?A)))
+                              (org-agenda-prefix-format " %-12t%-8s %-15c ")))
+                  (tags-todo "+next_week-urgent|DEADLINE>=\"<+8d>\"&DEADLINE<=\"<+14d>\""
+                             ((org-agenda-overriding-header "Prochaine semaine :")
+                              (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取"))
+                                                             (sync0-org-skip-subtree-if-priority ?A)))
+                              (org-agenda-prefix-format " %-12t%-8s %-15c ")))
+                  (tags-todo "+this_month-next_month-urgent|DEADLINE>=\"<+15d>\"&DEADLINE<=\"<+31d>\""
+                             ((org-agenda-overriding-header "Mensuels :")
+                              (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取"))
+                                                             (sync0-org-skip-subtree-if-priority ?A)))
+                              (org-agenda-prefix-format " %-12t%-8s %-15c ")))
+                  (tags-todo "+next_month-urgent|DEADLINE>=\"<+32d>\"&DEADLINE<=\"<+62d>\""
+                             ((org-agenda-overriding-header "Prochain moi :")
+                              (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取"))
+                                                             (sync0-org-skip-subtree-if-priority ?A)))
+                              (org-agenda-prefix-format " %-12t%-8s %-15c ")))
+                  (tags-todo "+short_term-urgent"
+                             ((org-agenda-overriding-header "Court terme :")
+                              (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取"))
+                                                             (sync0-org-skip-subtree-if-priority ?A)))
+                              (org-agenda-prefix-format " %-12t%-8s %-15c ")))
+                  (tags-todo "+long_term"
+                             ((org-agenda-overriding-header "Longue terme :")
+                              (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取"))
+                                                             (sync0-org-skip-subtree-if-priority ?A)))
+                              (org-agenda-prefix-format " %-12t%-8s %-15c "))))
+                 ;; list options for block display
+                 ((org-agenda-remove-tags t)
+                  (org-agenda-view-columns-initially t)))
+
+                ("c" "Stephen Covey's"
+                 ((tags-todo "+this_month+important|+urgent+important|+this_month+PRIORITY=\"A\"|+urgent+PRIORITY=\"A\""
+                             ((org-agenda-overriding-header "Urgent & important :")
+                              (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("完" "取")))
+                              (org-agenda-prefix-format " %-12t%-8s %-15c ")))
+                  (tags-todo "+this_month-important|+urgent-important"
+                             ((org-agenda-overriding-header "Urgent & pas important :")
+                              (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取"))
+                                                             (sync0-org-skip-subtree-if-priority ?A)))
+                              (org-agenda-prefix-format " %-12t%-8s %-15c ")))
+                  (tags-todo "+important-this_month-urgent|+PRIORITY=\"A\"-this_month-urgent"
+                             ((org-agenda-overriding-header "Pas urgent & important :")
+                              (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("完" "取")))
+                              (org-agenda-prefix-format " %-12t%-8s %-15c ")))
+                  (tags-todo "-important-this_month-urgent"
+                             ((org-agenda-overriding-header "Pas urgent & pas important :")
+                              (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取"))
+                                                             (sync0-org-skip-subtree-if-priority ?A)))
+                              (org-agenda-prefix-format " %-12t%-8s %-15c "))))
+                 ;; list options for block display
+                 ((org-agenda-remove-tags t)
+                  (org-agenda-view-columns-initially t)))
+
+                ("h" "Agenda"
+                 ((agenda "" 
+                          ((org-agenda-overriding-header " Agenda \n")
+                           (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("完" "取" "阻")))
+                           (org-agenda-span 'day)
+                           (org-agenda-start-on-weekday nil)
+                           ;; (org-agenda-skip-scheduled-delay-if-deadline t)
+                            ;; (org-agenda-repeating-timestamp-show-all )
+                           (org-agenda-start-day "+0d")
+                           (org-deadline-warning-days 7)
+                           ;; (org-agenda-current-time-string "⮜    ‧    ‧    maintenant")
+                           (org-agenda-current-time-string " ")
+                           (org-agenda-time-grid (quote ((daily today remove-match)
+                                                         ;; the () means not to put those annoying time
+                                                         ()
+                                                         "     ⮜" "⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺")))
+                                                         ;; "     ⮜" ""
+                                                        ;;  "     <" " "
+                           (org-agenda-prefix-format "  %-22t  %-5s  %-3i  %-20c  ")))
+                  (tags-todo "urgent|+PRIORITY=\"A\""
+                             ((org-agenda-overriding-header " Tâches prioritaires \n")
+                              (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("完" "取" "阻")))
+                              ;; (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取" "阻"))
+                              ;;                                (org-agenda-skip-entry-if 'scheduled 'deadline)))
+                              (org-agenda-sorting-strategy '(timestamp-up category-keep tag-up todo-state-up))
+                              (org-agenda-prefix-format "  %-29(sync0-org-agenda-get-timestamp-time)  %-3i  %-20c  ")))
+                              ;; (org-agenda-prefix-format "  %-22t  %-5s  %-3i %-20c  ")
+                  (tags-todo "+this_week-urgent|DEADLINE>=\"<+2d>\"&DEADLINE<=\"<+7d>\"|SCHEDULED>=\"<+2d>\"&SCHEDULED<=\"<+7d>\""
+                             ((org-agenda-overriding-header " Prochains sept jours \n")
+                              (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取"))
+                                                             (sync0-org-skip-subtree-if-priority ?A)))
+                              (org-agenda-sorting-strategy '(timestamp-up category-keep tag-up todo-state-up))
+                              (org-agenda-prefix-format "  %-29(sync0-org-agenda-get-timestamp-time)  %-3i  %-20c  ")))
+                  (tags-todo "+next_week-urgent-this_week|DEADLINE>=\"<+8d>\"&DEADLINE<=\"<+14d>\"|SCHEDULED>=\"<+8d>\"&SCHEDULED<=\"<+14d>\""
+                             ((org-agenda-overriding-header " Prochains quatorze jours \n")
+                              (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取"))
+                                                             (sync0-org-skip-subtree-if-priority ?A)))
+                              (org-agenda-sorting-strategy '(timestamp-up category-keep tag-up todo-state-up))
+                              (org-agenda-prefix-format "  %-29(sync0-org-agenda-get-timestamp-time)  %-3i  %-20c  ")))
+                  (tags-todo "+this_month-urgent-this_week-next_week-ignore|DEADLINE>=\"<+15d>\"&DEADLINE<=\"<+29d>\"|SCHEDULED>=\"<+15d>\"&SCHEDULED<=\"<+29d>\""
+                             ((org-agenda-overriding-header " Prochains trente jours \n")
+                              (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取"))
+                                                             (sync0-org-skip-subtree-if-priority ?A)))
+                              (org-agenda-sorting-strategy '(timestamp-up category-keep tag-up todo-state-up))
+                              (org-agenda-prefix-format "  %-29(sync0-org-agenda-get-timestamp-time)  %-3i  %-20c  ")))
+                  (tags-todo "+research-projects-this_week-next_week-urgent-ignore-DEADLINE<=\"<+30d>\"-SCHEDULED<=\"<+30d>\""
+                             ((org-agenda-overriding-header " Recherche \n")
+                              (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取" "阻" "待"))
+                                                             ;; (org-agenda-skip-entry-if 'scheduled 'deadline)
+                                                             (sync0-org-skip-subtree-if-priority ?A)))
+                              (org-agenda-sorting-strategy '(timestamp-up category-keep tag-up todo-state-up))
+                              (org-agenda-prefix-format "  %-29(sync0-org-agenda-get-project-timestamp-time-today)  %-3i  %-20c  ")))
+                  (tags-todo "+projects-research-this_week-next_week-urgent-ignore-DEADLINE<=\"<+30d>\"-SCHEDULED<=\"<+30d>\""
+                             ((org-agenda-overriding-header " Projets \n")
+                              (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取" "阻" "待"))
+                                                             ;; (org-agenda-skip-entry-if 'scheduled 'deadline)
+                                                             (sync0-org-skip-subtree-if-priority ?A)))
+                              (org-agenda-sorting-strategy '(timestamp-up category-keep tag-up todo-state-up))
+                              (org-agenda-prefix-format "  %-29(sync0-org-agenda-get-project-timestamp-time-today)  %-3i  %-20c  "))))
+
+                 ;; list options for block display
+                 ((org-agenda-remove-tags nil)))
+
+                ("p" "Research & Projets"
+                 ;;tags-todo "+CATEGORY=\"Doctorat\""
+                 ((tags-todo "+doctorat+todo|doctorat+readings|doctorat+stage"
+                             ((org-agenda-overriding-header " Doctorat \n")
+                              (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("中" "見" "次" "無"))
+                                                             (sync0-org-skip-subtree-if-habit)))
+                              (org-agenda-sorting-strategy '(priority-up timestamp-up tag-up todo-state-up))
+                              (org-agenda-prefix-format "  %-29(sync0-org-agenda-get-project-timestamp-time)  %-3i  %-20T  ")))
+                  ;; (tags-todo "+CATEGORY=\"Español\""
+                  ;;            ((org-agenda-overriding-header " Español \n")
+                  ;;             (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取" "阻"))
+                  ;;                                            (sync0-org-skip-subtree-if-habit)))
+                  ;;             (org-agenda-sorting-strategy '(timestamp-up category-keep tag-up todo-state-up))
+                  ;;             (org-agenda-prefix-format "  %-29(sync0-org-agenda-get-project-timestamp-time)  %-3i  %-20T  ")))
+                  (tags-todo "+france+todo|france+readings"
+                             ((org-agenda-overriding-header " Séjour en France \n")
+                              (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取" "阻"))
+                                                             (sync0-org-skip-subtree-if-habit)))
+                              (org-agenda-sorting-strategy '(timestamp-up category-keep tag-up todo-state-up))
+                              (org-agenda-prefix-format "  %-29(sync0-org-agenda-get-project-timestamp-time)  %-3i  %-20T  ")))
+                  (tags-todo "+research_tools+todo|research_tools+readings"
+                             ((org-agenda-overriding-header " Outils de la recherche \n")
+                              (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("中" "見" "次" "無"))
+                                                             (sync0-org-skip-subtree-if-habit)))
+                              (org-agenda-sorting-strategy '(timestamp-up category-keep tag-up todo-state-up))
+                              (org-agenda-prefix-format "  %-29(sync0-org-agenda-get-project-timestamp-time)  %-3i  %-20T  ")))
+                  (tags-todo "+work+todo|work+readings"
+                             ((org-agenda-overriding-header " Travail \n")
+                              (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取" "阻"))
+                                                             (sync0-org-skip-subtree-if-habit)))
+                              (org-agenda-sorting-strategy '(timestamp-up category-keep tag-up todo-state-up))
+                              (org-agenda-prefix-format "  %-29(sync0-org-agenda-get-project-timestamp-time)  %-3i  %-20T  ")))
+                  (tags-todo "+portuguese+todo|portuguese+readings"
+                             ((org-agenda-overriding-header " Portugais \n")
+                              (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取" "阻"))
+                                                             (sync0-org-skip-subtree-if-habit)))
+                              (org-agenda-sorting-strategy '(timestamp-up category-keep tag-up todo-state-up))
+                              (org-agenda-prefix-format "  %-29(sync0-org-agenda-get-project-timestamp-time)  %-3i  %-20T  ")))
+                  (tags-todo "+french+todo|french+readings"
+                             ((org-agenda-overriding-header " Francais \n")
+                              (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取" "阻"))
+                                                             (sync0-org-skip-subtree-if-habit)))
+                              (org-agenda-sorting-strategy '(timestamp-up category-keep tag-up todo-state-up))
+                              (org-agenda-prefix-format "  %-29(sync0-org-agenda-get-project-timestamp-time)  %-3i  %-20T  ")))
+                  (tags-todo "+writings+todo|writings+readings"
+                             ((org-agenda-overriding-header " Écriture \n")
+                              (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("中" "見" "次" "無"))
+                                                             (sync0-org-skip-subtree-if-habit)))
+                              (org-agenda-sorting-strategy '(timestamp-up category-keep tag-up todo-state-up))
+                              (org-agenda-prefix-format "  %-29(sync0-org-agenda-get-project-timestamp-time)  %-3i  %-20T  ")))
+                  (tags-todo "+historiography+todo|historiography+readings"
+                             ((org-agenda-overriding-header " Historiographie \n")
+                              (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("中" "見" "次" "無"))
+                                                             (sync0-org-skip-subtree-if-habit)))
+                              (org-agenda-sorting-strategy '(timestamp-up category-keep tag-up todo-state-up))
+                              (org-agenda-prefix-format "  %-29(sync0-org-agenda-get-project-timestamp-time)  %-3i  %-20T  ")))
+                  (tags-todo "+blog+todo"
+                             ((org-agenda-overriding-header " Blog \n")
+                              (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("中" "見" "次" "無"))
+                                                             (sync0-org-skip-subtree-if-habit)))
+                              (org-agenda-sorting-strategy '(timestamp-up category-keep tag-up todo-state-up))
+                              (org-agenda-prefix-format "  %-29(sync0-org-agenda-get-project-timestamp-time)  %-3i  %-20T  ")))
+                  (tags-todo "+emacs+todo"
+                             ((org-agenda-overriding-header " Emacs \n")
+                              (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("中" "見" "次" "無"))
+                                                             (sync0-org-skip-subtree-if-habit)))
+                              (org-agenda-sorting-strategy '(timestamp-up category-keep tag-up todo-state-up))
+                              (org-agenda-prefix-format "  %-29(sync0-org-agenda-get-project-timestamp-time)  %-3i  %-20T  ")))
+                  ;; (tags-todo "+CATEGORY=\"Sefardi\""
+                  ;;            ((org-agenda-overriding-header " Sefardi \n")
+                  ;;             (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取" "阻"))
+                  ;;                                            ;; (sync0-org-skip-subtree-if-priority ?A)
+                  ;;                                            (sync0-org-skip-subtree-if-habit)))
+                  ;;             ;; (org-agenda-prefix-format " %-12t%-8s %-15c %l")
+                  ;;             (org-agenda-sorting-strategy '(timestamp-up category-keep tag-up todo-state-up))
+                  ;;             (org-agenda-prefix-format "  %-29(sync0-org-agenda-get-project-timestamp-time)  %-3i  %-20T  ")))
+                  (tags-todo "+message"
+                             ((org-agenda-overriding-header " Messages \n")
+                             ;; (org-agenda-overriding-header "◈   Messages \n⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺")
+                              (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取" "阻"))
+                                                             ;; (sync0-org-skip-subtree-if-priority ?A)
+                                                             (sync0-org-skip-subtree-if-habit)))
+                              ;; (org-agenda-prefix-format " %-12t%-8s %-15c %l")
+                              (org-agenda-sorting-strategy '(timestamp-up category-keep tag-up todo-state-up))
+                              (org-agenda-prefix-format "  %-29(sync0-org-agenda-get-project-timestamp-time)  %-3i  %-20T  "))))
+
+                 ;; list options for block display
+                 ((org-agenda-remove-tags nil)
+                  (org-agenda-view-columns-initially nil)))
+                ;; End of custom
+                ))
+
+        :bind 
+        (([f6] . sync0-pop-to-org-agenda)
+         :map org-agenda-mode-map
+         ("S" . org-agenda-schedule)
+         ("D" . org-agenda-deadline)
+         ("j" . org-agenda-next-item)
+         ("k" . org-agenda-previous-item)
+         ("J" . sync0-org-agenda-next-header)
+         ("K" . sync0-org-agenda-previous-header)
+         ("N" . sync0-org-agenda-new)))
+ #+END_SRC
+
+* org-habits
+This package is included in ~org-mode~; it simply allows the creation of
+recurring tasks for use in ~org-agenda~. Although this introduces some
+interesting functionality for tracking your habits, I found that I
+didn't  use it consistently. I keep the configuration just in case I
+change my mind someday.
+
+Beware! There is a strange inconsistency when habits are enabled. See [[https://emacs.stackexchange.com/questions/26291/not-allowed-in-tags-type-agenda-using-custom-agenda]]
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org-habit 
+:straight nil
+    :after (org org-agenda)
+    ;; :commands org-bullets-mode
+    :config
+    (setq org-habit-graph-column 80
+          org-habit-show-habits-only-for-today nil))
+  #+END_SRC 
+
+This allow to hide certain tags in the agenda display, but include them in
+the processing of agenda commands
+#+BEGIN_SRC emacs-lisp
+  (setq
+  org-agenda-hide-tags-regexp "contacts\\|projects\\|research\\|urgent\\|important\\|short_term\\|long_term\\|no_export\\|this_month\\|this_week\\|next_week\\|next_moth\\|Métier")
+#+END_SRC 
+
+;;(setq org-agenda-hide-tags-regexp "noexport\\|university\\|today")
+
+Stuck projects. 
+I'm trying to setup the org-stuck-projects variable so that the "stuck
+projects" agenda will list all headlines which are TODOs (any TODO keyword
+except DONE) but those which don't have SCHEDULED or DEADLINE attributes
+set. Currently I get an empty list with this setting for the variable:
+
+     ;; (setq org-stuck-projects      '("TODO={.+}/-DONE" nil nil "SCHEDULED:\\|DEADLINE:"))
+     ;; (setq org-stuck-projects      '("TODO={.+}/-DONE" nil nil "SCHEDULED:\\|DEADLINE:"))
+
+* org-clock
+#+BEGIN_SRC emacs-lisp
+  (use-package org-clock 
+:straight nil
+    :after (org org-agenda)
+    :custom
+    ;; Set default column view headings: Task Priority Effort Clock_Summary
+    (org-columns-default-format "%1PRIORITY %2TODO %DEADLINE %60ITEM(Task) %5EFFORT(Effort){:} %5CLOCKSUM")
+    (org-agenda-clockreport-parameter-plist
+     '(:link t :maxlevel 6 :fileskip0 t :compact t :narrow 60 :score 0))
+    ;; Agenda clock report parameters
+    ;; global Effort estimate values
+    ;;        1    2    3    4    5    6    7    8    9    0
+    ;; These are the hotkeys ^
+    (org-global-properties  '(("Effort_ALL" . "1:00 2:00 4:00 5:00 8:00 10:00 12:00 15:00 20:00 24:00")))
+    ;; If idle for more than 15 minutes, resolve the things by asking what to do
+    ;; with the clock time
+    (org-clock-idle-time 5)
+    ;; Show lot of clocking history so it's easy to pick items off the `C-c I` list
+    (org-clock-history-length 23)
+    ;; Save the running clock and all clock history when exiting Emacs, load it on startup
+    (org-clock-persist 'history)
+    ;; org-clock-persist t
+    ;; Resume clocking task on clock-in if the clock is open
+    (org-clock-in-resume t)
+    ;; Do not prompt to resume an active clock, just resume it
+    (org-clock-persist-query-resume nil)
+    ;; Change tasks to whatever when clocking in
+    (org-clock-in-switch-to-state "中")
+    ;; Save clock data and state changes and notes in the LOGBOOK drawer
+    (org-clock-into-drawer t)
+    ;; Sometimes I change tasks I'm clocking quickly - this removes clocked tasks
+    ;; with 0:00 duration
+    (org-clock-out-remove-zero-time-clocks t)
+    ;; Clock out when moving task to a done state
+    (org-clock-out-when-done t)
+    ;; Enable auto clock resolution for finding open clocks
+    (org-clock-auto-clock-resolution (quote when-no-clock-is-running))
+    ;; Include current clocking task in clock reports
+    (org-clock-report-include-clocking-task t)
+    ;; use pretty things for the clocktable
+    (org-pretty-entities t)
+(org-clock-string-limit 8)
+    :config
+
+    (defun sync0-org-clock-in ()
+      (interactive)
+      (org-clock-in '(4)))
+
+    ;; This function was taken from Sacha Chua's configuration.
+    ;; Display words typed and minutes spent in an org subtree.
+    (defun sync0-org-entry-word-count ()
+      (interactive)
+      (save-restriction
+        (save-excursion
+          (org-narrow-to-subtree)
+          (goto-char (point-min))
+          (let* ((words (count-words-region (point-min) (point-max)))
+                 (minutes (org-clock-sum-current-item))
+                 (wpm (/ words minutes)))
+            (message "WPM: %d (words: %d, minutes: %d)" wpm words minutes)
+            (kill-new (number-to-string wpm))))))
+
+    ;; Resume clocking task when emacs is restarted
+    (org-clock-persistence-insinuate)
+
+ (defhydra sync0-hydra-org-clock (:color blue :hint nil)
+   "
+Clock   In/out^     ^Edit^   ^Summary     (_?_)
+-----------------------------------------
+        _i_n         _e_dit   _g_oto entry
+        _c_ontinue   _q_uit   _d_isplay
+        _o_ut        ^ ^      _r_eport
+        ^ ^          ^ ^      _w_ord count
+      "
+   ("i" sync0-org-clock-in)
+   ("c" org-clock-in-last)
+   ("o" org-clock-out)
+   ("e" org-clock-modify-effort-estimate)
+   ("q" org-clock-cancel)
+   ("g" org-clock-goto)
+   ("d" org-clock-display)
+   ("r" org-clock-report)
+   ("w" sync0-org-entry-word-count)
+   ("?" (org-info "Clocking commands")))
+
+    :bind 
+(:map org-mode-map
+("C-c t" . sync0-hydra-org-clock/body)))
+#+END_SRC 
+
+* ox-latex
+Even though, by default, Emacs Org mode has the export keyword
+~LATEX_COMPILER:~ to choose among the different engines (pdflatex, xelatex, or
+lualatex), I had to tweek the settings to run LaTeX through ~latexmk~ for
+biber to work properly with BibLaTeX. In layman English, the following
+configuration is necessary for automatic bibliography management to work
+properly when exporting org documents to LaTeX.
+
+BTW, you can assign "pdf" in above variables if you prefer PDF format
+for page breaks add this to org files
+# #+ODT: <text:p text:style-name="PageBreak"/>
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ox-latex 
+:straight nil
+    :after org
+    :custom
+    ;; Set latex compiler for org export. 
+    (org-latex-compiler "lualatex")
+    ;; Set latex bibtex compiler for org export. 
+    (org-latex-bibtex-compiler "lualatex")
+    ;; Export references (to tables, graphics, etc.) properly, evaluating the +NAME property. 
+    (org-latex-prefer-user-labels t)
+    ;; (org-latex-pdf-process (list "latexmk -lualatex -bibtex -f %f"))
+    ;; export process is sent to the background
+    (org-latex-listings 'minted)
+    ;; set word wrap for code blocks
+    (org-latex-minted-options '(("breaklines" "true")
+                                ("breakanywhere" "true")))
+    ;;  (org-latex-pdf-process (list "latexmk -lualatex -bibtex-cond -f %f")
+    ;; (org-latex-logfiles-extensions (quote ("lof" "lot" "tex~" "aux" "idx" "log" "out" "toc" "nav" "snm" "vrb" "dvi" "fdb_latexmk" "blg" "brf" "fls" "entoc" "ps" "spl" "bbl"))
+    (org-export-in-background t)
+    ;; select tasks (i.e., TODOs) for export
+    (org-export-with-tasks '("次" "完" "無" "中" "待" "疑" "見"))
+    (org-export-date-timestamp-format "%Y/%m/%d")
+    ;; Export to Microsoft Word (doc).
+    (org-export-odt-preferred-output-format "doc")
+    (org-odt-preferred-output-format "doc")
+    (org-latex-logfiles-extensions (quote ("aux" "bcf" "lof" "lot" "tex~" "idx" "out" "toc" "nav" "snm" "vrb" "dvi" "fdb_latexmk" "blg" "brf" "fls" "entoc" "ps" "spl" "run.xml")))
+
+    :config
+    (defun sync0-latex-and-beamer-export ()
+      "Export current org file with beamer if it has beamer as latex class."
+      (interactive)
+      (when (equal major-mode 'org-mode) 
+        (if (string-match "^\\#\\+SETUPFILE: .*beamer\\.org.*" (buffer-string))
+            (progn
+              (setq org-latex-pdf-process (list "latexmk -xelatex -bibtex -output-directory=%o -f %f"))
+              (org-beamer-export-to-pdf))
+          (progn
+            (setq org-latex-pdf-process (list "latexmk -lualatex -bibtex -output-directory=%o -f %f"))
+            (org-latex-export-to-pdf)))))
+
+;; export headlines to separate files
+;; http://emacs.stackexchange.com/questions/2259/how-to-export-top-level-headings-of-org-mode-buffer-to-separate-files
+
+(defun sync0-org-export-headlines-to-latex ()
+  "Export all subtrees that are *not* tagged with :noexport: to
+separate files.
+
+Subtrees that do not have the :EXPORT_FILE_NAME: property set
+are exported to a filename derived from the headline text."
+  (interactive)
+  (save-buffer)
+  (let ((modifiedp (buffer-modified-p)))
+    (save-excursion
+      (goto-char (point-min))
+      (goto-char (re-search-forward "^*"))
+      (set-mark (line-beginning-position))
+      (goto-char (point-max))
+      (org-map-entries
+       (lambda ()
+         (let ((export-file (org-entry-get (point) "EXPORT_FILE_NAME")))
+           (unless export-file
+             (org-set-property
+              "EXPORT_FILE_NAME"
+              (replace-regexp-in-string " " "_" (nth 4 (org-heading-components)))))
+           (deactivate-mark)
+           (org-latex-export-to-latex nil t)
+           (unless export-file (org-delete-property "EXPORT_FILE_NAME"))
+           (set-buffer-modified-p modifiedp)))
+       "-noexport" 'region-start-level))))
+
+    ;; (defun sync0-latex-and-beamer-export ()
+    ;;   "Export current org file with beamer if it has beamer as latex class."
+    ;;   (interactive)
+    ;;   (when (equal major-mode 'org-mode) 
+    ;;     (if (string-match "LATEX_CLASS: beamer" (buffer-string))
+    ;;         (progn
+    ;;           (setq org-latex-pdf-process (list "latexmk -lualatex -bibtex -f %f"))
+    ;;           (org-beamer-export-to-pdf))
+    ;;       (progn
+    ;;         (setq org-latex-pdf-process (list "latexmk -output-directory=%o -lualatex -bibtex -f %f"))
+    ;;         (org-latex-export-to-pdf)))))
+
+    ;; ;; Set tags to excluce from export. 
+    (add-to-list 'org-export-exclude-tags "取")
+    (add-to-list 'org-export-exclude-tags "noexport")
+
+    ;; To use KOMA-Script classes in LaTeX documents created through Org mode
+    ;; export, it is necessary to explicitely add them to ~org-latex-classes~.
+    ;; Moreover, this method can be used to create custom LaTeX classes.
+    (add-to-list 'org-latex-classes '("scrartcl"
+                                      "\\documentclass{scrartcl}
+                                        [NO-DEFAULT-PACKAGES]
+  \\input{/home/sync0/Dropbox/typography/latex_preamble.tex}
+                                        [EXTRA]"
+                                      ("\\section{%s}" . "\\section*{%s}")
+                                      ("\\subsection{%s}" . "\\subsection*{%s}")
+                                      ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                                      ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                                      ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+
+    (add-to-list 'org-latex-classes '("scrartcl-subsection"
+                                      "\\documentclass{scrartcl}
+                                        [NO-DEFAULT-PACKAGES]
+  \\input{/home/sync0/Dropbox/typography/latex_preamble.tex}
+                                        [EXTRA]"
+                                      ("\\section{%s}" . "\\section*{%s}")
+                                      ("\\subsection{%s}" . "\\subsection*{%s}")
+                                      ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                                      ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+
+    (add-to-list 'org-latex-classes '("scrartcl-section"
+                                      "\\documentclass{scrartcl}
+                                        [NO-DEFAULT-PACKAGES]
+  \\input{/home/sync0/Dropbox/typography/latex_preamble.tex}
+                                        [EXTRA]"
+                                      ("\\section{%s}" . "\\section*{%s}")
+                                      ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                                      ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+
+    (add-to-list 'org-latex-classes '("scrreprt"
+                                      "\\documentclass{scrreprt}
+                                        [NO-DEFAULT-PACKAGES]
+  \\input{/home/sync0/Dropbox/typography/latex_preamble.tex}
+                                        [EXTRA]"
+                                      ("\\chapter{%s}" . "\\chapter*{%s}")
+                                      ("\\section{%s}" . "\\section*{%s}")
+                                      ("\\subsection{%s}" . "\\subsection*{%s}")
+                                      ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                                      ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                                      ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+
+    (add-to-list 'org-latex-classes '("scrbook"
+                                      "\\documentclass{scrbook}
+                                        [NO-DEFAULT-PACKAGES]
+  \\input{/home/sync0/Dropbox/typography/latex_preamble.tex}
+                                        [EXTRA]"
+                                      ("\\part{%s}" . "\\part*{%s}")
+                                      ("\\chapter{%s}" . "\\chapter*{%s}")
+                                      ("\\section{%s}" . "\\section*{%s}")
+                                      ("\\subsection{%s}" . "\\subsection*{%s}")
+                                      ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                                      ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                                      ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+
+    (add-to-list 'org-latex-classes '("scrbook-chapter"
+                                      "\\documentclass{scrbook}
+                                        [NO-DEFAULT-PACKAGES]
+  \\input{/home/sync0/Dropbox/typography/latex_preamble.tex}
+                                        [EXTRA]"
+                                      ("\\chapter{%s}" . "\\chapter*{%s}")
+                                      ("\\section{%s}" . "\\section*{%s}")
+                                      ("\\subsection{%s}" . "\\subsection*{%s}")
+                                      ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                                      ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                                      ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+
+    (add-to-list 'org-latex-classes '("scrbook-section"
+                                      "\\documentclass{scrbook}
+                                        [NO-DEFAULT-PACKAGES]
+  \\input{/home/sync0/Dropbox/typography/latex_preamble.tex}
+                                        [EXTRA]"
+                                      ("\\chapter{%s}" . "\\chapter*{%s}")
+                                      ("\\section{%s}" . "\\section*{%s}")
+                                      ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                                      ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+
+    (add-to-list 'org-latex-classes '("scrbook-subsection"
+                                      "\\documentclass{scrbook}
+                                        [NO-DEFAULT-PACKAGES]
+  \\input{/home/sync0/Dropbox/typography/latex_preamble.tex}
+                                        [EXTRA]"
+                                      ("\\chapter{%s}" . "\\chapter*{%s}")
+                                      ("\\section{%s}" . "\\section*{%s}")
+                                      ("\\subsection{%s}" . "\\subsection*{%s}")
+                                      ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                                      ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+
+    (add-to-list 'org-latex-classes '("article"
+                                      "\\documentclass{article}
+                                        [NO-DEFAULT-PACKAGES]
+  \\input{/home/sync0/Dropbox/typography/latex_preamble.tex}
+                                        [EXTRA]"
+                                      ("\\chapter{%s}" . "\\chapter*{%s}")
+                                      ("\\section{%s}" . "\\section*{%s}")
+                                      ("\\subsection{%s}" . "\\subsection*{%s}")
+                                      ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                                      ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                                      ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+
+    (add-to-list 'org-latex-classes '("book"
+                                      "\\documentclass{book}
+                                        [NO-DEFAULT-PACKAGES]
+  \\input{/home/sync0/Dropbox/typography/latex_preamble.tex}
+                                        [EXTRA]"
+                                      ("\\chapter{%s}" . "\\chapter*{%s}")
+                                      ("\\section{%s}" . "\\section*{%s}")
+                                      ("\\subsection{%s}" . "\\subsection*{%s}")
+                                      ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                                      ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                                      ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+
+    (add-to-list 'org-latex-classes '("report"
+                                      "\\documentclass{report}
+                                        [NO-DEFAULT-PACKAGES]
+  \\input{/home/sync0/Dropbox/typography/latex_preamble.tex}
+                                        [EXTRA]"
+                                      ("\\chapter{%s}" . "\\chapter*{%s}")
+                                      ("\\section{%s}" . "\\section*{%s}")
+                                      ("\\subsection{%s}" . "\\subsection*{%s}")
+                                      ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                                      ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                                      ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+
+    (add-to-list 'org-latex-classes '("beamer"
+                                      "\\documentclass{beamer}
+                                        [NO-DEFAULT-PACKAGES]
+  \\input{/home/sync0/Dropbox/typography/latex_preamble-beamer.tex}
+                                        [EXTRA]"
+                                      ("\\section{%s}" . "\\section*{%s}")
+                                      ("\\subsection{%s}" . "\\subsection*{%s}")
+                                      ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))
+
+    :bind 
+    (:map org-mode-map 
+          ("M-p" . sync0-latex-and-beamer-export)))
+#+END_SRC 
+
+* org-bullets
+While this is an amazing package, it terribly slows down org-mode
+on my laptop when editing large ~org~ files or files with many
+~PROPERTY~ drawers .
+
+#+BEGIN_SRC emacs-lisp
+      (use-package org-bullets 
+        :custom
+        ;; Hide all bullets:
+        (org-bullets-bullet-list '(" "))
+        :config
+        (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+    ;; Display the colon (i.e., ":") of org-mode tags as a space. The
+    ;; first function identifies whether the colon is a tag colon or a
+    ;; regular colon; this is necessary to avoid hiding colons that
+    ;; are not tags.
+
+  ;;         (font-lock-add-keywords 'org-mode
+  ;;                               '(("^\\*+ "
+  ;;                                ":[[:graph:]]+\\(:\\)[[:blank:]]*$" nil nil
+  ;;                                  (0 (put-text-property (match-beginning 1) (match-end 1) 'font-lock-face '(:foreground "#fdf6e3"))))))
+
+
+          (font-lock-add-keywords 'org-mode
+                                 '(("^\\*+ "
+                                  ":[[:graph:]]+\\(:\\)[[:blank:]]*$" nil nil
+                                   (0 (put-text-property (match-beginning 1) (match-end 1) 'display " ")))))
+
+  ;; The second function hides those colons that occur at the
+  ;; beginning of a word.
+          (font-lock-add-keywords 'org-mode
+                                '(("^\\*+ "
+                                 "\\(:\\)[[:graph:]]+:" nil nil
+                                   (0 (put-text-property (match-beginning 1) (match-end 1) 'display " "))))))
+
+  ;; ;; The second function hides those colons that occur at the
+  ;; ;; beginning of a word.
+  ;;         (font-lock-add-keywords 'org-mode
+  ;;                               '(("^\\*+ "
+  ;;                                "\\(:\\)[[:graph:]]+" nil nil
+  ;;                                  (0 (put-text-property (match-beginning 1) (match-end 1) 'font-lock-face '(:foreground "#fdf6e3"))))))
+
+#+END_SRC 
+
+* org-mu4e
+  This package stores org mode links to messages.
+#+BEGIN_SRC emacs-lisp
+  (use-package org-mu4e 
+:straight nil
+    ;; :disabled t
+    :after (org mu4e)
+    :custom
+    ;; Store link to message if in header view, not to header query.
+    (org-mu4e-link-query-in-headers-mode nil))
+  #+END_SRC 
+
+* 取 ox-extra
+  ;; (use-package org-plus-contrib :after org)
+  ;; (use-package ox :after org)
+  (use-package ox-extra :after org 
+  :config
+  (ox-extras-activate '(ignore-headlines)))
+
+* org-ref 
+#+BEGIN_SRC emacs-lisp
+  (use-package org-ref
+;;    :after (org org-roam)
+    ;;    :init 
+    ;; :functions (org-ref-find-bibliography org-ref-get-bibtex-key-and-file)
+;;    :commands (sync0-hydra-research-functions/body org-ref-ivy-insert-cite-link)
+    :preface 
+    (defun sync0-org-ref-open-pdf-at-point ()
+      "Open the pdf for bibtex key under point if it exists."
+      (interactive)
+      (let* ((results (org-ref-get-bibtex-key-and-file))
+             (key (car results))
+             (pdf-file (car (bibtex-completion-find-pdf key))))
+        (if (file-exists-p pdf-file)
+            (org-open-file pdf-file))
+        (message "No PDF found for %s" key)))
+
+    :custom
+    (reftex-default-bibliography '("~/Dropbox/org/etc/bibliography.bib"))
+    (org-ref-default-bibliography reftex-default-bibliography)
+    (org-ref-pdf-directory sync0-pdfs-folder)
+    (org-ref-completion-library 'org-ref-ivy-cite)
+    (org-ref-open-pdf-function 'sync0-org-ref-open-pdf-at-point)
+         ;; (org-ref-notes-directory maikol/bibliography-notes)
+         ;; (org-ref-notes-function 'orb-edit-notes)
+    :config
+(require 'doi-utils)
+
+    (setq org-ref-notes-function
+          (lambda (thekey)
+            (let ((bibtex-completion-bibliography (org-ref-find-bibliography)))
+              (bibtex-completion-edit-notes
+               (list (car (org-ref-get-bibtex-key-and-file thekey)))))))
+
+    (defun sync0-visit-bibliography-in-buffer ()
+      (interactive)
+      (find-file
+       (expand-file-name "~/Dropbox/org/etc/bibliography.bib")))
+
+    (defhydra sync0-hydra-research-functions (:color amaranth :hint nil :exit t)
+      "
+   ^Research functions^   ^References^            ^Roam^           ^Roam actions^     ^Dailies^
+   ^------------------------------------------------------------------------------------------------------
+   _i_: Orb insert        _p_: Footnote           _C_: Capture     _B_: Build cache   _T_: Today note
+   _I_: Org-ref citation  _r_: LaTeX citation     _f_: Find file   _s_: Store link    _o_: Other date            
+   _a_: Orb actions       _c_: LaTeX quotation    _D_: Deft        _S_: Insert link   _k_: Previous note
+   _n_: Notes             _F_: Foreign quotation  _R_: Roam buffer _l_: File link     _j_: Next note
+   _e_: Bibtex entry      ^ ^                     _x_: Index       _L_: Headline link   
+   _b_: Bibliography      ^ ^                     _g_: Graph
+   _P_: Open PDF          ^ ^                     
+                                                                     
+   [q] Quit
+        "
+      ("C" org-roam-capture)
+      ("x" org-roam-jump-to-index)
+      ("s" org-store-link)
+      ("i" orb-insert)
+      ("a" orb-note-actions)
+      ("D" deft)
+      ("T" org-roam-dailies-find-today)
+      ("k" org-roam-dailies-find-previous-note)
+      ("j" org-roam-dailies-find-next-note)
+      ("o" org-roam-dailies-find-date)
+      ("R" org-roam)
+      ("B" org-roam-db-build-cache)
+      ("f" org-roam-find-file)
+      ("g" org-roam-graph)
+      ("l" org-roam-insert)
+      ("L" org-insert-link)
+      ("S" org-insert-last-stored-link)
+      ;; ("L" org-roam-insert-immediate)
+      ("I" org-ref-ivy-insert-cite-link)
+      ("n" ivy-bibtex)
+      ("e" org-ref-open-citation-at-point)
+      ("b" sync0-visit-bibliography-in-buffer)
+      ("P" sync0-org-ref-open-pdf-at-point)
+      ("p" org-footnote-new)
+      ("r" (progn (yas-expand-snippet (yas-lookup-snippet "org_ref_citation"))))
+      ("c" (progn (yas-expand-snippet (yas-lookup-snippet "csquotes_displayquote"))))
+      ("F" (progn (yas-expand-snippet (yas-lookup-snippet "csquotes_foreign_displayquote"))))
+      ("q" nil :color blue))
+
+    :bind 
+    (:map org-mode-map
+          ("C-c [" . org-ref-ivy-insert-cite-link)
+          ;; ("C-c 9"  . org-ref-notes-function)
+          ("<f9>" . sync0-hydra-research-functions/body)
+          :map bibtex-mode-map
+          ("C-c 9"  . ivy-bibtex)
+          ("<f9>" . sync0-hydra-research-functions/body)
+          ("C-c 8"  . sync0-org-ref-open-pdf-at-point)))
+#+END_SRC 
+
+* 取 org-noter
+#+BEGIN_SRC emacs-lisp
+    (use-package nov
+    :after org-noter
+    :load-path "~/.emacs.d/sync0/nov.el" 
+    :custom
+     (nov-text-width 66)
+      :config
+      (push '("\\.epub\\'" . nov-mode) auto-mode-alist)
+
+    (defun sync0-nov-font-setup ()
+      (face-remap-add-relative 'variable-pitch :family "Minion Pro" :height 150)) 
+
+    (add-hook 'nov-mode-hook 'sync0-nov-font-setup)
+
+                (require 'justify-kp)
+
+                (defun my-nov-window-configuration-change-hook ()
+                  (my-nov-post-html-render-hook)
+                  (remove-hook 'window-configuration-change-hook
+                               'my-nov-window-configuration-change-hook
+                               t))
+
+                (defun my-nov-post-html-render-hook ()
+                  (if (get-buffer-window)
+                      (let ((max-width (pj-line-width))
+                            buffer-read-only)
+                        (save-excursion
+                          (goto-char (point-min))
+                          (while (not (eobp))
+                            (when (not (looking-at "^[[:space:]]*$"))
+                              (goto-char (line-end-position))
+                              (when (> (shr-pixel-column) max-width)
+                                (goto-char (line-beginning-position))
+                                (pj-justify)))
+                            (forward-line 1))))
+
+                    (add-hook 'window-configuration-change-hook
+                              'my-nov-window-configuration-change-hook
+                              nil t)))
+
+                (add-hook 'nov-post-html-render-hook 'my-nov-post-html-render-hook))
+
+
+    (use-package org-noter
+      :after (:any org pdf-view)
+      :config
+      (setq
+       ;; The WM can handle splits
+       org-noter-notes-window-location 'other-frame
+       ;; Please stop opening frames
+       org-noter-always-create-frame nil
+       ;; I want to see the whole file
+       org-noter-hide-other nil
+       ;; Everything is relative to the main notes file
+       org-noter-notes-search-path sync0-notes-folder
+       ))
+#+END_SRC 
+
+* org-noter
+#+BEGIN_SRC emacs-lisp
+    (use-package nov
+    :after (org-noter evil)
+    :load-path "~/.emacs.d/sync0/nov.el" 
+    :custom
+     (nov-text-width 60)
+      :config
+      (push '("\\.epub\\'" . nov-mode) auto-mode-alist)
+
+       (evil-define-key 'normal nov-mode-map
+    "r" 'nov-render-document
+   ;; "S" 'nov-view-content-source
+    ;; "g?" 'nov-display-metadata
+    "J" 'nov-next-document
+    "K" 'nov-previous-document
+    "T" 'nov-goto-toc
+    "i" 'org-noter-insert-note
+    "I" 'org-noter-insert-precise-note
+      )
+
+   (defun sync0-nov-font-setup ()
+    (progn
+      (face-remap-add-relative 'variable-pitch
+                               :family "Minion Pro"
+                               :height 170)
+        (nov-render-document)))
+
+    (add-hook 'nov-mode-hook 'sync0-nov-font-setup))
+
+    (use-package org-noter
+      :after (:any org pdf-view)
+      :config
+      (setq
+       ;; The WM can handle splits
+       org-noter-notes-window-location 'horizontal-split
+       ;; Please stop opening frames
+       org-noter-always-create-frame nil
+       ;; I want to see the whole file
+       org-noter-hide-other nil
+       ;; Use interleave properties 
+       org-noter-property-doc-file "INTERLEAVE_PDF"
+       ;; 
+       org-noter-default-heading-title (format-time-string "%Y%m%d%H%M%S")
+       ;; Everything is relative to the main notes file
+       org-noter-notes-search-path (list sync0-notes-folder)
+       ))
+#+END_SRC 
+  
+* org-download
+#+BEGIN_SRC emacs-lisp
+(use-package org-download
+  :after org
+:hook (dired-mode . org-download-enable)
+:commands (org-download-screenshot org-download-clipboard org-download-yank)
+:custom
+(org-download-image-dir "~/Pictures/org")
+(org-download-screenshot-method "xfce4-screenshooter")
+  :bind
+  (:map org-mode-map
+        (("s-Y" . org-download-screenshot)
+         ("s-y" . org-download-yank))))
+#+END_SRC 
+
+* org-gcal
+This package synchronizes org-mode and Google calendar. This is
+useful to have Google calendar events displayed in org-mode agenda
+buffers. 
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org-gcal 
+    :after (org simple-secrets)
+    :commands (org-gcal-fetch org-gcal-sync)
+    :custom (org-gcal-auto-archive nil)
+    :config
+    (let* ((username (secret-lookup "sync0-gcal-client-id"))
+           (password (secret-lookup "sync0-gcal-client-secret")))
+      (setq org-gcal-client-id username)
+      (setq org-gcal-client-secret password))
+
+    ;; After learning how to use loops (cl-loop?), this function can
+    ;; be rewritten in a much more concise way.
+    (defun sync0-org-gcal-erase-buffers ()
+     (interactive)
+      "Erase buffers of calendar files"
+      (let ((delete-classes (find-file-noselect "/home/sync0/Dropbox/org/etc/Classes.org"))
+            (delete-events (find-file-noselect "/home/sync0/Dropbox/org/etc/Events.org"))
+            (delete-gcal (find-file-noselect "/home/sync0/Dropbox/org/etc/Gcal.org"))
+            (delete-habits (find-file-noselect "/home/sync0/Dropbox/org/etc/Habits.org")))
+        (progn 
+          (with-current-buffer delete-classes
+            (erase-buffer))
+          (with-current-buffer delete-events
+            (erase-buffer))
+          (with-current-buffer delete-gcal
+            (erase-buffer))
+          (with-current-buffer delete-habits
+            (erase-buffer)))))
+
+    (setq org-gcal-file-alist '(("carc.sync0@gmail.com" .  "~/Dropbox/org/etc/Gcal.org")
+                                ("5iudo90h5e3nabbubvsj1lov4o@group.calendar.google.com" . "~/Dropbox/org/etc/Classes.org")
+                                ("p9vu3a782nahsma6ud1rdg1qpc@group.calendar.google.com" . "~/Dropbox/org/etc/Events.org")
+                                ("vbnn8eksqpqun2mbtdlknhh9uk@group.calendar.google.com" . "~/Dropbox/org/etc/Habits.org")
+                                ("addressbook#contacts@group.v.calendar.google.com" . "~/Dropbox/org/etc/Birthdays.org"))))
+#+END_SRC 
+
+* org2blog 
+This package allow org mode to interact with WordPress. 
+
+#+BEGIN_SRC emacs-lisp
+    (use-package org2blog
+      :after (org simple-secrets)
+      :commands (org2blog-user-interface)
+      :bind (("C-c b" . org2blog-user-interface))
+      :custom
+      (org-list-allow-alphabetical t)
+      :config
+      ;;    (setq load-path (cons "~/.emacs.d/org2blog/" load-path))
+      ;; (require 'org2blog-autoloads)
+      ;; blog setup
+      ;; (require 'auth-source)
+      (let* ((username (secret-lookup "sync0-blog-cybernetic-username"))
+             (password (secret-lookup "sync0-blog-cybernetic-password"))
+             (track-posts (list "org2blog.org" "Cahiers de révoltologie"))
+             (config `(("cahiers"
+                       :url "https://cyberneticrevolutionary.wordpress.com/xmlrpc.php"
+                       :username ,username
+                       :password ,password
+                       :default-title "Penseé"
+                       :track-posts ,track-posts
+                       :tags-as-categories nil))))
+        (setq org2blog/wp-blog-alist config)))
+
+  ;;     (defun sync0-after-save-actions ()
+  ;;       "Used in `after-save-hook'."
+  ;;   (save-excursion 
+  ;;     (goto-char (point-min))
+  ;;       (when (re-search-forward "#\\+ORG2BLOG:" (line-end-position 5) t 1)
+
+  ;; (equal this-command 'save-buffer)
+  ;;         (when (equal major-mode 'latex-mode) 
+  ;;           (sync0-latex-fast-compile))))
+
+  ;;    org2blog-buffer-post-save
+
+  ;;     :hook 
+  ;;      Set hooks to execute after files are saved. 
+  ;;     (after-save . sync0-after-save-actions))
+#+END_SRC
+
+* 取 org-roam
+#+BEGIN_SRC emacs-lisp
+        (use-package org-roam
+              ;; :after org-journal
+              :hook
+              (after-init . org-roam-mode)
+    :init
+    (require 'org-journal)
+              :custom
+              (org-roam-directory "~/Dropbox/org/")
+        ; make org-roam buffer sticky
+              (org-roam-buffer-no-delete-other-windows t)
+              (org-roam-completion-system 'default)
+              ;;(org-roam-dailies-directory 'org-roam-directory)
+               (org-roam-dailies-directory org-journal-dir)
+              ;; (org-roam-dailies-directory "journal/")
+              ;; (org-roam-title-sources 'title)
+              (org-roam-tag-sources '(prop))
+              ;; (org-roam-tag-sources '(prop vanilla))
+              ;; (org-roam-tag-sources '(vanilla))
+        (org-roam-completion-everywhere t)
+        :config
+
+        (setq org-roam-capture-templates '(
+             ;;  ("e" "Pensée éphémère" plain (function org-roam--capture-get-point)
+             ;; "%?"
+             ;; :file-name "fleeting_${slug}_%<%Y-%m-%d>"
+             ;; :head "#+TITLE: Pensée éphémère sur ${slug}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y>  %<%B>\n\n"
+             ;; :unnarrowed t)
+             ;;  ("c" "Cogitation" plain (function org-roam--capture-get-point)
+             ;; "*  %?\n:PROPERTIES:\n:CREATED: %<<%Y-%m-%d>>\n:LAST_EDITED: %<<%Y-%m-%d>>\n:END:\n\n"
+             ;; :file-name "cogitatio_${slug}>"
+             ;; :head "#+TITLE: Cogitations sur ${slug}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: cogitatio  ${slug}\n\n"
+             ;; :unnarrowed t)
+  ;; I will experiment using only one format for the Zettel
+              ;; ("d" "Défini par l'utilisateur" plain (function org-roam--capture-get-point)
+             ;; "%?"
+             ;; :file-name "${slug}"
+             ;; :head "#+TITLE: ${title}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: \n\n"
+             ;; :unnarrowed t)
+             ;;  ("d" "Défini par l'utilisateur (daté)" plain (function org-roam--capture-get-point)
+             ;; "%?"
+             ;; :file-name "${slug}_%<%Y-%m-%d>"
+             ;; :head "#+TITLE: ${title}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: ${slug}\n\n"
+             ;; :unnarrowed t)
+             ;;  ("z" "Zettelkasten" plain (function org-roam--capture-get-point)
+             ;; "%?"
+             ;; :file-name "${slug}_zettelkasten"
+             ;; :head "#+TITLE: Zettelkasten sur ${slug}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: zettelkasten  ${slug}\n\n"
+             ;; :unnarrowed t)
+  ;; I will experiment using only one format for the Zettel
+             ;;  ("f" "Fiche" plain (function org-roam--capture-get-point)
+             ;; "%?"
+             ;; :file-name "fiche_${slug}"
+             ;; :head "#+TITLE: ${title}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: fiches ${slug}\n\n"
+             ;; :unnarrowed t)
+             ;;  ("c" "cogitation" entry
+             ;;     #'org-roam-capture--get-point
+             ;; "*  %?\n:PROPERTIES:\n:CREATED:%<%Y-%m-%d %a>\n:END:\n\n"
+             ;; :file-name "cogitatio_${slug}>"
+             ;; :head "#+TITLE: Cogitations sur ${slug}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+FILETAGS: :cogitatio:${slug}:\n\n")
+              ;; ("e" "Écriture spontanée" entry
+              ;;    #'org-roam-capture--get-point
+              ;;    "* %<%A>, %<%Y/%m/%d>\n:PROPERTIES:\n:CREATED: %<<%Y-%m-%d>>\n:LAST_EDITED: %<<%Y-%m-%d>>\n:END:\n\n%?"
+              ;;    :file-name "writing_spontaneous_%<%Y-%m>"
+              ;;    :head "#+TITLE: Écriture spontanée\n#+SUBTITLE: %<%B>, %<%Y>\n#+ROAM_TAGS: writings spontaneous %<%Y> %<%B>\n\n")
+              ("n" "Numéroté" plain (function org-roam--capture-get-point)
+             "%?"
+             :file-name "%<%Y%m%d%H%M%S>"
+             :head "#+TITLE: ${slug}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y>  %<%B>\n\nOrigin: %a\n"
+             :unnarrowed t)
+             ;;  ("s" "Numéroté et simple" plain (function org-roam--capture-get-point)
+             ;; "%?"
+             ;; :file-name "%<%Y%m%d%H%M>"
+             ;; :head "#+TITLE: ${slug}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: rambling  %<%Y>  %<%B>\n\n"
+             ;; :unnarrowed t)
+             ;;  ("d" "default" plain (function org-roam--capture-get-point)
+             ;; "%?"
+             ;; :file-name "%<%Y%m%d%H%M%S>-${slug}"
+             ;; :head "#+TITLE: ${slug}\n\n"
+             ;; :unnarrowed t)
+             ))
+
+      (setq org-roam-capture-ref-templates
+              '(("r" "ref" plain (function org-roam-capture--get-point)
+                 "#+ROAM_KEY: ${ref}\n\n%?"
+                 :file-name "website_${slug}_%<%Y-%m-%d>"
+                 :head "#+TITLE: ${title}]\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: website %<%Y>\n\n"
+                 :unnarrowed t)))
+
+        (setq org-roam-dailies-capture-templates
+              '(("d" "default" entry
+                 #'org-roam-capture--get-point
+                 "* %<%A, %Y/%m/%d>\n:PROPERTIES:\n:CREATED: %<%Y%m%d>\n:END:\n\n%?"
+                 :immediate-finish t
+                 :file-name "journal/%<%Y_%m>"
+                 :head "#+TITLE: %<%B, %Y>\n#+ROAM_TAGS: journal %<%Y> %<%B>\n\n"))))
+
+                ;; ("j" "journal" entry
+                ;;  #'org-roam-capture--get-point
+                ;;  "* %<%A, %Y/%m/%d>\n%?"
+                ;;  :file-name "personal_journal_%<%Y>"
+                ;;  :head "#+TITLE: Journal\n#+SUBTITLE: %<%Y>\n#+ROAM_TAGS: personal journal %<%Y>\n\n"
+                ;;  :olp ("%<%B>"))
+
+            ;; (setq sync0-journal-this-year-file 
+            ;;       (concat sync0-dropbox-directory "org/journal/" (format-time-string "%Y") ".org"))
+
+            ;; (setq sync0-journal-this-month-file 
+            ;;       (concat sync0-dropbox-directory "org/journal/" (format-time-string "%Y_%m") ".org"))
+
+            ;; (add-to-list 'org-agenda-files sync0-journal-this-year-file))
+
+#+END_SRC 
+
+        (setq sync0-journal-this-month-file 
+              (concat sync0-dropbox-directory "org/personal_journal" (format-time-string "%Y_%m") ".org"))
+
+        (add-to-list 'org-agenda-files sync0-journal-this-month-file))
+
+        :bind (:map org-roam-mode-map
+                (("C-c n l" . org-roam)
+                 ("C-c n f" . org-roam-find-file)
+                 ("C-c n g" . org-roam-graph))
+                :map org-mode-map
+                (("C-c n i" . org-roam-insert))
+                (("C-c n I" . org-roam-insert-immediate))))
+
+
+(use-package org-roam
+  :hook (org-load . org-roam-mode)
+  :commands (org-roam-buffer-toggle-display
+             org-roam-find-file
+             org-roam-graph
+             org-roam-insert
+             org-roam-switch-to-buffer
+             org-roam-dailies-date
+             org-roam-dailies-today
+             org-roam-dailies-tomorrow
+             org-roam-dailies-yesterday)
+  :preface
+  ;; Set this to nil so we can later detect whether the user has set a custom
+  ;; directory for it, and default to `org-directory' if they haven't.
+  (defvar org-roam-directory nil)
+  :init
+  :config
+  (setq org-roam-directory (expand-file-name (or org-roam-directory "roam")
+                                             org-directory)
+        org-roam-verbose nil  ; https://youtu.be/fn4jIlFwuLU
+        org-roam-buffer-no-delete-other-windows t ; make org-roam buffer sticky
+        org-roam-completion-system 'default
+)
+
+  ;; Normally, the org-roam buffer doesn't open until you explicitly call
+  ;; `org-roam'. If `+org-roam-open-buffer-on-find-file' is non-nil, the
+  ;; org-roam buffer will be opened for you when you use `org-roam-find-file'
+  ;; (but not `find-file', to limit the scope of this behavior).
+  (add-hook 'find-file-hook
+    (defun +org-roam-open-buffer-maybe-h ()
+      (and +org-roam-open-buffer-on-find-file
+           (memq 'org-roam-buffer--update-maybe post-command-hook)
+           (not (window-parameter nil 'window-side)) ; don't proc for popups
+           (not (eq 'visible (org-roam-buffer--visibility)))
+           (with-current-buffer (window-buffer)
+             (org-roam-buffer--get-create)))))
+
+  ;; Hide the mode line in the org-roam buffer, since it serves no purpose. This
+  ;; makes it easier to distinguish among other org buffers.
+  (add-hook 'org-roam-buffer-prepare-hook #'hide-mode-line-mode))
+
+     ("r" "ref" plain (function org-roam--capture-get-point)
+           "%?"
+           :file-name "websites/${slug}"
+           :head "#+SETUPFILE:./hugo_setup.org
+
+;;  #+ROAM_KEY: ${ref}
+;; #+TITLE: ${title}
+
+** company-org-roam
+ #+BEGIN_SRC emacs-lisp
+    (use-package company-org-roam
+   :after company)
+   ;;   :ensure t
+      ;; You may want to pin in case the version from stable.melpa.org is not working 
+      ; :pin melpa
+      ;; :config
+      ;; (push 'company-org-roam company-backends)
+ #+END_SRC 
+
+** 無 org-roam-bibtex
+
+#+BEGIN_SRC emacs-lisp
+    (use-package org-roam-bibtex
+      :after (org-roam)
+      :hook (org-roam-mode . org-roam-bibtex-mode)
+      :custom
+          (orb-autokey-format "%a%y")
+          (orb-process-file-keyword t)
+          (orb-file-field-extensions '("pdf"))
+          ;; Use this to insert org-ref citations (cite:XXX199X)
+          ;; (orb-insert-link-description 'citation)
+          ;; Use this to insert citation keys
+           (orb-insert-link-description 'citekey)
+          (orb-note-actions-interface 'hydra)
+      :config
+
+    (setq orb-preformat-keywords
+          '("citekey" "title" "url" "author-or-editor" "keywords" "file"))
+
+  ;; (setq orb-templates
+  ;;       '(("r" "ref" plain (function org-roam-capture--get-point) ""
+  ;;          :file-name "${citekey}"
+  ;;          :head "#+TITLE: ${citekey}: ${title}\n#+ROAM_KEY: ${ref}\n" ; <--
+  ;;          :unnarrowed t))))
+
+  ;; (setq orb-templates
+  ;;       '((\"r\" \"reference\" plain (function org-roam-capture--get-point)
+  ;;          "#+ROAM_KEY: %^{citekey}%?
+  ;; %^{author} published %^{entry-type} in %^{date}: fullcite:%\\1."
+  ;;          :file-name "references/${citekey}"
+  ;;          :head "#+TITLE: ${title}"
+  ;;          :unnarrowed t)))
+
+      (setq orb-templates
+            '(("r" "ref" plain (function org-roam-capture--get-point)
+             (file "/home/sync0/Dropbox/org/etc/template_research-notes.org")
+               :file-name "annotations/${=key=}"
+               :head "#+TITLE: ${title}\n#+AUTHOR: ${author-or-editor}\n#+ROAM_KEY: ${ref}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: annotations ${keywords}\n#+INTERLEAVE_PDF: ${file}\n#+LATEX_CLASS: scrartcl-section\n#+EXPORT_FILE_NAME: /home/sync0/Dropbox/annotations/${=key=}\n#+SETUPFILE: ~/Dropbox/typography/settings_notetaking-scrartcl-fr.org"
+               :unnarrowed t))))
+#+END_SRC 
+
+* org-roam
+#+BEGIN_SRC emacs-lisp
+        (use-package org-roam
+              :hook
+              (after-init . org-roam-mode)
+    :init
+    (require 'org-journal)
+              :custom
+              (org-roam-directory "~/Dropbox/org/")
+        ;; make org-roam buffer sticky
+              (org-roam-buffer-no-delete-other-windows t)
+              (org-roam-completion-system 'default)
+              (org-roam-link-file-path-type 'absolute)
+              ;; (org-roam-dailies-directory org-journal-dir)
+              (org-roam-dailies-directory "journal/")
+              (org-roam-tag-sources '(prop last-directory))
+  ;;           (org-roam-tag-sources '(prop))
+              (org-roam-completion-everywhere t)
+              (org-roam-index-file "~/Dropbox/org/index.org")
+              (org-roam-graph-exclude-matcher '("journal" "etc" "inbox" "projects" "spontaneous"))
+        :config
+
+        (setq org-roam-capture-templates '(
+              ("n" "Numéroté" plain (function org-roam--capture-get-point)
+             "%?"
+             :file-name "%<%Y%m%d%H%M%S>"
+             :head "#+TITLE: ${slug}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: permanent %<%Y>  %<%B>\n\nOrigin: %a\n"
+             :unnarrowed t)
+             ))
+
+      (setq org-roam-capture-ref-templates
+              '(("r" "ref" plain (function org-roam-capture--get-point)
+                 "#+ROAM_KEY: ${ref}\n\n%?"
+                 :file-name "website_${slug}_%<%Y-%m-%d>"
+                 :head "#+TITLE: ${title}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: website %<%Y>\n\n"
+                 :unnarrowed t)))
+
+        (setq org-roam-dailies-capture-templates
+              '(("d" "default" entry
+                 #'org-roam-capture--get-point
+                 "* %?"
+               ;;  :immediate-finish t
+                 ;; :file-name "%<%Y%m%d>"
+                 :file-name "journal/%<%Y%m%d>"
+                 :head "#+TITLE: %<%A, %d %B %Y>\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: journal %<%Y> %<%B>\n\n"))))
+
+#+END_SRC 
+
+** company-org-roam
+ #+BEGIN_SRC emacs-lisp
+    (use-package company-org-roam
+   :after company)
+   ;;   :ensure t
+      ;; You may want to pin in case the version from stable.melpa.org is not working 
+      ; :pin melpa
+      ;; :config
+      ;; (push 'company-org-roam company-backends)
+ #+END_SRC 
+
+** 無 org-roam-bibtex
+
+#+BEGIN_SRC emacs-lisp
+    (use-package org-roam-bibtex
+      :after (org-roam)
+      :hook (org-roam-mode . org-roam-bibtex-mode)
+      :custom
+          ;; Use this to insert org-ref citations (cite:XXX199X)
+          (orb-autokey-format "%a%y")
+          (orb-process-file-keyword t)
+          (orb-file-field-extensions '("pdf"))
+          ;; Use this to insert citation keys
+           (orb-insert-link-description 'citekey)
+          ;; (orb-insert-link-description 'citation)
+          (orb-note-actions-interface 'hydra)
+      :config
+
+    (setq orb-preformat-keywords
+          '("citekey" "title" "subtitle" "url" "author-or-editor" "keywords" "file"))
+
+      (setq orb-templates
+            '(("r" "ref" plain (function org-roam-capture--get-point)
+             ""
+             ;; (file "/home/sync0/Dropbox/org/etc/template_research-notes.org")
+               :file-name "references/${citekey}"
+               :head "#+TITLE: ${title}\n#+SUBTITLE: ${subtitle}\n#+AUTHOR: ${author-or-editor}\n#+ROAM_KEY: ${ref}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: ${citekey} references ${keywords}\n#+INTERLEAVE_PDF: ${file}"
+               :unnarrowed t))))
+#+END_SRC 

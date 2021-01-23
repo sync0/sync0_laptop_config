@@ -1,0 +1,16 @@
+* Other packages 
+#+INCLUDE: "~/.emacs.d/sync0/sync0-other-packages.org" 
+* UI improvements 
+#+INCLUDE: "~/.emacs.d/sync0/sync0-ui-improvements.org" 
+* Org mode 
+#+INCLUDE: "~/.emacs.d/sync0/sync0-org.org" 
+* Theme
+#+INCLUDE: "~/.emacs.d/sync0/sync0-theme.org" 
+* Text editing
+#+INCLUDE: "~/.emacs.d/sync0/sync0-text-editing.org" 
+* Latex
+#+INCLUDE: "~/.emacs.d/sync0/sync0-latex.org" 
+* Calendars
+#+INCLUDE: "~/.emacs.d/sync0/sync0-calendars.org" 
+* Version control
+#+INCLUDE: "~/.emacs.d/sync0/sync0-version-control.org" 

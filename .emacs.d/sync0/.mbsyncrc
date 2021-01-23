@@ -1,0 +1,162 @@
+# ACCOUNT INFORMATION
+IMAPAccount carc.sync0
+# Address to connect to
+Host imap.gmail.com
+User carc.sync0@gmail.com
+PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.emacs.d/sync0/.mbsyncpass_carc_sync0.gpg"
+AuthMechs LOGIN
+SSLType IMAPS
+SSLVersions TLSv1.2
+CertificateFile /etc/ssl/certs/ca-certificates.crt
+
+# REMOTE STORAGE (USE THE IMAP ACCOUNT SPECIFIED ABOVE)
+IMAPStore carc.sync0-remote
+Account carc.sync0
+
+# LOCAL STORAGE (CREATE DIRECTORIES with mkdir -p ~/Mail/carc.sync0)
+MaildirStore carc.sync0-local
+Path ~/Mail/carc.sync0/
+Inbox ~/Mail/carc.sync0/INBOX
+# SubFolders Verbatim
+
+# CONNECTIONS ARE SPECIFIED USING PATTERNS, WHICH MATCH REMOTE MAIl
+# FOLDERS. SOME COMMONLY USED PATTERS INCLUDE:
+#
+# 1 "*" TO MATCH EVERYTHING
+# 2 "!DIR" TO EXCLUDE "DIR"
+# 3 "DIR" TO MATCH DIR
+
+Channel carc.sync0-inbox
+Master :carc.sync0-remote:
+Slave :carc.sync0-local:
+Patterns "INBOX"
+Create Slave
+Expunge Both
+Sync All
+SyncState *
+
+Channel carc.sync0-trash
+Master :carc.sync0-remote:"[Gmail]/Trash"
+Slave :carc.sync0-local:"[carc.sync0].Trash"
+Create Slave
+Expunge Both
+Sync All
+SyncState *
+
+Channel carc.sync0-sent
+Master :carc.sync0-remote:"[Gmail]/Sent Mail"
+Slave :carc.sync0-local:"[carc.sync0].Sent Mail"
+Create Slave
+Expunge Both
+Sync All
+SyncState *
+
+Channel carc.sync0-all
+Master :carc.sync0-remote:"[Gmail]/All Mail"
+Slave :carc.sync0-local:"[carc.sync0].All Mail"
+Create Slave
+Expunge Both
+Sync All
+SyncState *
+
+Channel carc.sync0-drafts
+Master :carc.sync0-remote:"[Gmail]/Drafts"
+Slave :carc.sync0-local:"[carc.sync0].Drafts"
+Create Slave
+Expunge Both
+Sync All
+SyncState *
+
+Group carc.sync0
+Channel carc.sync0-inbox
+Channel carc.sync0-sent
+Channel carc.sync0-trash
+Channel carc.sync0-drafts
+Channel carc.sync0-all
+
+# ================================================================================
+
+# ACCOUNT INFORMATION
+IMAPAccount cantorlunae
+# Address to connect to
+Host imap.gmail.com
+User cantorlunae@gmail.com
+PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.emacs.d/sync0/.mbsyncpass_cantorlunae.gpg"
+AuthMechs LOGIN
+SSLType IMAPS
+SSLVersions TLSv1.2
+CertificateFile /etc/ssl/certs/ca-certificates.crt
+
+# REMOTE STORAGE (USE THE IMAP ACCOUNT SPECIFIED ABOVE)
+IMAPStore cantorlunae-remote
+Account cantorlunae
+
+# LOCAL STORAGE (CREATE DIRECTORIES with mkdir -p ~/Refile/cantorlunae)
+MaildirStore cantorlunae-local
+Path ~/Mail/cantorlunae/
+Inbox ~/Mail/cantorlunae/INBOX
+# SubFolders Verbatim
+
+# CONNECTIONS SPECIFY LINKS BETWEEN REMOTE AND LOCAL FOLDERS
+#
+# CONNECTIONS ARE SPECIFIED USING PATTERNS, WHICH MATCH REMOTE Refile
+# FOLDERS. SOME COMMONLY USED PATTERS INCLUDE:
+#
+# 1 "*" TO MATCH EVERYTHING
+# 2 "!DIR" TO EXCLUDE "DIR"
+# 3 "DIR" TO MATCH DIR
+
+Channel cantorlunae-inbox
+Master :cantorlunae-remote:
+Slave :cantorlunae-local:
+Patterns "INBOX"
+Create Slave
+Expunge Both
+Sync All
+SyncState *
+
+Channel cantorlunae-trash
+Master :cantorlunae-remote:"[Gmail]/Trash"
+Slave :cantorlunae-local:"[cantorlunae].Trash"
+Create Slave
+Expunge Both
+Sync All
+SyncState *
+
+Channel cantorlunae-sent
+Master :cantorlunae-remote:"[Gmail]/Sent Mail"
+Slave :cantorlunae-local:"[cantorlunae].Sent Mail"
+Create Slave
+Expunge Both
+Sync All
+SyncState *
+
+Channel cantorlunae-all
+Master :cantorlunae-remote:"[Gmail]/All Mail"
+Slave :cantorlunae-local:"[cantorlunae].All Mail"
+Create Slave
+Expunge Both
+Sync All
+SyncState *
+
+Channel cantorlunae-drafts
+Master :cantorlunae-remote:"[Gmail]/Drafts"
+Slave :cantorlunae-local:"[cantorlunae].Drafts"
+Create Slave
+Expunge Both
+Sync All
+SyncState *
+
+
+# GROUPS PUT TOGETHER CHANNELS, SO THAT WE CAN INVOKE
+# MBSYNC ON A GROUP TO SYNC ALL CHANNELS
+#
+# FOR INSTANCE: "mbsync gmail" GETS MAIL FROM
+# "gmail-inbox", "gmail-sent", and "gmail-trash"
+
+Group cantorlunae
+Channel cantorlunae-inbox
+Channel cantorlunae-sent
+Channel cantorlunae-trash
+Channel cantorlunae-all
+Channel cantorlunae-drafts

@@ -1,0 +1,4 @@
+destroying
+convergent
+say
+however

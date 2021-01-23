@@ -1,0 +1,626 @@
+#+TITLE: Emacs Settings
+#+AUTHOR: sync0
+#+EMAIL: cantorlunae@gmail.com
+# Necessary to export code from Emacs org mode to elisp. 
+#+PROPERTY: header-args :tangle yes
+
+* Introduction 
+This is my Emacs configuration file. As the sloppy code herein
+attests, I am not a proficient programmer. I use Emacs primarily
+for taking notes and writing academic articles, so these settings
+reflect that usage.  
+
+
+The functions prefixed by ~sync0~ are not necessarily my creations;
+this is just the placeholder I use to distinguish them from Emacs
+and other packages' native functions. I would like to credit the
+authors of all borrowed functions, but I don't do this
+consistently because writing such precise documention is too time
+consuming.
+
+Since I am such a lousy programmer, many parts of this
+configuration have been borrowed from more proficient programmers.
+Although I am trying hard to tidy up the documentation for this
+file, my limited programming literacy prevents me from better
+explaining the functioning of borrowed code sections. Therefore,
+in certain packages that I rarely use, there are vast passages of
+orphan and undocumented code. Furthermore, since writing
+documentation is so time consuming, I don't update it frequently.
+
+Should you have any suggestions for improving the code, I would
+greatly appreciate if you sent me an email.
+
+** 無 For Tyros
+Emacs is too complex; accept that you will never learn /all/ of it.
+
+I suggest you learn enough Emacs for your daily needs, and then
+begin from there. I have been using Emacs for years, and I still
+learn something new whenever I take the time to check what other
+users are doing with their setup. Once, it even happened that I
+asked an Emacs related question on a forum, and a twenty-plus-year
+Emacs veteran was surprised to see my discussion of a useful, but
+little known function that he had never heard of. As you could
+glance from the introduction to this file, I am not a programmer,
+and my coding skills are very limited. As an academic historian,
+my needs differ from those of most Emacs users, and this very
+specific usage reflects on my configuration. Briefly, my advice to
+you, oh tyro, is: Learn the Emacs you need, learn from those
+better than you, and remember that each user's configuration is
+very personal and reflects their specific needs.
+
+One thing I could never like about vanilla Emacs is its lack of
+usability. Some users might disagree, but I believe that if it
+wasn't for its extensibility, Emacs would be inferior to the
+competition. As a treat to tyros, I have tried to highlight those
+packages that I consider an absolute must: Without these, Emacs
+would drive me crazy.
+
+In my honest opinion, no matter what you do with Emacs, you should
+have the following installed:
+
+- ~org~ (the reason I started using Emacs).
+- ~evil~ (yes! Vim keybindings are way better)
+- ~doom-themes~ (vanilla Emacs is just too ugly.)
+- ~doom-modeline~ (looks good with doom-themes)
+- ~counsel~ (improved versions of useful commands)
+- ~ivy~ (completion frontend. Alternatively, you could use ~helm~)
+- ~hydra~ (the only sane method for dealing with keybindings in Emacs.)
+- ~saveplace~ (good luck finding your way around files otherwise)
+- ~smooth-scrolling~ (yeah; default scrolling is /that/ bad.)
+- ~rainbow-delimiters~ (good luck editing those pesky parentheses otherwise)
+- ~smartparens~ (same as above)
+- ~pdf-tools~ (not a must, but comes in handy sometimes)
+- ~google-this~ (not a must, but since everyone uses google these days,
+  why not?)
+ 
+** Organization
+I configure Emacs with a single file: ~init.org~. This is the file
+you are reading. The only thing not included in this file are
+snippets, Github packages, and the like. Those you have to find
+yourself, but, where possible, I have tried to provide links.
+
+Although there are more learned discussions about the organization
+of the Emacs configuration, let me summarize them by saying that
+to the best of my knowledge, there are roughly two ways to go
+about this: You either have myriad ~foo.el~ files with different
+parts of your configuration that you then call upon when necessary
+(i.e., ~(require 'foo)~), or you have one massive ~org-mode~ file with
+src blocks that are then extracted (i.e., ~(org-babel-tangle-file)~)
+into a massive ~foo.el~ file.
+
+I won't get into the advantages and disadvantages of these two
+approaches, but, at this point, I will only mention that the
+former approach was the dominant until after the development of
+~org-mode~ by Carsten Dominik in 2003.
+
+Since org-mode is the single reason I decided to embark into
+Emacs, I naturally embraced the latter approach. Nonetheless, as
+my configuration grew bigger, my elisp skills stagnated, and my
+laptop grew older, I decided to tweak that approach to combine the
+best of both worlds. My approach to organizing Emacs is a middle
+path that attempts to combine the benefits of the two.
+
+Essentially:
+- ~snippets~
+- ~sync0~
+- ~sync0_git~
+  
+** Tips
+Before presenting the code, I have compiled a few tips that you
+might find useful for setting up Emacs:
+
+ - In Org mode, ~<s + tab~ creates a code block. To make it
+   executable, add the words ~emacs-lisp~ to the first line, right
+   after ~#+BEGIN_SRC~.
+ - The location for hunspell dictionaries should be in
+   /usr/share/hunspell. Otherwise, an error arises that I have
+   been unable to solve, even when declaring the path.
+  
+* Initialization 
+
+These settings are necessary to load Emacs packages and the rest
+of my configuration, so they must be placed in the beginning of
+this file.
+
+** Package manager
+These settings configure the Emacs package manager and the package
+repositories.
+
+#+BEGIN_SRC emacs-lisp
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+  (setq straight-use-package-by-default t)
+#+END_SRC 
+
+   #+BEGIN_SRC emacs-lisp
+     ;; Load latest versions of all packages. 
+     ;; List packages that will not be loaded. 
+     ;; IMPORTANT: Set this variable before calling (package-initialize).
+     ;; (setq package-load-list '(all
+     ;;                           ;; (projectile nil)
+     ;;                           (desktop-save-mode nil)
+     ;;                          ;; (solaire-mode nil)
+     ;;                           (sublimity-mode nil)
+     ;;                          ;; (which-key-mode nil)
+     ;;                          ;; (org-bullets-mode nil)
+     ;;                           (company-mode nil)))
+     ;; Do not check package signatures when installing new packages. 
+     ;; (setq package-check-signature nil)
+     ;; Initialize the Emacs package manager.
+     ;; (package-initialize)
+     ;; Set up the package repositories.
+     ;; (setq package-archives
+     ;;       '(("melpa" . "https://melpa.org/packages/")
+     ;;         ;; ("melpa-stable" . "http://melpa-stable.milkbox.net/packages/")
+     ;;         ;;     ("melpa-stable" . "https://stable.melpa.org/packages/")
+     ;;         ("org" . "http://orgmode.org/elpa/")
+     ;;         ("gnu" . "http://elpa.gnu.org/packages/")))
+     #+END_SRC 
+
+
+** use-package
+[[https://github.com/jwiegley][jwiegley's]] ~use-package~ macro simplifies package configuration in
+the ~.emacs~ startup file for faster startup and easier
+organization. Since I use a single org-mode file for configuring
+Emacs, ~use-package~ provides a nice way to keep everything
+organized.
+
+The alternative way to organize your Emacs configuration is by
+having separate ~whatever-package.el~ files, and calling them when
+needed. Although many seasoned users continue organizing their
+configurations this way, I find it too cumbersome to be worth the
+trouble. The only reason I can think for keeping to the old way is
+if you want to have your configuration rely on the least number of
+external dependencies or if your single configuration file cannot
+be handled by your current machine.
+
+Remember that the ~:disabled~ keyword only disables the use-package
+configuration. If you want to prevent a package from loading, it
+is necessary to add it, as in ~(unwanted-package nil)~, to the list
+~package-load-list~. See above for the code.
+
+   #+BEGIN_SRC emacs-lisp
+     (eval-when-compile
+       ;; Activate "use-package". 
+       (require 'use-package))
+     ;; Necessary to shorten mode line package names with ":diminish".
+     (require 'diminish)               
+     ;; Necessary to allow use-package to bind keys through ":bind" keyword.
+     (require 'bind-key)
+
+     (setq use-package-verbose t)
+ #+END_SRC 
+
+ Setting the following variable is necessary to avoid a strange
+ error downloading packages from the gnu archive. After this bug
+ is solved, setting this explicitly might be unnecessary.
+
+See https://www.reddit.com/r/emacs/comments/cdei4p/failed_to_download_gnu_archive_bad_request/
+   #+BEGIN_SRC emacs-lisp
+(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+ #+END_SRC 
+
+** Tangling
+This code sets up tangling to byte-compile the /init.org/ file
+automatically on save. Byte compiling this file speeds up Emacs on
+startup. Likewise, when byte-compiling, Emacs displays whether
+there are any errors or warnings, which simplifies debugging.
+
+# Verify that current buffer is visiting my Emacs configuration
+# file.
+
+#+BEGIN_SRC emacs-lisp
+(with-eval-after-load 'org
+(defun sync0-export-tangle ()
+  "Shortcut for exporting and tangling the current org-mode buffer."
+  (when (equal (buffer-file-name)
+               (expand-file-name 
+                (concat user-emacs-directory "sync0_emacs.org")))
+    (let*  ((contents (progn (org-org-export-as-org)
+                             (with-current-buffer "*Org ORG Export*"
+                               (buffer-string))))
+            (exported-file (make-temp-file "to-tangle-" nil ".org" contents))
+            (tangled-file (car (org-babel-tangle-file exported-file))))
+               (with-temp-buffer 
+                 (insert-file-contents tangled-file)
+                 (write-file "init.el")
+               (byte-compile-file "init.el")))))
+
+  (add-hook 'after-save-hook 'sync0-export-tangle))
+#+END_SRC 
+
+* Configuration
+The following settings are my Emacs configuration.
+
+First, add to ~load-path~ the folder that houses my configuration. 
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'load-path (concat user-emacs-directory "sync0/"))
+ #+END_SRC 
+
+** Sane defaults
+
+   Define user information.
+ #+BEGIN_SRC emacs-lisp
+   (setq user-full-name "Carlos Alberto Rivera Carreño"
+;; Define my Dropbox location
+         sync0-dropbox-directory "~/Dropbox/"
+         user-mail-address "carc.sync0@gmail.com")
+ #+END_SRC
+
+ Configure bookmarks.  
+ #+BEGIN_SRC emacs-lisp
+   ;; Bookmarks directory
+   (setq bookmark-default-file (concat user-emacs-directory "bookmarks")
+         bookmark-save-flag 1)
+ #+END_SRC
+
+Configure autosave.
+ #+BEGIN_SRC emacs-lisp
+   (setq auto-save-interval 100
+         auto-save-timeout 60)
+ #+END_SRC
+
+   Configure CUSTOM
+ #+BEGIN_SRC emacs-lisp
+   (use-package custom
+  :straight nil
+     :custom
+     ;; Allow automatic theme changing 
+     (custom--inhibit-theme-enable nil)
+     :config
+     ;; Set CUSTOM directory
+     (setq custom-file (expand-file-name "custom_settings.el" user-emacs-directory)))
+ #+END_SRC
+
+Configure line numbers
+   ;; (when (version<= "26.0.50" emacs-version)
+   ;; (global-display-line-numbers-mode))
+
+Eliminate Emacs' yes-no inconsistency. 
+ #+BEGIN_SRC emacs-lisp
+   (fset 'yes-or-no-p 'y-or-n-p)
+ #+END_SRC
+
+Configure the default encoding system.
+ #+BEGIN_SRC emacs-lisp
+   (prefer-coding-system 'utf-8)
+   (set-language-environment 'utf-8)
+   (set-default-coding-systems 'utf-8)
+   (set-terminal-coding-system 'utf-8)
+   (set-keyboard-coding-system 'utf-8)
+   (set-selection-coding-system 'utf-8)
+   (setq default-file-name-coding-system 'utf-8)
+   (setq locale-coding-system 'utf-8)
+   (if (boundp buffer-file-coding-system)
+       (setq buffer-file-coding-system 'utf-8)
+     (setq default-buffer-file-coding-system 'utf-8))
+
+   ;; Treat clipboard input as UTF-8 string first; compound text next, etc.
+   (when (display-graphic-p)
+     (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
+ #+END_SRC
+
+Configure bookmarks.
+ #+BEGIN_SRC emacs-lisp 
+   ;; Store all autosave files in the tmp directory.
+   (setq auto-save-file-name-transforms `((".*" ,temporary-file-directory t))
+         ;; Store all backups in the "backups" directory.
+         backup-directory-alist '(("." . "~/Documents/backups/emacs"))
+         backup-by-copying t
+         delete-old-versions t
+         kept-new-versions 5
+         kept-old-versions 0
+         ;; Use versioned backups.
+         version-control t
+         ;; Don't create lockfiles.
+         create-lockfiles nil) 
+ #+END_SRC
+
+Define system locale.
+#+BEGIN_SRC emacs-lisp
+;; (setq system-time-locale "fr_FR.UTF-8")
+#+END_SRC 
+
+Other settings.
+    #+BEGIN_SRC emacs-lisp
+      ;; Improve slow down due to undo
+      (setq-default undo-limit 100000
+                    ;; Split verticly by default
+                    ;; split-width-threshold 0         
+                    split-width-threshold (- (window-width) 10)
+                    ;; Split verticly by default
+                    split-height-threshold nil        
+                    ;; hide cursors in other windows
+                    cursor-in-non-selected-windows nil  
+                    ;; Don't resize frames implicitly.
+                    frame-inhibit-implied-resize t
+                    highlight-nonselected-windows nil
+                    ;; Don't show the "Welcome to GNU Emacs ..." at startup
+                    inhibit-startup-screen t
+                    ;; Stop asking whether themes are safe
+                    custom-safe-themes t
+                    ;; Loop animated images such as gif files. 
+                    image-animate-loop nil)
+ #+END_SRC
+
+Prevent more than two windows open in vertical split. 
+ #+BEGIN_SRC emacs-lisp
+ (defun sync0-count-visible-buffers (&optional frame)
+  "Count how many buffers are currently being shown. Defaults to selected frame."
+  (length (mapcar #'window-buffer (window-list frame))))
+
+(defun sync0-prevent-split-over-two-windows (window &optional horizontal)
+  (if (and horizontal (> (sync0-count-visible-buffers) 1))
+      nil
+    t))
+
+(advice-add 'window-splittable-p :before-while #'sync0-prevent-split-over-two-windows)
+ #+END_SRC 
+Taken from:
+https://stackoverflow.com/questions/23207958/how-to-prevent-emacs-dired-from-splitting-frame-into-more-than-two-windows
+
+
+** Keybindings 
+#+BEGIN_SRC emacs-lisp
+  ;; Font size change
+  (define-key global-map (kbd "C-=") 'text-scale-increase)
+  (define-key global-map (kbd "C--") 'text-scale-decrease)
+  ;; Cycle through buffers
+  (global-set-key (kbd "<C-tab>") 'bury-buffer)
+  ;; EVIL friendly keybindings for next-buffer
+  (global-set-key (kbd "M-h") 'next-buffer)
+  ;; Quickly save
+  (global-set-key (kbd "M-w") 'save-buffer)
+  ;; EVIL friendly keybindings for previous-buffer
+  (global-set-key (kbd "M-l") 'previous-buffer)
+#+END_SRC 
+
+** Definitions
+#+BEGIN_SRC emacs-lisp
+;; (setq sync0-notes-folder (concat (getenv "HOME") "/Dropbox/org/annotations/"))
+(setq sync0-notes-folder (concat (getenv "HOME") "/Dropbox/org/"))
+(setq sync0-current-year (format-time-string "%Y"))
+(setq sync0-current-month (format-time-string "%B"))
+(setq sync0-current-month-downcase (downcase (format-time-string "%B")))
+(setq sync0-current-day (format-time-string "%d"))
+(setq sync0-pdfs-folder (concat (getenv "HOME") "/Documents/pdfs/"))
+(setq sync0-english-parts-speech '("noun" "intransitive verb" "transitive verb" "verb" "conjunction" "adjective" "adverb"))
+(setq sync0-french-parts-speech '("nom féminin" "nom masculin" "verbe intransitif" "verbe transitif" "verbe" "conjonction" "adjectif" "adverbe"))
+(setq sync0-portuguese-parts-speech '("sustantivo femenino" "sustantivo masculino" "verbo intransitivo" "verbo transitivo" "verbo" "conjunção" "adjetivo" "advérbio"))
+(setq sync0-spanish-parts-speech '("sustantivo femenino" "sustantivo masculino" "verbo intransitivo" "verbo transitivo" "verbo" "conjunción" "adjectivo" "adverbio"))
+ #+END_SRC 
+ 
+** Functions
+#+BEGIN_SRC emacs-lisp
+;; useless function
+  (defun sync0-iso-to-time (day month year)
+    (pcase-let ((`(,d ,m ,y)
+                 (calendar-gregorian-from-absolute
+                  (calendar-iso-to-absolute (list day month year)))))
+      (encode-time 0 0 0 d m y "America/Bogota")))
+
+(defun sync0-log-today-timestamp () 
+  "Insert today's date in the YYYY/MM/DD format"
+    (insert (format-time-string "%A, %Y/%m/%d")))
+
+  (defun insert-current-day () 
+    (insert (format-time-string "%d")))
+
+  (defun insert-current-month () 
+    (insert (format-time-string "%B")))
+
+  (defun sync0-insert-today-timestamp () 
+    "Insert today's date in the YYYY/MM/DD format"
+    (insert (format-time-string "%Y/%m/%d")))
+
+  (defun sync0-org-insert-today-timestamp () 
+    "Insert today's date in the YYYY/MM/DD format"
+    (insert (format-time-string "<%Y-%m-%d>")))
+
+  (defun sync0-insert-dates ()
+    "insert a bunch of dates"
+    (interactive)
+    (let* ((month 4)
+           (day 1)
+           (time (encode-time 1 1 0 day month 2019)))
+      (while (= (nth 4 (decode-time time)) month)
+        (insert (concat "** " (format-time-string "%d/%m/%Y \n" time)))
+        (setq day (1+ day))
+        (setq time (encode-time 1 1 0 day month 2019)))))
+
+  (defun sync0-insert-weeks ()
+    "insert a bunch of weeks"
+    (interactive)
+    (let* ((weeky 1))
+      (while (< weeky 32)
+        (insert (format  "** \ordinalnum{%s} Week \n" weeky))
+        (setq weeky (1+ weeky)))))
+
+  (defun sync0-update-timestamp ()
+    "Update current #+DATE timestamp"
+    (interactive)
+    (save-excursion
+      (goto-char (point-min))
+      (let ((regex "[0-9][0-9][0-9][0-9]\/[0-9][0-9]\/[0-9][0-9]")
+            (date (shell-command-to-string "echo -n $(date +'%Y/%m/%d')")))
+         (when (search-forward "#+DATE:" nil nil 1)
+           (if (progn (forward-char 1)(looking-at regex))
+               (replace-match date)
+             (sync0-insert-today-timestamp)))
+        (when (search-forward "Last modified: &" nil nil 1)
+          (if (progn (forward-char 1)(looking-at regex))
+              (replace-match date)
+            (sync0-insert-today-timestamp))))))
+
+  (add-hook 'before-save-hook (lambda ()
+                                (when (and (eq major-mode 'org-mode)
+                                           ;; (not (equal buffer-file-name "/home/sync0/Dropbox/notes/forschungsbuch.org"))
+                                           (or (equal default-directory "/home/sync0/Dropbox/org/")
+                                            (equal default-directory "/home/sync0/Dropbox/org/projects/")
+                                            (equal default-directory "/home/sync0/Dropbox/org/annotations/")
+                                            (equal default-directory "/home/sync0/Dropbox/org/inbox/")
+                                           (equal default-directory "/home/sync0/Dropbox/notes/")))
+                                  (sync0-update-timestamp))))
+
+  (defun sync0-annotations-update-author ()
+    "Save current #+AUTHOR for use later on."
+    (interactive)
+ (when (equal default-directory "/home/sync0/Dropbox/org/")
+    (save-excursion
+      (goto-char (point-min))
+         (when (re-search-forward "^#\\+AUTHOR: \\([[:print:]]+\\)$" nil t 1)
+             (setq sync0-annotations-author (match-string-no-properties 1))))))
+
+  (defun sync0-annotations-update-roam-key ()
+    "Save current #+ROAM_KEY for use later on."
+    (interactive)
+ (when (equal default-directory "/home/sync0/Dropbox/org/")
+    (save-excursion
+      (goto-char (point-min))
+         (when (re-search-forward "^#\\+ROAM_KEY: cite:\\([[:print:]]+\\)$" nil t 1)
+           (progn
+             (setq sync0-annotations-key (match-string-no-properties 1))
+             (setq sync0-annotations-roam-key (concat "cite:" sync0-annotations-key)))))))
+
+(add-hook 'find-file-hook 'sync0-annotations-update-author)
+(add-hook 'find-file-hook 'sync0-annotations-update-roam-key)
+(add-hook 'buffer-list-update-hook 'sync0-annotations-update-author)
+(add-hook 'buffer-list-update-hook 'sync0-annotations-update-roam-key)
+
+ #+END_SRC
+
+Useful function to use with org-roam
+ #+BEGIN_SRC emacs-lisp
+(defun sync0-show-file-path ()
+  "Show the full path file name in the minibuffer."
+  (interactive)
+  (kill-new (buffer-file-name)))
+
+;; https://emacs.stackexchange.com/questions/36850/copy-to-kill-ring-selected-file-names-full-path
+(defun sync0-dired-copy-path-at-point ()
+    (interactive)
+    (dired-copy-filename-as-kill 0))
+ #+END_SRC 
+
+ Another one to copy file name to clipboard:
+https://emacsredux.com/blog/2013/03/27/copy-filename-to-the-clipboard/
+
+#+BEGIN_SRC emacs-lisp
+(defun sync0-copy-file-name-to-clipboard ()
+  "Copy the current buffer file name to the clipboard."
+  (interactive)
+  (let ((filename (if (equal major-mode 'dired-mode)
+                      default-directory
+                    (buffer-file-name))))
+    (when filename
+      (kill-new filename)
+      (message "Copied buffer file name '%s' to the clipboard." filename))))
+#+END_SRC  
+
+ Move files for real. The code here is directly taken from:
+ https://zck.org/emacs-move-file
+
+ #+BEGIN_SRC emacs-lisp
+ (defun sync0-move-file (new-location)
+  "Write this file to NEW-LOCATION, and delete the old one."
+  (interactive (list (expand-file-name
+                      (if buffer-file-name
+                          (read-file-name "Move file to: ")
+                        (read-file-name "Move file to: "
+                                        default-directory
+                                        (expand-file-name (file-name-nondirectory (buffer-name))
+                                                          default-directory))))))
+  (when (file-exists-p new-location)
+    (delete-file new-location))
+  (let ((old-location (expand-file-name (buffer-file-name))))
+    (message "old file is %s and new file is %s"
+             old-location
+             new-location)
+    (write-file new-location t)
+    (when (and old-location
+               (file-exists-p new-location)
+               (not (string-equal old-location new-location)))
+      (delete-file old-location))))
+ #+END_SRC 
+
+This is a collection of functions that become problematic when
+loaded after packages are declared.
+
+#+BEGIN_SRC emacs-lisp
+  (setq smart-quote-regexp-replacements
+        '(("\\(\\w\\)- " . "\\1")
+          ("\\(\\w\\)\\(  [-—] \\|—\\)" . "\\1---")))
+
+  ;; Replace smart quotes with straight quotes so that spell check can recognize
+  ;; words with contractions like “don’t” and “can’t.” For when I paste text in
+  ;; that I’ve copied from the web.
+  (defun replace-smart-quotes-regexp (beg end)
+    "Replace 'smart quotes' in buffer or region with ascii quotes."
+    (interactive "r")
+    (mapcar
+     (lambda (r)
+       (save-excursion
+         (replace-regexp (car r) (cdr r) nil beg (min end (point-max)))))
+     smart-quote-regexp-replacements))
+
+  (defun replace-smart-quotes (beg end)
+    "Replace 'smart quotes' in buffer or region with ascii quotes."
+    (interactive "r")
+    ;;(while (search-forward-regexp "- " nil to)
+    ;; (replace-match "") nil t)
+    ;; add alpha. And replace the alpha.
+
+    (replace-smart-quotes-regexp beg end)
+    (format-replace-strings '(
+                              ("\x201C" . "``")
+                              ("“" . "``")
+                              ("\x201D" . "''")
+                              ("”" . "''")
+                              ("\x2018" . "`")
+                              ("\x2019" . "'")
+                              ("’" . "'")
+                              ;;("''" . "\"")
+                              ;;("​" . "")
+                              ;;("…" . "...")
+                              ("…" . "\\ldots")
+                              ("..." . "\\ldots")
+                              ;;("• " . "- ")
+                              ;;(" " . "")
+                              ("  " . " "))
+                            nil   beg (min end (point-max))))
+ #+END_SRC 
+
+** Packages and related settings
+The power of this configuration is that it provides modularity,
+but not too much that it becomes unwieldy. The following
+~#+INCLUDE:~ statements reflect the my everyday usage of Emacs for
+composing academic documents.
+
+All packages that I don't know where to put are laid here. 
+#+INCLUDE: "~/.emacs.d/sync0/sync0-other-packages.org" 
+
+Since org-mode is my most used package, I dedicated a
+configuration file just for itself.
+#+INCLUDE: "~/.emacs.d/sync0/sync0-org.org" 
+
+Most settings related to Emacs eye candy are here. 
+#+INCLUDE: "~/.emacs.d/sync0/sync0-theme.org" 
+
+Settings related to text editing and natural language processing
+are here.
+#+INCLUDE: "~/.emacs.d/sync0/sync0-text-editing.org" 
+
+Since I use latex to compose documents I also dedicated an entire
+file to LaTeX and related settings.  
+#+INCLUDE: "~/.emacs.d/sync0/sync0-latex.org" 

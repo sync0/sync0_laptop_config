@@ -1,0 +1,877 @@
+* Display
+    ;; (setq    inhibit-splash-screen t
+    ;;          echo-keystrokes 0.1
+    ;;          auto-revert-interval 1)
+* Set default faces
+#+BEGIN_SRC emacs-lisp
+  ;; select default faces
+  ;; (set-face-attribute 'default nil :font "Fira Mono")
+
+  ;; adjust font size according to screen resolution (when I use dual monitor setup)
+  (if (> (display-pixel-width) 2000)
+      ;; external monitor font size
+      (progn
+        ;; interline spacing
+        (set-face-attribute 'default nil 
+                            :family "Source Code Pro"
+                            :height 120)
+        (setq line-spacing 0))
+    ;; laptop font size
+    (progn
+      ;; interline spacing
+      (set-face-attribute 'default nil 
+                          :family "Source Code Pro"
+                          :height 115)
+      (setq line-spacing 0)))
+
+  ;; (defun my-buffer-face-mode-fixed ()
+  ;;   "Sets a fixed width (monospace) font in current buffer"
+  ;;   (if (> (display-pixel-width) 2000)
+  ;;       ;; external monitor font size
+  ;;       (setq buffer-face-mode-face '(:family "Source Code Pro" :height 120)) 
+  ;;     ;; laptop font size
+  ;;     (setq buffer-face-mode-face '(:family "Source Code Pro" :height 115)))
+  ;;   (buffer-face-mode))
+
+  ;; Variable-width faces 
+  (defun sync0-buffer-face-mode-variable ()
+    "Set font to a variable width (proportional) fonts in current buffer"
+    (if (> (display-pixel-width) 2000)
+        ;; external monitor font size
+        (setq buffer-face-mode-face '(:family "Linux Libertine" :height 140))
+      ;; laptop font size
+      (setq buffer-face-mode-face '(:family "Linux Libertine" :height 150)))
+    (buffer-face-mode))
+
+  ;; Set default font faces for Info, ERC, and Org
+  (add-hook 'erc-mode-hook 'my-buffer-face-mode-variable)
+  (add-hook 'Info-mode-hook 'my-buffer-face-mode-variable)
+  (add-hook 'text-mode-hook 'sync0-buffer-face-mode-variable)
+
+  ;; Allow narrowing
+  (put 'narrow-to-region 'disabled nil)
+
+  ;; Sentences end with single espace
+  (setq sentence-end-double-space nil
+        ;; Word wrap
+        org-startup-truncated t)
+ #+END_SRC
+* Org-crypt
+     (use-package org-crypt :after org
+       :config
+       (org-crypt-use-before-save-magic)
+       (setq org-tags-exclude-from-inheritance (quote ("crypt"))
+             org-crypt-key nil)
+       ;; GPG key to use for encryption
+       ;; Either the Key ID or set to nil to use symmetric encryption.
+       )
+     ;; (setq auto-save-default nil)
+     ;; Auto-saving does not cooperate with org-crypt.el: so you need
+     ;; to turn it off if you plan to use org-crypt.el quite often.
+     ;; Otherwise, you'll get an (annoying) message each time you
+     ;; start Org.
+
+     ;; To turn it off only locally, you can insert this:
+     ;;
+     ;; # -*- buffer-auto-save-file-name: nil; -*-
+
+* Org2blog                                                                    
+This package allow org mode to interact with WordPress. 
+  ;;   (use-package org2blog :after org 
+  ;;     :config
+  ;; ;; initial config
+  ;;     (setq load-path (cons "~/.emacs.d/org2blog/" load-path))
+  ;;     (require 'org2blog-autoloads)
+  ;;     (setq org-list-allow-alphabetical t)
+
+  ;;   ;; blog setup
+  ;;     (setq org2blog/wp-blog-alist
+  ;;           '(("cahiers"
+  ;;              :url "https://cyberneticrevolutionary.wordpress.com/xmlrpc.php"
+  ;;              :username "cyberneticrevolutionary"
+  ;;              :password "kosmos666"
+  ;;              :default-title "Penseé"
+  ;;              :tags-as-categories nil))))
+** default template
+(setq org2blog/wp-buffer-template
+      "-----------------------
+#+TITLE: %s
+#+DATE: %s
+-----------------------\n")
+(defun my-format-function (format-string)
+  (format format-string
+          org2blog/wp-default-title
+          (format-time-string "%Y-%m-%d" (current-time)))))
+          (setq org2blog/wp-buffer-format-function
+'my-format-function)
+
+* Highlight changes mode
+#+BEGIN_SRC emacs-lisp
+    ;; higlight changes in documents
+  (global-highlight-changes-mode t)
+  (setq highlight-changes-visibility-initial-state nil); initially hide
+  ; toggle visibility
+  ;; (global-set-key (kbd "<f7>")      'highlight-changes-visible-mode) ;; changes
+  ;; remove the change-highlight in region
+  ;;(global-set-key (kbd "S-<f7>")    'highlight-changes-remove-highlight)
+
+  ;; alt-pgup/pgdown jump to the previous/next change
+
+  ;; if you're not already using it for something else...
+  (global-set-key (kbd "M->") 'highlight-changes-next-change)
+  (global-set-key (kbd "M-<")  'highlight-changes-previous-change)
+
+  ;;(set-face-foreground 'highlight-changes nil)
+  (set-face-foreground 'highlight-changes "#268bd2")
+  ;;(set-face-background 'highlight-changes "#382f2f")
+  (set-face-background 'highlight-changes nil)
+  ;;(set-face-foreground 'highlight-changes-delete nil)
+  (set-face-foreground 'highlight-changes-delete "#dc322f")
+  ;;(set-face-background 'highlight-changes-delete "#916868")
+  (set-face-background 'highlight-changes-delete nil)
+  #+END_SRC 
+* Avy
+#+BEGIN_SRC emacs-lisp
+  (use-package avy
+    :after evil
+    :commands (avy-goto-char-2 avy-goto-line avy-org-goto-heading-timer)
+    :init
+    (evil-define-key 'normal org-mode-map
+      "gl" 'avy-goto-line
+      "gc" 'avy-goto-char-2
+      "go" 'avy-org-goto-heading-timer
+      "gr" 'avy-org-refile-as-child)
+    :config
+    (setq avy-all-windows nil
+          avy-background t))
+  #+END_SRC 
+* Company Mode
+  ;;           (use-package company
+  ;;           :defer 2
+  ;;       :config
+  ;;         (setq company-idle-delay .1
+  ;;                 company-tooltip-limit 5
+  ;;           ;; company-begin-commands '(self-insert-command)
+  ;;                 ;; company-dabbrev-downcase nil
+  ;;                 ;; company-dabbrev-ignore-case nil
+  ;;           company-minimum-prefix-length 2
+  ;;                 ;; company-dabbrev-code-other-buffers t
+  ;;           company-show-numbers t
+  ;;           company-selection-wrap-around t
+  ;;                 company-tooltip-align-annotations t
+  ;;                 company-require-match 'never
+  ;;                 ;; company-global-modes '(not eshell-mode comint-mode erc-mode message-mode help-mode gud-mode)
+  ;;                 company-frontends '(company-pseudo-tooltip-frontend company-echo-metadata-frontend)
+  ;;                 ;; company-backends '(company-capf company-dabbrev company-ispell)
+  ;;                 company-transformers '(company-sort-by-occurrence))
+  ;;         ;; (add-to-list 'company-backends 'company-bibtex)
+  ;; (make-local-variable 'company-backends)
+  ;;         (add-to-list 'company-backends 'company-capf)
+  ;;         (add-to-list 'company-backends 'company-yasnippet)
+  ;;         (add-to-list 'company-backends 'company-elisp)
+  ;;         (add-to-list 'company-backends 'company-files)
+  ;;         (add-to-list 'company-backends 'company-gtags)
+  ;;         (add-to-list 'company-backends 'company-ispell)
+  ;; ;; (define-key company-active-map 'company-complete-common nil)
+  ;;       (global-company-mode +1))
+
+  ;;     (use-package company-bibtex
+  ;;       :after (bibtex company)
+  ;;       :config 
+  ;;   (add-to-list 'company-backends 'company-bibtex)
+  ;;       (setq company-bibtex-bibliography
+  ;;               '("/home/sync0/Documents/pdfs/bibliography.bib"))
+  ;;       (setq company-bibtex-key-regex "[[:alnum:]+_]*"))
+
+          ;; (autoload 'company-capf "company-capf")
+          ;; (autoload 'company-yasnippet "company-yasnippet")
+          ;; (autoload 'company-dabbrev "company-dabbrev")
+          ;; (autoload 'company-dabbrev-code "company-dabbrev-code")
+          ;; (autoload 'company-etags "company-etags")
+          ;; (autoload 'company-elisp "company-elisp")
+          ;; (autoload 'company-files "company-files")
+          ;; (autoload 'company-gtags "company-gtags")
+          ;; (autoload 'company-ispell "company-ispell")
+* Flycheck
+  ;;     (use-package flycheck
+  ;;       ;; :init (global-flycheck-mode)
+  ;;             :hook (text-mode . flycheck-mode)
+  ;;       :config
+  ;;       (flycheck-define-checker proselint
+  ;;                                "A linter for prose."
+  ;;                                :command ("proselint" source-inplace)
+  ;;                                :error-patterns
+  ;;                                ((warning line-start (file-name) ":" line ":" column ": "
+  ;;                                          (id (one-or-more (not (any " "))))
+  ;;                                          (message) line-end))
+  ;;                                :modes (text-mode markdown-mode gfm-mode org-mode))
+  ;; (setq flycheck-check-syntax-automatically '(save
+  ;;                                             idle-change
+  ;;                                             mode-enabled))
+  ;; (with-eval-after-load 'flycheck
+  ;;   (flycheck-pos-tip-mode))
+  ;; (setq flycheck-indication-mode 'right-fringe)
+  ;; (setq flycheck-pos-tip-timeout 10)
+  ;; ;; Immediate syntax checking quite annoying. Slow it down a bit.
+  ;; (setq flycheck-idle-change-delay 60.0))
+
+    ;; (use-package flycheck
+    ;;   :ensure t
+    ;;   :if (version<= "24.4" emacs-version)
+    ;;   :commands global-flycheck-mode
+    ;;   :init (add-hook 'prog-mode-hook 'global-flycheck-mode)
+    ;;   :config
+    ;;   (progn
+    ;;     ;; Settings
+    ;;     (setq-default flycheck-emacs-lisp-initialize-packages t
+    ;;                   flycheck-highlighting-mode 'lines
+    ;;                   flycheck-check-syntax-automatically '(save)
+    ;;                   flycheck-disabled-checkers '(c/c++-clang c/c++-gcc))
+
+      ;; (add-to-list 'flycheck-checkers 'proselint)
+      ;;   (flycheck-define-checker proselint
+      ;;     "A linter for prose."
+      ;;     :command ("proselint" source-inplace)
+      ;;     :error-patterns
+      ;;     ((warning line-start (file-name) ":" line ":" column ": "
+      ;;               (id (one-or-more (not (any " "))))
+      ;;               (message) line-end))
+      ;;     :modes (text-mode markdown-mode gfm-mode))
+
+      ;; (add-to-list 'flycheck-checkers 'proselint)
+      ;;   (defun magnars/adjust-flycheck-automatic-syntax-eagerness ()
+      ;;   "Adjust how often we check for errors based on if there are any.
+      ;; This lets us fix any errors as quickly as possible, but in a
+      ;; clean buffer we're an order of magnitude laxer about checking."
+      ;;   (setq flycheck-idle-change-delay
+      ;;         (if flycheck-current-errors 0.5 30.0)))
+
+      ;; Each buffer gets its own idle-change-delay because of the
+      ;; buffer-sensitive adjustment above.
+      ;; (make-variable-buffer-local 'flycheck-idle-change-delay)
+
+      ;; (add-hook 'flycheck-after-syntax-check-hook
+      ;;           'magnars/adjust-flycheck-automatic-syntax-eagerness)
+
+      ;; Remove newline checks, since they would trigger an immediate check
+      ;; when we want the idle-change-delay to be in effect while editing.
+      ;; (setq flycheck-check-syntax-automatically '(save
+      ;;                                             idle-change
+      ;;                                             mode-enabled))
+
+      ;; (eval-after-load 'flycheck
+      ;;   '(custom-set-variables
+      ;;     '(flycheck-display-errors-function #'flycheck-pos-tip-error-messages)))
+* Persp-mode 
+      (use-package persp-mode
+        :config
+    ;;  "A hook that's run after `persp-switch'.
+    ;; Run with the newly created perspective as `persp-curr'."
+
+    ;; (add-hook 'persp-switch-hook
+    ;;   (lambda()
+    ;;     ;; switche themes here...
+    ;; ))
+
+    ;; loads workspace on launch
+    ;; https://github.com/nex3/perspective-el/pull/49
+    ;; (defun save-perspective-configuration ()
+    ;;   "Save the current perspective windows configuration"
+    ;;   (interactive)
+    ;;   (if persp-curr
+    ;;       (with-temp-file (format "~/.emacs.d/perspectives/%s" (persp-name persp-curr))
+    ;;         (insert (prin1-to-string (current-window-configuration-printable))))))
+
+    ;; (defun load-perspective-configuration ()
+    ;;   "Load the current perspective windows configuration"
+    ;;   (interactive)
+    ;;   (let ((perspective-file (format "~/.emacs.d/perspectives/%s" (persp-name persp-curr))))
+    ;;     (if (f-exists? perspective-file)
+    ;;         (restore-window-configuration (read (f-read perspective-file))))))
+
+    ;; (add-hook 'persp-before-switch-hook 'save-perspective-configuration)
+    ;; (add-hook 'persp-created-hook 'load-perspective-configuration)
+
+    ;; (load-perspective-configuration)
+
+    ;; (persp-new "main")
+    ;; (persp-new "config")
+    ;; (persp-new "journal")
+    ;; (persp-new "vimvalley")
+  )
+* Minions
+  ;; (use-package minions 
+  ;;   :init
+  ;;   (setq minions-blacklist 
+  ;;         ;; '((abbrev-mode . nil)
+  ;;         ;;   (auto-fill-mode . nil)
+  ;;         ;;   (auto-revert-mode . nil)
+  ;;         ;;   (auto-revert-tail-mode . nil)
+  ;;         ;;   (flyspell-mode . nil)
+  ;;         ;;   (font-lock-mode . nil)
+  ;;         ;;   (glasses-mode . nil)
+  ;;         ;;   (hide-ifdef-mode . nil)
+  ;;         ;;   (highlight-changes-mode . nil)
+  ;;         ;;   (outline-minor-mode . nil)
+  ;;         ;;   (overwrite-mode . nil)
+  ;;         ;;   (overwrite-mode . nil)
+  ;;         ;;   (ruler-mode . nil))
+  ;;         '((org-bullets-mode . nil)
+  ;;         ;; (yas-global-mode . nil)
+  ;;         (yas-minor-mode . nil)
+  ;;         (global-git-gutter-mode . nil)
+  ;;         (git-gutter-mode . nil)
+  ;;         (org-indent-mode . nil)
+  ;;         (julia-math-mode . nil)
+  ;;         (LaTeX-math-mode . nil)
+  ;;         (TeX-interactive-mode . nil)
+  ;;         (TeX-PDF-mode . nil)
+  ;;         (TeX-source-correlate-mode . nil)
+  ;;         (TeX-Omega-mode . nil)
+  ;;         (flymake-mode . nil)
+  ;;         (ess-r-package-mode . nil)
+  ;;         (ess-roxy-mode . nil)
+  ;;         (ess-debug-minor-mode . nil)
+  ;;         (magit-blame-read-only-mode . nil)
+  ;;         (magit-blame-mode . nil)
+  ;;         (magit-blob-mode . nil)
+  ;;         (global-magit-file-mode . nil)
+  ;;         (magit-file-mode . nil)
+  ;;         (magit-wip-initial-backup-mode . nil)
+  ;;         (magit-wip-before-change-mode . nil)
+  ;;         (magit-wip-after-apply-mode . nil)
+  ;;         (magit-wip-after-save-mode . nil)
+  ;;         (magit-wip-after-save-local-mode . nil)
+  ;;         (magit-wip-mode . nil)
+  ;;         (smerge-mode . nil)
+  ;;         (magit-auto-revert-mode . nil)
+  ;;         (global-auto-revert-mode . nil)
+  ;;         (auto-revert-tail-mode . nil)
+  ;;         (auto-revert-mode . nil)
+  ;;         (transient-resume-mode . nil)
+  ;;         (git-commit-mode . nil)
+  ;;         (global-git-commit-mode . nil)
+  ;;         (which-function-mode . nil)
+  ;;         (shell-command-with-editor-mode . nil)
+  ;;         (with-editor-mode . nil)
+  ;;         (async-bytecomp-package-mode . nil)
+  ;;         (server-mode . nil)
+  ;;         (savehist-mode . nil)
+  ;;         (global-hi-lock-mode . nil)
+  ;;         (hi-lock-mode . nil)
+  ;;         (company-search-mode . nil)
+  ;;         (global-company-mode . nil)
+  ;;         (company-mode . nil)
+  ;;         (orgtbl-mode . nil)
+  ;;         (org-table-follow-field-mode . nil)
+  ;;         (gnus-dead-summary-mode . nil)
+  ;;         (gnus-undo-mode . nil)
+  ;;         (tar-subfile-mode . nil)
+  ;;         (counsel-mode . nil)
+  ;;         (xref-etags-mode . nil)
+  ;;         (buffer-face-mode . nil)
+  ;;         (text-scale-mode . nil)
+  ;;         (global-anzu-mode . nil)
+  ;;         (anzu-mode . nil)
+  ;;         (show-smartparens-global-mode . nil)
+  ;;         (show-smartparens-mode . nil)
+  ;;         (smartparens-global-mode . nil)
+  ;;         (smartparens-global-strict-mode . nil)
+  ;;         (smartparens-strict-mode . nil)
+  ;;         (smartparens-mode . nil)
+  ;;         (electric-pair-mode . nil)
+  ;;         (solaire-global-mode . nil)
+  ;;         (solaire-mode . nil)
+  ;;         (fancy-battery-mode . nil)
+  ;;         (display-battery-mode . nil)
+  ;;         (doom-modeline-mode . nil)
+  ;;         (eldoc-in-minibuffer-mode . nil)
+  ;;         (evil-escape-mode . nil)
+  ;;         (global-mu4e-conversation-mode . nil)
+  ;;         (mu4e-conversation-mode . nil)
+  ;;         (default-text-scale-mode . nil)
+  ;;         (org-capture-mode . nil)
+  ;;         (global-highlight-changes-mode . nil)
+  ;;         (highlight-changes-visible-mode . nil)
+  ;;         (highlight-changes-mode . nil)
+  ;;         (reftex-mode . nil)
+  ;;         (diff-minor-mode . nil)
+  ;;         (diff-auto-refine-mode . nil)
+  ;;         (pdf-view-midnight-minor-mode . nil)
+  ;;         (pdf-view-printer-minor-mode . nil)
+  ;;         (pdf-view-dark-minor-mode . nil)
+  ;;         (pdf-view-auto-slice-minor-mode . nil)
+  ;;         (pdf-cache-prefetch-minor-mode . nil)
+  ;;         (bibtex-completion-notes-global-mode . nil)
+  ;;         (bibtex-completion-notes-mode . nil)
+  ;;         (desktop-save-mode . nil)
+  ;;         ;; ido-everywhere
+  ;;         (doc-view-minor-mode . nil)
+  ;;         (image-minor-mode . nil)
+  ;;         (dired-hide-details-mode . nil)
+  ;;         (mml-mode . nil)
+  ;;         (mail-abbrevs-mode . nil)
+  ;;         (global-hl-line-mode . nil)
+  ;;         (hl-line-mode . nil)
+  ;;         (table-fixed-width-mode . nil)
+  ;;         (undo-tree-visualizer-selection-mode . nil)
+  ;;         (global-undo-tree-mode . nil)
+  ;;         (undo-tree-mode . nil)
+  ;;         (global-reveal-mode . nil)
+  ;;         (reveal-mode . nil)
+  ;;         (shell-dirtrack-mode . nil)
+  ;;         (evil-mode . nil)
+  ;;         (evil-local-mode . nil)
+  ;;         (rectangle-mark-mode . nil)
+  ;;         (flyspell-mode . nil)
+  ;;         (org-cdlatex-mode . nil)
+  ;;         (org-src-mode . nil)
+  ;;         (outline-minor-mode . nil)
+  ;;         (projectile-mode . nil)
+  ;;         (compilation-minor-mode . nil)
+  ;;         (compilation-shell-minor-mode . nil)
+  ;;         (ibuffer-auto-mode . nil)
+  ;;         (ivy-mode . nil)
+  ;;         (delete-selection-mode . nil)
+  ;;         (ispell-minor-mode . nil)
+  ;;         (cycle-themes-mode . nil)
+  ;;         (recentf-mode . nil)
+  ;;         (flycheck-pos-tip-mode . nil)
+  ;;         (global-flycheck-mode . nil)
+  ;;         (flycheck-mode . nil)
+  ;;         (show-paren-mode . nil)
+  ;;         (global-display-line-numbers-mode . nil)
+  ;;         (display-line-numbers-mode . nil)
+  ;;         (display-time-mode . nil)
+  ;;         (override-global-mode . nil)
+  ;;         (url-handler-mode . nil)
+  ;;         (cl-old-struct-compat-mode . nil)
+  ;;         (tooltip-mode . nil)
+  ;;         (global-eldoc-mode . nil)
+  ;;         (eldoc-mode . nil)
+  ;;         (electric-quote-mode . nil)
+  ;;         (electric-layout-mode . nil)
+  ;;         (electric-indent-mode . nil)
+  ;;         (mouse-wheel-mode . nil)
+  ;;         (tool-bar-mode . nil)
+  ;;         (paragraph-indent-minor-mode . nil)
+  ;;         (global-prettify-symbols-mode . nil)
+  ;;         (prettify-symbols-mode . nil)
+  ;;         ;; use-hard-newlines 
+  ;;         (menu-bar-mode . nil)
+  ;;         (file-name-shadow-mode . nil)
+  ;;         (horizontal-scroll-bar-mode . nil)
+  ;;         (jit-lock-debug-mode . nil)
+  ;;         (global-font-lock-mode . nil)
+  ;;         (font-lock-mode . nil)
+  ;;         (blink-cursor-mode . nil)
+  ;;         (window-divider-mode . nil)
+  ;;         (auto-composition-mode . nil)
+  ;;         (unify-8859-on-decoding-mode . nil)
+  ;;         (unify-8859-on-encoding-mode . nil)
+  ;;         (auto-encryption-mode . nil)
+  ;;         (auto-compression-mode . nil)
+  ;;         (temp-buffer-resize-mode . nil)
+  ;;         (visible-mode . nil)
+  ;;         ;; buffer-read-only
+  ;;         (size-indication-mode . nil)
+  ;;         (column-number-mode . nil)
+  ;;         (line-number-mode . nil)
+  ;;         ;; auto-fill-function 
+  ;;         (global-visual-line-mode . nil)
+  ;;         (visual-line-mode . nil)
+  ;;         (transient-mark-mode . nil)
+  ;;         (next-error-follow-minor-mode . nil)
+  ;;         (completion-in-region-mode . nil)
+  ;;         (auto-save-visited-mode . nil)
+  ;;         (auto-save-mode . nil)
+  ;;         (auto-fill-mode . nil)
+  ;;         (abbrev-mode . nil)
+  ;;         (overwrite-mode . nil)
+  ;;         (view-mode . nil)
+  ;;         (hs-minor-mode . nil)))
+  ;;         :config
+  ;;         (minions-mode 1))
+* Elisp
+  ;; (use-package lisp-mode
+  ;; :defer t
+  ;;   :init
+  ;; (use-package eldoc
+  ;;       :init
+  ;;       (progn
+  ;;         (add-hook 'emacs-lisp-mode-hook #'eldoc-mode)
+  ;;         (add-hook 'lisp-interaction-mode-hook #'eldoc-mode)
+  ;;         (add-hook 'ielm-mode-hook #'eldoc-mode))))
+
+* 取 Company mode
+(require 'company)
+
+(add-hook 'after-init-hook 'global-company-mode)
+
+;; Don't enable company-mode in below major modes, OPTIONAL
+(setq company-global-modes '(not eshell-mode comint-mode erc-mode rcirc-mode))
+
+;; "text-mode" is a major mode for editing files of text in a human language"
+;; most major modes for non-programmers inherit from text-mode
+(defun text-mode-hook-setup ()
+  ;; make `company-backends' local is critcal
+  ;; or else, you will have completion in every major mode, that's very annoying!
+  (make-local-variable 'company-backends)
+
+
+(setq company-ispell-available t) ; error without this
+
+  ;; company-ispell is the plugin to complete words
+(add-to-list 'company-backends 'company-ispell)
+
+;; OPTIONAL, if `company-ispell-dictionary' is nil, `ispell-complete-word-dict' is used
+;; but I prefer hard code the dictionary path. That's more portable.
+(setq company-ispell-dictionary (file-truename "~/.emacs.d/dictionaries/francais.txt")))
+
+
+(add-hook 'text-mode-hook 'text-mode-hook-setup)
+
+(defun toggle-company-ispell ()
+  (interactive)
+  (cond
+   ((memq 'company-ispell company-backends)
+    (setq company-backends (delete 'company-ispell company-backends))
+    (message "company-ispell disabled"))
+   (t
+    (add-to-list 'company-backends 'company-ispell)
+    (message "company-ispell enabled!"))))
+
+;; skip the downcase that company does to the variables I autocomplete
+(setq company-dabbrev-downcase 0)
+
+;; time it takes before company begins completing
+(setq company-idle-delay 0.1)
+;;(setq company-selection-wrap-around t)
+(define-key company-active-map [tab] 'company-complete)
+;;(define-key company-active-map (kbd "M-j") 'company-select-next)
+;;(define-key company-active-map (kbd "M-k") 'company-select-previous)
+;;(add-hook 'company-mode-hook
+ ;;           (lambda ()
+   ;;           (define-key evil-insert-state-local-map (kbd "TAB") 'company-complete)
+     ;;         (define-key evil-insert-state-local-map (kbd "C-j") 'company-select-next)
+       ;;       (define-key evil-insert-state-local-map (kbd "C-k") 'company-select-previous)))
+
+;; avoid conflict with yasnippet 
+(advice-add 'company-complete-common :before (lambda () (setq my-company-point (point))))
+(advice-add 'company-complete-common :after (lambda ()
+  		  				(when (equal my-company-point (point))
+  			  			  (yas-expand))))
+* Default Text Scale
+This package provides commands for increasing or decreasing the default
+font size in all GUI Emacs frames -- it is like an Emacs-wide version of
+~text-scale-mode~.
+
+It works by adjusting the height of the ~default~ face in the ~user~ theme,
+which is always combined with any other loaded themes.
+
+It's handy for quickly adjusting the font size for readability or impromptu
+screen-sharing.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package default-text-scale
+    :config
+    (global-set-key (kbd "C-M-=") 'default-text-scale-increase)
+    (global-set-key (kbd "C-M--") 'default-text-scale-decrease))
+  #+END_SRC 
+* Evil-leader
+            (use-package evil-leader :after (evil org)
+ :config
+
+ # (evil-leader/set-leader "<SPC>")
+ # (global-evil-leader-mode)
+ # (evil-leader/set-key
+ #   ;; "f" 'helm-find-files
+ #   ;; "b" 'helm-mini
+ #   ;; "w" 'persp-switch
+ #   "-" 'text-scale-decrease
+ #   "+" 'text-scale-increase
+ #   ;; "d" 'neotree-toggle
+ #   "x" 'counsel-M-x
+ #   ;; "r" 'helm-M-x
+ #   "k" 'kill-buffer)
+ 
+ ;; leader maps for org mode
+ (evil-leader/set-key-for-mode 'org-mode
+   "t"  'org-show-todo-tree
+   "a"  'org-agenda
+   "c"  'org-archive-subtree
+   "l"  'evil-org-open-links
+   ;; "o"  'org-open-at-point
+   "o"  'sync0-org-tree-open-in-right-frame
+   "e"  'outline-show-branches
+ )
+ )
+* More Syn0 bibtex
+
+(defun sync0-bibtex-list-publishers ()
+ (interactive)
+ (save-excursion
+   (progn 
+    (while (and (re-search-forward "^[ \t]*@" nil nil 1)
+                (re-search-forward "^publisher = " nil nil 1))
+     (let* ((pubstringfull  (progn (looking-at "{.+}")
+                                   (match-string 0)))
+            (pubstring     (substring pubstringfull 1 -1)))
+         (add-to-list 'sync0-bibtex-publisher-list 'pubstring)))
+      (message "%s" sync0-bibtex-publisher-list))))
+
+
+(defun sync0-bibtex-list-publishers ()
+ (interactive)
+ (save-excursion
+   (progn 
+    (while (re-search-forward "^[ \t]*@" nil t 1)
+      (let* ((pubstringfull  (when  (re-search-forward "^publisher = " nil nil 1)
+                                    (looking-at "{.+}")
+                                    (match-string 0)))
+            (pubstring     (substring pubstringfull 1 -1)))
+         (cons pubstring sync0-bibtex-publisher-list)))
+      (message "%s" sync0-bibtex-publisher-list))))
+
+(defun sync0-bibtex-list-publishers ()
+ (interactive)
+ (save-excursion
+   (progn 
+    (while (re-search-forward "^[ \t]*@" nil t 1)
+      (let* ((pubstringfull  (when  (re-search-forward "^publisher = " nil nil 1)
+                                    (looking-at "{.+}")
+                                    (match-string 0)))
+            (pubstring     (substring pubstringfull 1 -1)))
+         (cons pubstring sync0-bibtex-publisher-list)))
+      (message "%s" sync0-bibtex-publisher-list))))
+
+
+(defun sync0-bibtex-list-publishers ()
+ (interactive)
+ (save-excursion
+   (progn 
+    (while (re-search-forward "^publisher = " nil t 1)
+      (let* ((pubstringfull  (progn 
+                                    (looking-at "{.+}")
+                                    (match-string 0)))
+            (pubstring     (substring pubstringfull 1 -1)))
+         (cons pubstring sync0-bibtex-publisher-list)))
+      (message "%s" sync0-bibtex-publisher-list))))
+
+
+
+(defun sync0-bibtex-list-publishers ()
+ (interactive)
+ (save-excursion
+
+   (cl-loop for item = (parsebib-find-next-item)
+            while item do
+    (let* ((pubstringfull (when (re-search-forward "^publisher = " nil nil 1)
+                                (looking-at "{.+}")
+                                (match-string 0)))
+           (pubstring     (substring pubstringfull 1 -1)))
+
+(cl-loop for pubstring in '(fred sue alice joe june)
+              collect name
+              append kids)
+
+(cl-loop for name in '(fred sue alice joe june)
+              for kids in '((bob ken) () () (kris sunshine) ())
+              collect name
+              append kids)
+
+
+(defun sync0-bibtex-list-publishers ()
+ (interactive)
+ (save-excursion
+   (let* ((pubstringfull (progn (re-search-forward "^publisher = {.+}," nil nil 1)
+                                (match-string 0)))
+            (pubstring     (substring pubstringfull 13 -2)))
+      (message "%s" pubstring))))
+
+
+         (push (cons pubstring t) ref-keys)))))))
+         (push (list key) crossref-keys))))
+
+   )))
+
+
+  ;; (goto-char (point-min))
+  (cl-loop with entry = nil
+           for entry-type = (parsebib-find-next-item)
+           while entry-type do
+            (unless 
+             (setq entry (parsebib-read-entry entry-type nil strings))
+             (if entry
+                (puthash (cdr (assoc-string "=key=" entry)) entry hash))))
+    hash))
+
+
+    (re-search-forward "^publisher = ")
+
+(cl-loop for buf in (buffer-list)
+              collect (buffer-file-name buf))
+
+* Sync0 org
+  (defun org-export-collect-headlines (info &optional n)
+    "Collect headlines in order to build a table of contents. [...]
+
+  Return a list of all exportable headlines as parsed elements.
+  Footnote sections, if any, will be ignored."
+    (let ((limit (plist-get info :headline-levels)))
+      (setq n (if (wholenump n) (min n limit) limit))
+      (org-element-map (plist-get info :parse-tree) 'headline
+        #'(lambda (headline)
+            (unless (or (org-element-property :NOTOC headline)               ; new condition
+                        (org-element-property :footnote-section-p headline)) ; old condition
+              (let ((level (org-export-get-relative-level headline info)))
+                (and (<= level n) headline))))
+        info)))
+
+* 取 desktop-save mode
+  (use-package desktop
+:disabled t
+    :custom
+    (desktop-auto-save-timeout 300)
+    ;; If t, restoring frames reuses existing frames.
+    ;; (desktop-restore-reuses-frames nil)
+    :init
+    (desktop-save-mode 1))
+* 取 solaire-mode
+solaire-mode is an aesthetic plugin that helps visually distinguish
+file-visiting windows from other types of windows (like popups or
+sidebars) by giving them a slightly different -- often brighter --
+background.
+
+Currently, I have it disabled because it conflicts with
+~buffer-face-mode~. 
+
+#+BEGIN_SRC emacs-lisp
+  (use-package solaire-mode 
+    :disabled t
+    :diminish solaire-mode
+    :after doom-themes 
+    :hook 
+    ((change-major-mode after-revert ediff-prepare-buffer) . turn-on-solaire-mode)
+    (minibuffer-setup . solaire-mode-in-minibuffer)
+    :config
+    ;; (setq solaire-mode-remap-modeline nil)
+    (solaire-global-mode +1)
+    (solaire-mode-swap-bg))
+#+END_SRC 
+* 取 sumblimity
+#+BEGIN_SRC emacs-lisp
+  (use-package sublimity
+:disabled t 
+    :defer t
+    :diminish sublimity-mode
+    :commands sublimity-mode
+    :custom
+    (sublimity-map-size 30)
+    (sublimity-map-fraction 0.3)
+    (sublimity-map-text-scale -5)
+    :init
+    (require 'sublimity-map)
+    :config
+    ;; experimental
+    ;; (sublimity-mode 1)
+    (sublimity-map-set-delay 2))
+#+END_SRC
+* 取 company-mode
+Company is a text completion framework for Emacs. It uses pluggable
+back-ends and front-ends to retrieve and display completion
+candidates.
+
+This configuration was taken from:
+https://github.com/mandarvaze/dot-files/blob/master/emacs.org. 
+
+To avoid the conflict between ~company-mode~ and ~yasnippets~ over the use of
+the tab key, I borrowed the solution from the EmacsWiki page for
+~company-mode~. 
+https://www.emacswiki.org/emacs/CompanyMode#toc11
+
+#+BEGIN_SRC emacs-lisp
+      (use-package company
+  :disabled t
+        :defer t
+  :diminish company-mode
+        :after (yasnippet ispell)
+        :commands company-mode
+        :custom
+        (company-dabbrev-ignore-case t)
+        (company-show-numbers nil)
+        (company-idle-delay 0.1)
+        (company-minimum-prefix-length 2)
+        (company-selection-wrap-around t)
+        (company-tooltip-align-annotations t)  ; align to the right border
+        ;; company-sort-by-occurrence t (20190410)
+        (company-tooltip-limit 5)
+          (company-ispell-dictionary  (concat user-emacs-directory "dictionaries/english.txt"))
+        ;; (company-backends '(company-ispell
+        ;;                     company-capf
+        ;;                     company-yasnippet
+        ;;                     company-dabbrev
+        ;;                     ;; company-gtags
+        ;;                     ;; company-etags
+        ;;                     company-elisp
+        ;;                     company-files))
+        :config
+    ;; (with-eval-after-load 'company
+    ;;       (setq company-ispell-dictionary  (concat user-emacs-directory "dictionaries/english.txt")))
+
+      (use-package company-quickhelp
+        :init
+         (use-package pos-tip)
+        :config
+        (company-quickhelp-mode 1))
+
+        (defun sync0-text-mode-hook-setup ()
+          ;; make `company-backends' local is critcal
+          ;; or else, you will have completion in every major mode, that's very annoying!
+          (make-local-variable 'company-backends)
+          (add-to-list 'company-backends 'company-capf)
+          ;; company-ispell is the plugin to complete words
+          (add-to-list 'company-backends 'company-ispell)
+          (add-to-list 'company-backends 'company-yasnipet)))
+        ;; (add-to-list 'company-backends 'company-math-symbols-unicode)
+
+        ;; With this code, yasnippet will expand the snippet if company didn't complete the word
+        ;; replace company-complete-common with company-complete if you're using it
+
+        ;; (advice-add 'company-complete-common :before (lambda () (setq my-company-point (point))))
+        ;; (advice-add 'company-complete-common :after (lambda ()
+        ;;                                               (when (equal my-company-point (point))
+        ;;                                                 (yas-expand)))))
+
+        ;; :hook
+        ;; ((after-init . global-company-mode)
+        ;;  (text-mode . sync0-text-mode-hook-setup)))
+      ;; :bind 
+      ;; (("<tab>" . sync0-tab-indent-or-complete)))
+
+      ;; To use company-quickhelp, the pos-tip package is necessary.
+#+END_SRC 
+* 取 which-key
+This package displays available keybindings in a popup. As configured
+herein, ~which-key~ will not show automatically in the minibuffer. That
+is the default behavior, which gets annoying rather fast.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package which-key
+    :disabled t
+    :after evil
+    :custom
+    ;; Use minibuffer instead of opening another buffer to the side.
+    (which-key-popup-type 'minibuffer)
+    (which-key-sort-order 'which-key-key-order-alpha)
+    ;; (which-key-popup-type 'side-window)
+    ;; Allow C-h to trigger which-key before it is done automatically.
+    (which-key-show-early-on-C-h t)
+    ;; (which-key-idle-delay 10000)
+    (which-key-idle-delay 0.05)
+    ;; (which-key-idle-secondary-delay 0.5)
+    ;; (which-key-allow-evil-operators t)
+    ;; (which-key-show-operator-state-maps t)
+    :init
+    (which-key-mode))
+#+END_SRC 

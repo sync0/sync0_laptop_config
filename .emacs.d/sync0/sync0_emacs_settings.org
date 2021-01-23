@@ -1,0 +1,335 @@
+* Scratch message
+The following code changes the Emacs welcome message in the ~scratch~
+ buffer. I use a fragment from the chapter "Where I Lived, and What I Lived
+ for" from Thoreau's /Walden, or, Life in the Woods/ (1854). 
+
+   (setq initial-scratch-message ";;
+   ;; 
+   ;; WHERE I LIVED, AND WHAT I LIVED FOR
+   ;; 
+   ;; I went to the woods because I wished to live deliberately, to
+   ;; front only the essential facts of life, and see if I could not
+   ;; learn what it had to teach, and not, when I came to die, discover
+   ;; that I had not lived. I did not wish to live what was not life,
+   ;; living is so dear; nor did I wish to practise resignation, unless
+   ;; it was quite necessary. I wanted to live deep and suck out all
+   ;; the marrow of life, to live so sturdily and Spartan-like as to
+   ;; put to rout all that was not life, to cut a broad swath and shave
+   ;; close, to drive life into a corner, and reduce it to its lowest
+   ;; terms, and, if it proved to be mean, why then to get the whole
+   ;; and genuine meanness of it, and publish its meanness to the
+   ;; world; or if it were sublime, to know it by experience, and be
+   ;; able to give a true account of it in my next excursion.
+   ;; 
+   ;; 
+   ;; 
+   ;; Henry David Thoreau, Walden (1854)")
+
+I use a fragment from a letter (23 December 1990) by writer
+Charles Bukowski to his friend William Packard, a fellow poet and
+founder of the New York Quarterly magazine.
+
+#+BEGIN_SRC emacs-lisp
+   (setq initial-scratch-message ";;
+  ;; Too many writers write for the wrong reasons. They want to get
+  ;; famous or they want to get rich or they want to get laid by the
+  ;; girls with bluebells in their hair. (Maybe that last ain't a
+  ;; bad idea).
+
+  ;; When everything works best it's not because you chose writing but
+  ;; because writing chose you. It's when you're mad with it, it's
+  ;; when it's stuffed in your ears, your nostrils, under your
+  ;; fingernails. It's when there's no hope but that.
+  ;;
+  ;;
+  ;;
+  ;; Charles Bukowski, 
+  ;; Letter to William Packard (23 December 1990)
+  ;; ")
+  #+END_SRC 
+* Mode line
+Display time in modeline.
+  #+BEGIN_SRC emacs-lisp
+    (setq display-time-string-forms
+          '((propertize (format-time-string " %H:%M " now) 'face 'bold)))
+
+    (display-time-mode 1)
+    #+END_SRC 
+* Toolbars
+Define a function to toggle mode line. 
+    #+BEGIN_SRC emacs-lisp
+    (defun sync0-toggle-mode-line () 
+      "toggles the modeline on and off"
+      (interactive) 
+      (setq mode-line-format
+            (if (equal mode-line-format nil)
+                (default-value 'mode-line-format)) )
+      (redraw-display))
+      #+END_SRC 
+
+Hide tool bar, menu bar, and scroll bar at startup. 
+    #+BEGIN_SRC emacs-lisp
+      (tool-bar-mode -1) 
+      (menu-bar-mode -1)
+      (scroll-bar-mode -1)
+      (menu-bar-showhide-fringe-menu-customize-disable)
+      #+END_SRC 
+
+In case I need those annoying toolbars back, I bind them:
+    #+BEGIN_SRC emacs-lisp
+    (with-eval-after-load 'hydra
+    (defhydra sync0-hydra-menu-toggle (:color amaranth :hint nil :exit t)
+      "
+^Toolbar toggle^
+^^^----------------
+_l_: Mode line
+_t_: Tool bar
+_m_: Menu bar
+[q] Quit
+
+"
+      ("l" sync0-toggle-mode-line)
+      ("t" tool-bar-mode)
+      ("m" menu-bar-mode)
+      ("q" nil :color blue))
+
+      (global-set-key (kbd "<f8>") 'sync0-hydra-menu-toggle/body))
+      #+END_SRC 
+* Appeareance
+    At startup,  maxmize Emacs' window. 
+    #+BEGIN_SRC emacs-lisp
+      (add-to-list 'default-frame-alist '(fullscreen . maximized))
+ #+END_SRC
+
+Configure window dividers. 
+    #+BEGIN_SRC emacs-lisp
+      ;; On graphical displays, you can use window dividers in order to separate
+      ;; windows visually.
+      (setq-default window-divider-default-places t
+                    window-divider-default-bottom-width 0
+                    window-divider-default-right-width 5)
+      (add-hook 'emacs-startup-hook #'window-divider-mode)
+#+END_SRC
+
+Remove fringes from minibuffer. This function was taken from [[https://github.com/hlissner][hlissner]]. See
+https://github.com/hlissner/emacs-solaire-mode/issues/6
+#+BEGIN_SRC emacs-lisp
+(defun sync0-no-fringes-in-minibuffer ()
+  "Disable fringes in the minibuffer window."
+  (set-window-fringes (minibuffer-window) 0 0 nil))
+
+(add-hook 'minibuffer-setup-hook #'sync0-no-fringes-in-minibuffer)
+#+END_SRC 
+
+Other settings.
+#+BEGIN_SRC emacs-lisp
+      (setq-default                    
+       ;; Avoid ugly problemes with git-gutter.
+       fringes-outside-margins t
+       left-margin-width 2
+       ;; right-margin-width 7
+       ;; left-fringe-width 5
+       left-fringe-width 1
+       right-fringe-width 0
+       ;; Remove continuation arrow on right fringe.
+       fringe-indicator-alist (delq (assq 'continuation fringe-indicator-alist)
+                                    fringe-indicator-alist)
+       indicate-buffer-boundaries nil
+       indicate-empty-lines nil
+       max-mini-window-height 0.3)
+
+      (defun sync0-restore-margins ()
+        "Restore margins after they are destroyed by git-gutter"
+        (setq left-margin-width 2))
+
+     (add-hook 'after-save-hook 'sync0-restore-margins)
+ #+END_SRC
+* Sane defaults
+   Define user information.
+ #+BEGIN_SRC emacs-lisp
+   (setq user-full-name "Carlos Alberto Rivera Carreño"
+;; Define my Dropbox location
+         sync0-dropbox-directory "~/Dropbox/"
+         user-mail-address "carc.sync0@gmail.com")
+ #+END_SRC
+
+ Configure bookmarks.  
+ #+BEGIN_SRC emacs-lisp
+   ;; Bookmarks directory
+   (setq bookmark-default-file (concat user-emacs-directory "bookmarks")
+         bookmark-save-flag 1)
+ #+END_SRC
+
+Configure autosave.
+ #+BEGIN_SRC emacs-lisp
+   (setq auto-save-interval 100
+         auto-save-timeout 60)
+ #+END_SRC
+
+   Configure CUSTOM.
+ #+BEGIN_SRC emacs-lisp
+   ;; Set CUSTOM directory
+   (setq custom-file (expand-file-name "custom_settings.el" user-emacs-directory))
+   ;; (load custom-file nil)
+   ;; (load custom-file t)
+ #+END_SRC
+
+Configure line numbers
+ #+BEGIN_SRC emacs-lisp
+   ;; (when (version<= "26.0.50" emacs-version )
+   ;; (global-display-line-numbers-mode))
+ #+END_SRC
+
+Configure matching delimiters. Necessary to deal with elisp parenthesis. 
+ #+BEGIN_SRC emacs-lisp
+   (setq show-paren-delay 0.1
+         show-paren-highlight-openparen t
+         ;; don't blink--too distracting
+         blink-matching-paren nil
+         show-paren-when-point-inside-paren t)
+
+   (show-paren-mode 1)
+  #+END_SRC
+
+Eliminate Emacs' yes-no inconsistency. 
+ #+BEGIN_SRC emacs-lisp
+   (fset 'yes-or-no-p 'y-or-n-p)
+ #+END_SRC
+
+Configure the default encoding system.
+ #+BEGIN_SRC emacs-lisp
+   (prefer-coding-system 'utf-8)
+   (set-language-environment 'utf-8)
+   (set-default-coding-systems 'utf-8)
+   (set-terminal-coding-system 'utf-8)
+   (set-keyboard-coding-system 'utf-8)
+   (set-selection-coding-system 'utf-8)
+   (setq default-file-name-coding-system 'utf-8)
+   (setq locale-coding-system 'utf-8)
+   (if (boundp buffer-file-coding-system)
+       (setq buffer-file-coding-system 'utf-8)
+     (setq default-buffer-file-coding-system 'utf-8))
+   ;; Treat clipboard input as UTF-8 string first; compound text next, etc.
+   (when (display-graphic-p)
+     (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
+ #+END_SRC
+
+Other settings.
+    #+BEGIN_SRC emacs-lisp
+      (setq-default                    
+       ;; Use spaces instead of tabs
+       indent-tabs-mode nil              
+       ;; Split verticly by default
+       split-width-threshold 0         
+       ;; Split verticly by default
+       split-height-threshold nil        
+       ;; disable bidirectional text for tiny performance boost
+       bidi-display-reordering nil 
+       ;; hide cursors in other windows
+       cursor-in-non-selected-windows nil  
+       ;; Don't resize frames implicitly.
+       frame-inhibit-implied-resize t
+       highlight-nonselected-windows nil
+       ;; Don't show the "Welcome to GNU Emacs ..." at startup
+       inhibit-startup-screen t
+       ;; Stop asking whether themes are safe
+       custom-safe-themes t
+       ;; Loop animated images such as gif files. 
+       image-animate-loop t)
+ #+END_SRC
+* Faces & text
+    Adjust font size according to screen resolution (when I use dual monitor setup)
+#+BEGIN_SRC emacs-lisp
+  (if (> (display-pixel-width) 2000)
+      ;; external monitor font size
+      (progn (set-face-attribute 'default nil 
+                            :family "Source Code Pro"
+                            :height 120)
+        (setq line-spacing 0))
+    ;; laptop font size
+    (progn (set-face-attribute 'default nil 
+                          :family "Source Code Pro"
+                          :height 115)
+      (setq line-spacing 0)))
+ #+END_SRC
+
+  Configure variable-width faces.
+  #+BEGIN_SRC emacs-lisp
+          ;; (setq buffer-face-mode-face '(:family "Linux Libertine O" :height 140))
+          ;; (setq buffer-face-mode-face '(:family "ETBembo RomanOSF" :height 140))
+
+        ;; (setq buffer-face-mode-face '(:family "ETBembo RomanOSF" :height 150)))
+        ;; (setq buffer-face-mode-face '(:family "Linux Libertine O" :height 150)))
+
+    (defun sync0-buffer-face-mode-variable ()
+      "Set font to a variable width (proportional) fonts in current buffer"
+      (if (> (display-pixel-width) 2000)
+          ;; external monitor font size
+        (progn
+          (setq buffer-face-mode-face '(:family "Minion Pro" :height 140))
+      (setq line-spacing 0.2))
+        ;; laptop font size
+        (progn
+        (setq buffer-face-mode-face '(:family "Minion Pro" :height 175))
+      (setq line-spacing 0.2)))
+      (buffer-face-mode))
+ #+END_SRC
+
+    Configure default font faces for Info, ERC, and Org
+#+BEGIN_SRC emacs-lisp
+    (add-hook 'erc-mode-hook 'sync0-buffer-face-mode-variable)
+    (add-hook 'Info-mode-hook 'sync0-buffer-face-mode-variable)
+    (add-hook 'text-mode-hook 'sync0-buffer-face-mode-variable)
+ #+END_SRC
+
+  Allow narrowing
+  #+BEGIN_SRC emacs-lisp
+    (put 'narrow-to-region 'disabled nil)
+ #+END_SRC
+
+Configure Hooks. 
+ #+BEGIN_SRC emacs-lisp
+      (add-hook 'text-mode-hook 'turn-on-visual-line-mode)
+      (add-hook 'LaTeX-mode-hook 'turn-on-visual-line-mode)
+      ;; (add-hook 'text-mode-hook 'turn-off-auto-fill)
+      ;; (add-hook 'LaTeX-mode-hook 'turn-on-auto-fill)
+  #+END_SRC
+
+    Have sentences end with single espace.
+#+BEGIN_SRC emacs-lisp
+  (setq sentence-end-double-space nil)
+ #+END_SRC
+* Backups 
+ #+BEGIN_SRC emacs-lisp 
+   ;; Store all autosave files in the tmp directory.
+   (setq auto-save-file-name-transforms `((".*" ,temporary-file-directory t))
+         ;; Store all backups in the "backups" directory.
+         backup-directory-alist '(("." . "~/.emacs.d/backups"))
+         backup-by-copying t
+         delete-old-versions t
+         kept-new-versions 5
+         kept-old-versions 0
+         ;; Use versioned backups.
+         version-control t
+         ;; Don't create lockfiles.
+         create-lockfiles nil) 
+ #+END_SRC
+* Personal
+Do this.
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'load-path (concat user-emacs-directory "sync0/"))
+
+  (require 'sync0-date-functions)
+ #+END_SRC 
+* Keybindings 
+  (require 'sync0-keybindings)
+* Definitions
+  (require 'sync0-definitions)
+* Functions
+  (require 'sync0-date-functions)
+
+This is a collection of functions that become problematic when
+loaded after packages are declared.
+
+  (require 'sync0-functions)
+
