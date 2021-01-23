@@ -85,69 +85,6 @@
   (add-hook 'TeX-mode-hook (lambda () (reftex-isearch-minor-mode))))
   #+END_SRC 
 
-* 取 tex
-#+BEGIN_SRC emacs-lisp
-    (use-package tex
-      :defer t
-      :after evil
-      :diminish tex-mode
-      :custom
-      (preview-gs-command "/usr/local/bin/gs")
-      ;; Activate forward/reverse search
-      (TeX-source-correlate-mode t)        
-      (TeX-PDF-mode t)
-      :config
-  (define-key LaTeX-mode-map (kbd "M-p")
-    (lambda ()
-      "Save the buffer and run `TeX-command-run-all`."
-      (interactive)
-      (save-buffer)
-      (TeX-command-run-all nil)))
-
-  ;; (define-key LaTeX-mode-map (kbd "C-SPC")
-  ;;   (lambda ()
-  ;;     "Save the buffer and run `TeX-command-run-all`."
-  ;;     (interactive)
-  ;;     (let (TeX-save-query) (TeX-save-document (TeX-master-file)))
-  ;;     (TeX-command-run-all nil)))
-
-      ;; Zathura settings
-      (add-to-list 'TeX-view-program-list  '("Zathura"     ("zathura "
-                                                            (mode-io-correlate " --synctex-forward %n:0:%b -x \"emacsclient +%{line} %{input}\" ")
-                                                            " %o") "zathura"))
-
-      (add-to-list 'TeX-view-program-selection
-                   '(output-pdf "Zathura"))
-
-      ;; Compile tex documents automatically.
-      (defun sync0-latex-fast-compile ()
-        "Fast compile current file"
-        (TeX-command "LaTeX" 'TeX-master-file))
-
-      ;; Compile tex documents automatically after save.
-      (defun sync0-latex-after-save-actions ()
-        "Used in `after-save-hook'."
-        (when (equal this-command 'save-buffer)
-          (when (equal major-mode 'latex-mode) 
-            (sync0-latex-fast-compile))))
-
-      (evil-define-key 'normal LaTeX-mode-map
-        "k" 'previous-line
-        "j" 'next-line
-        ;;  "m" 'set-mark-command
-        "q" 'fill-paragraph
-        "Q" 'sync0-insert-line-below
-        (kbd "SPC") 'sync0-insert-whitespace
-        "[" 'backward-sentence
-        "]" 'forward-sentence))
-
-    ;;      (evil-define-key 'visual LaTeX-mode-map
-    ;;         "q" 'highlight-changes-remove-highlight)
-    ;; :hook 
-    ;; Set hooks to execute after files are saved. 
-    ;; (after-save . sync0-after-save-actions)
-  #+END_SRC 
-
 * bibtex 
 #+BEGIN_SRC emacs-lisp
   (use-package bibtex
@@ -484,77 +421,6 @@
                                         ("keywords"))))))
 #+END_SRC 
 
-* 取 ivy-bibtex
-#+BEGIN_SRC emacs-lisp
-  (use-package ivy-bibtex 
-    :diminish ivy-bitex-mode
-    :after (ivy bibtex)
-    :custom 
-  ;;  (bibtex-completion-bibliography '("~/Dropbox/org/annotations/bibliography.bib")) ;; writing completion
-   ;; (bibtex-completion-notes-path '"~/Dropbox/org/annotations")
-    ;; (bibtex-completion-library-path '("~/Dropbox/org/annotations/"))
-    (bibtex-completion-bibliography '("~/Dropbox/org/etc/bibliography.bib")) ;; writing completion
-    (bibtex-completion-notes-path '"~/Dropbox/org")
-    (bibtex-completion-library-path '("~/Dropbox/org/"))
-    (bibtex-completion-pdf-field "file")
-    (bibtex-completion-pdf-symbol "⌘")
-    (bibtex-completion-notes-symbol "✎")
-    (ivy-bibtex-default-action 'ivy-bibtex-edit-notes)
-    :config 
-    (setq bibtex-completion-notes-template-multiple-files  
-     "
-,#+TITLE: ${title}
-,#+AUTHOR: ${author-or-editor}
-,#+ROAM_KEY: cite:${=key=}
-,#+CREATED: %(sync0-insert-today-timestamp)
-,#+DATE: %(sync0-insert-today-timestamp)
-,#+ROAM_TAGS: annotations ${keywords}
-,#+INTERLEAVE_PDF: ${file}
-,#+LATEX_CLASS: scrartcl-section
-,#+EXPORT_FILE_NAME: /home/sync0/Dropbox/annotations/${key}
-,#+SETUPFILE: ~/Documents/typography/settings_notetaking-scrartcl-fr.org
-
-,#+BEGIN_modified
-fullcite:${=key=}
-\\tcblower
-\\begin{tabular}{lr}
-Created: & %(sync0-insert-today-timestamp) \\\\
-Last modified: & 
-\\end{tabular}
-,#+END_modified
-
-# \\printbibliography[title=Bibliographie,heading=subbibliography]
-# \\printbibliography[title=Bibliographie]")
-
-(defun sync0-ivy-bibtex-extractor ()
-  (interactive)
- (let*   ((pre-entry   (ivy-completing-read "Select from list: " (bibtex-completion-candidates)))
-           (key   (progn (string-match "[[:blank:]]\\([[:graph:]]+$\\)" pre-entry)
-                  (match-string 1 pre-entry)))
-         (entry (bibtex-completion-get-entry1 key))
-         (entity (ivy-completing-read "Choose one: " '("=key=" "title" "author" "journal" "date" "editor")))
-         (extraction (bibtex-completion-get-value entity entry)))
-       (insert  extraction)))
-
-    (defun sync0-ivy-bibtex ()
-      (interactive)
-      (setq ivy-bibtex-default-action 'ivy-bibtex-insert-key)
-      (bibtex-completion-init)
-      (let* ((candidates (bibtex-completion-candidates))
-             (key (bibtex-completion-key-at-point))
-             (preselect (and key
-                             (cl-position-if (lambda (cand)
-                                               (member (cons "=key=" key)
-                                                       (cdr cand)))
-                                             candidates))))
-
-        (ivy-read "BibTeX entries%s: "
-                  candidates
-                  :preselect preselect
-                  :caller 'ivy-bibtex
-                  :action ivy-bibtex-default-action))))
-#+END_SRC 
-
 * ivy-bibtex
 #+BEGIN_SRC emacs-lisp
   (use-package ivy-bibtex 
@@ -615,67 +481,10 @@ Last modified: &
                   :action ivy-bibtex-default-action))))
 #+END_SRC 
 
-* 取 pdf-tools
-  (use-package pdf-tools
-    :after (evil outline-mode)
-    :pin manual ;; manually update
- ;;   :functions pdf-view-midnight-minor-mode
-    :custom
-    ;; automatically annotate highlights
-;;    (pdf-annot-activate-created-annotations t)
-    ;; more fine-grained zooming
-    (pdf-view-resize-factor 1.1)
-    (pdf-view-midnight-colors '("#C0C5CE" . "#4F5B66" ))
-    :config
-    ;; initialise
-    (pdf-tools-install)
-    (add-to-list 'evil-emacs-state-modes 'pdf-view-mode)
-    (add-to-list 'evil-emacs-state-modes 'pdf-outline-buffer-mode)
-    ;; open pdfs scaled to fit page
-    (setq-default pdf-view-display-size 'fit-page)
-
-    ;; change midnite mode colours functions
-    (defun bms/pdf-midnite-original ()
-      "Set pdf-view-midnight-colors to original colours."
-      (interactive)
-      (setq pdf-view-midnight-colors '("#839496" . "#002b36" )) ; original values
-      (pdf-view-midnight-minor-mode))
-
-    (defun sync0-pdf-view-dark-colors ()
-      "Set pdf-view-midnight-colors to amber on dark slate blue."
-      (interactive)
-      (setq pdf-view-midnight-colors '("#C0C5CE" . "#4F5B66" )) ; amber
-      (pdf-view-midnight-minor-mode))
-
-;;    :hook
-    ;; Use dark mode. 
-;;    (pdf-tools-enabled . pdf-view-midnight-minor-mode)
-
-    :bind ((:map pdf-view-mode-map
-                ("C-s" . isearch-forward)
-                ("j" . pdf-view-next-line-or-next-page)
-                ("J" . pdf-view-scroll-up-or-next-page)
-               ;; ("j" . pdf-view-scroll-up-or-next-page)
-                ;; ("j" . pdf-view-next-line-or-next-page)
-                ("k" . pdf-view-previous-line-or-previous-page)
-                 ("K" . pdf-view-scroll-down-or-previous-page)
-                ;; ("k" . pdf-view-previous-page-command)
-               ;; ("K" . pdf-view-previous-page-command)
-                 ("H" . pdf-annot-add-highlight-markup-annotation)
-                ("l" . image-forward-hscroll)
-                ("h" . image-backward-hscroll)
-                ("t" . pdf-annot-add-text-annotation)
-                ("g" . pdf-view-first-page)
-                ("G" . pdf-view-last-page)
-                ("D" . pdf-view-dark-minor-mode)
-                ("d" . pdf-annot-delete)
-:map pdf-outline-buffer-mode-map
-                ("j" . next-line)
-                ("k" . previous-line))))
-
 * pdf-tools
 #+BEGIN_SRC emacs-lisp
   (use-package pdf-tools
+:straight (pdf-tools :type git :host github :repo "politza/pdf-tools") 
     ;; :load-path "site-lisp/pdf-tools/lisp"
     :after evil
     ;; :after (evil outline-mode)

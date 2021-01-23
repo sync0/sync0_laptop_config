@@ -147,6 +147,7 @@ Configure Hooks.
 * rainbow-delimiters
 #+BEGIN_SRC emacs-lisp
   (use-package rainbow-delimiters
+:straight (rainbow-delimiters :type git :host github :repo "Fanael/rainbow-delimiters") 
     :diminish rainbow-delimiters-mode
     :hook 
     ((text-mode . rainbow-delimiters-mode)
@@ -177,6 +178,7 @@ parenthesis.
 
 #+BEGIN_SRC emacs-lisp
 (use-package smartparens
+:straight (smartparens :type git :host github :repo "Fuco1/smartparens") 
     :after evil
     :diminish smartparens-mode
     :hook 
@@ -476,6 +478,7 @@ parenthesis.
 * company-mode
 #+BEGIN_SRC emacs-lisp
         (use-package company
+:straight (company :type git :host github :repo "company-mode/company-mode") 
         :hook
         (after-init . global-company-mode)
         :custom
@@ -556,58 +559,11 @@ parenthesis.
       )
 #+END_SRC 
 
-* 取 company-mode
-#+BEGIN_SRC emacs-lisp
-        (use-package company
-        :hook (after-init . global-company-mode)
-        :custom
-                (company-idle-delay 0.1)
-                (company-minimum-prefix-length 2)
-                (company-tooltip-limit 5)
-                (company-tooltip-align-annotations t)
-                (company-require-match 'never)
-                (company-global-modes '(not erc-mode message-mode help-mode gud-mode))
-                (company-frontends '(company-pseudo-tooltip-frontend 
-                            company-echo-metadata-frontend))  
-                (company-backends '(company-capf))
-                (company-auto-complete nil)
-                ;; (company-auto-complete-chars nil)
-                ;; Only search the current buffer for `company-dabbrev' (a backend that
-                ;; suggests text your open buffers). This prevents Company from causing
-                ;; lag once you have a lot of buffers open.
-                ;; company-dabbrev-other-buffers nil
-                ;; Make `company-dabbrev' fully case-sensitive, to improve UX with
-                ;; domain-specific words with particular casing.
-      ;; company-dabbrev-ignore-case nil
-                ;; company-dabbrev-downcase nil
-    :config
-    ;; (require 'company-bibtex)
-
-    (defvar +company-backend-alist
-      '((text-mode company-capf  company-yasnippet company-ispell company-org-roam)
-      ;;(text-mode company-capf company-yasnippet company-ispell company-bibtex)
-        (prog-mode company-elisp company-capf company-yasnippet)
-        (conf-mode company-capf company-dabbrev-code company-yasnippet))
-      "An alist matching modes to company backends. The backends for any mode is
-    built from this.")
-
-    (defun sync0-config-prose-completion ()
-      "Make auto-complete less agressive in this buffer."
-  (make-local-variable 'company-backends)
-  ;; company-ispell is the plugin to complete words
-  (add-to-list 'company-backends 'company-ispell)
-  ;; (add-to-list 'company-backends 'company-org-roam)
-      (setq-local company-minimum-prefix-length 4))
-
-    (add-hook 'text-mode-hook #'sync0-config-prose-completion)
-
-      )
-#+END_SRC 
-
 * company-bibtex
  #+BEGIN_SRC emacs-lisp
   (use-package company-bibtex
-:disabled
+:straight (company-bibtex :type git :host github :repo "gbgar/company-bibtex") 
+:disabled t
 :custom
 (company-bibtex-key-regex "[[:alnum:]+_]*")
 (company-bibtex-bibliography '("/home/sync0/Dropbox/notes/bibliography.bib")))
@@ -616,6 +572,7 @@ parenthesis.
 * company-box
 #+BEGIN_SRC emacs-lisp
   (use-package company-box
+:straight (company-box :type git :host github :repo "sebastiencs/company-box") 
     ;; :when (featurep! +childframe)
     :hook (company-mode . company-box-mode)
     :config
@@ -809,6 +766,7 @@ per document.
 
 #+BEGIN_SRC emacs-lisp
       (use-package guess-language
+:straight (guess-language :type git :host github :repo "tmalsburg/guess-language.el") 
         :after (ispell evil hydra company)
         :hook (text-mode . guess-language-mode)
         :init
@@ -1162,6 +1120,7 @@ some quality voices in the AUR repositories.
 
 #+BEGIN_SRC emacs-lisp
   (use-package festival 
+:straight nil
     :disabled t
     :defer t
     :after evil
@@ -1187,41 +1146,10 @@ some quality voices in the AUR repositories.
           ("s" . festival-say-region)))
   #+END_SRC 
 
-* 取 yasnippets
-#+BEGIN_SRC emacs-lisp
-  (use-package yasnippet 
-    :preface (defvar tmp/company-point nil)
-    ;; :commands (yas-minor-mode-on
-    ;;          yas-expand
-    ;;          yas-expand-snippet
-    ;;          yas-lookup-snippet
-    ;;          yas-insert-snippet
-    ;;          yas-new-snippet
-    ;;          yas-visit-snippet-file
-    ;;          yas-activate-extra-mode
-    ;;          yas-deactivate-extra-mode)
-    :config
-  (advice-add 'company-complete-common
-              :before
-              #'(lambda ()
-                  (setq tmp/company-point (point))))
-  (advice-add 'company-complete-common
-              :after
-              #'(lambda ()
-                  (when (equal tmp/company-point (point))
-                    (yas-expand))))
-    (require 'sync0-yasnippet-bibtex)
-    :hook 
-    (;;(LaTeX-mode . yas-minor-mode)
-     (text-mode . yas-minor-mode)
-     (prog-mode . yas-minor-mode)
-     (mu4e-mode . yas-minor-mode)
-     (bibtex-mode . yas-minor-mode)))
-#+END_SRC
-
 * yasnippets
 #+BEGIN_SRC emacs-lisp
   (use-package yasnippet 
+:straight (yasnippet :type git :host github :repo "joaotavora/yasnippet") 
     ;; :commands (yas-minor-mode-on
     ;;          yas-expand
     ;;          yas-expand-snippet
@@ -1263,6 +1191,7 @@ integer indicates a less dim color.
 
 #+BEGIN_SRC emacs-lisp
   (use-package focus
+:straight (focus :type git :host github :repo "larstvei/Focus") 
     :defer t
     :commands focus-mode)
 #+END_SRC 
@@ -1272,6 +1201,7 @@ Center text. It is unusable in split screen setups.
 #+BEGIN_SRC emacs-lisp
 
     (use-package olivetti
+:straight (olivetti :type git :host github :repo "rnkn/olivetti") 
       :disabled 
       :diminish olivetti-mode
       :config
@@ -1290,7 +1220,7 @@ Center text. It is unusable in split screen setups.
        (prog-mode . sync0-prog-mode-olivetti)))
 
   #+END_SRC 
-
+  
 * follow-mode 
 This mode allows the continuation of text in other buffers.
 It is useful, specially in smaller displays, when editing

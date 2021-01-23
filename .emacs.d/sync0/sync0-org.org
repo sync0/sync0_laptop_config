@@ -256,14 +256,6 @@
       :config (org-pdftools-setup-link))
 #+END_SRC 
 
-* 取 org-pdftools
-      (use-package org-pdftools
-      :hook (org-load . org-pdftools-setup-link)
-  :config
-    (add-to-list 'org-file-apps 
-                 '("\\.pdf\\'" . (lambda (file link)
-                                         (org-pdftools-open link)))))
-
 * org-crypt
 Allow encryption of org trees and sub trees. 
 
@@ -275,224 +267,6 @@ Allow encryption of org trees and sub trees.
     (org-crypt-key "carc.sync0@gmail.com")
     :config
     (org-crypt-use-before-save-magic))
-  #+END_SRC 
-
-* 取 org-journal
-Although, I have been almost entirely paper-less since I started my
-Master's degree, I have struggled to implement a planning workflow
-(calendar, task list, etc.) that is both easy to maintain and easy to
-use. After all, the litmus test of an efficient and consistent
-planning workflow is daily use. The ~org-journal~ package contains a set
-of functions to maintain a personal diary, using ~org-mode~ and Emacs.
-For my daily planning needs, this is the package I currently use,
-alongside the proverbial ~org-agenda~ and Google calendar.
-
-Caveat: Unfortunately, I have been unable to coordinate my Emacs
-workflow with my mobile phone; therefore, I sometimes require ~Todoist~
-for things such as grocery shopping and recurring tasks. While you can
-do all this within ~org-mode~, and I have, I am not satisfied with the
-implementation so far. 
-
-#+BEGIN_SRC emacs-lisp
-  (use-package org-journal 
-    :after org
-    :custom
-    ;; Set default directory to search for journal files. 
-    (org-journal-dir (concat sync0-dropbox-directory "org"))
-    ;; (org-journal-dir (concat sync0-dropbox-directory "org/journal"))
-    ;; (org-journal-dir (concat (file-name-as-directory org-directory) (format-time-string "journal/%Y")))
-    ;; Delete the date prefix to new journal entries.
-    (org-journal-time-format "")
-    ;; Create one journal file per month. 
-    ;; (org-journal-file-type 'monthly)
-    (org-journal-file-type 'daily)
-    ;; Change the title of journal files to the format: "YYYY_MM.gpg".
-    ;; (org-journal-file-format "%Y_%m.org")
-    (org-journal-file-format "journal_%Y%m%d.org")
-    ;; Change the format of journal entries (org headlines) to "[Day], DD/MM/YYYY".
-    (org-journal-date-format "%A, %Y/%m/%d")
-    ;; Encrypt journal files.
-    (org-journal-encrypt-journal nil)
-    ;; Don't encript individual entires in journal files. It's too cumbersome. 
-    (org-journal-enable-encryption nil)
-    (org-journal-carryover-items "TODO=\"無\"|TODO=\"次\"|TODO=\"中\"|TODO=\"待\"|TODO=\"阻\"")
-    (org-journal-enable-agenda-integration nil)
-    (org-journal-file-header "#+TITLE: %B, %Y\n#+ROAM_TAGS: journal %Y %B\n\n")
-    :config
-    ;; This setup prevents slowing down agenda parsing. 
-    ;; I create a variable to stand for the path of the journal file for the current month.  
-    ;; Then, I have org-agenda parse only this path and not all the past journal files.
-    (setq sync0-journal-this-month-file 
-          (concat sync0-dropbox-directory "org/" (format-time-string "journal_%Y%m%d") ".org"))
-
-          ;;(concat sync0-dropbox-directory "org/journal/" (format-time-string "%Y/%Y_%m") ".org")
-
-    (add-to-list 'org-agenda-files sync0-journal-this-month-file)
-
-    ;;       (require 'sync0-org-journal)
-
-  ;;   (defun sync0-org-journal-new-entry (prefix &optional time)
-  ;;     "Open today's journal file and start a new entry.
-
-  ;; With a PREFIX arg, open the today's file, create a heading if it doesn't exist yet,
-  ;; but do not create a new entry.
-
-  ;; If given a TIME, create an entry for the time's day. If no TIME was given,
-  ;; use the current time (which is interpreted as belonging to yesterday if
-  ;; smaller than `org-extend-today-until`).
-
-  ;; Whenever a journal entry is created the `org-journal-after-entry-create-hook'
-  ;; hook is run."
-  ;;     (interactive "P")
-  ;;     (org-journal-dir-check-or-create)
-
-  ;;     ;; if time is before org-extend-today-until, interpret it as
-  ;;     ;; part of the previous day:
-  ;;     (let (oetu-active-p) ;; org-extend-today-until-active-p
-  ;;       (let ((now (decode-time nil)))
-  ;;         (if (and (not time) ; time was not given
-  ;;                  (< (nth 2 now)
-  ;;                     org-extend-today-until))
-  ;;             (setq oetu-active-p t
-  ;;                   time (encode-time (nth 0 now)      ; second
-  ;;                                     (nth 1 now)      ; minute
-  ;;                                     (nth 2 now)      ; hour
-  ;;                                     (1- (nth 3 now)) ; day
-  ;;                                     (nth 4 now)      ; month
-  ;;                                     (nth 5 now)      ; year
-  ;;                                     (nth 8 now)))))  ; timezone
-
-  ;;       (let* ((entry-path (org-journal-get-entry-path time))
-  ;;              (should-add-entry-p (not prefix))
-  ;;              match)
-
-  ;;         ;; Open journal file
-  ;;         (unless (string= entry-path (buffer-file-name))
-  ;;           (funcall org-journal-find-file entry-path))
-
-  ;;         ;; Create new journal entry if there isn't one.
-  ;;         (let ((entry-header
-  ;;                (if (functionp org-journal-date-format)
-  ;;                    (funcall org-journal-date-format time)
-  ;;                  (concat org-journal-date-prefix
-  ;;                          (format-time-string org-journal-date-format time)))))
-  ;;           (goto-char (point-min))
-  ;;           (unless (search-forward entry-header nil t)
-  ;;             ;; Insure we insert the new journal header at the correct location
-  ;;             (unless (org-journal-daily-p)
-  ;;               (let ((date (decode-time time))
-  ;;                     (dates (sort (org-journal-file->calendar-dates (buffer-file-name))
-  ;;                                  (lambda (a b)
-  ;;                                    (calendar-date-compare (list b) (list a))))))
-  ;;                 (setq date (list (nth 4 date) (nth 3 date) (nth 5 date)))
-  ;;                 (while dates
-  ;;                   (when (calendar-date-compare dates (list date))
-  ;;                     (org-journal-search-forward-created (car dates))
-  ;;                     (outline-end-of-subtree)
-  ;;                     (insert "\n")
-  ;;                     (setq match t
-  ;;                           dates nil))
-  ;;                   (setq dates (cdr dates)))))
-  ;;             ;; True if entry must be inserted at the end of the journal file.
-  ;;             (unless match
-  ;;               (goto-char (point-max))
-  ;;               (forward-line))
-
-  ;;             (when  (looking-back "[^\t ]" (point-at-bol))
-  ;;               (re-search-backward "\\*\\*\\* .+ Aujourd'hui" nil nil 1)
-  ;;               (end-of-line)
-  ;;               (insert "\n")
-  ;;               (beginning-of-line)
-  ;;               (insert entry-header))
-  ;;             ;; For 'weekly, 'monthly and 'yearly journal entries
-  ;;             ;; create a "CREATED" property with the current date.
-  ;;             (unless (org-journal-daily-p)
-  ;;               (org-set-property "CREATED" (format-time-string "%Y%m%d" time)))
-  ;;             (when org-journal-enable-encryption
-  ;;               (unless (member org-crypt-tag-matcher (org-get-tags))
-  ;;                 (org-set-tags org-crypt-tag-matcher)))))
-  ;;         (org-journal-decrypt)
-
-  ;;         ;; move TODOs from previous day here
-  ;;         (when (and org-journal-carryover-items
-  ;;                    (not (string-blank-p org-journal-carryover-items))
-  ;;                    (string= entry-path (org-journal-get-entry-path (current-time))))
-  ;;           (org-journal-carryover))
-
-  ;;         (if (org-journal-org-heading-p)
-  ;;             (outline-end-of-subtree)
-  ;;           (goto-char (point-max)))
-
-  ;;         ;; insert the header of the entry
-  ;;         (when should-add-entry-p
-  ;;           (unless (eq (current-column) 0) (insert "\n"))
-  ;;           (let* ((day-discrepancy (- (time-to-days (current-time)) (time-to-days time)))
-  ;;                  (timestamp (cond
-  ;;                              ;; “time” is today, use normal timestamp format
-  ;;                              ((= day-discrepancy 0)
-  ;;                               (format-time-string org-journal-time-format))
-  ;;                              ;; “time” is yesterday with org-extend-today-until,
-  ;;                              ;; use different timestamp format if available
-  ;;                              ((and (= day-discrepancy 1) oetu-active-p)
-  ;;                               (if (not (string-equal org-journal-time-format-post-midnight ""))
-  ;;                                   (format-time-string org-journal-time-format-post-midnight)
-  ;;                                 (format-time-string org-journal-time-format)))
-  ;;                              ;; “time” is on some other day, use blank timestamp
-  ;;                              (t ""))))
-  ;;             (insert org-journal-time-prefix timestamp))
-  ;;           (run-hooks 'org-journal-after-entry-create-hook))
-
-  ;;         (if (and org-journal-hide-entries-p (org-journal-time-entry-level))
-  ;;             (outline-hide-sublevels (org-journal-time-entry-level))
-  ;;           (save-excursion (org-journal-finalize-view)))
-
-  ;;         (when should-add-entry-p
-  ;;           (outline-show-entry)))))
-
-
-            ;; (let ((scheduled-time (or scheduled-time (org-read-date nil nil nil "Date:")))
-
-    (defun sync0-org-journal-new-scheduled-entry (prefix &optional scheduled-time)
-      "Create a new entry in the future."
-      (interactive "P")
-      (let ((scheduled-time (or scheduled-time (org-read-date nil nil nil "%Y-%m-%d %a")))
-            (raw (prefix-numeric-value prefix)))
-        (org-journal-new-entry (= raw 16) (org-time-string-to-time scheduled-time))
-        (unless (= raw 16)
-          (if (not prefix)
-              (insert "")))))
-
-    ;; (defun sync0-org-journal-new-scheduled-entry (prefix &optional scheduled-time)
-    ;;   "Create a new entry in the future."
-    ;;   (interactive "P")
-    ;;   (let ((scheduled-time (or scheduled-time (org-read-date nil nil nil "%Y-%m-%d %a")))
-    ;;         (raw (prefix-numeric-value prefix)))
-    ;;     (org-journal-new-entry (= raw 16) (org-time-string-to-time scheduled-time))
-    ;;     (unless (= raw 16)
-    ;;       (if (not prefix)
-    ;;           (insert "無 "))
-    ;;       (save-excursion
-    ;;         (insert "\nSCHEDULED: <" scheduled-time ">")))))
-
-
-    ;; (defun org-journal-date-format-func (time)
-    ;;   "Custom function to insert journal date header.
-    ;;   When buffer is empty prepend a header in front the entry header."
-    ;;   (concat (when (= (buffer-size) 0)
-    ;;             (concat
-    ;;              (pcase org-journal-file-type
-    ;;                (`daily "#+CATEGORY: Journal")
-    ;;                (`weekly "#+CATEGORY: Journal")
-    ;;                (`monthly "#+CATEGORY: Journal")
-    ;;                (`yearly "#+CATEGORY: Journal"))))
-    ;;           org-journal-date-prefix
-    ;;           (format-time-string "%A, %x" time)))
-
-    ;; (setq org-journal-date-format 'org-journal-date-format-func)
-
-    :bind (("C-c j" . sync0-org-journal-new-scheduled-entry)
-           :map org-journal-mode-map
-           ("C-c C-s" . org-schedule)))
   #+END_SRC 
 
 * org-journal
@@ -513,6 +287,7 @@ implementation so far.
 
 #+BEGIN_SRC emacs-lisp
   (use-package org-journal 
+    :straight (org-journal :type git :host github :repo "bastibe/org-journal") 
     :after org
     :custom
     ;; Set default directory to search for journal files. 
@@ -560,134 +335,6 @@ implementation so far.
            :map org-journal-mode-map
            ("C-c C-s" . org-schedule)))
   #+END_SRC 
-
-* 取 org-capture
-#+BEGIN_SRC emacs-lisp
-          (use-package org-capture 
-            :after org 
-            :commands org-capture
-            :preface 
-            (defun org-journal-find-location ()
-              ;; Open today's journal, but specify a non-nil prefix argument in order to
-              ;; inhibit inserting the heading; org-capture will insert the heading.
-              (org-journal-new-entry t)
-              ;; Position point on the journal's top-level heading so that org-capture
-              ;; will add the new entry as a child entry.
-              (goto-char (point-min)))
-
-        ;;     (defun sync0-org-journal-find-location ()
-        ;; "Search the current journal file for today's tasks and add a new one"
-        ;;       ;; Open today's journal, but specify a non-nil prefix argument in order to
-        ;;       ;; inhibit inserting the heading; org-capture will insert the heading.
-        ;;       (org-journal-new-entry t)
-        ;;       ;; Position point on the journal's top-level heading so that org-capture
-        ;;      (goto-char (point-min))
-        ;;      (re-search-forward "\\*\\*\\* .+ Aujourd'hui" nil nil 1))
-            :custom
-            (org-default-notes-file "~/Dropbox/inbox/notes.org")
-            :config 
-
-      ;; See https://emacs.stackexchange.com/questions/40749/using-user-prompted-file-name-for-org-capture-in-template
-
-      (defun sync0-generate-spontaneous-note-name ()
-        (let ((time (format-time-string "%Y%m%d%H%M%S")))
-          (expand-file-name (format "writing_spontaneous_%s.org" time) "~/Dropbox/org/projects/")))
-
-      (defun sync0-generate-inbox-note-name ()
-        (let ((time (format-time-string "%Y%m%d%H%M%S")))
-          (expand-file-name (format "%s.org" time) "~/Dropbox/org/inbox/")))
-
-      (defun sync0-generate-zettel-name ()
-        (let ((time (format-time-string "%Y%m%d%H%M%S")))
-          (expand-file-name (format "%s.org" time) "~/Dropbox/org/")))
-
-    ;;   (defun sync0-generate-writing-note-name ()
-    ;;     (let ((time (format-time-string "%Y%m%d%H%M%S")))
-    ;;       (expand-file-name (format "%s.org" time) "~/Dropbox/org/projects/")))
-
-    ;;   (defun sync0-generate-project-name ()
-    ;; (setq sync0-project-name (read-string "Project name: "))
-    ;; (setq sync0-project-time (format-time-string "%Y%m%d%H%M%S"))
-    ;; (setq sync0-project-time-ordered (format-time-string "%Y/%m/%d"))
-    ;;       (expand-file-name (format "%s_%s.org" sync0-project-name sync0-project-time) "~/Dropbox/org/projects/"))
-
-      (defun sync0-generate-project-note-name ()
-    (setq sync0-project-name (read-string "Project name: "))
-    (setq sync0-project-name-upcase (upcase sync0-project-name))
-    (setq sync0-project-time (format-time-string "%Y%m%d%H%M%S"))
-    (setq sync0-project-time-ordered (format-time-string "%Y/%m/%d"))
-          (expand-file-name (format "%s_%s.org" sync0-project-name sync0-project-time) "~/Dropbox/org/projects/"))
-
-      (defun sync0-generate-zettelkasten-name ()
-    (setq sync0-zettelkasten-name (read-string "Zettelkasten name: "))
-    (setq sync0-zettelkasten-time (format-time-string "%Y%m%d%H%M%S"))
-    (setq sync0-zettelkasten-time-ordered (format-time-string "%Y/%m/%d"))
-          (expand-file-name (format "%s_zettelkasten.org" sync0-zettelkasten-name) "~/Dropbox/org/projects/"))
-
-      (defun sync0-generate-fiche-name ()
-  (progn 
-    (setq sync0-fiche-name (read-string "Fiche created for: "))
-    (setq sync0-fiche-name-uppercase 
-        (let* ((author_list (split-string sync0-fiche-name "_"))
-              (last_name (nth 0 author_list))
-              (first_name (nth 1 author_list))
-              (author_string (format "%s %s" first_name last_name)))
-        (upcase-initials author_string)))
-    (setq sync0-fiche-time (format-time-string "%Y/%m/%d"))
-          (expand-file-name (format "fiche_%s.org" sync0-fiche-name) "~/Dropbox/org/")))
-
-            (setq org-capture-templates 
-                  '(("j" "Journal" entry (function org-journal-find-location)
-                     "* %(format-time-string org-journal-time-format)\n\n%?"
-                                   :jump-to-captured t :immediate-finish t)
-                   ("z" "Zettelkasten" plain 
-                   (file sync0-generate-zettelkasten-name)
-                   "%(format \"#+TITLE: Zettelkasten sur %s\n#+CREATED: %s\n#+DATE: \n#+ROAM_TAGS: zettelkasten %s\" sync0-zettelkasten-name sync0-zettelkasten-time-ordered sync0-zettelkasten-name)\n\n%?"
-                   :jump-to-captured t)
-                   ("f" "Fiche" plain 
-                   (file sync0-generate-fiche-name)
-                   "%(format \"#+TITLE: %s\n#+CREATED: %s\n#+DATE: \n#+ROAM_TAGS: fiches %s\" sync0-fiche-name-uppercase sync0-fiche-time sync0-fiche-name)\n\nOrigin: %a\n\n%?"
-                   :jump-to-captured t)
-                  ;;  :unnarrowed t
-                   ("p" "Note de projet" plain 
-                   (file sync0-generate-project-note-name)
-                   "%(format \"#+TITLE: \n#+CREATED: %s\n#+DATE: \n#+ROAM_TAGS: projects %s %s\" sync0-project-time-ordered sync0-project-name sync0-current-year)\n\nOrigin: %a\n\n%?"
-                   :jump-to-captured t)
-                     ("t" "Liste de tâches" plain
-                     (file sync0-generate-project-note-name)
-                     "%(format \"#+TITLE: Tâches de %s\n#+CATEGORY: %s\" sync0-project-name sync0-project-name-upcase)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: projects todo %(format \"%s\n#+FILETAGS: :projects:todo:%s:\" sync0-project-name sync0-project-name)\n\nOrigin: %a\n\n%?"
-                   :unnarrowed t)
-                   ("a" "Annotation" plain 
-                    (file sync0-generate-zettel-name)
-                     "#+TITLE: %(format \"%s\" sync0-annotations-key)\n#+AUTHOR: %(format \"%s\" sync0-annotations-author)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y> %(format \"%s\" sync0-current-month-downcase) %(format \"%s\" sync0-annotations-key) annotations\n\nOrigin: %a\n\nDans la page %?"
-                   :unnarrowed t)
-                     ;; "#+TITLE: %(buffer-name (plist-get org-caputre-plist :orginial-buffer))\n#+AUTHOR: %(format \"%s\" sync0-annotations-author)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y> %(format \"%s\" sync0-current-month-downcase) %(buffer-name (plist-get org-caputre-plist :orginial-buffer)) annotations\n\nOrigin: %a\n\nDans la page "
-                ("e" "Pensée éphémère" plain
-                 (file sync0-generate-inbox-note-name)
-               "#+TITLE: \n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y>  %<%B>\n\nOrigin: %a\n\n%?"
-                   :unnarrowed t)
-                    ("r" "Recommendation" entry
-                     (file+headline "~/Dropbox/org/recommendations.org" "Non classé")
-                     "** 無 %^{author_lastname, title} \n:PROPERTIES:\n:CREATED: %<%Y-%m-%d>\n:RECOMMENDER: %^{Recommender}\n:END:" :prepend t)
-                    ("l" "Lecture du doctorat" entry
-                     (file+headline "~/Dropbox/org/projects/doctorat_readings.org" "Non-classées")
-                     "** %^{lastname, title} \n:PROPERTIES:\n:CREATED: %<<%Y-%m-%d>>\n:ORIGIN: %a\n:END:" :prepend t)
-              ("n" "Numérotée" plain 
-                 (file sync0-generate-zettel-name)
-             "#+TITLE: %^{Title}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y>  %<%B>\n\nOrigin: %a\n\n%?"
-             :unnarrowed t)
-                  ("s" "Écriture spontanée" plain
-                 (file sync0-generate-spontaneous-note-name)
-                   "#+TITLE: Divertisements du %<%d> %<%B> %<%Y>\n#+ROAM_TAGS: writings spontaneous %<%Y> %<%B>\n\n%?")
-                    ;; ("q" "Question" entry (function org-journal-find-location)
-                    ;;  "** 無 %^{question}\n:PROPERTIES:\n:ADDED: %<%Y-%m-%d>\n:ORIGIN: %a\n:END:%i%?")
-                    ("m" "Email" entry 
-                     (file+headline "~/Dropbox/org/messages.org" "Courriel")
-                     "** 無 %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n" :prepend t)))
-
-            :bind 
-            (("\C-c c" . org-capture)))
-#+END_SRC 
 
 * org-capture
 #+BEGIN_SRC emacs-lisp
@@ -2296,6 +1943,7 @@ on my laptop when editing large ~org~ files or files with many
 
 #+BEGIN_SRC emacs-lisp
       (use-package org-bullets 
+:straight (org-bullets :type git :host github :repo "sabof/org-bullets") 
         :custom
         ;; Hide all bullets:
         (org-bullets-bullet-list '(" "))
@@ -2345,19 +1993,12 @@ on my laptop when editing large ~org~ files or files with many
     (org-mu4e-link-query-in-headers-mode nil))
   #+END_SRC 
 
-* 取 ox-extra
-  ;; (use-package org-plus-contrib :after org)
-  ;; (use-package ox :after org)
-  (use-package ox-extra :after org 
-  :config
-  (ox-extras-activate '(ignore-headlines)))
-
 * org-ref 
 #+BEGIN_SRC emacs-lisp
   (use-package org-ref
+:straight (org-ref :type git :host github :repo "jkitchin/org-ref") 
 ;;    :after (org org-roam)
     ;;    :init 
-    ;; :functions (org-ref-find-bibliography org-ref-get-bibtex-key-and-file)
 ;;    :commands (sync0-hydra-research-functions/body org-ref-ivy-insert-cite-link)
     :preface 
     (defun sync0-org-ref-open-pdf-at-point ()
@@ -2446,68 +2087,10 @@ on my laptop when editing large ~org~ files or files with many
           ("C-c 8"  . sync0-org-ref-open-pdf-at-point)))
 #+END_SRC 
 
-* 取 org-noter
-#+BEGIN_SRC emacs-lisp
-    (use-package nov
-    :after org-noter
-    :load-path "~/.emacs.d/sync0/nov.el" 
-    :custom
-     (nov-text-width 66)
-      :config
-      (push '("\\.epub\\'" . nov-mode) auto-mode-alist)
-
-    (defun sync0-nov-font-setup ()
-      (face-remap-add-relative 'variable-pitch :family "Minion Pro" :height 150)) 
-
-    (add-hook 'nov-mode-hook 'sync0-nov-font-setup)
-
-                (require 'justify-kp)
-
-                (defun my-nov-window-configuration-change-hook ()
-                  (my-nov-post-html-render-hook)
-                  (remove-hook 'window-configuration-change-hook
-                               'my-nov-window-configuration-change-hook
-                               t))
-
-                (defun my-nov-post-html-render-hook ()
-                  (if (get-buffer-window)
-                      (let ((max-width (pj-line-width))
-                            buffer-read-only)
-                        (save-excursion
-                          (goto-char (point-min))
-                          (while (not (eobp))
-                            (when (not (looking-at "^[[:space:]]*$"))
-                              (goto-char (line-end-position))
-                              (when (> (shr-pixel-column) max-width)
-                                (goto-char (line-beginning-position))
-                                (pj-justify)))
-                            (forward-line 1))))
-
-                    (add-hook 'window-configuration-change-hook
-                              'my-nov-window-configuration-change-hook
-                              nil t)))
-
-                (add-hook 'nov-post-html-render-hook 'my-nov-post-html-render-hook))
-
-
-    (use-package org-noter
-      :after (:any org pdf-view)
-      :config
-      (setq
-       ;; The WM can handle splits
-       org-noter-notes-window-location 'other-frame
-       ;; Please stop opening frames
-       org-noter-always-create-frame nil
-       ;; I want to see the whole file
-       org-noter-hide-other nil
-       ;; Everything is relative to the main notes file
-       org-noter-notes-search-path sync0-notes-folder
-       ))
-#+END_SRC 
-
 * org-noter
 #+BEGIN_SRC emacs-lisp
     (use-package nov
+:straight nil
     :after (org-noter evil)
     :load-path "~/.emacs.d/sync0/nov.el" 
     :custom
@@ -2536,6 +2119,7 @@ on my laptop when editing large ~org~ files or files with many
     (add-hook 'nov-mode-hook 'sync0-nov-font-setup))
 
     (use-package org-noter
+:straight (org-noter :type git :host github :repo "weirdNox/org-noter") 
       :after (:any org pdf-view)
       :config
       (setq
@@ -2557,6 +2141,7 @@ on my laptop when editing large ~org~ files or files with many
 * org-download
 #+BEGIN_SRC emacs-lisp
 (use-package org-download
+:straight (org-download :type git :host github :repo "abo-abo/org-download") 
   :after org
 :hook (dired-mode . org-download-enable)
 :commands (org-download-screenshot org-download-clipboard org-download-yank)
@@ -2576,6 +2161,7 @@ buffers.
 
 #+BEGIN_SRC emacs-lisp
   (use-package org-gcal 
+:straight (org-gcal :type git :host github :repo "kidd/org-gcal.el") 
     :after (org simple-secrets)
     :commands (org-gcal-fetch org-gcal-sync)
     :custom (org-gcal-auto-archive nil)
@@ -2616,6 +2202,7 @@ This package allow org mode to interact with WordPress.
 
 #+BEGIN_SRC emacs-lisp
     (use-package org2blog
+:straight (org2blog :type git :host github :repo "org2blog/org2blog") 
       :after (org simple-secrets)
       :commands (org2blog-user-interface)
       :bind (("C-c b" . org2blog-user-interface))
@@ -2655,240 +2242,10 @@ This package allow org mode to interact with WordPress.
   ;;     (after-save . sync0-after-save-actions))
 #+END_SRC
 
-* 取 org-roam
-#+BEGIN_SRC emacs-lisp
-        (use-package org-roam
-              ;; :after org-journal
-              :hook
-              (after-init . org-roam-mode)
-    :init
-    (require 'org-journal)
-              :custom
-              (org-roam-directory "~/Dropbox/org/")
-        ; make org-roam buffer sticky
-              (org-roam-buffer-no-delete-other-windows t)
-              (org-roam-completion-system 'default)
-              ;;(org-roam-dailies-directory 'org-roam-directory)
-               (org-roam-dailies-directory org-journal-dir)
-              ;; (org-roam-dailies-directory "journal/")
-              ;; (org-roam-title-sources 'title)
-              (org-roam-tag-sources '(prop))
-              ;; (org-roam-tag-sources '(prop vanilla))
-              ;; (org-roam-tag-sources '(vanilla))
-        (org-roam-completion-everywhere t)
-        :config
-
-        (setq org-roam-capture-templates '(
-             ;;  ("e" "Pensée éphémère" plain (function org-roam--capture-get-point)
-             ;; "%?"
-             ;; :file-name "fleeting_${slug}_%<%Y-%m-%d>"
-             ;; :head "#+TITLE: Pensée éphémère sur ${slug}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y>  %<%B>\n\n"
-             ;; :unnarrowed t)
-             ;;  ("c" "Cogitation" plain (function org-roam--capture-get-point)
-             ;; "*  %?\n:PROPERTIES:\n:CREATED: %<<%Y-%m-%d>>\n:LAST_EDITED: %<<%Y-%m-%d>>\n:END:\n\n"
-             ;; :file-name "cogitatio_${slug}>"
-             ;; :head "#+TITLE: Cogitations sur ${slug}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: cogitatio  ${slug}\n\n"
-             ;; :unnarrowed t)
-  ;; I will experiment using only one format for the Zettel
-              ;; ("d" "Défini par l'utilisateur" plain (function org-roam--capture-get-point)
-             ;; "%?"
-             ;; :file-name "${slug}"
-             ;; :head "#+TITLE: ${title}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: \n\n"
-             ;; :unnarrowed t)
-             ;;  ("d" "Défini par l'utilisateur (daté)" plain (function org-roam--capture-get-point)
-             ;; "%?"
-             ;; :file-name "${slug}_%<%Y-%m-%d>"
-             ;; :head "#+TITLE: ${title}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: ${slug}\n\n"
-             ;; :unnarrowed t)
-             ;;  ("z" "Zettelkasten" plain (function org-roam--capture-get-point)
-             ;; "%?"
-             ;; :file-name "${slug}_zettelkasten"
-             ;; :head "#+TITLE: Zettelkasten sur ${slug}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: zettelkasten  ${slug}\n\n"
-             ;; :unnarrowed t)
-  ;; I will experiment using only one format for the Zettel
-             ;;  ("f" "Fiche" plain (function org-roam--capture-get-point)
-             ;; "%?"
-             ;; :file-name "fiche_${slug}"
-             ;; :head "#+TITLE: ${title}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: fiches ${slug}\n\n"
-             ;; :unnarrowed t)
-             ;;  ("c" "cogitation" entry
-             ;;     #'org-roam-capture--get-point
-             ;; "*  %?\n:PROPERTIES:\n:CREATED:%<%Y-%m-%d %a>\n:END:\n\n"
-             ;; :file-name "cogitatio_${slug}>"
-             ;; :head "#+TITLE: Cogitations sur ${slug}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+FILETAGS: :cogitatio:${slug}:\n\n")
-              ;; ("e" "Écriture spontanée" entry
-              ;;    #'org-roam-capture--get-point
-              ;;    "* %<%A>, %<%Y/%m/%d>\n:PROPERTIES:\n:CREATED: %<<%Y-%m-%d>>\n:LAST_EDITED: %<<%Y-%m-%d>>\n:END:\n\n%?"
-              ;;    :file-name "writing_spontaneous_%<%Y-%m>"
-              ;;    :head "#+TITLE: Écriture spontanée\n#+SUBTITLE: %<%B>, %<%Y>\n#+ROAM_TAGS: writings spontaneous %<%Y> %<%B>\n\n")
-              ("n" "Numéroté" plain (function org-roam--capture-get-point)
-             "%?"
-             :file-name "%<%Y%m%d%H%M%S>"
-             :head "#+TITLE: ${slug}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y>  %<%B>\n\nOrigin: %a\n"
-             :unnarrowed t)
-             ;;  ("s" "Numéroté et simple" plain (function org-roam--capture-get-point)
-             ;; "%?"
-             ;; :file-name "%<%Y%m%d%H%M>"
-             ;; :head "#+TITLE: ${slug}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: rambling  %<%Y>  %<%B>\n\n"
-             ;; :unnarrowed t)
-             ;;  ("d" "default" plain (function org-roam--capture-get-point)
-             ;; "%?"
-             ;; :file-name "%<%Y%m%d%H%M%S>-${slug}"
-             ;; :head "#+TITLE: ${slug}\n\n"
-             ;; :unnarrowed t)
-             ))
-
-      (setq org-roam-capture-ref-templates
-              '(("r" "ref" plain (function org-roam-capture--get-point)
-                 "#+ROAM_KEY: ${ref}\n\n%?"
-                 :file-name "website_${slug}_%<%Y-%m-%d>"
-                 :head "#+TITLE: ${title}]\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: website %<%Y>\n\n"
-                 :unnarrowed t)))
-
-        (setq org-roam-dailies-capture-templates
-              '(("d" "default" entry
-                 #'org-roam-capture--get-point
-                 "* %<%A, %Y/%m/%d>\n:PROPERTIES:\n:CREATED: %<%Y%m%d>\n:END:\n\n%?"
-                 :immediate-finish t
-                 :file-name "journal/%<%Y_%m>"
-                 :head "#+TITLE: %<%B, %Y>\n#+ROAM_TAGS: journal %<%Y> %<%B>\n\n"))))
-
-                ;; ("j" "journal" entry
-                ;;  #'org-roam-capture--get-point
-                ;;  "* %<%A, %Y/%m/%d>\n%?"
-                ;;  :file-name "personal_journal_%<%Y>"
-                ;;  :head "#+TITLE: Journal\n#+SUBTITLE: %<%Y>\n#+ROAM_TAGS: personal journal %<%Y>\n\n"
-                ;;  :olp ("%<%B>"))
-
-            ;; (setq sync0-journal-this-year-file 
-            ;;       (concat sync0-dropbox-directory "org/journal/" (format-time-string "%Y") ".org"))
-
-            ;; (setq sync0-journal-this-month-file 
-            ;;       (concat sync0-dropbox-directory "org/journal/" (format-time-string "%Y_%m") ".org"))
-
-            ;; (add-to-list 'org-agenda-files sync0-journal-this-year-file))
-
-#+END_SRC 
-
-        (setq sync0-journal-this-month-file 
-              (concat sync0-dropbox-directory "org/personal_journal" (format-time-string "%Y_%m") ".org"))
-
-        (add-to-list 'org-agenda-files sync0-journal-this-month-file))
-
-        :bind (:map org-roam-mode-map
-                (("C-c n l" . org-roam)
-                 ("C-c n f" . org-roam-find-file)
-                 ("C-c n g" . org-roam-graph))
-                :map org-mode-map
-                (("C-c n i" . org-roam-insert))
-                (("C-c n I" . org-roam-insert-immediate))))
-
-
-(use-package org-roam
-  :hook (org-load . org-roam-mode)
-  :commands (org-roam-buffer-toggle-display
-             org-roam-find-file
-             org-roam-graph
-             org-roam-insert
-             org-roam-switch-to-buffer
-             org-roam-dailies-date
-             org-roam-dailies-today
-             org-roam-dailies-tomorrow
-             org-roam-dailies-yesterday)
-  :preface
-  ;; Set this to nil so we can later detect whether the user has set a custom
-  ;; directory for it, and default to `org-directory' if they haven't.
-  (defvar org-roam-directory nil)
-  :init
-  :config
-  (setq org-roam-directory (expand-file-name (or org-roam-directory "roam")
-                                             org-directory)
-        org-roam-verbose nil  ; https://youtu.be/fn4jIlFwuLU
-        org-roam-buffer-no-delete-other-windows t ; make org-roam buffer sticky
-        org-roam-completion-system 'default
-)
-
-  ;; Normally, the org-roam buffer doesn't open until you explicitly call
-  ;; `org-roam'. If `+org-roam-open-buffer-on-find-file' is non-nil, the
-  ;; org-roam buffer will be opened for you when you use `org-roam-find-file'
-  ;; (but not `find-file', to limit the scope of this behavior).
-  (add-hook 'find-file-hook
-    (defun +org-roam-open-buffer-maybe-h ()
-      (and +org-roam-open-buffer-on-find-file
-           (memq 'org-roam-buffer--update-maybe post-command-hook)
-           (not (window-parameter nil 'window-side)) ; don't proc for popups
-           (not (eq 'visible (org-roam-buffer--visibility)))
-           (with-current-buffer (window-buffer)
-             (org-roam-buffer--get-create)))))
-
-  ;; Hide the mode line in the org-roam buffer, since it serves no purpose. This
-  ;; makes it easier to distinguish among other org buffers.
-  (add-hook 'org-roam-buffer-prepare-hook #'hide-mode-line-mode))
-
-     ("r" "ref" plain (function org-roam--capture-get-point)
-           "%?"
-           :file-name "websites/${slug}"
-           :head "#+SETUPFILE:./hugo_setup.org
-
-;;  #+ROAM_KEY: ${ref}
-;; #+TITLE: ${title}
-
-** company-org-roam
- #+BEGIN_SRC emacs-lisp
-    (use-package company-org-roam
-   :after company)
-   ;;   :ensure t
-      ;; You may want to pin in case the version from stable.melpa.org is not working 
-      ; :pin melpa
-      ;; :config
-      ;; (push 'company-org-roam company-backends)
- #+END_SRC 
-
-** 無 org-roam-bibtex
-
-#+BEGIN_SRC emacs-lisp
-    (use-package org-roam-bibtex
-      :after (org-roam)
-      :hook (org-roam-mode . org-roam-bibtex-mode)
-      :custom
-          (orb-autokey-format "%a%y")
-          (orb-process-file-keyword t)
-          (orb-file-field-extensions '("pdf"))
-          ;; Use this to insert org-ref citations (cite:XXX199X)
-          ;; (orb-insert-link-description 'citation)
-          ;; Use this to insert citation keys
-           (orb-insert-link-description 'citekey)
-          (orb-note-actions-interface 'hydra)
-      :config
-
-    (setq orb-preformat-keywords
-          '("citekey" "title" "url" "author-or-editor" "keywords" "file"))
-
-  ;; (setq orb-templates
-  ;;       '(("r" "ref" plain (function org-roam-capture--get-point) ""
-  ;;          :file-name "${citekey}"
-  ;;          :head "#+TITLE: ${citekey}: ${title}\n#+ROAM_KEY: ${ref}\n" ; <--
-  ;;          :unnarrowed t))))
-
-  ;; (setq orb-templates
-  ;;       '((\"r\" \"reference\" plain (function org-roam-capture--get-point)
-  ;;          "#+ROAM_KEY: %^{citekey}%?
-  ;; %^{author} published %^{entry-type} in %^{date}: fullcite:%\\1."
-  ;;          :file-name "references/${citekey}"
-  ;;          :head "#+TITLE: ${title}"
-  ;;          :unnarrowed t)))
-
-      (setq orb-templates
-            '(("r" "ref" plain (function org-roam-capture--get-point)
-             (file "/home/sync0/Dropbox/org/etc/template_research-notes.org")
-               :file-name "annotations/${=key=}"
-               :head "#+TITLE: ${title}\n#+AUTHOR: ${author-or-editor}\n#+ROAM_KEY: ${ref}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: annotations ${keywords}\n#+INTERLEAVE_PDF: ${file}\n#+LATEX_CLASS: scrartcl-section\n#+EXPORT_FILE_NAME: /home/sync0/Dropbox/annotations/${=key=}\n#+SETUPFILE: ~/Dropbox/typography/settings_notetaking-scrartcl-fr.org"
-               :unnarrowed t))))
-#+END_SRC 
-
 * org-roam
 #+BEGIN_SRC emacs-lisp
         (use-package org-roam
+:straight (org-roam :type git :host github :repo "org-roam/org-roam") 
               :hook
               (after-init . org-roam-mode)
     :init
@@ -2949,6 +2306,7 @@ This package allow org mode to interact with WordPress.
 
 #+BEGIN_SRC emacs-lisp
     (use-package org-roam-bibtex
+:straight (org-roam-bibtex :type git :host github :repo "org-roam/org-roam-bibtex") 
       :after (org-roam)
       :hook (org-roam-mode . org-roam-bibtex-mode)
       :custom

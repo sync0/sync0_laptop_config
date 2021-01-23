@@ -143,32 +143,6 @@ repositories.
   (setq straight-use-package-by-default t)
 #+END_SRC 
 
-   #+BEGIN_SRC emacs-lisp
-     ;; Load latest versions of all packages. 
-     ;; List packages that will not be loaded. 
-     ;; IMPORTANT: Set this variable before calling (package-initialize).
-     ;; (setq package-load-list '(all
-     ;;                           ;; (projectile nil)
-     ;;                           (desktop-save-mode nil)
-     ;;                          ;; (solaire-mode nil)
-     ;;                           (sublimity-mode nil)
-     ;;                          ;; (which-key-mode nil)
-     ;;                          ;; (org-bullets-mode nil)
-     ;;                           (company-mode nil)))
-     ;; Do not check package signatures when installing new packages. 
-     ;; (setq package-check-signature nil)
-     ;; Initialize the Emacs package manager.
-     ;; (package-initialize)
-     ;; Set up the package repositories.
-     ;; (setq package-archives
-     ;;       '(("melpa" . "https://melpa.org/packages/")
-     ;;         ;; ("melpa-stable" . "http://melpa-stable.milkbox.net/packages/")
-     ;;         ;;     ("melpa-stable" . "https://stable.melpa.org/packages/")
-     ;;         ("org" . "http://orgmode.org/elpa/")
-     ;;         ("gnu" . "http://elpa.gnu.org/packages/")))
-     #+END_SRC 
-
-
 ** use-package
 [[https://github.com/jwiegley][jwiegley's]] ~use-package~ macro simplifies package configuration in
 the ~.emacs~ startup file for faster startup and easier
@@ -388,7 +362,6 @@ https://stackoverflow.com/questions/23207958/how-to-prevent-emacs-dired-from-spl
 
 ** Definitions
 #+BEGIN_SRC emacs-lisp
-;; (setq sync0-notes-folder (concat (getenv "HOME") "/Dropbox/org/annotations/"))
 (setq sync0-notes-folder (concat (getenv "HOME") "/Dropbox/org/"))
 (setq sync0-current-year (format-time-string "%Y"))
 (setq sync0-current-month (format-time-string "%B"))

@@ -1,6 +1,7 @@
 * evil mode
    #+BEGIN_SRC emacs-lisp
      (use-package evil  
+:straight (evil :type git :host github :repo "emacs-evil/evil") 
        :diminish evil-mode
        :hook (after-init . evil-mode)
        :custom
@@ -237,26 +238,26 @@ file (i.e., ~sync0_secrets.gpg~) that I don't want to reveal.
 
 * deft
 #+BEGIN_SRC emacs-lisp
-  (use-package el-patch)
-    ;; :straight (:host github
-    ;;            :repo "raxod502/el-patch"
-    ;;            :branch "develop")
+  (use-package el-patch
+     :straight (:host github
+                :repo "raxod502/el-patch"
+                :branch "develop"))
 
   (eval-when-compile
     (require 'el-patch))
 
   (use-package deft
-    ;; same as above...
+      :straight (deft :type git :host github :repo "jrblevin/deft") 
       :after org
       ;; :bind
       ;; ("C-c r d" . deft)
       :custom
       (deft-recursive t)
-;;      (deft-use-filter-string-for-filename t)
+    ;;  (deft-use-filter-string-for-filename t)
       (deft-default-extension "org")
       (deft-directory "~/Dropbox/org")
- (deft-new-file-format "%Y%m%d%H%M%S")
-(deft-file-naming-rules
+      (deft-new-file-format "%Y%m%d%H%M%S")
+      (deft-file-naming-rules
       '((noslash . "-")
         (nospace . "_")
         (case-fn . downcase)))
@@ -296,24 +297,10 @@ file (i.e., ~sync0_secrets.gpg~) that I don't want to reveal.
           ("<f9>" . sync0-hydra-deft-functions/body)))
 #+END_SRC 
 
-    (use-package deft
-      ;; :straight (deft
-      ;;             :type git :host github
-      ;;             :repo "jrblevin/deft"
-      ;;             :fork (:host github
-      ;;                    :repo "credmp/deft"))
-      :after org
-      :bind
-      ("C-c r d" . deft)
-      :custom
-      (deft-recursive t)
-      (deft-use-filter-string-for-filename t)
-      (deft-default-extension "org")
-      (deft-directory "~/Dropbox/org/" ))
-
 * hydra
 #+BEGIN_SRC emacs-lisp
-  (use-package hydra)
+  (use-package hydra
+:straight (hydra :type git :host github :repo "abo-abo/hydra"))
     ;; In case I later need to wrap defhydra in any special functionality.
     ;; :custom (lv-use-seperator t)
 #+END_SRC 
@@ -332,60 +319,6 @@ A packate that displays a list of recent files.
     :bind (:map recentf-dialog-mode-map
                 ("j"  . next-line)
                 ("k"  . previous-line)))
-#+END_SRC
-
-* 取 projectile
-Configuration taken from
-https://github.com/danieroux/emacs/blob/master/mine/djr-hydra.el
-
-#+BEGIN_SRC emacs-lisp
-  (use-package projectile 
-:disabled t
-
-    :custom
-    ;; (projectile-keymap-prefix (kbd "C-p"))
-    (projectile-completion-system 'ivy)
-    (projectile-enable-caching t)
-    (projectile-project-search-path '("~/Dropbox/projects/"))
-    ;;(setq projectile-indexing-method 'alien)
-
-    :config
-    (defhydra sync0-hydra-projectile (:color teal)
-      "
-        Find File          Search/Tags             Buffers                      Cache
-        ------------------------------------------------------------------------------------------
-        ^^_f_: file dwim       _a_: ag             ^^_i_: Ibuffer               _c_: cache clear
-        ^^_r_: replace regexp  _g_: grep           ^^_K_: Kill all buffers      _x_: remove known project
-        ^^_d_: dir             _o_: multi-occur    ^^_X_: cleanup non-existing  _z_: cache current
-        Operate On
-        ---------------------
-        ^^_D_: Dired
-        ^^_e_: Eshell
-        "
-      ("a"   projectile-ag                      nil)
-      ("c"   projectile-invalidate-cache        nil)
-      ("d"   projectile-find-dir                nil)
-      ("e"   (eshell '(4))                      nil)
-      ("D"   projectile-dired                   nil)
-      ("f"   projectile-find-file-dwim          nil)
-      ;; ("g"   projectile-regenerate-tags         nil)
-      ("g"   projectile-grep         nil)
-      ("i"   projectile-ibuffer                 nil)
-      ("K"   projectile-kill-buffers            nil)
-      ;; ("m"   (magit-status (projectile-project-root)) nil)
-      ("o"   projectile-multi-occur             nil)
-      ("p"   projectile-switch-project          nil)
-      ("r"   projectile-replace-regexp                 nil)
-      ;; ("r"   projectile-recentf                 nil)
-      ("x"   projectile-remove-known-project    nil)
-      ("X"   projectile-cleanup-known-projects  nil)
-      ("z"   projectile-cache-current-file      nil)
-      ("q"   nil                                "cancel" :color blue))
-
-    (add-to-list 'projectile-globally-ignored-files "node-modules")
-
-    (projectile-mode)
-    :bind (("C-c p" . sync0-hydra-projectile/body)))
 #+END_SRC
 
 * counsel
@@ -457,93 +390,6 @@ its last location.
     ;; Start save-place-mode.
     :init (save-place-mode)
     :hook (find-file . sync0-save-place-reposition))
-#+END_SRC 
-
-* 取 windmove
-This built-in Emacs package lets you move point from window to window
-using more familiar key combinations than the default ~C-x o~.
-
-I added some functions to improve defaults.
-https://emacs.stackexchange.com/questions/40821/open-new-window-and-switch-to-it
-#+BEGIN_SRC emacs-lisp
-  (use-package windmove
-    :config 
-    (require 'projectile)
-    (require 'org)
-    (require 'org-agenda)
-    (require 'org-journal)
- 
-    (defun sync0-split-and-follow-horizontally ()
-      (interactive)
-(progn
-      (split-window-below)
-      (balance-windows)
-                (setq truncate-lines t)
-                (setq truncate-partial-width-windows t)
-      (other-window 1)
-(sync0-restore-margins)))
-
-    (defun sync0-split-and-follow-vertically ()
-      (interactive)
-(progn
-      (split-window-right)
-      (balance-windows)
-                (setq truncate-lines t)
-                (setq truncate-partial-width-windows t)
-;;      (other-window 1)
-(sync0-restore-margins)))
-
-    (defhydra sync0-hydra-file-access (:color amaranth :hint nil :exit t)
-      "
-       ^Windows^                ^Buffers^             ^Search^
-    ^^^^^^---------------------------------------------------------------
-    _1_: Delete others       _w_: Write           _r_: Recent
-    _2_: Split horizontally  _a_: Write as        _f_: Find
-    _3_: Split vertically    _b_: Open           
-    ^ ^                      _k_: Kill
-    ^ ^                      _M_: Move file  
-    ^^^^^^---------------------------------------------------------------
-       ^Bookmarks^               ^Projectile^         ^Planning^ 
-    ^^^^^^---------------------------------------------------------------
-    _j_: Jump to bookmark    _R_: Recent files    _h_: Today
-    _g_: Bookmark o. window  _d_: Find directory  _t_: Planning files
-    _m_: Set bookmark        _B_: Browse & jump   _A_: Agenda
-    _l_: List bookmarks      _p_: Switch project  _J_: org-journal
-    ^ ^                      _D_: Dired           
-    [q] Quit                 ^ ^
-    "
-      ("1" delete-other-windows)
-      ("2" sync0-split-and-follow-horizontally)
-      ("3" sync0-split-and-follow-vertically)
-      ("b" ivy-switch-buffer)
-      ;; Quickly save
-      ("w" save-buffer)
-      ("a" write-file)
-      ;; Kill current buffer and window
-      ("k" kill-buffer-and-window)
-      ;; ("o" ivy-switch-buffer-other-window)
-      ("M" sync0-move-file)
-      ("r" counsel-recentf)
-      ("f" counsel-find-file)
-      ("m" bookmark-set)
-      ("j" counsel-bookmark)
-      ("g" bookmark-jump-other-window)
-      ("l" bookmark-bmenu-list)
-      ("d" projectile-find-dir)
-      ("B" projectile-find-file-dwim)
-      ("p" projectile-switch-project)
-      ("D" projectile-dired)
-      ("R" projectile-recentf)
-      ("A" org-agenda)
-      ("J" sync0-org-journal-new-scheduled-entry)
-      ("t" sync0-org-find-planning-file)
-      ("h" sync0-pop-to-org-agenda)
-      ("q" nil :color blue))
-    :bind (("M-," . windmove-left)
-           ("<f5>" . sync0-hydra-file-access/body)
-           ("C-x 2" . sync0-split-and-follow-horizontally)
-           ("C-x 3" . sync0-split-and-follow-vertically)
-           ("M-." . windmove-right)))
 #+END_SRC 
 
 * windmove
@@ -631,6 +477,7 @@ https://emacs.stackexchange.com/questions/40821/open-new-window-and-switch-to-it
 * smooth-scrolling
 #+BEGIN_SRC emacs-lisp
   (use-package smooth-scrolling 
+    :straight (smooth-scrolling :type git :host github :repo "aspiers/smooth-scrolling") 
     :commands (sync0-scroll-up sync0-scroll-down)
     :diminish smooth-scrolling-mode
     :custom
@@ -667,7 +514,7 @@ https://emacs.stackexchange.com/questions/40821/open-new-window-and-switch-to-it
            ("M-j" . sync0-scroll-down)))
 #+END_SRC 
 
-* alert (Growl) 
+* alert 
 #+BEGIN_SRC emacs-lisp
   (use-package alert
   :straight (alert :type git :host github :repo "jwiegley/alert"))
@@ -688,6 +535,7 @@ from within emacs.
 
 #+BEGIN_SRC emacs-lisp
   (use-package google-this 
+    :straight (google-this :type git :host github :repo "Malabarba/emacs-google-this") 
     :defer t
     :diminish google-this-mode
     :commands (google-this-search google-this)
@@ -1092,6 +940,7 @@ from within emacs.
 
 #+BEGIN_SRC emacs-lisp
   (use-package calfw 
+:straight (calfw :type git :host github :repo "kiwanami/emacs-calfw") 
 :disabled t
     :defer t
     :commands sync0-open-calendar
@@ -1157,6 +1006,7 @@ from within emacs.
 
 #+BEGIN_SRC emacs-lisp
   (use-package magit
+:straight (magit :type git :host github :repo "magit/magit") 
     :defer t
     :diminish magit-mode
     :commands (magit-status magit-blame)
@@ -1183,6 +1033,8 @@ from within emacs.
 
 #+BEGIN_SRC emacs-lisp
   (use-package magithub
+:disabled t
+:straight (magithub :type git :host github :repo "vermiculus/magithub") 
     :after magit
     :config
     (magithub-feature-autoinject t)
@@ -1193,6 +1045,8 @@ from within emacs.
 
 #+BEGIN_SRC emacs-lisp
   (use-package magit-todos
+:disabled t
+:straight (magit-todos :type git :host github :repo "alphapapa/magit-todos") 
     :commands (magit-todos-mode)
     :hook (magit-mode . magit-todos-mode)
     :custom 
@@ -1211,6 +1065,7 @@ really ugly way that I haven't been able to fix.
 
 #+BEGIN_SRC emacs-lisp
     (use-package git-gutter 
+:straight (git-gutter :type git :host github :repo "emacsorphanage/git-gutter") 
       :after hydra
       :diminish git-gutter-mode
       ;; :init
@@ -1264,6 +1119,7 @@ really ugly way that I haven't been able to fix.
 
 #+BEGIN_SRC emacs-lisp
   (use-package git-timemachine
+:straight (git-timemachine :type git :host gitlab :repo "pidu/git-timemachine") 
     :defer t
     :after evil
     :commands 
@@ -1288,6 +1144,7 @@ really ugly way that I haven't been able to fix.
 
 #+BEGIN_SRC emacs-lisp
   (use-package ediff
+:straight nil
     :defer t
     :custom
     ;; No separate frame for ediff control buffer
