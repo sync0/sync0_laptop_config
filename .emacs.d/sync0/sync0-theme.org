@@ -188,6 +188,7 @@ I stopped using it.
         ;; (load-theme 'doom-solarized-light t)
         ;; (load-theme 'doom-plain t)
         (load-theme 'doom-flatwhite t)
+        ;; (load-theme 'doom-zenburn t)
    :config
       ;; Correct org-mode's native fontification.
       (doom-themes-org-config)
@@ -478,7 +479,7 @@ https://stackoverflow.com/questions/8190277/how-do-i-display-the-total-number-of
                       (propertize 
                        (capitalize 
                         (s-replace "-mode" "" (prin1-to-string major-mode)))
-                       'face))
+                       'face '(:weight bold)))
                  ;; (:eval 
                  ;;  (if (equal sync0-current-theme 'doom-solarized-light)
                  ;;      (propertize 

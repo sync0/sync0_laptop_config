@@ -478,7 +478,7 @@ parenthesis.
 * company-mode
 #+BEGIN_SRC emacs-lisp
         (use-package company
-:straight (company :type git :host github :repo "company-mode/company-mode") 
+        ;; :straight (company :type git :host github :repo "company-mode/company-mode") 
         :hook
         (after-init . global-company-mode)
         :custom

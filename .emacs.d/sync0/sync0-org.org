@@ -405,9 +405,10 @@ implementation so far.
 
 
       (defun sync0-generate-reference-name ()
+    (setq sync0-reference-filename (read-string "Nom du fichier : "))
     (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
     (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
-          (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/references/"))
+          (expand-file-name (format "%s.org" sync0-reference-filename) "~/Dropbox/org/references/"))
 
       (defun sync0-generate-project-name ()
     (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
@@ -463,7 +464,7 @@ implementation so far.
                      ;; "** 無 %^{author_lastname, title} \n:PROPERTIES:\n:CREATED: %<%Y-%m-%d>\n:RECOMMENDER: %^{Recommender}\n:END:" :prepend t)
                    ("l" "Note de lecture" plain 
                     (file sync0-generate-reference-name)
-                   "#+TITLE: %^{Title}\n#+SUBTITLE: %^{Subtitle}\n#+AUTHOR: %^{Author}\n#+ROAM_KEY: cite:%^{Cite key}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %4 references %?\n#+INTERLEAVE_PDF:\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title (org-capture-get :original-file))]]\n\n"
+                   "#+TITLE: %^{Title}\n#+SUBTITLE: %^{Subtitle}\n#+AUTHOR: %^{Author}\n#+ROAM_KEY: cite:%(format \"%s\" sync0-reference-filename)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %(format \"%s\" sync0-reference-filename) references %?\n#+INTERLEAVE_PDF:\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title (org-capture-get :original-file))]]\n\n"
                    :unnarrowed t)
                     ;; ("l" "Lecture du doctorat" entry
                     ;;  (file+headline "~/Dropbox/org/doctorat_readings.org" "Non-classées")

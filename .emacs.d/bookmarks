@@ -1,0 +1,205 @@
+;;;; Emacs Bookmark Format Version 1 ;;;; -*- coding: utf-8 -*-
+;;; This format is meant to be slightly human-readable;
+;;; nevertheless, you probably don't want to edit it.
+;;; -*- End Of Bookmark File Format Version Stamp -*-
+(("sefardi"
+ (filename . "~/Dropbox/org/projects/20210121083612.org")
+ (front-context-string . ":\n\nhttps://www.f")
+ (rear-context-string . "por\nFamilySearch")
+ (position . 373))
+("colfuturo"
+ (filename . "~/Dropbox/org/projects/20210110222012.org")
+ (front-context-string . "Diligenciar form")
+ (rear-context-string . "Sun>\n\n* 無 [2/8] ")
+ (position . 295))
+("ethics"
+ (filename . "~/Dropbox/org/projects/doctorat_cours-ethique.org")
+ (front-context-string)
+ (rear-context-string . "di, 2021/01/07\n\n")
+ (position . 296))
+("reading_mark"
+ (filename . "/home/sync0/Documents/calibre/Sonke Ahrens/How to Take Smart Notes_ One Simple Technique to Boost Writing, Learning and Thinking - for Stu (1225)/How to Take Smart Notes_ One Simple Techni - Sonke Ahrens.epub")
+ (index . 13)
+ (position . 10712)
+ (handler . nov-bookmark-jump-handler))
+("notetypes"
+ (filename . "/home/sync0/Documents/calibre/Sonke Ahrens/How to Take Smart Notes_ One Simple Technique to Boost Writing, Learning and Thinking - for Stu (1225)/How to Take Smart Notes_ One Simple Techni - Sonke Ahrens.epub")
+ (index . 13)
+ (position . 7681)
+ (handler . nov-bookmark-jump-handler))
+("roam"
+ (filename . "~/.emacs.d/sync0/sync0-org.org")
+ (front-context-string . " (function org-r")
+ (rear-context-string . "(\"r\" \"ref\" plain")
+ (position . 125418))
+("actividad"
+ (filename . "~/Dropbox/projects/caro_cuervo/caro_cuervo.org")
+ (front-context-string . "\n\nhttps://jamboa")
+ (rear-context-string . "complementario.\n")
+ (position . 17496))
+("fonetica"
+ (filename . "~/Dropbox/projects/caro_cuervo/todo.org")
+ (front-context-string . " i kaio\nβ̞ertixj")
+ (rear-context-string . " θima se řezβalo")
+ (position . 21658))
+("didry"
+ (filename . "~/Dropbox/notes/didry2016.org")
+ (front-context-string . "arché sur L'État")
+ (rear-context-string . "La victoire du m")
+ (position . 10712))
+("fran"
+ (filename . "~/Documents/languages/portuguese/nivel_6/nivel_6.org")
+ (front-context-string . "0DN0xJ\nFrancieli")
+ (rear-context-string . "785\nContraseña: ")
+ (position . 507))
+("portugues"
+ (filename . "~/Documents/languages/portuguese/nivel_4/nivel_4.org")
+ (front-context-string)
+ (rear-context-string . "onomes relativos")
+ (position . 37190))
+("portuguese"
+ (filename . "~/Dropbox/org/projects/20210113070300.org")
+ (front-context-string)
+ (rear-context-string . "Eles | têm    |\n")
+ (position . 1687))
+("here2"
+ (filename . "~/.emacs.d/sync0/sync0-theme.org")
+ (front-context-string . " \n            (i")
+ (rear-context-string . "ad 'cycle-themes")
+ (position . 4352))
+("matonti"
+ (filename . "~/Dropbox/notes/matonti2012.org")
+ (front-context-string . "\n\n* 無 Conclusion")
+ (rear-context-string . "uels Bourdieu .\n")
+ (position . 18777))
+("these"
+ (filename . "~/Dropbox/phd/lausanne/projet_these.org")
+ (front-context-string . "# \\publishers{so")
+ (rear-context-string . "de Louis Blanc}\n")
+ (position . 299))
+("rozan"
+ (filename . "~/Dropbox/notes/rozan1984.org")
+ (front-context-string . "\n\\end{align*} \n\n")
+ (rear-context-string . "in{align*}\n&Asi\n")
+ (position . 7113))
+("zoom_session"
+ (filename . "~/Dropbox/teleperformance/training/teleperformance_training.org")
+ (front-context-string . " https://tpcol.z")
+ (rear-context-string . " chat: WAVE 80A\n")
+ (position . 507))
+("protocal_answer_call"
+ (filename . "~/Dropbox/teleperformance/training/teleperformance_training.org")
+ (front-context-string . "  \n\n\n* Tasks \n**")
+ (rear-context-string . "\n\nHello, this is")
+ (position . 31259))
+("l2_glossary"
+ (filename . "~/Dropbox/teleperformance/training/teleperformance_training.org")
+ (front-context-string . "*** L2 core glos")
+ (rear-context-string . "ssaries & etc. \n")
+ (position . 6169))
+("l3_vocabulary"
+ (filename . "~/Dropbox/teleperformance/training/teleperformance_training.org")
+ (front-context-string . "* L3 vocabulary\n")
+ (rear-context-string . "s to\nrepeat. \n\n*")
+ (position . 24472))
+("glossaries"
+ (filename . "~/Dropbox/teleperformance/training/teleperformance_training.org")
+ (front-context-string . "** Glossaries & ")
+ (rear-context-string . "es every day. \n\n")
+ (position . 5060))
+("teleperformance"
+ (filename . "~/Dropbox/teleperformance/training/teleperformance_training.org")
+ (front-context-string . "\n\n* Tasks \n** 無 ")
+ (rear-context-string . "a arreglarlos. \n")
+ (position . 13557))
+("boice1990.org"
+ (filename . "~/Dropbox/notes/boice1990.org")
+ (front-context-string . "\n# \\printbibliog")
+ (rear-context-string . "rative Writing \n")
+ (position . 6966))
+("prost1996_2010.org"
+ (filename . "~/Dropbox/notes/prost1996_2010.org")
+ (front-context-string . "\n* Introduction ")
+ (rear-context-string . " #+END_modified\n")
+ (position . 512))
+("planning"
+ (filename . "~/Dropbox/org/studies/planning.org")
+ (front-context-string . "nizing my resear")
+ (rear-context-string . "file is for orga")
+ (position . 22))
+("blanc"
+ (filename . "~/Dropbox/research/louis_blanc/README.org")
+ (front-context-string . "** English writi")
+ (rear-context-string)
+ (position . 1))
+("nyu"
+ (filename . "~/Dropbox/phds/statements/nyu_statement.org")
+ (front-context-string . "\n\n\nI consider th")
+ (rear-context-string . "al university.\n\n")
+ (position . 6160))
+("journal"
+ (filename . "~/Dropbox/org/journal/2021_01.org")
+ (front-context-string)
+ (rear-context-string . "210109\n  :END:\n*")
+ (position . 3514))
+("eafit"
+ (filename . "~/Documents/languages/german/eafit/aktivitat.org")
+ (front-context-string . "Antioquia. \n\nBev")
+ (rear-context-string . "ug ins Museo de\n")
+ (position . 447))
+("mu4e"
+ (filename . "~/.emacs.d/sync0/sync0-mu4e.el")
+ (front-context-string . "\"\n              ")
+ (rear-context-string . ".sync0@gmail.com")
+ (position . 1078))
+("org-capture-last-stored-marker"
+ (filename . "~/Dropbox/org/journal/2020/2020_01.gpg")
+ (front-context-string . "**** 無 destroy l")
+ (rear-context-string . "2020-01-27 Mon>\n")
+ (position . 4723))
+("org-refile-last-stored"
+ (filename . "~/Dropbox/org/notes.org")
+ (front-context-string . "** 無 Candidature")
+ (rear-context-string . "isse du dollar.\n")
+ (position . 1575))
+("bibliography.bib"
+ (filename . "~/Dropbox/research/bibliography.bib")
+ (front-context-string . "  subtitle = {So")
+ (rear-context-string . "\n  date = 1995,\n")
+ (position . 61044))
+("annie"
+ (filename . "~/Dropbox/phds/annie_letter.org")
+ (front-context-string . "credit a lecture")
+ (rear-context-string . "ven took for no\n")
+ (position . 2596))
+("phd"
+ (filename . "~/Dropbox/org/phd.org")
+ (front-context-string . " \n\nDavid A. Bell")
+ (rear-context-string . "volutionary era.")
+ (position . 63203))
+("todo"
+ (filename . "~/Dropbox/org/todo.org")
+ (front-context-string . "DEADLINE: <2019-")
+ (rear-context-string . "Jérôme Lallment\n")
+ (position . 883))
+("org-capture-last-stored"
+ (filename . "~/Dropbox/org/20210110215320.org")
+ (front-context-string . "#+TITLE: Tarjeta")
+ (rear-context-string)
+ (position . 1))
+("carc"
+ (filename . "~/Dropbox/formularios.org")
+ (front-context-string . "* Formulario par")
+ (rear-context-string . "ehabilitación? \n")
+ (position . 903))
+("init"
+ (filename . "~/.emacs.d/sync0_emacs.org")
+ (front-context-string . "\n  (defun sync0-")
+ (rear-context-string . "\"init.el\"))))))\n")
+ (position . 5443))
+("here"
+ (filename . "~/Dropbox/org/projects/20210109220730.org")
+ (front-context-string . " \n\n  - Un /white")
+ (rear-context-string . "ter le plagiat :")
+ (position . 539))
+)

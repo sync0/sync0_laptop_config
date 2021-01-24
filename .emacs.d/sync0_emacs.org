@@ -4,6 +4,7 @@
 # Necessary to export code from Emacs org mode to elisp. 
 #+PROPERTY: header-args :tangle yes
 
+
 * Introduction 
 This is my Emacs configuration file. As the sloppy code herein
 attests, I am not a proficient programmer. I use Emacs primarily
@@ -248,7 +249,7 @@ Configure autosave.
    Configure CUSTOM
  #+BEGIN_SRC emacs-lisp
    (use-package custom
-  :straight nil
+     :straight nil
      :custom
      ;; Allow automatic theme changing 
      (custom--inhibit-theme-enable nil)
@@ -256,10 +257,6 @@ Configure autosave.
      ;; Set CUSTOM directory
      (setq custom-file (expand-file-name "custom_settings.el" user-emacs-directory)))
  #+END_SRC
-
-Configure line numbers
-   ;; (when (version<= "26.0.50" emacs-version)
-   ;; (global-display-line-numbers-mode))
 
 Eliminate Emacs' yes-no inconsistency. 
  #+BEGIN_SRC emacs-lisp

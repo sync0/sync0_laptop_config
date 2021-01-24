@@ -484,7 +484,7 @@
 * pdf-tools
 #+BEGIN_SRC emacs-lisp
   (use-package pdf-tools
-:straight (pdf-tools :type git :host github :repo "politza/pdf-tools") 
+    ;; :straight (pdf-tools :type git :host github :repo "politza/pdf-tools") 
     ;; :load-path "site-lisp/pdf-tools/lisp"
     :after evil
     ;; :after (evil outline-mode)
