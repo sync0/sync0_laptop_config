@@ -1,31 +1,10 @@
 * auctex
 #+BEGIN_SRC emacs-lisp
   (use-package latex
-:straight nil
+    :straight nil
     :defer t
-    :after evil
-    :diminish latex-mode
     :mode
     ("\\.tex\\'" . latex-mode)
-    :bind
-    (:map LaTeX-mode-map
-          ("M-<delete>" . TeX-remove-macro)
-          ("C-c C-r" . reftex-query-replace-document))
-    ;; ("C-c C-g" . reftex-grep-document)
-    :init
-    ;; A function to delete the current macro in AUCTeX.
-    ;; Note: keybinds won't be added to TeX-mode-hook if not kept at the end of the AUCTeX setup!
-    (defun TeX-remove-macro ()
-      "Remove current macro and return TRUE, If no macro at point, return Nil."
-      (interactive)
-      (when (TeX-current-macro)
-        (let ((bounds (TeX-find-macro-boundaries))
-              (brace  (save-excursion
-                        (goto-char (1- (TeX-find-macro-end)))
-                        (TeX-find-opening-brace))))
-          (delete-region (1- (cdr bounds)) (cdr bounds))
-          (delete-region (car bounds) (1+ brace)))
-        t))
     :custom
     (TeX-auto-save t)
 ;; Don't prompt for saving the .tex file
@@ -69,11 +48,6 @@
       "[" 'backward-sentence
       "]" 'forward-sentence)
 
-  ;; (add-to-list 'TeX-command-list
-  ;;              '("Makeglossaries" "makeglossaries %s" TeX-run-command nil
-  ;;                (latex-mode)
-  ;;                :help "Run makeglossaries script, which will choose xindy or makeindex") t)
-
   (setq-default TeX-master nil ; by each new fie AUCTEX will ask for a master fie.
                 TeX-PDF-mode t
                 TeX-engine 'luatex)     ; optional
@@ -88,9 +62,8 @@
 * bibtex 
 #+BEGIN_SRC emacs-lisp
   (use-package bibtex
-:straight nil
+    :straight nil
     :defer t
-    :after evil
     :custom
     (bibtex-dialect 'biblatex) ;; biblatex as default bib format
     (bibtex-maintain-sorted-entries t)
@@ -424,12 +397,8 @@
 * ivy-bibtex
 #+BEGIN_SRC emacs-lisp
   (use-package ivy-bibtex 
-    :diminish ivy-bitex-mode
     :after (ivy bibtex)
     :custom 
-  ;;  (bibtex-completion-bibliography '("~/Dropbox/org/annotations/bibliography.bib")) ;; writing completion
-   ;; (bibtex-completion-notes-path '"~/Dropbox/org/annotations")
-    ;; (bibtex-completion-library-path '("~/Dropbox/org/annotations/"))
     (bibtex-completion-bibliography '("~/Dropbox/org/etc/bibliography.bib")) ;; writing completion
     (bibtex-completion-notes-path '"~/Dropbox/org/references")
     (bibtex-completion-library-path '("~/Dropbox/org/references/"))
@@ -485,9 +454,7 @@
 #+BEGIN_SRC emacs-lisp
   (use-package pdf-tools
     ;; :straight (pdf-tools :type git :host github :repo "politza/pdf-tools") 
-    ;; :load-path "site-lisp/pdf-tools/lisp"
     :after evil
-    ;; :after (evil outline-mode)
     :magic ("%PDF" . pdf-view-mode)
     :custom
     ;; automatically annotate highlights
@@ -503,7 +470,7 @@
     (setq-default pdf-view-display-size 'fit-page)
 
     ;; change midnite mode colours functions
-    (defun bms/pdf-midnite-original ()
+    (defun sync0-pdf-view--original-colors ()
       "Set pdf-view-midnight-colors to original colours."
       (interactive)
       (setq pdf-view-midnight-colors '("#839496" . "#002b36" )) ; original values
@@ -557,9 +524,8 @@ oultine of a pdf using ~outline-mode~.
 #+BEGIN_SRC emacs-lisp
 (use-package interleave
 :after pdf-tools
-  ;; :ensure t
-  ;; :bind* (("M-m o n" . interleave))
-  :commands (interleave-mode interleave-pdf-mode))
+:commands
+(interleave-mode interleave-pdf-mode))
 #+END_SRC 
 
 * 取 docview

@@ -11,7 +11,6 @@ attests, I am not a proficient programmer. I use Emacs primarily
 for taking notes and writing academic articles, so these settings
 reflect that usage.  
 
-
 The functions prefixed by ~sync0~ are not necessarily my creations;
 this is just the placeholder I use to distinguish them from Emacs
 and other packages' native functions. I would like to credit the
@@ -123,7 +122,7 @@ These settings are necessary to load Emacs packages and the rest
 of my configuration, so they must be placed in the beginning of
 this file.
 
-** Package manager
+** Package manager (straight.el)
 These settings configure the Emacs package manager and the package
 repositories.
 
@@ -253,9 +252,51 @@ Configure autosave.
      :custom
      ;; Allow automatic theme changing 
      (custom--inhibit-theme-enable nil)
+     ;; (custom-enabled-themes  (quote (doom-flatwhite)))
      :config
-     ;; Set CUSTOM directory
-     (setq custom-file (expand-file-name "custom_settings.el" user-emacs-directory)))
+     ;; Set CUSTOM directory.
+     (setq custom-file (expand-file-name "custom_settings.el" user-emacs-directory))
+     ;; Default settings for all themes.
+    (custom-theme-set-faces 'user
+                            `(org-default ((t (:family "Minion Pro" :weight normal :height 1.0))))
+                            `(org-link ((t (:inherit org-default :underline t))))
+                            `(org-ref-cite-face ((t (:inherit org-link)))) 
+                            `(org-footnote ((t (:family "Minion Pro" :height 0.7 :weight normal))))
+                            `(org-document-info ((t (:family "Myriad Pro" :height 1.0))))
+                            `(org-document-title ((t (:inherit org-document-info))))
+                            `(org-level-1 ((t (:family "Myriad Pro" :height 1.2 :weight bold))))
+                            `(org-level-2 ((t (:family "Myriad Pro" :height 1.1 :weight normal))))
+                            `(org-level-3 ((t (:family "Myriad Pro" :height 1.0 :weight semi-bold)))) 
+                            `(org-level-4 ((t (:family "Myriad Pro" :height 1.0 :weight normal)))) 
+                            `(org-level-5 ((t (:family "Myriad Pro" :height 0.9 :weight semi-bold)))) 
+                            `(org-level-6 ((t (:family "Myriad Pro" :height 0.9 :weight normal)))) 
+                            `(org-meta-line ((t (:family "Fira Code" :height 0.75  :slant normal)))) 
+                            `(org-document-info-keyword ((t (:inherit org-meta-line))))
+                            `(org-special-keywords ((t (:inherit org-meta-line))))
+                            `(org-drawer ((t (:inherit org-meta-line)))) 
+                            `(org-property-value ((t (:inherit org-meta-line)))) 
+                            `(org-ellipsis ((t (:family "Fira Code" :underline nil :box nil)))) 
+                            ;; `(org-hide ((t (:foreground "#FFFBF0")))) 
+                            ;; `(org-indent ((t (:inherit org-hide)))) 
+                            `(org-date ((t (:family "Fira Code" :height 0.75))))
+                            `(org-agenda-date ((t (:family "Minion Pro" :weight normal :height 1.5))))
+                            `(org-agenda-date-today ((t (:family "Minion Pro" :weight normal :height 1.5 :slant italic))))
+                            `(org-agenda-structure ((t (:family "Minion Pro" :weight normal :height 2.0))))
+                            `(org-agenda-date-weekend ((t (:inherit org-agenda-date))))
+                            `(org-scheduled ((t (:weight normal :slant normal))))
+                            `(org-scheduled-today ((t (:family "Fira Code" :weight normal :slant normal))))
+                            `(org-scheduled-previously ((t (:family "Fira Code" :weight normal :slant normal))))
+                            `(org-upcoming-deadline ((t (:inherit org-scheduled-previously))))
+                            `(org-agenda-diary ((t (:family "Fira Code" :inherit fixed-pitch))))
+                            `(org-agenda-done ((t (:strke-through t :inherit fixed-pitch))))
+                            `(org-table ((t (:family "Fira Code" :inherit fixed-pitch))))
+                            ;; `(org-block-begin-line ((t (:inherit org-meta-line))))
+                            ;; `(org-block-end-line ((t (:inherit org-meta-line))))
+                            ;; `(org-column ((t (:family "Fira Code"))))
+                            ;; `(org-block ((t ( :height 1.0 :slant italic))))
+                            ;; `(org-code ((t (:family "Fira Code" :height 0.75  :inherit fixed-pitch))))
+                            `(org-tag ((t (:family "Fira Code" :height 0.75))))))
+     
  #+END_SRC
 
 Eliminate Emacs' yes-no inconsistency. 
@@ -282,12 +323,12 @@ Configure the default encoding system.
      (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
  #+END_SRC
 
-Configure bookmarks.
+Configure backups.
  #+BEGIN_SRC emacs-lisp 
    ;; Store all autosave files in the tmp directory.
    (setq auto-save-file-name-transforms `((".*" ,temporary-file-directory t))
          ;; Store all backups in the "backups" directory.
-         backup-directory-alist '(("." . "~/Documents/backups/emacs"))
+         backup-directory-alist '(("." . "~/.emacs.d/backups"))
          backup-by-copying t
          delete-old-versions t
          kept-new-versions 5
@@ -338,6 +379,7 @@ Prevent more than two windows open in vertical split.
 
 (advice-add 'window-splittable-p :before-while #'sync0-prevent-split-over-two-windows)
  #+END_SRC 
+
 Taken from:
 https://stackoverflow.com/questions/23207958/how-to-prevent-emacs-dired-from-splitting-frame-into-more-than-two-windows
 
@@ -359,7 +401,8 @@ https://stackoverflow.com/questions/23207958/how-to-prevent-emacs-dired-from-spl
 
 ** Definitions
 #+BEGIN_SRC emacs-lisp
-(setq sync0-notes-folder (concat (getenv "HOME") "/Dropbox/org/"))
+(setq sync0-zettelkasten-directory (concat (getenv "HOME") "/Dropbox/org/"))
+(setq sync0-zettelkasten-directory-sans (concat (getenv "HOME") "/Dropbox/org"))
 (setq sync0-current-year (format-time-string "%Y"))
 (setq sync0-current-month (format-time-string "%B"))
 (setq sync0-current-month-downcase (downcase (format-time-string "%B")))
@@ -373,13 +416,6 @@ https://stackoverflow.com/questions/23207958/how-to-prevent-emacs-dired-from-spl
  
 ** Functions
 #+BEGIN_SRC emacs-lisp
-;; useless function
-  (defun sync0-iso-to-time (day month year)
-    (pcase-let ((`(,d ,m ,y)
-                 (calendar-gregorian-from-absolute
-                  (calendar-iso-to-absolute (list day month year)))))
-      (encode-time 0 0 0 d m y "America/Bogota")))
-
 (defun sync0-log-today-timestamp () 
   "Insert today's date in the YYYY/MM/DD format"
     (insert (format-time-string "%A, %Y/%m/%d")))
@@ -397,25 +433,6 @@ https://stackoverflow.com/questions/23207958/how-to-prevent-emacs-dired-from-spl
   (defun sync0-org-insert-today-timestamp () 
     "Insert today's date in the YYYY/MM/DD format"
     (insert (format-time-string "<%Y-%m-%d>")))
-
-  (defun sync0-insert-dates ()
-    "insert a bunch of dates"
-    (interactive)
-    (let* ((month 4)
-           (day 1)
-           (time (encode-time 1 1 0 day month 2019)))
-      (while (= (nth 4 (decode-time time)) month)
-        (insert (concat "** " (format-time-string "%d/%m/%Y \n" time)))
-        (setq day (1+ day))
-        (setq time (encode-time 1 1 0 day month 2019)))))
-
-  (defun sync0-insert-weeks ()
-    "insert a bunch of weeks"
-    (interactive)
-    (let* ((weeky 1))
-      (while (< weeky 32)
-        (insert (format  "** \ordinalnum{%s} Week \n" weeky))
-        (setq weeky (1+ weeky)))))
 
   (defun sync0-update-timestamp ()
     "Update current #+DATE timestamp"
@@ -435,38 +452,38 @@ https://stackoverflow.com/questions/23207958/how-to-prevent-emacs-dired-from-spl
 
   (add-hook 'before-save-hook (lambda ()
                                 (when (and (eq major-mode 'org-mode)
-                                           ;; (not (equal buffer-file-name "/home/sync0/Dropbox/notes/forschungsbuch.org"))
-                                           (or (equal default-directory "/home/sync0/Dropbox/org/")
-                                            (equal default-directory "/home/sync0/Dropbox/org/projects/")
-                                            (equal default-directory "/home/sync0/Dropbox/org/annotations/")
-                                            (equal default-directory "/home/sync0/Dropbox/org/inbox/")
-                                           (equal default-directory "/home/sync0/Dropbox/notes/")))
+                                           (or (equal default-directory (concat (getenv "HOME") "/Dropbox/org/"))
+                                               (equal default-directory (concat (getenv "HOME") "/Dropbox/org/projects/"))
+                                               (equal default-directory (concat (getenv "HOME") "/Dropbox/org/annotations/"))
+                                               (equal default-directory (concat (getenv "HOME") "/Dropbox/org/inbox/"))
+                                               (equal default-directory (concat (getenv "HOME") "/Dropbox/org/references/"))
+                                               (equal default-directory (concat (getenv "HOME") "/Dropbox/annotations/"))))
                                   (sync0-update-timestamp))))
 
-  (defun sync0-annotations-update-author ()
+  (defun sync0-zettelkasten-annotations-update-author ()
     "Save current #+AUTHOR for use later on."
     (interactive)
- (when (equal default-directory "/home/sync0/Dropbox/org/")
+ (when (equal default-directory sync0-zettelkasten-directory)
     (save-excursion
       (goto-char (point-min))
          (when (re-search-forward "^#\\+AUTHOR: \\([[:print:]]+\\)$" nil t 1)
-             (setq sync0-annotations-author (match-string-no-properties 1))))))
+             (setq sync0-zettelkasten-annotations-author (match-string-no-properties 1))))))
 
-  (defun sync0-annotations-update-roam-key ()
+  (defun sync0-zettelkasten-annotations-update-roam-key ()
     "Save current #+ROAM_KEY for use later on."
     (interactive)
- (when (equal default-directory "/home/sync0/Dropbox/org/")
+ (when (equal default-directory sync0-zettelkasten-directory)
     (save-excursion
       (goto-char (point-min))
          (when (re-search-forward "^#\\+ROAM_KEY: cite:\\([[:print:]]+\\)$" nil t 1)
            (progn
-             (setq sync0-annotations-key (match-string-no-properties 1))
-             (setq sync0-annotations-roam-key (concat "cite:" sync0-annotations-key)))))))
+             (setq sync0-zettelkasten-annotations-key (match-string-no-properties 1))
+             (setq sync0-zettelkasten-annotations-roam-key (concat "cite:" sync0-zettelkasten-annotations-key)))))))
 
-(add-hook 'find-file-hook 'sync0-annotations-update-author)
-(add-hook 'find-file-hook 'sync0-annotations-update-roam-key)
-(add-hook 'buffer-list-update-hook 'sync0-annotations-update-author)
-(add-hook 'buffer-list-update-hook 'sync0-annotations-update-roam-key)
+(add-hook 'find-file-hook 'sync0-zettelkasten-annotations-update-author)
+(add-hook 'find-file-hook 'sync0-zettelkasten-annotations-update-roam-key)
+(add-hook 'buffer-list-update-hook 'sync0-zettelkasten-annotations-update-author)
+(add-hook 'buffer-list-update-hook 'sync0-zettelkasten-annotations-update-roam-key)
 
  #+END_SRC
 
@@ -498,30 +515,28 @@ https://emacsredux.com/blog/2013/03/27/copy-filename-to-the-clipboard/
       (message "Copied buffer file name '%s' to the clipboard." filename))))
 #+END_SRC  
 
- Move files for real. The code here is directly taken from:
- https://zck.org/emacs-move-file
+Moving around windows. 
 
  #+BEGIN_SRC emacs-lisp
- (defun sync0-move-file (new-location)
-  "Write this file to NEW-LOCATION, and delete the old one."
-  (interactive (list (expand-file-name
-                      (if buffer-file-name
-                          (read-file-name "Move file to: ")
-                        (read-file-name "Move file to: "
-                                        default-directory
-                                        (expand-file-name (file-name-nondirectory (buffer-name))
-                                                          default-directory))))))
-  (when (file-exists-p new-location)
-    (delete-file new-location))
-  (let ((old-location (expand-file-name (buffer-file-name))))
-    (message "old file is %s and new file is %s"
-             old-location
-             new-location)
-    (write-file new-location t)
-    (when (and old-location
-               (file-exists-p new-location)
-               (not (string-equal old-location new-location)))
-      (delete-file old-location))))
+      (defun sync0-split-and-follow-horizontally ()
+        (interactive)
+  (progn
+        (split-window-below)
+        (balance-windows)
+                  (setq truncate-lines t)
+                  (setq truncate-partial-width-windows t)
+        (other-window 1)
+  (sync0-restore-margins)))
+
+      (defun sync0-split-and-follow-vertically ()
+        (interactive)
+  (progn
+        (split-window-right)
+        (balance-windows)
+                  (setq truncate-lines t)
+                  (setq truncate-partial-width-windows t)
+  ;;      (other-window 1)
+  (sync0-restore-margins)))
  #+END_SRC 
 
 This is a collection of functions that become problematic when
@@ -571,7 +586,247 @@ loaded after packages are declared.
                             nil   beg (min end (point-max))))
  #+END_SRC 
 
-** Packages and related settings
+** Fundamental Packages
+*** hydra
+#+BEGIN_SRC emacs-lisp
+  (use-package hydra
+    :straight (hydra :type git :host github :repo "abo-abo/hydra"))
+#+END_SRC 
+
+*** ivy 
+    #+BEGIN_SRC emacs-lisp
+    (use-package ivy
+      :hook 
+      (after-init . ivy-mode)
+      :custom
+      (ivy-use-virtual-buffers t)
+      (ivy-count-format "(%d/%d) "))
+    #+END_SRC
+
+*** evil
+     #+BEGIN_SRC emacs-lisp
+            (use-package evil  
+              :straight (evil :type git :host github :repo "emacs-evil/evil") 
+              :hook (after-init . evil-mode)
+              :custom
+              ;; Make horizontal movement cross lines                                    
+              (evil-cross-lines t)
+              ;; turn off auto-indent 
+              (evil-auto-indent nil)
+              :bind (("M-H" . next-buffer)
+                     ("M-L" . previous-buffer)
+                     (:map evil-normal-state-map
+                           :map minibuffer-local-map
+                           ("ESC" . minibuffer-keyboard-quit)
+                           :map minibuffer-local-ns-map
+                           ("ESC" . minibuffer-keyboard-quit)
+                           :map minibuffer-local-completion-map
+                           ("ESC" . minibuffer-keyboard-quit)
+                           :map minibuffer-local-must-match-map
+                           ("ESC" . minibuffer-keyboard-quit)
+                           :map minibuffer-local-isearch-map
+                           ("ESC" . minibuffer-keyboard-quit)))
+              :config 
+              (defun sync0-insert-line-below ()
+                "Insert an empty line below the current line."
+                (interactive)
+                (save-excursion
+                  (end-of-line)
+                  ;; To insert the line above
+                  ;; (end-of-line 0)
+                  (open-line 1)))
+
+              ;; insert whitespace
+              (defun sync0-insert-whitespace ()
+                " Add a whitespace"
+                (interactive)
+                (insert " "))
+
+              (defun sync0-delete-text-block ()
+                "Delete selection or current or next text block and also copy to `kill-ring'.
+                 URL `http://ergoemacs.org/emacs/emacs_delete_block.html'
+                 Version 2016-08-13"
+                (interactive)
+                (if (use-region-p)
+                    (kill-region (region-beginning) (region-end))
+                  (progn
+                    (beginning-of-line)
+                    (if (search-forward-regexp "[[:graph:]]" (line-end-position) 'NOERROR )
+                        (sync0-delete-current-text-block)
+                      (when (search-forward-regexp "[[:graph:]]" )
+                        (sync0-delete-current-text-block))))))
+
+              ;; Turn on evil mode when enabled.
+              (evil-mode 1)
+              ;; Turn on evil-escape mode when enabled.
+              (evil-escape-mode 1)
+
+              ;; Change global key bindings
+              (unbind-key "C-m" evil-normal-state-map)
+              (unbind-key "M-." evil-normal-state-map)
+              (unbind-key "C-d" evil-motion-state-map)
+
+              (evil-define-key 'normal global-map
+                 "U" 'undo-tree-redo
+                "s" 'fill-paragraph
+                "S" 'sync0-insert-line-below
+                "M" 'bookmark-set
+                "zc" 'transpose-chars
+                "zb" 'sync0-delete-text-block
+                "zl" 'transpose-lines
+                "zw" 'transpose-words
+                "zp" 'transpose-paragraphs
+                "zs" 'transpose-sentences
+                (kbd "SPC") 'sync0-insert-whitespace)
+
+              ;; Improve EVIL behavior with visual lines (visual-line-mode).
+              (define-key evil-normal-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
+              (define-key evil-normal-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line)
+              (define-key evil-motion-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
+              (define-key evil-motion-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line))
+     #+END_SRC 
+
+**** evil-escape
+  #+BEGIN_SRC emacs-lisp
+    (use-package evil-escape 
+      :straight (evil-escape :type git :host github :repo "syl20bnr/evil-escape") 
+      :after evil
+      ;; :commands evil-escape-mode
+      :custom
+      (evil-escape-excluded-states '(normal visual multiedit emacs motion))
+      ;;(evil-escape-excluded-major-modes '(neotree-mode))
+      (evil-escape-key-sequence "fd")
+      (evil-escape-unordered-key-sequence t)
+      (evil-escape-delay 0.25)
+      :config
+      ;; no `evil-escape' in minibuffer
+      (push #'minibufferp evil-escape-inhibit-functions)
+      :bind (:map evil-insert-state-map
+                  ("C-g"  . evil-escape)
+                  :map evil-replace-state-map
+                  ("C-g"  . evil-escape)
+                  :map evil-visual-state-map
+                  ("C-g"  . evil-escape)
+                  :map evil-operator-state-map
+                  ("C-g"  . evil-escape)))
+  #+END_SRC 
+
+**** 取 evil-multiedit
+  #+BEGIN_SRC emacs-lisp
+    (use-package evil-multiedit 
+      :disabled t
+      :defer t
+      :commands 
+      (evil-multiedit-and-next evil-multiedit-match-and-next evil-multiedit-toggle-marker-here)
+      :after evil
+      :bind (:map evil-visual-state-map
+                  ;; Highlights all matches of the selection in the buffer.
+                  ("R" . evil-multiedit-match-all)
+                  ;; Match selected region.
+                  ("M-d" . evil-multiedit-and-next)
+                  ("M-D" . evil-multiedit-and-prev)
+                  ;; Restore the last group of multiedit regions.
+                  ("C-M-D"  . evil-multiedit-restore)
+                  :map evil-normal-state-map
+                  ;; Match the word under cursor (i.e. make it an edit region). Consecutive presses will
+                  ;; incrementally add the next unmatched match.
+                  ("M-d"  . evil-multiedit-match-and-next)
+                  :map evil-insert-state-map
+                  ;; Insert marker at point
+                  ("M-d"  . evil-multiedit-toggle-marker-here)
+                  :map evil-normal-state-map
+                  ;; Same as M-d but in reverse.
+                  ("M-D"  . evil-multiedit-match-and-prev)
+                  ;; OPTIONAL: If you prefer to grab symbols rather than words, use
+                  ;; `evil-multiedit-match-symbol-and-next` (or prev).
+                  ;; RET will toggle the region under the cursor
+                  :map evil-multiedit-state-map
+                  ("RET"  . evil-multiedit-toggle-or-restrict-region)
+                  ;; ...and in visual mode, RET will disable all fields outside the selected region
+                  ("RET"  . evil-multiedit-toggle-or-restrict-region)
+                  ;; For moving between edit regions
+                  ("C-n"  . evil-multiedit-next)
+                  ("C-p"  . evil-multiedit-prev)
+                  ("C-n"  . evil-multiedit-next)
+                  ("C-p"  . evil-multiedit-prev)))
+    #+END_SRC 
+
+*** simple-secrets
+ The long lost Emacs string manipulation library. This is required for
+ ~simple-secrets~ to work. 
+
+ #+BEGIN_SRC emacs-lisp
+   (use-package s)
+ #+END_SRC 
+
+  The ~simple-secrets~ package contains a set of functions to manage
+  passwords. After defining ~secret-password-file~, you can draw
+  information from this file, without revealing the encrypted
+  contents. For example, in this file, whenever I use ~(secret-lookup
+  [secret_name])~, I am drawing information from my encrypted secrets
+  file (i.e., ~sync0_secrets.gpg~) that I don't want to reveal.
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package simple-secrets
+  :straight nil
+      :load-path "~/.emacs.d/sync0/" 
+      :after s
+      :config 
+      (setq secret-password-file "~/.emacs.d/sync0_secrets.gpg")
+       (secret-load-keys))
+  #+END_SRC 
+
+*** epa-file
+  #+BEGIN_SRC emacs-lisp
+    (use-package epa-file
+      :straight nil
+      :load-path "~/.emacs.d/sync0/" 
+      :custom
+      (epa-file-encrypt-to '("carc.sync0@gmail.com"))
+      (epa-file-select-keys 'silent)
+      :config (epa-file-enable))
+    #+END_SRC 
+
+*** recentf
+  A packate that displays a list of recent files. 
+  #+BEGIN_SRC emacs-lisp
+    (use-package recentf
+  :straight nil
+      :diminish recentf-mode
+      :custom
+      (recentf-max-saved-items 100)
+      (recentf-max-menu-items 10)
+      :config 
+      (recentf-mode +1)
+      (require 'dired-x)
+      :bind (:map recentf-dialog-mode-map
+                  ("j"  . next-line)
+                  ("k"  . previous-line)))
+  #+END_SRC
+
+*** saveplace
+  This is Emacs' default minor mode to save your location in visited
+  files. With ~saveplace~ enabled, when you open a file, the point goes to
+  its last location. 
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package saveplace
+  :straight nil
+      :preface
+      (defun sync0-save-place-reposition ()
+        "Force windows to recenter current line (with saved position)."
+        (run-with-timer 0 nil
+                        (lambda (buf)
+                          (when (buffer-live-p buf)
+                            (dolist (win (get-buffer-window-list buf nil t))
+                              (with-selected-window win (recenter)))))
+                        (current-buffer)))
+      ;; Start save-place-mode.
+      :init (save-place-mode)
+      :hook (find-file . sync0-save-place-reposition))
+  #+END_SRC 
+
+** Include the rest 
 The power of this configuration is that it provides modularity,
 but not too much that it becomes unwieldy. The following
 ~#+INCLUDE:~ statements reflect the my everyday usage of Emacs for

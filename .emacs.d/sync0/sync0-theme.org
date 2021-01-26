@@ -1,46 +1,21 @@
 * Scratch Message
-# The following code changes the Emacs welcome message in the ~scratch~
-#  buffer. I use a fragment from the chapter "Where I Lived, and What I Lived
-#  for" from Thoreau's /Walden, or, Life in the Woods/ (1854). 
-
-I use a fragment from a letter (23 December 1990) by writer
-Charles Bukowski to his friend William Packard, a fellow poet and
-founder of the New York Quarterly magazine.
-
-   (setq initial-scratch-message ";;
-  ;; Too many writers write for the wrong reasons. They want to get
-  ;; famous or they want to get rich or they want to get laid by the
-  ;; girls with bluebells in their hair. (Maybe that last ain't a
-  ;; bad idea).
-  ;; 
-  ;; When everything works best it's not because you chose writing but
-  ;; because writing chose you. It's when you're mad with it, it's
-  ;; when it's stuffed in your ears, your nostrils, under your
-  ;; fingernails. It's when there's no hope but that.
-  ;;
-  ;;
-  ;;
-  ;; Charles Bukowski, 
-  ;; Letter to William Packard (23 December 1990)
-  ;; ")
-
 #+BEGIN_SRC emacs-lisp
-     (setq initial-scratch-message ";;
-  ;; Ceux qui ont pris tout le plat dans leur assiette, laissant les
-  ;; assiettes des autres vides, et qui ayant tout disent avec une
-  ;; bonne figure « Nous qui avons tout, nous sommes pour la paix ! »,
-  ;; je sais ce que je dois leur crier à ceux-là : les premiers
-  ;; violents, les provocateurs, c’est vous !
-
-  ;; Quand le soir, dans vos belles maisons, vous allez embrasser vos
-  ;; petits enfants, avec votre bonne conscience, vous avez
-  ;; probablement plus de sang sur vos mains d’inconscients, au regard
-  ;; de Dieu, que n’en aura jamais le désespéré qui a pris les armes
-  ;; pour essayer de sortir de son désespoir...
-
-  ;; Abbé Pierre,
-  ;; La voix des sans-voix (fragment)
-  ;; ")
+       (setq initial-scratch-message ";; 
+;; Man should not be ready to
+;; show that he can live like a badly-fed animal. He should decline
+;; to live like that, and should either steal or go on the rates,
+;; which is considered by many to be a form of stealing. As for
+;; begging, it is safer to beg than to take, but it is finer to take
+;; than to beg. No: a poor man who is ungrateful, unthrifty,
+;; discontented, and rebellious, is probably a real personality, and
+;; has much in him. He is at any rate a healthy protest. As for the
+;; virtuous poor, one can pity them, of course, but one cannot
+;; possibly admire them. They have made private terms with the
+;; enemy, and sold their birthright for very bad pottage. 
+;;
+;; Oscar Wilde
+;; The Soul of Man under Socialism (1891)
+;; ")
 
   #+END_SRC 
 
@@ -70,7 +45,6 @@ Hide tool bar, menu bar, and scroll bar at startup.
 In case I need those annoying toolbars back, I bind them:
 
     #+BEGIN_SRC emacs-lisp
-    (with-eval-after-load 'hydra
     (defhydra sync0-hydra-menu-toggle (:color amaranth :hint nil :exit t)
       "
 ^Toolbar toggle^
@@ -79,14 +53,13 @@ _l_: Mode line
 _t_: Tool bar
 _m_: Menu bar
 [q] Quit
-
 "
       ("l" sync0-toggle-mode-line)
       ("t" tool-bar-mode)
       ("m" menu-bar-mode)
       ("q" nil :color blue))
 
-      (global-set-key (kbd "<f8>") 'sync0-hydra-menu-toggle/body))
+      (global-set-key (kbd "<f8>") 'sync0-hydra-menu-toggle/body)
       #+END_SRC 
 
 * Windows
@@ -127,7 +100,6 @@ Other settings.
           fringes-outside-margins t
           left-margin-width 2
           right-margin-width 0
-          ;; left-fringe-width 5
           left-fringe-width 1
           right-fringe-width 0
           ;; Remove continuation arrow on right fringe.
@@ -136,29 +108,13 @@ Other settings.
           indicate-buffer-boundaries nil
           indicate-empty-lines nil
           max-mini-window-height 0.3)
-
-          (defun sync0-restore-margins () 
-(interactive)
-  "Restore margins after they are destroyed by git-gutter"
-       (setq
-        ;; Avoid ugly problemes with git-gutter.
-        fringes-outside-margins t
-        left-margin-width 2
-        right-margin-width 0
-        left-fringe-width 1
-        right-fringe-width 0)
-(set-window-buffer nil (current-buffer)))
-
-         (add-hook 'after-revert-hook #'sync0-restore-margins)
-         (add-hook 'after-save-hook #'sync0-restore-margins)
  #+END_SRC
 
 * all-the-icons
 
 #+BEGIN_SRC emacs-lisp
   (use-package all-the-icons 
-:straight (all-the-icons :type git :host github :repo "domtronn/all-the-icons.el") 
-    :diminish all-the-icons-mode
+    :straight (all-the-icons :type git :host github :repo "domtronn/all-the-icons.el") 
     :after ivy
     ;; improve performance 
     :custom (inhibit-compacting-font-caches t)
@@ -180,68 +136,28 @@ I stopped using it.
 #+BEGIN_SRC emacs-lisp
   (use-package doom-themes  
    :straight (doom-themes :type git :host github :repo "hlissner/emacs-doom-themes") 
-   :after org
+   :after (org custom)
    :init
+        ;; (load-theme 'doom-one t)
         ;; (load-theme 'doom-nord t)
         ;; (load-theme 'doom-nova t)
         ;; (load-theme 'doom-spacegrey t)
         ;; (load-theme 'doom-solarized-light t)
         ;; (load-theme 'doom-plain t)
+        ;; (load-theme 'doom-gruvbox t)
+         (load-theme 'doom-zenburn t)
         (load-theme 'doom-flatwhite t)
-        ;; (load-theme 'doom-zenburn t)
    :config
       ;; Correct org-mode's native fontification.
       (doom-themes-org-config)
       ;; Enable flashing mode-line on errors
-       (doom-themes-visual-bell-config)
-
-    (custom-theme-set-faces 'doom-flatwhite
-                            `(org-default ((t (:family "Minion Pro" :weight normal))))
-                            `(org-link ((t (:inherit org-default :underline t))))
-                            `(org-ref-cite-face ((t (:inherit org-link)))) 
-                            `(org-ref-cite-face ((t (:inherit org-link)))) 
-                            `(org-footnote ((t (:family "Minion Pro" :height 0.7 :weight normal))))
-                            `(org-document-title ((t (:height 1.4 :weight normal))))
-                            `(org-document-info ((t (:slant italic :height 1.1))))
-                            `(org-level-1 ((t (:family "Myriad Pro" :height 1.2 :weight bold))))
-                            `(org-level-2 ((t (:family "Myriad Pro" :height 1.1 :weight normal))))
-                            `(org-level-3 ((t (:family "Myriad Pro" :height 1.0 :weight semi-bold)))) 
-                            `(org-level-4 ((t (:family "Myriad Pro" :height 1.0 :weight normal)))) 
-                            `(org-level-5 ((t (:family "Myriad Pro" :height 0.9 :weight semi-bold)))) 
-                            `(org-level-6 ((t (:family "Myriad Pro" :height 0.9 :weight normal)))) 
-                            `(org-meta-line ((t (:family "Fira Code" :height 0.75  :slant normal)))) 
-                            `(org-document-info-keyword ((t (:inherit org-meta-line))))
-                            `(org-special-keywords ((t (:inherit org-meta-line))))
-                            `(org-drawer ((t (:inherit org-meta-line)))) 
-                            `(org-property-value ((t (:inherit org-meta-line)))) 
-                            `(org-ellipsis ((t (:family "Fira Code" :underline nil :box nil)))) 
-                            ;; `(org-hide ((t (:foreground "#FFFBF0")))) 
-                            ;; `(org-indent ((t (:inherit org-hide)))) 
-                            `(org-date ((t (:family "Fira Code" :height 0.75))))
-                            `(org-agenda-date ((t (:family "Minion Pro" :weight normal :height 1.5))))
-                            `(org-agenda-date-today ((t (:family "Minion Pro" :weight normal :height 1.5 :slant italic))))
-                            `(org-agenda-structure ((t (:family "Minion Pro" :weight normal :height 2.0))))
-                            `(org-agenda-date-weekend ((t (:inherit org-agenda-date))))
-                            `(org-scheduled ((t (:weight normal :slant normal))))
-                            `(org-scheduled-today ((t (:family "Fira Code" :weight normal :slant normal))))
-                            `(org-scheduled-previously ((t (:family "Fira Code" :weight normal :slant normal))))
-                            `(org-upcoming-deadline ((t (:inherit org-scheduled-previously))))
-                            `(org-agenda-diary ((t (:family "Fira Code" :inherit fixed-pitch))))
-                            `(org-agenda-done ((t (:strke-through t :inherit fixed-pitch))))
-                            `(org-table ((t (:family "Fira Code" :inherit fixed-pitch))))
-                            ;; `(org-block-begin-line ((t (:inherit org-meta-line))))
-                            ;; `(org-block-end-line ((t (:inherit org-meta-line))))
-                            ;; `(org-column ((t (:family "Fira Code"))))
-                            ;; `(org-block ((t ( :height 1.0 :slant italic))))
-                            ;; `(org-code ((t (:family "Fira Code" :height 0.75  :inherit fixed-pitch))))
-                            `(org-tag ((t (:family "Minion Pro" :slant italic :height 1.0))))))
-
+       (doom-themes-visual-bell-config))
 #+END_SRC 
 
 ** solaire-mode
 #+BEGIN_SRC emacs-lisp
   (use-package solaire-mode
-:straight (solaire-mode :type git :host github :repo "hlissner/emacs-solaire-mode") 
+    :straight (solaire-mode :type git :host github :repo "hlissner/emacs-solaire-mode") 
     :disabled t
     :hook
     ((change-major-mode after-revert ediff-prepare-buffer) . turn-on-solaire-mode)
@@ -263,124 +179,22 @@ I stopped using it.
     (solaire-global-mode +1))
 #+END_SRC 
 
-* 取 cycle-themes
+* cycle-themes
 
 Cycle between themes.
 
 #+BEGIN_SRC emacs-lisp
   (use-package cycle-themes 
-:disabled t
-:straight (cycle-themes :type git :host github :repo "toroidal-code/cycle-themes.el") 
+    :straight (cycle-themes :type git :host github :repo "toroidal-code/cycle-themes.el") 
     :after doom-themes
     :commands cycle-themes
+    :init
+    (require 'cl-lib)
     :bind (("C-c C-t" . cycle-themes))
     :config 
     ;; The order has to be set this way for the hook to work
-    (setq cycle-themes-theme-list '(doom-solarized-light doom-nova))
-
-    (defun sync0-doom-org-theme ()
-      "Define my custom settings for fontification"
-      (cond ((equal sync0-current-theme 'doom-nova)
-             (progn
-               (setq sync0-current-theme 'doom-solarized-ligth)
-               (setq mini-modeline-face-attr '(:background "#f4ebd7"))
-               (set-face-attribute 'mini-modeline-mode-line-inactive nil
-                                   :background "#f4ebd7"
-                                   :height 0.1 
-                                   :box nil)
-               (set-face-attribute 'mini-modeline-mode-line nil
-                                   :background "#f4ebd7"
-                                   :height 0.14
-                                   :box nil)
-               (custom-theme-set-faces 'doom-solarized-light
-                          `(org-default ((t (:family "Minion Pro" :weight normal :foreground "#556B72"))))
-                          `(org-link ((t (:inherit org-default :underline t))))
-                          `(org-ref-cite-face ((t (:inherit org-link)))) 
-                          `(org-ref-cite-face ((t (:inherit org-link)))) 
-                          `(org-footnote ((t (:family "Minion Pro" :height 0.7 :weight normal :foreground "#556B72"))))
-                          `(org-document-title ((t (:height 1.4 :weight normal))))
-                          `(org-document-info ((t (:slant italic :height 1.1))))
-                          `(org-level-1 ((t (:family "Myriad Pro" :height 1.2 :weight bold))))
-                          `(org-level-2 ((t (:family "Myriad Pro" :height 1.1 :weight normal))))
-                          `(org-level-3 ((t (:family "Myriad Pro" :height 1.0 :weight semi-bold)))) 
-                          `(org-level-4 ((t (:family "Myriad Pro" :height 1.0 :weight normal)))) 
-                          `(org-level-5 ((t (:family "Myriad Pro" :height 0.9 :weight semi-bold)))) 
-                          `(org-level-6 ((t (:family "Myriad Pro" :height 0.9 :weight normal)))) 
-                          `(org-meta-line ((t (:family "Fira Code" :foreground "#F2E6CE" :height 0.75  :slant normal)))) 
-                          `(org-document-info-keyword ((t (:inherit org-meta-line))))
-                          `(org-special-keywords ((t (:inherit org-meta-line))))
-                          `(org-drawer ((t (:inherit org-meta-line)))) 
-                          `(org-property-value ((t (:inherit org-meta-line)))) 
-                          `(org-ellipsis ((t (:family "Fira Code" :underline nil :box nil :foreground "#bfbfbf")))) 
-                          `(org-hide ((t (:foreground "#FFFBF0")))) 
-                          `(org-indent ((t (:inherit org-hide)))) 
-                          `(org-date ((t (:family "Fira Code" :height 0.75))))
-                          `(org-agenda-date ((t (:family "Minion Pro" :weight normal :foreground "#556B72" :height 1.5))))
-                          `(org-agenda-date-today ((t (:family "Minion Pro" :weight normal :foreground "#556B72" :height 1.5 :slant italic))))
-                          `(org-agenda-structure ((t (:family "Minion Pro" :weight normal :foreground "#556B72" :height 2.0))))
-                          `(org-agenda-date-weekend ((t (:inherit org-agenda-date))))
-                          `(org-scheduled ((t (:weight normal :slant normal))))
-                          `(org-scheduled-today ((t (:family "Fira Code" :foreground "#268bd2" :weight normal :slant normal))))
-                          `(org-scheduled-previously ((t (:family "Fira Code" :foreground "#dc322f" :weight normal :slant normal))))
-                          `(org-upcoming-deadline ((t (:inherit org-scheduled-previously))))
-                          `(org-agenda-diary ((t (:family "Fira Code" :foreground "#859900" :inherit fixed-pitch))))
-                          `(org-agenda-done ((t (:strke-through t :inherit fixed-pitch))))
-                          `(org-tag ((t (:family "Minion Pro" :slant italic :height 1.0)))))))
-            ((equal sync0-current-theme 'doom-solarized-light)
-             (progn
-               (setq sync0-current-theme 'doom-nova)
-               (setq mini-modeline-face-attr '(:background "#6A7D89"))
-               (set-face-attribute 'mini-modeline-mode-line-inactive nil
-                                   :background "#6A7D89"
-                                   :height 0.1 
-                                   :box nil)
-               (set-face-attribute 'mini-modeline-mode-line nil
-                                   :background "#6A7D89"
-                                   :height 0.14
-                                   :box nil)
-               (custom-theme-set-faces 'doom-nova
-                                       `(org-default ((t (:family "Minion Pro" :weight normal :foreground "#c5d4dd"))))
-                                       `(org-link ((t (:inherit org-default :underline t)))) 
-                                       `(org-ref-cite-face ((t (:inherit org-link)))) 
-                                       `(org-ref-cite-face ((t (:inherit org-link)))) 
-                                       `(org-footnote ((t (:family "Minion Pro" :height 0.7 :weight normal :foreground "#c5d4dd"))))
-                                       `(org-document-title ((t (:height 1.4 :weight normal))))
-                                       `(org-document-info ((t (:slant italic :height 1.1))))
-                                       `(org-level-1 ((t (:family "Myriad Pro" :height 1.2 :weight bold  ))))
-                                       `(org-level-2 ((t (:family "Myriad Pro" :height 1.1 :weight normal  ))))
-                                       `(org-level-3 ((t (:family "Myriad Pro" :height 1.0 :weight semi-bold  )))) 
-                                       `(org-level-4 ((t (:family "Myriad Pro" :height 1.0 :weight normal  )))) 
-                                       `(org-level-5 ((t (:family "Myriad Pro" :height 0.9 :weight semi-bold  )))) 
-                                       `(org-level-6 ((t (:family "Myriad Pro" :height 0.9 :weight normal  )))) 
-                                       `(org-meta-line ((t (:family "Fira Code" :foreground "#44545d" :height 0.75  :slant normal)))) 
-                                       `(org-document-info-keyword ((t (:inherit org-meta-line))))
-                                       `(org-special-keywords ((t (:inherit org-meta-line))))
-                                       `(org-drawer ((t (:inherit org-meta-line)))) 
-                                       `(org-property-value ((t (:inherit org-meta-line)))) 
-                                       `(org-ellipsis ((t (:family "Fira Code" :underline nil :box nil :foreground "#899BA6")))) 
-                                       `(org-hide ((t (:foreground "#3c4c55")))) 
-                                       `(org-indent ((t (:inherit org-hide)))) 
-                                       `(org-date ((t (:family "Fira Code" :height 0.75))))
-                          `(org-agenda-date ((t (:family "Minion Pro" :weight normal :foreground "#c5d4dd" :height 1.5))))
-                                       `(org-agenda-date-today ((t (:family "Minion Pro" :weight normal :foreground "#c5d4dd" :height 1.5 :slant italic))))
-                                       `(org-agenda-structure ((t (:family "Minion Pro" :weight normal :foreground "##c5d4dd" :height 2.0))))
-                                       `(org-agenda-date-weekend ((t (:inherit org-agenda-date))))
-                                       `(org-scheduled ((t (:weight normal :slant normal))))
-                                       `(org-scheduled-today ((t (:family "Fira Code" :foreground "#F2C38F" :weight normal :slant normal))))
-                                       `(org-scheduled-previously ((t (:family "Fira Code" :foreground "#DF8C8C" :weight normal :slant normal))))
-                                       `(org-agenda-diary ((t (:family "Fira Code" :foreground "#A8CE93"))))
-                                       `(org-upcoming-deadline ((t (:inherit org-scheduled-previously))))
-                                       `(org-agenda-done ((t (:strke-through t))))
-                                       `(org-tag ((t (:family "Minion Pro" :slant italic :height 1.0)))))))))
-                                       ;; `(org-block-begin-line ((t (:inherit org-meta-line))))
-                                       ;; `(org-block-end-line ((t (:inherit org-meta-line))))
-                                       ;; `(org-column ((t (:family "Fira Code" ))))
-                                       ;; `(org-block ((t ( :height 1.0 :slant italic))))
-                                       ;; `(org-code ((t (:family "Fira Code" :height 0.75))))
-
-    (add-hook 'cycle-themes-after-cycle-hook #'sync0-doom-org-theme))
-
-                                       #+END_SRC 
+    (setq cycle-themes-theme-list '(doom-zenburn doom-flatwhite)))
+#+END_SRC 
 
 * mini-modeline
 I use the package ~mini-modeline~ because I always liked the idea of
@@ -432,7 +246,6 @@ https://stackoverflow.com/questions/8190277/how-do-i-display-the-total-number-of
         (add-hook 'find-file-hook 'sync0-mode-line-count-lines)
         (add-hook 'after-save-hook 'sync0-mode-line-count-lines)
         (add-hook 'after-revert-hook 'sync0-mode-line-count-lines)
-    ;;    (add-hook 'dired-after-readin-hook 'sync0-mode-line-count-lines)
 
         :config
         (setq   mini-modeline-l-format
@@ -448,18 +261,6 @@ https://stackoverflow.com/questions/8190277/how-do-i-display-the-total-number-of
                                          'face '(:family "Noto Color Emoji")))))
                   mode-line-buffer-identification 
                   "  " 
-                  ;; (:eval (when (boundp 'sync0-current-theme)
-                  ;;          (if (equal sync0-current-theme 'doom-solarized-light)
-                  ;;              (propertize 
-                  ;;               (if (boundp 'guess-language-current-language) 
-                  ;;                   (upcase (prin1-to-string guess-language-current-language))
-                  ;;                 "NIL")
-                  ;;               'face '(:foreground "#268bd2" :weight bold))
-                  ;;            (propertize 
-                  ;;             (if (boundp 'guess-language-current-language) 
-                  ;;                 (upcase (prin1-to-string guess-language-current-language))
-                  ;;               "NIL")
-                  ;;             'face '(:foreground "#83AFE5" :weight bold)))))
                   (:eval (propertize 
                           (if (boundp 'guess-language-current-language) 
                                (upcase (prin1-to-string guess-language-current-language))
@@ -480,16 +281,6 @@ https://stackoverflow.com/questions/8190277/how-do-i-display-the-total-number-of
                        (capitalize 
                         (s-replace "-mode" "" (prin1-to-string major-mode)))
                        'face '(:weight bold)))
-                 ;; (:eval 
-                 ;;  (if (equal sync0-current-theme 'doom-solarized-light)
-                 ;;      (propertize 
-                 ;;       (capitalize 
-                 ;;        (s-replace "-mode" "" (prin1-to-string major-mode)))
-                 ;;       'face '(:foreground "#6c71c4"))
-                 ;;    (propertize 
-                 ;;     (capitalize 
-                 ;;      (s-replace "-mode" "" (prin1-to-string major-mode)))
-                 ;;     'face '(:foreground "#D18EC2")))) 
                  " " 
                  (vc-mode vc-mode)
                  " " 
@@ -498,91 +289,18 @@ https://stackoverflow.com/questions/8190277/how-do-i-display-the-total-number-of
                  (:eval (propertize (format-time-string " %H:%M ")
                                     'face '(:weight bold))) 
                  " " 
-                 ;; (:eval fancy-battery-mode-line)
                  mode-line-misc-info
                  ))
 
-        (set-face-attribute 'mini-modeline-mode-line-inactive nil
-                            :background "#f4ebd7"
-                            :height 0.1 
-                            :box nil)
-
-        (set-face-attribute 'mini-modeline-mode-line nil
-                            :background "#f4ebd7"
-                            :height 0.14
-                            :box nil)
-
-        (setq mini-modeline-face-attr '(:background "#f4ebd7"))
-
         (mini-modeline-mode t))
-  #+END_SRC 
-
-* 取 doom-modeline
-
-#+BEGIN_SRC emacs-lisp
-  (use-package doom-modeline 
-:straight (doom-modeline :type git :host github :repo "seagle0128/doom-modeline") 
-    :disabled t
-    ;; :after doom-themes
-    :diminish doom-modeline-mode
-    :hook 
-    (after-init . doom-modeline-mode)
-    :custom
-    ;; How tall the mode-line should be. It's only respected in GUI.
-    ;; If the actual char height is larger, it respects the actual height.
-    (doom-modeline-height 25)
-    ;; How wide the mode-line bar should be. It's only respected in GUI.
-    (doom-modeline-bar-width 2)
-    ;; Whether display the `evil' state icon.
-    (doom-modeline-evil-state-icon t)
-    (doom-modeline-buffer-file-name-style 'truncate-upto-project)
-    (doom-modeline-project-detection 'project)
-    ;; Whether display icons in mode-line or not.
-    (doom-modeline-icon (display-graphic-p))
-    ;; Whether display the icon for major mode. It respects `doom-modeline-icon'.
-    (doom-modeline-major-mode-icon t)
-    ;; Whether display minor modes in mode-line or not.
-    ;; (setq doom-modeline-minor-modes (featurep 'minions))
-    (doom-modeline-minor-modes nil)
-    ;; Whether display color icons for `major-mode'. It respects
-    ;; `doom-modeline-icon' and `all-the-icons-color-icons'.
-    (doom-modeline-major-mode-color-icon t)
-    ;; Whether display icons for buffer states. It respects `doom-modeline-icon'.
-    (doom-modeline-buffer-state-icon t)
-    ;; Whether display buffer modification icon. It respects `doom-modeline-icon'
-    ;; and `doom-modeline-buffer-state-icon'.
-    (doom-modeline-buffer-modification-icon t)
-    ;; If non-nil, a word count will be added to the selection-info modeline segment.
-    (doom-modeline-enable-word-count t)
-    ;; Whether display buffer encoding.
-    (doom-modeline-buffer-encoding t)
-    ;; Whether display indentation information.
-    (doom-modeline-indent-info nil)
-    ;; If non-nil, only display one number for checker information if applicable.
-    (doom-modeline-checker-simple-format t)
-    ;; The maximum displayed length of the branch name of version control.
-    ;; (doom-modeline-vcs-max-length 12)
-    ;; Whether display perspective name or not. Non-nil to display in mode-line.
-    (doom-modeline-persp-name nil)
-    ;; Whether display icon for persp name. Nil to display a # sign. It respects `doom-modeline-icon'
-    (doom-modeline-persp-name-icon nil)
-    ;; Whether display `lsp' state or not. Non-nil to display in mode-line.
-    (doom-modeline-lsp nil)
-    ;; Whether display github notifications or not. Requires `ghub` package.
-    (doom-modeline-github nil)
-    ;; The interval of checking github.
-    ;; (setq doom-modeline-github-interval (* 30 60))
-    ;; Whether display mu4e notifications or not. Requires `mu4e-alert' package.
-    (doom-modeline-mu4e t))
   #+END_SRC 
   
 * 取 hl-line mode
 
 #+BEGIN_SRC emacs-lisp
   (use-package hl-line 
-:straight nil
+    :straight nil
     :disabled t
-    :diminish hl-line-mode
     :hook ((text-mode conf-mode prog-mode) . hl-line-mode)
     :custom
     ;; I don't need hl-line showing in other windows. This also offers a small
@@ -590,17 +308,3 @@ https://stackoverflow.com/questions/8190277/how-do-i-display-the-total-number-of
     (hl-line-sticky-flag nil)
     (global-hl-line-sticky-flag nil))
 #+END_SRC 
-
-* 取 hide-mode-line
-
-#+BEGIN_SRC emacs-lisp
-  (use-package hide-mode-line
-:straight (hide-mode-line :type git :host github :repo "hlissner/emacs-hide-mode-line") 
-    :disabled t
-    :hook  ( ;; (after-init . hide-mode-line-mode)
-            (cfw:calendar-mode . hide-mode-line-mode)
-            (completion-list-mode . hide-mode-line-mode)
-            (org-agenda-mode . hide-mode-line-mode)
-            (text-mode . hide-mode-line-mode)))
-  #+END_SRC 
-

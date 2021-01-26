@@ -52,16 +52,6 @@
   (add-hook 'text-mode-hook 'sync0-buffer-face-mode-variable)
  #+END_SRC
 
-  Allow narrowing
-    (put 'narrow-to-region 'disabled nil)
-
-Configure Hooks. 
-   ;; (add-hook 'text-mode-hook 'turn-on-visual-line-mode)
-   ;; (add-hook 'LaTeX-mode-hook 'turn-on-visual-line-mode)
-   ;; (add-hook 'text-mode-hook 'turn-off-auto-fill)
-   ;; (add-hook 'LaTeX-mode-hook 'turn-on-auto-fill)
-
-
 #+BEGIN_SRC emacs-lisp
   ;; End sentences with a single espace.
   (setq-default sentence-end-double-space nil
@@ -81,8 +71,7 @@ Configure Hooks.
 
  #+BEGIN_SRC emacs-lisp
    (use-package auto-fill
- :straight nil
-     :diminish auto-fill-mode
+     :straight nil
      :hook 
      (text-mode . turn-on-auto-fill)
      (mu4e-compose-mode . turn-off-auto-fill)
@@ -105,11 +94,10 @@ Configure Hooks.
 * no-break-fade
 #+BEGIN_SRC emacs-lisp
   (use-package nobreak-fade 
- :straight nil
-:after auto-fill
-    :defer t
-    :load-path "~/.emacs.d/sync0/nobreak-fade.el" 
-    :after tex
+  :straight nil
+  :after auto-fill 
+  :defer t
+  :load-path "~/.emacs.d/sync0/nobreak-fade.el" 
     ;; :command nobreak-fade
     :config
     (autoload 'nobreak-fade-single-letter-p "nobreak-fade")
@@ -120,9 +108,8 @@ Configure Hooks.
 * visual-line
 #+BEGIN_SRC emacs-lisp
   (use-package visual-line
- :straight nil
+    :straight nil
     :defer t
-    :diminish visual-line-mode
     :commands visual-line-mode
     :hook 
     ;; (mu4e-compose-mode . visual-line-mode)
@@ -133,9 +120,7 @@ Configure Hooks.
 * visual-fill-column
 #+BEGIN_SRC emacs-lisp
   (use-package visual-fill-column
- :straight nil
-    :defer t
-    :diminish visual-fill-column-mode
+    :straight nil
     :commands visual-fill-column-mode
     :hook 
     (mu4e-view-mode . visual-fill-column-mode)
@@ -147,12 +132,12 @@ Configure Hooks.
 * rainbow-delimiters
 #+BEGIN_SRC emacs-lisp
   (use-package rainbow-delimiters
-:straight (rainbow-delimiters :type git :host github :repo "Fanael/rainbow-delimiters") 
-    :diminish rainbow-delimiters-mode
+    :straight (rainbow-delimiters :type git :host github :repo "Fanael/rainbow-delimiters") 
     :hook 
     ((text-mode . rainbow-delimiters-mode)
      (prog-mode . rainbow-delimiters-mode))
-    :custom (rainbow-delimiters-max-face-count 3))
+    :custom
+    (rainbow-delimiters-max-face-count 3))
   #+END_SRC 
 
 * paren
@@ -178,9 +163,8 @@ parenthesis.
 
 #+BEGIN_SRC emacs-lisp
 (use-package smartparens
-:straight (smartparens :type git :host github :repo "Fuco1/smartparens") 
+    :straight (smartparens :type git :host github :repo "Fuco1/smartparens") 
     :after evil
-    :diminish smartparens-mode
     :hook 
     ((emacs-startup . smartparens-global-mode)
      ;; (emacs-startup . show-smartparens-global-mode)
@@ -276,63 +260,6 @@ parenthesis.
   (sp-local-pair "{" "}")
   (sp-local-pair "(" ")")
   (sp-local-pair "[" "]")
-
-  ;; pairs for big brackets.  Needs more research on what pairs are
-  ;; useful to add here.  Post suggestions if you know some.
-  ;; (sp-local-pair "\\left(" "\\right)"
-  ;;                :trigger "\\l("
-  ;;                :when '(sp-in-math-p)
-  ;;                :post-handlers '(sp-latex-insert-spaces-inside-pair))
-  ;; (sp-local-pair "\\left[" "\\right]"
-  ;;                :trigger "\\l["
-  ;;                :when '(sp-in-math-p)
-  ;;                :post-handlers '(sp-latex-insert-spaces-inside-pair))
-  ;; (sp-local-pair "\\left\\{" "\\right\\}"
-  ;;                :trigger "\\l{"
-  ;;                :when '(sp-in-math-p)
-  ;;                :post-handlers '(sp-latex-insert-spaces-inside-pair))
-  ;; (sp-local-pair "\\left|" "\\right|"
-  ;;                :trigger "\\l|"
-  ;;                :when '(sp-in-math-p)
-  ;;                :post-handlers '(sp-latex-insert-spaces-inside-pair))
-  ;; (sp-local-pair "\\bigl(" "\\bigr)"
-  ;;                :post-handlers '(sp-latex-insert-spaces-inside-pair))
-  ;; (sp-local-pair "\\biggl(" "\\biggr)"
-  ;;                :post-handlers '(sp-latex-insert-spaces-inside-pair))
-  ;; (sp-local-pair "\\Bigl(" "\\Bigr)"
-  ;;                :post-handlers '(sp-latex-insert-spaces-inside-pair))
-  ;; (sp-local-pair "\\Biggl(" "\\Biggr)"
-  ;;                :post-handlers '(sp-latex-insert-spaces-inside-pair))
-  ;; (sp-local-pair "\\bigl[" "\\bigr]"
-  ;;                :post-handlers '(sp-latex-insert-spaces-inside-pair))
-  ;; (sp-local-pair "\\biggl[" "\\biggr]"
-  ;;                :post-handlers '(sp-latex-insert-spaces-inside-pair))
-  ;; (sp-local-pair "\\Bigl[" "\\Bigr]"
-  ;;                :post-handlers '(sp-latex-insert-spaces-inside-pair))
-  ;; (sp-local-pair "\\Biggl[" "\\Biggr]"
-  ;;                :post-handlers '(sp-latex-insert-spaces-inside-pair))
-  ;; (sp-local-pair "\\bigl\\{" "\\bigr\\}"
-  ;;                :post-handlers '(sp-latex-insert-spaces-inside-pair))
-  ;; (sp-local-pair "\\biggl\\{" "\\biggr\\}"
-  ;;                :post-handlers '(sp-latex-insert-spaces-inside-pair))
-  ;; (sp-local-pair "\\Bigl\\{" "\\Bigr\\}"
-  ;;                :post-handlers '(sp-latex-insert-spaces-inside-pair))
-  ;; (sp-local-pair "\\Biggl\\{" "\\Biggr\\}"
-  ;;                :post-handlers '(sp-latex-insert-spaces-inside-pair))
-  ;; (sp-local-pair "\\lfloor" "\\rfloor"
-  ;;                :post-handlers '(sp-latex-insert-spaces-inside-pair))
-  ;; (sp-local-pair "\\lceil" "\\rceil"
-  ;;                :post-handlers '(sp-latex-insert-spaces-inside-pair))
-  ;; (sp-local-pair "\\langle" "\\rangle"
-  ;;                :post-handlers '(sp-latex-insert-spaces-inside-pair))
-  ;; (sp-local-pair  "\\lVert" "\\rVert"
-  ;;                 :when '(sp-in-math-p)
-  ;;                 :trigger "\\lVert"
-  ;;                 :post-handlers '(sp-latex-insert-spaces-inside-pair))
-  ;; (sp-local-pair  "\\lvert" "\\rvert"
-  ;;                 :when '(sp-in-math-p)
-  ;;                 :trigger "\\lvert"
-  ;;                 :post-handlers '(sp-latex-insert-spaces-inside-pair)))
 
   ;; some common wrappings
   (sp-local-tag "\"" "``" "''" :actions '(wrap)))
@@ -434,8 +361,7 @@ parenthesis.
 
 #+BEGIN_SRC emacs-lisp
   (use-package abbrev
- :straight nil
-    :diminish abbrev-mode
+    :straight nil
     :custom
     ;; Tell Emacs where to read abbrevs.  
     (abbrev-file-name "~/.emacs.d/abbrev_defs")
@@ -471,7 +397,7 @@ parenthesis.
 
     ;; Auto-update abbrev table on save.
     (add-hook 'after-save-hook (lambda ()
-                                 (when (equal buffer-file-name "/home/sync0/.emacs.d/abbrev_defs")
+                                 (when (equal buffer-file-name "~/.emacs.d/abbrev_defs")
                                    (read-abbrev-file)))))
   #+END_SRC 
   
@@ -492,19 +418,9 @@ parenthesis.
                             company-echo-metadata-frontend))  
                 (company-backends '(company-capf))
                 (company-auto-complete nil)
-                ;; (company-auto-complete-chars nil)
-                ;; Only search the current buffer for `company-dabbrev' (a backend that
-                ;; suggests text your open buffers). This prevents Company from causing
-                ;; lag once you have a lot of buffers open.
-                ;; company-dabbrev-other-buffers nil
-                ;; Make `company-dabbrev' fully case-sensitive, to improve UX with
-                ;; domain-specific words with particular casing.
-      ;; company-dabbrev-ignore-case nil
-                ;; company-dabbrev-downcase nil
     :config
 ;; Disable company-mode in bibtex-mode (clashes with yasnippets)
  (add-hook 'bibtex-mode-hook (company-mode -1))
-   ;; (require 'company-bibtex)
 
     (defvar +company-backend-alist
       '((text-mode company-capf  company-yasnippet company-org-roam)
@@ -552,11 +468,8 @@ parenthesis.
     (defun sync0-config-prose-completion ()
       "Make auto-complete less agressive in this buffer."
       (setq-local company-minimum-prefix-length 4))
-    ;;  (setq-local ac-auto-start 6)
 
-    (add-hook 'text-mode-hook #'sync0-config-prose-completion)
-
-      )
+    (add-hook 'text-mode-hook #'sync0-config-prose-completion))
 #+END_SRC 
 
 * company-bibtex
@@ -566,24 +479,19 @@ parenthesis.
 :disabled t
 :custom
 (company-bibtex-key-regex "[[:alnum:]+_]*")
-(company-bibtex-bibliography '("/home/sync0/Dropbox/notes/bibliography.bib")))
+(company-bibtex-bibliography '("~/Dropbox/notes/bibliography.bib")))
  #+END_SRC 
 
 * company-box
 #+BEGIN_SRC emacs-lisp
   (use-package company-box
-:straight (company-box :type git :host github :repo "sebastiencs/company-box") 
-    ;; :when (featurep! +childframe)
+    :straight (company-box :type git :host github :repo "sebastiencs/company-box") 
     :hook (company-mode . company-box-mode)
     :config
     (setq company-box-show-single-candidate t
           company-box-backends-colors nil
 ;;          company-box-max-candidates 50
           company-box-icons-alist 'company-box-icons-all-the-icons
-          ;; company-box-icons-functions
-          ;; (cons #'+company-box-icons--elisp-fn
-          ;;       (delq 'company-box-icons--elisp
-          ;;             company-box-icons-functions))
           company-box-icons-all-the-icons
           (let ((all-the-icons-scale-factor 0.8))
             `((Unknown       . ,(all-the-icons-material "find_in_page"             :face 'all-the-icons-purple))
@@ -715,7 +623,6 @@ parenthesis.
                                                  ("de_DE" "[[:alpha:]ÄÖÜéäöüß]" "[^[:alpha:]ÄÖÜéäöüß]" "['’-]" t ("-d" "de_DE") nil utf-8)
                                                  ("es" "[[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "[^[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "['’-]" t ("-d" "es") nil utf-8)
                                                  ("pt_BR" "[[:alpha:]a-zàáâãçéêíóôõúüA-ZÀÁÂÃÇÉÊÍÓÔÕÚÜ]" "[^[:alpha:]a-zàáâãçéêíóôõúüA-ZÀÁÂÃÇÉÊÍÓÔÕÚÜ]" "['-]" t  ("-d" "pt_BR") nil utf-8)
-                                                 ;; ("pt_BR" "[a-zàáâãçéêíóôõúüA-ZÀÁÂÃÇÉÊÍÓÔÕÚÜ]" "[^a-zàáâãçéêíóôõúüA-ZÀÁÂÃÇÉÊÍÓÔÕÚÜ]" "['-]" t  ("-d" "pt_BR") nil utf-8)
                                                  ;; ("it_IT" "[[:alpha:]AEÉIOUàèéìòù]" "[^[:alpha:]AEÉIOUàèéìòù]" "['’-]" t ("-d" "it_IT") "~tex" nil utf-8)
                                                  ("fr_FR" "[[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[^[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[’'-]" t ("-d" "fr_FR")  nil utf-8))))
 
@@ -745,18 +652,10 @@ parenthesis.
  #+BEGIN_SRC emacs-lisp
    (use-package flyspell 
      :diminish flyspell-mode
-     :after (org ispell)
      :hook (text-mode . flyspell-mode)
      :custom
      (ispell-parser 'tex)
-     (flyspell-issue-message-flag nil)
-     :config
-     ;; Check next highlighted word custom function.
-     (defun sync0-flyspell-check-next-highlighted-word ()
-       "Custom function to spell check next highlighted word"
-       (interactive)
-       (flyspell-goto-next-error)
-       (ispell-word)))
+     (flyspell-issue-message-flag nil))
  #+END_SRC 
 
 * guess-language
@@ -766,7 +665,7 @@ per document.
 
 #+BEGIN_SRC emacs-lisp
       (use-package guess-language
-:straight (guess-language :type git :host github :repo "tmalsburg/guess-language.el") 
+        :straight (guess-language :type git :host github :repo "tmalsburg/guess-language.el") 
         :after (ispell evil hydra company)
         :hook (text-mode . guess-language-mode)
         :init
@@ -774,6 +673,7 @@ per document.
 
         (defvar sync0-language-active 'english
           "Currently active natural language")
+
         :custom
         (guess-language-languages '(en fr es de pt))
         (guess-language-min-paragraph-length 30)
@@ -784,94 +684,72 @@ per document.
            (de . ("de_DE" "german"))
            (fr . ("fr_FR" "french"))
            (es . ("es" "spanish"))))
-        :config 
 
+        :config 
         (defun sync0-language-change (lang beginning end)
           "Set of functions to run after a different language is detected."
           (unless (string-equal guess-language-current-language lang)
-            ;;(unless (string-equal sync0-language-active-language lang))
             (cond 
              ((string-equal lang "es")
               (progn
                 (setq sync0-language-active "spanish")
                 (setq local-abbrev-table spanish-mode-abbrev-table)
                 (set-input-method "spanish-prefix")
-                (ispell-change-dictionary "es")
-                ;;  (setq company-ispell-dictionary  (file-truename (concat user-emacs-directory "dictionaries/spanish.txt")))
-                ))
+                (ispell-change-dictionary "es")))
              ((string-equal lang "de")
               (progn
                 (setq sync0-language-active "german")
                 (setq local-abbrev-table german-mode-abbrev-table)
                 (set-input-method "german-prefix")
-                (ispell-change-dictionary "de_DE")
-                 ;; (setq company-ispell-dictionary  (file-truename (concat user-emacs-directory "dictionaries/french.txt")))
-                ))
+                (ispell-change-dictionary "de_DE")))
              ((string-equal lang "pt")
               (progn
                 (setq sync0-language-active "portuguese")
                 (setq local-abbrev-table portuguese-mode-abbrev-table)
                 (set-input-method "portuguese-prefix")
-                (ispell-change-dictionary "pt_BR")
-                ;;  (setq company-ispell-dictionary  (file-truename (concat user-emacs-directory "dictionaries/portuguese.txt")))
-                ))
+                (ispell-change-dictionary "pt_BR")))
              ((string-equal lang "fr")
               (progn
                 (setq sync0-language-active "french")
                 (setq local-abbrev-table french-mode-abbrev-table)
                 (set-input-method "french-prefix")
-                (ispell-change-dictionary "fr_FR")
-                 ;; (setq company-ispell-dictionary  (file-truename (concat user-emacs-directory "dictionaries/french.txt")))
-                ))
+                (ispell-change-dictionary "fr_FR")))
              ((string-equal lang "en")
               (progn
                 (setq sync0-language-active "english")
                 (setq local-abbrev-table english-mode-abbrev-table)
                 (set-input-method nil)
-                (ispell-change-dictionary "en_US-large")
-                ;;  (setq company-ispell-dictionary  (file-truename (concat user-emacs-directory "dictionaries/english.txt")))
-                )))))
+                (ispell-change-dictionary "en_US-large"))))))
 
     (defvar sync0-change-language-actions-alist
       '((?1 "en" (lambda ()
                 (progn
-                  (message "English is the active language")
                   (setq  guess-language-current-language 'en)
                   (setq sync0-language-active "english")
                   (setq local-abbrev-table english-mode-abbrev-table)
                   (set-input-method nil)
-                  (ispell-change-dictionary "en_US-large")
-  ;;                 (setq company-ispell-dictionary  (concat user-emacs-directory "dictionaries/english.txt"))
-  )))
+                  (ispell-change-dictionary "en_US-large"))))
         (?2 "es" (lambda ()
               (progn
-                  (message "El castellano es la lengua activa")
-                  (setq  guess-language-current-language 'es)
+                (setq  guess-language-current-language 'es)
                 (setq sync0-language-active "spanish")
                 (setq local-abbrev-table spanish-mode-abbrev-table)
                 (set-input-method "spanish-prefix")
-                (ispell-change-dictionary "es")
-  ;;                (setq company-ispell-dictionary  (concat user-emacs-directory "dictionaries/spanish.txt"))
-  )))
+                (ispell-change-dictionary "es"))))
         (?3 "pt" (lambda ()
               (progn
-                  (message "O português é a linguagem ativa")
-                  (setq  guess-language-current-language 'pt)
+                (setq  guess-language-current-language 'pt)
                 (setq sync0-language-active "portuguese")
                 (setq local-abbrev-table portuguese-mode-abbrev-table)
                 (set-input-method "portuguese-prefix")
-                (ispell-change-dictionary "pt_BR")
-  ;;                (setq company-ispell-dictionary  (concat user-emacs-directory "dictionaries/portuguese.txt"))
-  )))
+                (ispell-change-dictionary "pt_BR"))))
         (?4 "fr" (lambda ()
               (progn
                   (setq  guess-language-current-language 'fr)
                 (setq sync0-language-active "french")
                 (setq local-abbrev-table french-mode-abbrev-table)
                 (set-input-method "french-prefix")
-                (ispell-change-dictionary "fr_FR")
-                  ;; (setq company-ispell-dictionary  (concat user-emacs-directory "dictionaries/french.txt"))
-                  (message "Le français est la langue active"))))
+                (ispell-change-dictionary "fr_FR"))))
         (?5 "de" (lambda ()
               (progn
                   (message "Deutsch ist die aktuelle Sprache")
@@ -879,9 +757,7 @@ per document.
                 (setq sync0-language-active "german")
                 (setq local-abbrev-table german-mode-abbrev-table)
                 (set-input-method "german-prefix")
-                (ispell-change-dictionary "de_DE")
-  ;;                (setq company-ispell-dictionary  (concat user-emacs-directory "dictionaries/french.txt"))
-  ))))
+                (ispell-change-dictionary "de_DE")))))
       "List that associates number letters to descriptions and actions.")
 
     (defun sync0-change-current-language ()
@@ -896,67 +772,10 @@ per document.
                       (mapcar #'car sync0-change-language-actions-alist))))
         (funcall (nth 2 (assoc choice sync0-change-language-actions-alist)))))
 
-    ;;     (defun sync0-change-current-language (lang)
-    ;;       "Same funciton as sync0-language-change, but with interactive form."
-
-    ;; ;; this interactive expression is problematic. I have to analyse
-    ;; ;; the way completing-read works
-    ;;   (interactive
-    ;;    (let ((completion-case t))
-    ;;      (list (completing-read "Choose: " '(en fr pt de es) nil t))))
-
-    ;;       (if (string-equal guess-language-current-language lang)
-    ;;         (message "`%s' is already the active language" lang)
-
-    ;; (progn
-    ;;         (message "Active language changed to `%s'" lang)
-    ;;         (setq  guess-language-current-language lang)
-    ;;         (cond 
-    ;;          ((string-equal lang "es")
-    ;;           (progn
-    ;;             (setq sync0-language-active "spanish")
-    ;;             (setq local-abbrev-table spanish-mode-abbrev-table)
-    ;;             (set-input-method "spanish-prefix")
-    ;;             (ispell-change-dictionary "es")
-    ;;             (when (bound-and-true-p company-mode)
-    ;;               (setq company-ispell-dictionary  (concat user-emacs-directory "dictionaries/spanish.txt")))))
-    ;;          ((string-equal lang "de")
-    ;;           (progn
-    ;;             (setq sync0-language-active "german")
-    ;;             (setq local-abbrev-table german-mode-abbrev-table)
-    ;;             (set-input-method "german-prefix")
-    ;;             (ispell-change-dictionary "de_DE")
-    ;;             (when (bound-and-true-p company-mode)
-    ;;               (setq company-ispell-dictionary  (concat user-emacs-directory "dictionaries/french.txt")))))
-    ;;          ((string-equal lang "pt")
-    ;;           (progn
-    ;;             (setq sync0-language-active "portuguese")
-    ;;             (setq local-abbrev-table portuguese-mode-abbrev-table)
-    ;;             (set-input-method "portuguese-prefix")
-    ;;             (ispell-change-dictionary "pt_BR")
-    ;;             (when (bound-and-true-p company-mode)
-    ;;               (setq company-ispell-dictionary  (concat user-emacs-directory "dictionaries/portuguese.txt")))))
-    ;;          ((string-equal lang "fr")
-    ;;           (progn
-    ;;             (setq sync0-language-active "french")
-    ;;             (setq local-abbrev-table french-mode-abbrev-table)
-    ;;             (set-input-method "french-prefix")
-    ;;             (ispell-change-dictionary "fr_FR")
-    ;;             (when (bound-and-true-p company-mode)
-    ;;               (setq company-ispell-dictionary  (concat user-emacs-directory "dictionaries/french.txt")))))
-    ;;          ((string-equal lang "en")
-    ;;           (progn
-    ;;             (setq sync0-language-active "english")
-    ;;             (setq local-abbrev-table english-mode-abbrev-table)
-    ;;             (set-input-method nil)
-    ;;             (ispell-change-dictionary "en_US-large")
-    ;;             (when (bound-and-true-p company-mode)
-    ;;               (setq company-ispell-dictionary  (concat user-emacs-directory "dictionaries/english.txt")))))))))
-
-      (defun endless/simple-get-word ()
+      (defun sync0-ispell-get-word ()
         (car-safe (save-excursion (ispell-get-word nil))))
 
-      (defun endless/ispell-word-then-abbrev ()
+      (defun sync0-ispell-word-then-abbrev ()
         "Call `ispell-word', then create an abbrev for it.
       With prefix P, create local abbrev. Otherwise it will
       be global.
@@ -967,7 +786,7 @@ per document.
         (interactive)
         (let (bef aft)
           (save-excursion
-            (while (if (setq bef (endless/simple-get-word))
+            (while (if (setq bef (sync0-ispell-get-word))
                        ;; Word was corrected or used quit.
                        (if (ispell-word nil 'quiet)
                            nil ; End the loop.
@@ -978,7 +797,7 @@ per document.
                      (not (bobp)))
               (backward-word)
               (backward-char))
-            (setq aft (endless/simple-get-word)))
+            (setq aft (sync0-ispell-get-word)))
           (if (and aft bef (not (equal aft bef)))
               (let ((aft (downcase aft))
                     (bef (downcase bef)))
@@ -993,25 +812,6 @@ per document.
                 (message "\"%s\" now expands to \"%s\" %sally"
                          bef aft "loc"))
             (user-error "No typo at or before point"))))
-
-        (defun sync0-lookup-word (word)
-          "Search an online dictionary for the word at point according
-            to the active language minor mode."
-          (interactive (list (save-excursion (car (ispell-get-word nil)))))
-          (cond  ((string-equal guess-language-current-language "en") 
-                  (browse-url (format "https://www.merriam-webster.com/dictionary/%s" word)))
-                 ((string-equal guess-language-current-language "de") 
-                  (browse-url (format "https://www.duden.de/rechtschreibung/%s" word)))
-                 ((string-equal guess-language-current-language "pt") 
-                  (browse-url (format "https://www.dicio.com.br/%s" word)))
-                 ((string-equal guess-language-current-language "fr") 
-                  (browse-url (format "https://dictionnaire.lerobert.com/definition/%s#definitions" word)))
-                 ((string-equal guess-language-current-language "es") 
-                  (browse-url (format "https://dle.rae.es/?w=%s" word)))
-                 (t "No language minor mode specified")))
-
-
-
 
         (defun sync0-lookup-word (word)
           "Search an online dictionary for the word at point according
@@ -1069,8 +869,6 @@ per document.
            (progn
            (setq parts-list sync0-spanish-parts-speech)
             (ivy-completing-read "Elija uno: " parts-list)))
-          ;; ((string-equal lang "de")
-          ;; (setq sync0-language-active "german"))
           ((string-equal lang "pt")
            (progn
            (setq parts-list sync0-portuguese-parts-speech)
@@ -1103,7 +901,7 @@ per document.
         (add-hook 'guess-language-after-detection-functions #'sync0-language-change)
 
         :bind (("M-#" . sync0-lookup-word)
-               ("M-i" . endless/ispell-word-then-abbrev)
+               ("M-i" . sync0-ispell-word-then-abbrev)
                ("C-d" . sync0-hydra-language-functions/body)
                ("M-$" . sync0-lookup-conjugation)))
 #+END_SRC 
@@ -1120,10 +918,9 @@ some quality voices in the AUR repositories.
 
 #+BEGIN_SRC emacs-lisp
   (use-package festival 
-:straight nil
+    :straight nil
     :disabled t
     :defer t
-    :after evil
     :load-path "~/.emacs.d/sync0/" 
     :commands say-minor-mode
     :config
@@ -1149,7 +946,7 @@ some quality voices in the AUR repositories.
 * yasnippets
 #+BEGIN_SRC emacs-lisp
   (use-package yasnippet 
-:straight (yasnippet :type git :host github :repo "joaotavora/yasnippet") 
+  :straight (yasnippet :type git :host github :repo "joaotavora/yasnippet") 
     ;; :commands (yas-minor-mode-on
     ;;          yas-expand
     ;;          yas-expand-snippet
@@ -1172,38 +969,35 @@ some quality voices in the AUR repositories.
         (define-key yas-keymap [tab] 'yas-next-field)))
 
     :hook 
-    (;;(LaTeX-mode . yas-minor-mode)
-     (text-mode . yas-minor-mode)
+    ((text-mode . yas-minor-mode)
      (prog-mode . yas-minor-mode)
      (mu4e-mode . yas-minor-mode)
      (bibtex-mode . yas-minor-mode)))
-#+END_SRC
+  #+END_SRC
 
 * 取 focus-mode
-Focus provides focus-mode that dims the text of surrounding sections.
-This mode is perfect for proofreading. Thus, don't abuse it when
-writing drafts.  
+  Focus provides focus-mode that dims the text of surrounding sections.
+  This mode is perfect for proofreading. Thus, don't abuse it when
+  writing drafts.  
 
-The amount of dimness can be customized by setting the focus-dimness
-variable, where a positive integer indicates a more dim color (i.e.
-more blended with the background color of your theme), and a negative
-integer indicates a less dim color.
+  The amount of dimness can be customized by setting the focus-dimness
+  variable, where a positive integer indicates a more dim color (i.e.
+  more blended with the background color of your theme), and a negative
+  integer indicates a less dim color.
 
-#+BEGIN_SRC emacs-lisp
+  #+BEGIN_SRC emacs-lisp
   (use-package focus
-:straight (focus :type git :host github :repo "larstvei/Focus") 
-    :defer t
+    :straight (focus :type git :host github :repo "larstvei/Focus") 
     :commands focus-mode)
-#+END_SRC 
+  #+END_SRC 
 
 * 取 olivetti
-Center text. It is unusable in split screen setups. 
-#+BEGIN_SRC emacs-lisp
+  Center text. It is unusable in split screen setups. 
+  #+BEGIN_SRC emacs-lisp
 
     (use-package olivetti
-:straight (olivetti :type git :host github :repo "rnkn/olivetti") 
+      :straight (olivetti :type git :host github :repo "rnkn/olivetti") 
       :disabled 
-      :diminish olivetti-mode
       :config
   (defun sync0-text-mode-olivetti ()
    (progn
@@ -1214,7 +1008,6 @@ Center text. It is unusable in split screen setups.
    (progn
     (olivetti-set-width 80)
    (olivetti-mode 1)))
-
       :hook 
       ((text-mode . sync0-text-mode-olivetti)
        (prog-mode . sync0-prog-mode-olivetti)))

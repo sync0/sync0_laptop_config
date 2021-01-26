@@ -1,513 +1,259 @@
-* core 
+* org 
 #+BEGIN_SRC emacs-lisp
-      (use-package org 
-        :after evil
-        :custom
-        (org-hide-leading-stars t)
-        ;; Leave one line between headlines 
-        (org-cycle-separator-lines 1)
-        ;; Don't fontify the whole damn line
-        (org-fontify-whole-block-delimiter-line t)
-        ;; Disable word wrap in org mode.
-        ;; (org-startup-truncated t)
-        ;; Initial indentation
-        (org-startup-indented nil)         
-        ;; Necessary to avoid crazy inconsistenscies using org-download and org-roam
-        (org-link-file-path-type 'absolute)
-        ;; Begin displaying entire trees.
-        (org-startup-folded nil)
-        ;; Better display of italics & bold.
-        (org-hide-emphasis-markers t)
-        ;; Define org-tags.
-        (org-tag-alist '(("projects" . ?p)
-                         ;; ("noexport" . ?n)
-                         ("readings" . ?r)
-                         ;; ("reviews" . ?r)
-                         ("exams" . ?e)
-                         ("urgent" . ?u)
-                         ("this_week" . ?t)
-                         ("this_month" . ?m)
-                         ("next_week" . ?n)
-                         ("short_term" . ?s)
-                         ("long_term" . ?l)
-                         ;; ("university" . ?u)
-                         ("important" . ?i)))
-        ;; Hide inherited tags from Org's agenda view.
-        ;; org-agenda-show-inherited-tags nil
-        ;; Define todo keywords.
-        ;; (org-todo-keywords '((sequence "無(1)" "次(2)" "中(3)" "|" "完(4)")
-        ;;                      (sequence "見(5)" "待(6)" "阻(7)" "|" "取(8)")))
-        (org-todo-keywords '((sequence "無(1)" "次(2)" "中(3)" "見(4)" "待(5)" "阻(6)" "|" "完(7)" "取(8)")))
-        ;; Set faces for org-todo-keywords
-        (org-todo-keyword-faces '(("無" . (:foreground "#dc322f" :weight semi-bold :height 0.8))
-                                  ("次" . (:foreground "#d33682" :weight semi-bold :height 0.8))
-                                  ("完" . (:foreground "#859900" :weight semi-bold :height 0.8))   
-                                  ("待" . (:foreground "#cb4b16" :weight semi-bold :height 0.8))
-                                  ("阻" . (:foreground "#268bd2" :weight semi-bold :height 0.8)) 
-                                  ("取" . (:foreground "#6c71c4" :weight semi-bold :height 0.8)) 
-                                  ("見" . (:foreground "#268bd2" :weight semi-bold :height 0.8)) 
-                                  ("中" . (:foreground "#b58900" :weight semi-bold :height 0.8))))
-        (org-blank-before-new-entry '((heading . nil)(plain-list-item . nil)))
-        ;; Stop emacs asking for confirmation
-        (org-confirm-babel-evaluate nil)
-        (org-ellipsis "  ⌄ ") ;; folding symbol
-        ;; Do not show export buffer.
-        (org-export-show-temporary-export-buffer nil)
-        ;; Define file to initialize external export process.
-        ;; (org-export-async-init-file "~/.emacs.d/init.elc")
-        ;; Set path for org default directory (necessary for refile and agenda).
-        (org-directory (concat (getenv "HOME") "/Dropbox/org"))
-        (org-refile-use-outline-path 'file)
-        ;; (org-refile-use-outline-path nil) ;; Sasha-Chua's config
-        (org-refile-targets '((org-agenda-files :maxlevel . 4)))
-        (org-outline-path-complete-in-steps nil)
-        ;; (org-indent-indentation-per-level 1)
-        (org-startup-with-inline-images t)
-        ;; (org-reverse-note-order t)
-        ;; (org-refile-allow-creating-parent-nodes 'confirm)
-        ;; (org-blank-before-new-entry nil)
-        (org-refile-use-cache nil)
-        ;; Have org-mode indent elisp sections.
-        (org-src-tab-acts-natively nil)
-        ;; Color embeded source code
-        (org-src-fontify-natively t)
-        (org-hide-emphasis-markers t)
-        (org-fontify-done-headline t) 
-        (org-fontify-whole-heading-line t)
-        ;; (org-highlight-latex-and-related '(latex))
-        ;; (org-highlight-latex-fragments-and-specials t)
-        (org-fontify-quote-and-verse-blocks t)
-        ;; Don't fontify sub and superscripts.
-        (org-pretty-entities-include-sub-superscripts nil)
-        ;; Change font used in src blocks. This feature slows down Emacs tremendously. 
-        ;; (org-src-block-faces '(("emacs-lisp" (:height 115 :inherit 'fixed-pitch))
-        ;;                        ("python" (:height 115 :inherit 'fixed-pitch))))
-        ;; Limit inheritance for certain tags. 
-        (org-tags-exclude-from-inheritance (quote ("crypt" "ignore")))
-        :config 
-        (require 'org-pdftools)
+    (use-package org 
+      :after evil
+      :custom
+      (org-hide-leading-stars t)
+      ;; Leave one line between headlines 
+      (org-cycle-separator-lines 1)
+      ;; Don't fontify the whole damn line
+      (org-fontify-whole-block-delimiter-line t)
+      ;; Disable word wrap in org mode.
+      ;; (org-startup-truncated t)
+      ;; Initial indentation
+      (org-startup-indented nil)         
+      ;; Necessary to avoid crazy inconsistenscies using org-download and org-roam
+      (org-link-file-path-type 'absolute)
+      ;; Begin displaying entire trees.
+      (org-startup-folded nil)
+      ;; Better display of italics & bold.
+      (org-hide-emphasis-markers t)
+      ;; Define org-tags.
+      (org-tag-alist '(("projects" . ?p)
+                       ;; ("noexport" . ?n)
+                       ("readings" . ?r)
+                       ;; ("reviews" . ?r)
+                       ("exams" . ?e)
+                       ("urgent" . ?u)
+                       ("this_week" . ?t)
+                       ("this_month" . ?m)
+                       ("next_week" . ?n)
+                       ("short_term" . ?s)
+                       ("long_term" . ?l)
+                       ;; ("university" . ?u)
+                       ("important" . ?i)))
+      ;; Hide inherited tags from Org's agenda view.
+      ;; org-agenda-show-inherited-tags nil
+      ;; Define todo keywords.
+      (org-todo-keywords '((sequence "無(1)" "次(2)" "中(3)" "見(4)" "待(5)" "阻(6)" "|" "完(7)" "取(8)")))
+      ;; Set faces for org-todo-keywords
+      (org-todo-keyword-faces '(("無" . (:foreground "#dc322f" :weight semi-bold :height 0.8))
+                                ("次" . (:foreground "#d33682" :weight semi-bold :height 0.8))
+                                ("完" . (:foreground "#859900" :weight semi-bold :height 0.8))   
+                                ("待" . (:foreground "#cb4b16" :weight semi-bold :height 0.8))
+                                ("阻" . (:foreground "#268bd2" :weight semi-bold :height 0.8)) 
+                                ("取" . (:foreground "#6c71c4" :weight semi-bold :height 0.8)) 
+                                ("見" . (:foreground "#268bd2" :weight semi-bold :height 0.8)) 
+                                ("中" . (:foreground "#b58900" :weight semi-bold :height 0.8))))
+      (org-blank-before-new-entry '((heading . nil)(plain-list-item . nil)))
+      ;; Stop emacs asking for confirmation
+      (org-confirm-babel-evaluate nil)
+      (org-ellipsis "  ⌄ ") ;; folding symbol
+      ;; Do not show export buffer.
+      (org-export-show-temporary-export-buffer nil)
+      ;; Set path for org default directory (necessary for refile and agenda).
+      (org-directory (concat (getenv "HOME") "/Dropbox/org"))
+      (org-refile-use-outline-path 'file)
+      (org-refile-targets '((org-agenda-files :maxlevel . 4)))
+      (org-outline-path-complete-in-steps nil)
+      (org-startup-with-inline-images t)
+      (org-refile-use-cache nil)
+      ;; Have org-mode indent elisp sections.
+      (org-src-tab-acts-natively nil)
+      ;; Color embeded source code
+      (org-src-fontify-natively t)
+      (org-hide-emphasis-markers t)
+      (org-fontify-done-headline t) 
+      (org-fontify-whole-heading-line t)
+      (org-fontify-quote-and-verse-blocks t)
+      ;; Don't fontify sub and superscripts.
+      (org-pretty-entities-include-sub-superscripts nil)
+      ;; Limit inheritance for certain tags. 
+      (org-tags-exclude-from-inheritance (quote ("crypt" "ignore")))
 
-        ;; Free this keybinding for cycle-themes
-        (unbind-key "C-c C-t" org-mode-map)
-        (unbind-key "M-h" org-mode-map)
+      :config 
+      (require 'org-pdftools)
+      (require 'org-journal)
+      ;; Free this keybinding for cycle-themes
+      (unbind-key "C-c C-t" org-mode-map)
+      (unbind-key "M-h" org-mode-map)
 
-    (defun sync0-overview-tree-window ()
-      "Open a clone of the current buffer to the left, resize it to 30 columns, and bind <mouse-1> to jump to the same position in the base buffer."
-      (interactive)
-      (let ((new-buffer-name (concat "<tree>" (buffer-name))))
-        ;; Create tree buffer
-        (split-window-right 30)
-        (if (get-buffer new-buffer-name)
-            (switch-to-buffer new-buffer-name)  ; Use existing tree buffer
-          ;; Make new tree buffer
-          (progn  (clone-indirect-buffer new-buffer-name nil t)
-                  (switch-to-buffer new-buffer-name)
-                  (read-only-mode)
-                  (hide-body)
-                  (toggle-truncate-lines)
+  (defun sync0-overview-tree-window ()
+    "Open a clone of the current buffer to the left, resize it to 30 columns, and bind <mouse-1> to jump to the same position in the base buffer."
+    (interactive)
+    (let ((new-buffer-name (concat "<tree>" (buffer-name))))
+      ;; Create tree buffer
+      (split-window-right 30)
+      (if (get-buffer new-buffer-name)
+          (switch-to-buffer new-buffer-name)  ; Use existing tree buffer
+        ;; Make new tree buffer
+        (progn  (clone-indirect-buffer new-buffer-name nil t)
+                (switch-to-buffer new-buffer-name)
+                (read-only-mode)
+                (hide-body)
+                (toggle-truncate-lines)
 
-                  ;; Do this twice in case the point is in a hidden line
-                  (dotimes (_ 2 (forward-line 0)))
+                ;; Do this twice in case the point is in a hidden line
+                (dotimes (_ 2 (forward-line 0)))
 
-                  ;; Map keys
-                  (use-local-map (copy-keymap outline-mode-map))
-                  (local-set-key (kbd "q") 'delete-window)
-                  (mapc (lambda (key) (local-set-key (kbd key) 'my/jump-to-point-and-show))
-                        '("<mouse-1>" "RET"))))))
+                ;; Map keys
+                (use-local-map (copy-keymap outline-mode-map))
+                (local-set-key (kbd "q") 'delete-window)
+                (mapc (lambda (key) (local-set-key (kbd key) 'my/jump-to-point-and-show))
+                      '("<mouse-1>" "RET"))))))
 
-    (defun sync0-jump-to-overview-and-show ()
-      "Switch to a cloned buffer's base buffer and move point to the cursor position in the clone."
-      (interactive)
-      (let ((buf (buffer-base-buffer)))
-        (unless buf
-          (error "You need to be in a cloned buffer!"))
-        (let ((pos (point))
-              (win (car (get-buffer-window-list buf))))
-          (if win
-              (select-window win)
-            (other-window 1)
-            (switch-to-buffer buf))
-          (goto-char pos)
-          (when (invisible-p (point))
-            (show-branches)))))
+  (defun sync0-jump-to-overview-and-show ()
+    "Switch to a cloned buffer's base buffer and move point to the cursor position in the clone."
+    (interactive)
+    (let ((buf (buffer-base-buffer)))
+      (unless buf
+        (error "You need to be in a cloned buffer!"))
+      (let ((pos (point))
+            (win (car (get-buffer-window-list buf))))
+        (if win
+            (select-window win)
+          (other-window 1)
+          (switch-to-buffer buf))
+        (goto-char pos)
+        (when (invisible-p (point))
+          (show-branches)))))
 
-  ;; (defun sync0-org-open-buffer-in-split ()
-  ;; (interactive)
-  ;;     (when (string= (file-name-extension buffer-file-name) "org")
-  ;;   (unless (equal (current-buffer) (buffer-name (window-buffer)))
-  ;;     (display-buffer (current-buffer) (if (one-window-p)
-  ;;                                      'display-buffer-pop-up-window
-  ;;                                    'display-buffer-reuse-window)))))
+    (defhydra sync0-hydra-file-access (:color amaranth :hint nil :exit t)
+      "
+       ^Windows^                ^Buffers^             ^Search^
+    ^^^^^^---------------------------------------------------------------
+    _1_: Delete others       _w_: Write           _r_: Recent
+    _2_: Split horizontally  _a_: Write as        _f_: Find
+    _3_: Split vertically    _b_: Open           
+    ^ ^                      _k_: Kill
+    ^ ^                      _M_: Move file  
+    ^^^^^^---------------------------------------------------------------
+       ^Bookmarks^           ^Planning^ 
+    ^^^^^^---------------------------------------------------------------
+    _j_: Jump to bookmark    _h_: Today
+    _g_: Bookmark o. window  _t_: Planning files
+    _m_: Set bookmark        
+    _l_: List bookmarks      _J_: org-journal
+    ^ ^                      
+    [q] Quit                 ^ ^
+    "
+      ("1" delete-other-windows)
+      ("2" sync0-split-and-follow-horizontally)
+      ("3" sync0-split-and-follow-vertically)
+      ("b" ivy-switch-buffer)
+      ;; Quickly save
+      ("w" save-buffer)
+      ("a" write-file)
+      ;; Kill current buffer and window
+      ("k" kill-buffer-and-window)
+      ;; ("o" ivy-switch-buffer-other-window)
+      ("M" sync0-move-file)
+      ("r" counsel-recentf)
+      ("f" counsel-find-file)
+      ("m" bookmark-set)
+      ("j" counsel-bookmark)
+      ("g" bookmark-jump-other-window)
+      ("l" bookmark-bmenu-list)
+      ;; ("A" org-agenda)
+      ("J" sync0-org-journal-new-scheduled-entry)
+      ("t" sync0-org-find-planning-file)
+      ("h" sync0-pop-to-org-agenda)
+      ("q" nil :color blue))
 
-  ;;       (add-hook 'find-file-hook #'sync0-org-open-buffer-in-split)
+      (defun sync0-org-tree-open-in-right-frame ()
+        "Open headline in the next window as a separate tree."
+        (interactive)
+        (org-tree-to-indirect-buffer)
+        (windmove-right))
 
-        (defun sync0-org-tree-open-in-right-frame ()
-          "Open headline in the next window as a separate tree."
-          (interactive)
-          (org-tree-to-indirect-buffer)
-          (windmove-right))
+      (defun sync0-call-rebinding-org-blank-behaviour (fn)
+        (let ((org-blank-before-new-entry
+               (copy-tree org-blank-before-new-entry)))
+          (when (org-at-heading-p)
+            (rplacd (assoc 'heading org-blank-before-new-entry) nil))
+          (call-interactively fn)))
 
-        (defun sync0-call-rebinding-org-blank-behaviour (fn)
-          (let ((org-blank-before-new-entry
-                 (copy-tree org-blank-before-new-entry)))
-            (when (org-at-heading-p)
-              (rplacd (assoc 'heading org-blank-before-new-entry) nil))
-            (call-interactively fn)))
+      (defun sync0-org-meta-return-dwim ()
+        "Improved version of default org-meta-return"
+        (interactive)
+        (sync0-call-rebinding-org-blank-behaviour 'org-meta-return))
 
-        (defun sync0-org-meta-return-dwim ()
-          "Improved version of default org-meta-return"
-          (interactive)
-          (sync0-call-rebinding-org-blank-behaviour 'org-meta-return))
+      (defun sync0-org-insert-todo-heading-dwim ()
+        "Improved version of org-insert-todo-heading"
+        (interactive)
+        (sync0-call-rebinding-org-blank-behaviour 'org-insert-todo-heading))
 
-        (defun sync0-org-insert-todo-heading-dwim ()
-          "Improved version of org-insert-todo-heading"
-          (interactive)
-          (sync0-call-rebinding-org-blank-behaviour 'org-insert-todo-heading))
+      (defun sync0-clever-insert-item ()
+        "Clever insertion of org item."
+        (if (not (org-in-item-p))
+            (insert "\n")
+          (org-insert-item)))
 
-        (defun sync0-clever-insert-item ()
-          "Clever insertion of org item."
-          (if (not (org-in-item-p))
-              (insert "\n")
-            (org-insert-item)))
+      (defun sync0-evil-org-eol-call (fun)
+        "Go to end of line and call provided function. FUN function callback"
+        (end-of-line)
+        (funcall fun)
+        (evil-append nil))
 
-        (defun sync0-evil-org-eol-call (fun)
-          "Go to end of line and call provided function. FUN function callback"
-          (end-of-line)
-          (funcall fun)
-          (evil-append nil))
+      ;; redefinition evils normal mode map
+      (evil-define-key 'normal org-mode-map
+        "<" 'outline-previous-visible-heading
+        ">" 'outline-next-visible-heading
+        (kbd "C->") 'org-forward-heading-same-level
+        (kbd "C-<") 'org-backward-heading-same-level
+        (kbd "<S-tab>") 'sync0-org-tree-open-in-right-frame 
+        "H" 'org-metaleft
+        "L" 'org-metaright
+        "K" 'org-metaup
+        "J" 'org-metadown
+        "k" 'previous-line
+        "j" 'next-line
+        "o" '(lambda () (interactive) (sync0-evil-org-eol-call 'sync0-clever-insert-item))
+        "O" '(lambda () (interactive) (sync0-evil-org-eol-call 'org-insert-heading))
+        "$" 'org-end-of-line
+        "^" 'org-beginning-of-line
+        "[" 'backward-sentence
+        "]" 'forward-sentence
+        "{" 'org-backward-paragraph
+        "}" 'org-forward-paragraph
+        "-" 'org-cycle-list-bullet
+        (kbd "<tab>") 'org-cycle)
 
-        ;; redefinition evils normal mode map
-        (evil-define-key 'normal org-mode-map
-          "<" 'outline-previous-visible-heading
-          ">" 'outline-next-visible-heading
-          (kbd "C->") 'org-forward-heading-same-level
-          (kbd "C-<") 'org-backward-heading-same-level
-          (kbd "<S-tab>") 'sync0-org-tree-open-in-right-frame 
-          "H" 'org-metaleft
-          "L" 'org-metaright
-          "K" 'org-metaup
-          "J" 'org-metadown
-          "k" 'previous-line
-          "j" 'next-line
-          "o" '(lambda () (interactive) (sync0-evil-org-eol-call 'sync0-clever-insert-item))
-          "O" '(lambda () (interactive) (sync0-evil-org-eol-call 'org-insert-heading))
-          "$" 'org-end-of-line
-          "^" 'org-beginning-of-line
-          "[" 'backward-sentence
-          "]" 'forward-sentence
-          "{" 'org-backward-paragraph
-          "}" 'org-forward-paragraph
-          "-" 'org-cycle-list-bullet
-          (kbd "<tab>") 'org-cycle)
+      (evil-define-key 'visual org-mode-map
+        ;; "q" 'highlight-changes-remove-highlight
+        "z" 'org-emphasize)
 
-        (evil-define-key 'visual org-mode-map
-          ;; "q" 'highlight-changes-remove-highlight
-          "z" 'org-emphasize)
+      ;; List of files considered for org-refile.
+      ;; (setq org-refile-targets (quote ((nil :maxlevel . 9)                ;; Default value.
+      ;;                                  ;;(org-agenda-files :maxlevel . 9) ;; set for all agenda files
+      ;;                                  ("todo.org" :maxlevel . 2))))
 
-        ;; List of files considered for org-refile.
-        (setq org-refile-targets (quote ((nil :maxlevel . 9)                ;; Default value.
-                                         ;;(org-agenda-files :maxlevel . 9) ;; set for all agenda files
-                                         ("todo.org" :maxlevel . 2))))
+      (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
-        ;; Set default application to open pdfs.
-        ;; (add-hook 'org-mode-hook
-        ;;           '(lambda ()
-        ;;              (delete '("\\.pdf\\'" . default) org-file-apps)
-        ;;              (add-to-list 'org-file-apps '("\\.pdf\\'" . "zathura %s"))))
+      ;; (setq org-src-block-faces    '(("emacs-lisp" (:family "Fira Code"  :height 0.75))
+      ;;                                ("python" (:family "Fira Code"  :height 0.75))
+      ;;                                ("latex" (:family "Fira Code"  :height 0.75))))
 
-        ;; (add-hook 'org-mode-hook
-        ;;           '(lambda ()
-        ;;              (delete '("\\.pdf\\'" . default) org-file-apps)
-        ;;              (add-to-list 'org-file-apps '("\\.pdf\\'" . "PDF Tools %s"))))
-
-        ;;    (add-hook 'org-mode-hook
-        ;;              '(lambda ()
-        ;;                 (delete '("\\.pdf\\'" . default) org-file-apps)
-        ;; (add-to-list 'org-file-apps 
-        ;;              '("\\.pdf\\'" . (lambda (file link)
-        ;;                                      (org-pdftools-open link))))))
-
-        ;; Avoid annoying space in mode line when no clock is defined.
-        (add-hook 'org-clock-out-hook
-                  '(lambda ()
-                     (setq org-mode-line-string nil)))
-
-        (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-
-        ;; (add-hook 'org-mode-hook
-        ;;           '(lambda ()
-        ;;              (delete '("\\.pdf\\'" . default) org-file-apps)
-        ;;              (add-to-list 'org-file-apps '("\\.pdf\\'" . org-pdftools-open))))
-
-
-        (setq org-src-block-faces    '(("emacs-lisp" (:family "Fira Code"  :height 0.75))
-                                       ("python" (:family "Fira Code"  :height 0.75))
-                                       ("latex" (:family "Fira Code"  :height 0.75))))
-
-        :bind ((:map org-mode-map
-                     ("M-<return>" . sync0-org-meta-return-dwim)
-                     ("M-S-<return>" . sync0-org-insert-todo-heading-dwim))))
-#+END_SRC 
-
-* org-pdftools                                                                  
-#+BEGIN_SRC emacs-lisp
-      (use-package org-pdftools
-:straight nil
-      :config (org-pdftools-setup-link))
-#+END_SRC 
-
-* org-crypt
-Allow encryption of org trees and sub trees. 
-
-#+BEGIN_SRC emacs-lisp
-  (use-package org-crypt 
-:straight nil
-    :after org
-    :custom
-    (org-crypt-key "carc.sync0@gmail.com")
-    :config
-    (org-crypt-use-before-save-magic))
-  #+END_SRC 
-
-* org-journal
-Although, I have been almost entirely paper-less since I started my
-Master's degree, I have struggled to implement a planning workflow
-(calendar, task list, etc.) that is both easy to maintain and easy to
-use. After all, the litmus test of an efficient and consistent
-planning workflow is daily use. The ~org-journal~ package contains a set
-of functions to maintain a personal diary, using ~org-mode~ and Emacs.
-For my daily planning needs, this is the package I currently use,
-alongside the proverbial ~org-agenda~ and Google calendar.
-
-Caveat: Unfortunately, I have been unable to coordinate my Emacs
-workflow with my mobile phone; therefore, I sometimes require ~Todoist~
-for things such as grocery shopping and recurring tasks. While you can
-do all this within ~org-mode~, and I have, I am not satisfied with the
-implementation so far. 
-
-#+BEGIN_SRC emacs-lisp
-  (use-package org-journal 
-    :straight (org-journal :type git :host github :repo "bastibe/org-journal") 
-    :after org
-    :custom
-    ;; Set default directory to search for journal files. 
-    ;;(org-journal-dir (concat sync0-dropbox-directory "org"))
-    (org-journal-dir (concat sync0-dropbox-directory "org/journal"))
-    ;; Delete the date prefix to new journal entries.
-    (org-journal-time-format "")
-    ;; Create one journal file per month. 
-    ;; (org-journal-file-type 'monthly)
-    (org-journal-file-type 'daily)
-    ;; Change the title of journal files to the format: "YYYY_MM.gpg".
-    (org-journal-file-format "%Y%m%d.org")
-    ;; Change the format of journal entries (org headlines) to "[Day], DD/MM/YYYY".
-    ;; (org-journal-date-format "%A, %Y/%m/%d")
-    (org-journal-date-format "%A")
-    ;; Encrypt journal files.
-    (org-journal-encrypt-journal nil)
-    ;; Don't encript individual entires in journal files. It's too cumbersome. 
-    (org-journal-enable-encryption nil)
-    (org-journal-carryover-items "TODO=\"無\"|TODO=\"次\"|TODO=\"中\"|TODO=\"待\"|TODO=\"阻\"")
-    (org-journal-enable-agenda-integration nil)
-    (org-journal-file-header "#+TITLE: %A, %d %B %Y\n#+CREATED: %Y/%m/%d\n#+DATE: %Y/%m/%d\n#+ROAM_TAGS: journal %Y %B\n\n")
-    :config
-    ;; This setup prevents slowing down agenda parsing. 
-    ;; I create a variable to stand for the path of the journal file for the current month.  
-    ;; Then, I have org-agenda parse only this path and not all the past journal files.
-    (setq sync0-journal-this-month-file 
-          (concat sync0-dropbox-directory "org/" (format-time-string "%Y%m%d") ".org"))
-
-          ;;(concat sync0-dropbox-directory "org/journal/" (format-time-string "%Y/%Y_%m") ".org")
-
-    (add-to-list 'org-agenda-files sync0-journal-this-month-file)
-
-    (defun sync0-org-journal-new-scheduled-entry (prefix &optional scheduled-time)
-      "Create a new entry in the future."
-      (interactive "P")
-      (let ((scheduled-time (or scheduled-time (org-read-date nil nil nil "%Y-%m-%d %a")))
-            (raw (prefix-numeric-value prefix)))
-        (org-journal-new-entry (= raw 16) (org-time-string-to-time scheduled-time))
-        (unless (= raw 16)
-          (if (not prefix)
-              (insert "")))))
-
-    :bind (("C-c j" . sync0-org-journal-new-scheduled-entry)
-           :map org-journal-mode-map
-           ("C-c C-s" . org-schedule)))
-  #+END_SRC 
-
-* org-capture
-#+BEGIN_SRC emacs-lisp
-          (use-package org-capture 
-           :straight nil
-            :after org 
-            :commands org-capture
-            :preface 
-            (defun org-journal-find-location ()
-              ;; Open today's journal, but specify a non-nil prefix argument in order to
-              ;; inhibit inserting the heading; org-capture will insert the heading.
-              (org-journal-new-entry t)
-              ;; Position point on the journal's top-level heading so that org-capture
-              ;; will add the new entry as a child entry.
-              (goto-char (point-min)))
-
-            :custom
-            (org-default-notes-file "~/Dropbox/etc/notes.org")
-
-            :config 
-;; The following two functions are necessary to replicate the functionality of org-roam into org-capture.
-;; https://emacs.stackexchange.com/questions/27620/orgmode-capturing-original-document-title
-(defun sync0-org-get-title (file)
-  (let (title)
-    (when file
-      (with-current-buffer
-          (get-file-buffer file)
-        (pcase (org-collect-keywords '("TITLE"))
-          (`(("TITLE" . ,val))
-           (setq title (car val)))))
-      title)))
-
-(defun sync0-org-get-abbreviated-path (file)
-(interactive)
-  (let (path)
-    (when file
-      (with-current-buffer
-          (get-file-buffer file)
-          (setq path (abbreviate-file-name file)))
-      path)))
-
-      ;; See https://emacs.stackexchange.com/questions/40749/using-user-prompted-file-name-for-org-capture-in-template
-
-      ;; (defun sync0-generate-zettel-name ()
-      ;;   (let ((time (format-time-string "%Y%m%d%H%M%S")))
-      ;;     (expand-file-name (format "%s.org" time) "~/Dropbox/org/")))
-
-      (defun sync0-generate-inbox-zettel-name ()
-    (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
-    (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
-          (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/inbox/"))
-
-      (defun sync0-generate-spontaneous-zettel-name ()
-    (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
-    (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
-          (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/spontaneous/"))
-
-      ;; (defun sync0-generate-zettel-name ()
-    ;; (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
-    ;; (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
-          ;; (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/"))
-
-      (defun sync0-generate-zettel-name ()
-    (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
-    (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
-   ;; (setq sync0-zettel-parent-title (org-roam--extract-titles-title (org-capture-get :original-buffer)))
-          (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/"))
-
-
-      (defun sync0-generate-reference-name ()
-    (setq sync0-reference-filename (read-string "Nom du fichier : "))
-    (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
-    (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
-          (expand-file-name (format "%s.org" sync0-reference-filename) "~/Dropbox/org/references/"))
-
-      (defun sync0-generate-project-name ()
-    (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
-    (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
-    (setq sync0-project-name (read-string "Nom du projet: "))
-          (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/projects/"))
-
-      (defun sync0-generate-fiche-name ()
-    (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
-    (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
-    (setq sync0-fiche-name (read-string "Fiche created for: "))
-    (setq sync0-fiche-name-uppercase 
-        (let* ((author_list (split-string sync0-fiche-name "_"))
-              (last_name (nth 0 author_list))
-              (first_name (nth 1 author_list))
-              (author_string (format "%s %s" first_name last_name)))
-        (upcase-initials author_string)))
-          (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/"))
-
-            (setq org-capture-templates 
-                  '(("j" "Journal" entry (function org-journal-find-location)
-                     "* %(format-time-string org-journal-time-format)\n%?"
-                                   :jump-to-captured t :immediate-finish t)
-                   ("z" "Zettelkasten" plain 
-                   (file sync0-generate-zettel-name)
-                   "%(format \"#+TITLE: Zettelkasten sur \n#+CREATED: %s\n#+DATE: \n#+ROAM_TAGS: zettelkasten \n\n\" sync0-zettel-time-ordered)"
-                   :jump-to-captured t)
-                   ("f" "Fiche" plain 
-                   (file sync0-generate-fiche-name)
-                   "%(format \"#+TITLE: Fiche sur %s\n#+CREATED: %s\n#+DATE: \n#+ROAM_TAGS: fiches %s\" sync0-fiche-name-uppercase sync0-zettel-time-ordered sync0-fiche-name)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title (org-capture-get :original-file))]]\n\n"
-                   :jump-to-captured t)
-                  ;;  :unnarrowed t
-                   ("p" "Note de projet" plain 
-                   (file sync0-generate-project-name)
-                   "%(format \"#+TITLE: \n#+CREATED: %s\n#+DATE: \n#+ROAM_TAGS: projects %s %s\" sync0-zettel-time-ordered sync0-project-name sync0-current-year)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title (org-capture-get :original-file))]]\n\n"
-                   :jump-to-captured t)
-                     ;; ("t" "Tâche" entry
-                      ;; (file+headline "~/Dropbox/org/etc/todo.org" "Autres")
-                     ;; "** 無 %^{Task} \n:PROPERTIES:\n:CREATED: %<<%Y-%m-%d>>\n:END:" :prepend t)
-                ("e" "Pensée éphémère" plain
-                 (file sync0-generate-inbox-zettel-name)
-               "#+TITLE: \n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: inbox %<%Y> %<%B>\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title (org-capture-get :original-file))]]\n\n")
-                     ("t" "Liste de tâches" plain
-                     (file sync0-generate-project-note-name)
-                     "%(format \"#+TITLE: Tâches de %s\n#+CATEGORY: %s\" sync0-project-name sync0-project-name-upcase)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: projects todo %(format \"%s\n#+FILETAGS: :projects:todo:%s:\" sync0-project-name sync0-project-name)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title (org-capture-get :original-file))]]\n\n%?"
-                   :unnarrowed t)
-                   ("a" "Annotation" plain 
-                    (file sync0-generate-zettel-name)
-                     "#+TITLE: %(format \"%s\" sync0-annotations-key)\n#+AUTHOR: %(format \"%s\" sync0-annotations-author)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y> %(format \"%s\" sync0-current-month-downcase) %(format \"%s\" sync0-annotations-key) annotations\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title (org-capture-get :original-file))]]\n\nDans la page %?"
-                   :unnarrowed t)
-                    ;; ("r" "Recommendation" entry
-                     ;; (file+headline "~/Dropbox/org/recommendations.org" "Non classé")
-                     ;; "** 無 %^{author_lastname, title} \n:PROPERTIES:\n:CREATED: %<%Y-%m-%d>\n:RECOMMENDER: %^{Recommender}\n:END:" :prepend t)
-                   ("l" "Note de lecture" plain 
-                    (file sync0-generate-reference-name)
-                   "#+TITLE: %^{Title}\n#+SUBTITLE: %^{Subtitle}\n#+AUTHOR: %^{Author}\n#+ROAM_KEY: cite:%(format \"%s\" sync0-reference-filename)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %(format \"%s\" sync0-reference-filename) references %?\n#+INTERLEAVE_PDF:\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title (org-capture-get :original-file))]]\n\n"
-                   :unnarrowed t)
-                    ;; ("l" "Lecture du doctorat" entry
-                    ;;  (file+headline "~/Dropbox/org/doctorat_readings.org" "Non-classées")
-                    ;;  "** %^{lastname, title} \n:PROPERTIES:\n:CREATED: %<<%Y-%m-%d>>\n:ORIGIN: %a\n:END:" :prepend t)
-              ("w" "Site web" plain 
-                 (file sync0-generate-zettel-name)
-             "#+TITLE: %^{Title}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y> %<%B> annotations\n#+ROAM_KEY: \n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title (org-capture-get :original-file))]]\n\n%?"
-             :unnarrowed t)
-              ("n" "Numérotée" plain 
-                 (file sync0-generate-zettel-name)
-             ;; "#+TITLE: %^{Title}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y>  %<%B>\n\nOrigin: %F\n\n"
-             ;; "#+TITLE: %^{Title}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y>  %<%B>\n\nOrigin: %(sync0-org-get-title (org-capture-get :original-file))\n\n"
-              "#+TITLE: %^{Title}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y>  %<%B>\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title (org-capture-get :original-file))]]\n\n"
-             :unnarrowed t)
-              ;; ("n" "Numérotée" plain 
-              ;;    (file sync0-generate-zettel-name)
-             ;; "#+TITLE: %^{Title}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y>  %<%B>\n\nOrigin: %a\n\n"
-             ;; :unnarrowed t)
-                  ("s" "Écriture spontanée" plain
-                 (file sync0-generate-spontaneous-zettel-name)
-                   "#+TITLE: Divertisements du %<%d> %<%B> %<%Y>\n#+ROAM_TAGS: spontaneous %<%Y> %<%B>\n\n")
-                    ("m" "Email" entry 
-                     (file+headline "~/Dropbox/org/messages.org" "Courriel")
-                     "** 無 %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n" :prepend t)))
-
-            :bind 
-            (("\C-c c" . org-capture)))
-#+END_SRC 
+      :bind (("<f5>" . sync0-hydra-file-access/body)
+             ("C-x 2" . sync0-split-and-follow-horizontally)
+             ("C-x 3" . sync0-split-and-follow-vertically)
+             (:map org-mode-map
+              ("M-<return>" . sync0-org-meta-return-dwim)
+              ("M-S-<return>" . sync0-org-insert-todo-heading-dwim))))
+      #+END_SRC 
 
 * org-agenda
-#+BEGIN_SRC emacs-lisp
+  #+BEGIN_SRC emacs-lisp
       (use-package org-agenda 
-:straight nil
+        :straight nil
         :after (org all-the-icons)
-  :commands       (sync0-pop-to-org-agenda org-agenda)
+        :commands       (sync0-pop-to-org-agenda org-agenda)
         :custom
         (org-agenda-todo-keyword-format "%-1s ")
         (org-agenda-include-diary t)
         (org-agenda-inhibit-startup t)
         (org-agenda-dim-blocked-tasks nil)
         (org-cycle-separator-lines 0)
-        ;; Set property inheritance
-        ;; (org-use-property-inheritance '("PRIORITY" "DEADLINE" "SCHEDULED"))
         ;; Choose the placement of org tags in org files.
         (org-tags-column 80)
         ;; Place org agenda tags in the same place as org tags.
@@ -685,12 +431,6 @@ implementation so far.
           "Jump to the previous header in an agenda series."
           (interactive)
           (sync0--org-agenda-goto-header t))
-
-        ;; Fast access agenda view.
-        ;;(defun sync0-pop-to-org-agenda (&optional split)
-        ;; "Visit the org agenda, in the current window or a SPLIT."
-        ;;(interactive "P")
-        ;;(org-agenda nil "h")) 
 
         ;; Fast access agenda view.
         (defun sync0-pop-to-org-agenda (&optional split)
@@ -1157,110 +897,23 @@ implementation so far.
               nil)))
 
         ;; org-agenda configuration
+         (setq org-agenda-files (list "~/Dropbox/org/projects/"))
 
-        ;; Include all my Zetteln
-         (setq org-agenda-files (list ;;"~/Dropbox/org/"
-                                      "~/Dropbox/org/projects/"
-         ))
-
-         ;; (setq org-agenda-files (list "~/Dropbox/org/projects/"))
-
-          (let ((my-agenda-files (list "~/Dropbox/org/etc/Gcal.org"
+         (let ((my-agenda-files (list "~/Dropbox/org/etc/Gcal.org"
                                       "~/Dropbox/org/etc/Events.org"
                                       "~/Dropbox/org/etc/Classes.org"
                                       ;; "~/Dropbox/org/etc/Habits.org"
                                        "~/Dropbox/org/etc/todo.org"
                                       "~/Dropbox/org/etc/menage.org")))
-                  (setq org-agenda-files (append org-agenda-files my-agenda-files)))
+         (setq org-agenda-files (append org-agenda-files my-agenda-files)))
 
-        ;; (setq sync0-org-agenda-todo-files
-        ;;       (let ((sans-todo (cl-remove-if
-        ;;                         (lambda (k) (string-match-p "etc/etodo.org$" k)) org-agenda-files)))
-        ;;         (seq-difference org-agenda-files sans-todo)))
+    ;; This setup prevents slowing down agenda parsing. 
+    ;; I create a variable to stand for the path of the journal file for the current month.  
+    ;; Then, I have org-agenda parse only this path and not all the past journal files.
+    (setq sync0-journal-this-month-file 
+          (concat sync0-dropbox-directory "org/" (format-time-string "%Y%m%d") ".org"))
 
-        ;; (setq org-agenda-files (list "~/Dropbox/org/etc/calendar_gcal.org"
-        ;;                              "~/Dropbox/org/etc/calendar_events.org"
-        ;;                              "~/Dropbox/org/etc/calendar_classes.org"
-        ;;                              "~/Dropbox/org/etc/calendar_habits.org"
-        ;;                               "~/Dropbox/org/etc/todo.org"
-        ;;                              "~/Dropbox/org/etc/menage.org"))
-
-
-        ;; ;; Add files to arg-agenda-files recursively.
-        ;; (let ((zettel (directory-files-recursively "~/Dropbox/org/" "\.org$")))
-        ;;          (setq org-agenda-files (append org-agenda-files zettel)))
-
-        ;; ;; Add files to arg-agenda-files recursively.
-        ;; (let ((zettel (directory-files-recursively "~/Dropbox/org/" "\.org$"))
-        ;;          (repetitions (cl-remove-if  (lambda (k) (string-match-p "etc/[[:graph:]]+\.org$" k)) org-agenda-files)))
-        ;;          (seq-difference org-agenda-files repetitions)
-        ;;          (setq org-agenda-files (append org-agenda-files zettel)))
-
-        ;; ;; ;; Add files to arg-agenda-files recursively.
-        ;; (let ((todos (directory-files-recursively "~/Dropbox/org/" "todo\.org$"))
-        ;;        (messages (directory-files-recursively "~/Dropbox/org/" "messages\.org$"))
-        ;;        (readings (directory-files-recursively "~/Dropbox/org/projects/" "readings\.org$"))
-        ;;        (stages (directory-files-recursively "~/Dropbox/org/projects/" "stages\.org$")))
-        ;;        ;; (gestion (directory-files-recursively "~/Dropbox/projects/" "gestion\.org$"))
-        ;;       ;; (projects (directory-files-recursively "~/Dropbox/projects/" "\.org$"))
-        ;;    ;; (setq org-agenda-files (append org-agenda-files todos readings))
-        ;;    (setq org-agenda-files (append org-agenda-files todos messages readings stages)))
-
-        ;; Add files to journal files
-      ;;  (setq sync0-org-journal-files (directory-files-recursively "~/Dropbox/projects/" "journal.org$")) 
-
-        ;; (let ((messages (directory-files-recursively "~/Dropbox/org/messages/" "\.org$")))
-        ;;   (setq sync0-message-files messages))
-
-        ;; (setq sync0-org-agenda-todo-files
-        ;;       (let ((sans-todo (cl-remove-if
-        ;;                         (lambda (k) (string-match-p "todo.org$" k)) org-agenda-files)))
-        ;;         (seq-difference org-agenda-files sans-todo)))
-
-        ;; (defvar sync0-org-planning-files-alist
-        ;;   '((?1 "To-do"
-        ;;         (lambda ()
-        ;;           (find-file (ivy-completing-read "Select a to-do file: " sync0-org-agenda-todo-files))))
-        ;;     (?2 "Journal"
-        ;;         (lambda ()
-        ;;           (find-file (ivy-completing-read "Select a journal file: " sync0-org-journal-files))))
-        ;;     (?3 "Message"
-        ;;         (lambda ()
-        ;;           (find-file (ivy-completing-read "Select a message file: " sync0-message-files)))))
-        ;;   "List that associates number letters to descriptions and actions.")
-
-        ;; (defun sync0-org-find-planning-file ()
-        ;;   "Lets the user choose the animal and takes the corresponding action.
-        ;;   Returns whatever the action returns."
-        ;;   (interactive)
-        ;;   (let ((choice
-        ;;          (read-char-choice
-        ;;           (mapconcat
-        ;;            (lambda (item) (format "[%c] %s" (car item) (cadr item)))
-        ;;            sync0-org-planning-files-alist " ")
-        ;;           (mapcar #'car sync0-org-planning-files-alist))))
-        ;;     (funcall (nth 2 (assoc choice sync0-org-planning-files-alist)))))
-
-        ;; ;; (defun sync0-org-agenda-find-todo-file ()
-        ;;   "Find a to-do list from within my list of todo-files included in org-agenda-files"
-        ;;   (interactive)
-        ;;   (let ((file
-        ;;          (ivy-completing-read "Select a to-do file: " sync0-org-agenda-todo-files)))
-        ;;     (find-file file)))
-
-        ;; (defun sync0-org-find-journal-file ()
-        ;;   "Find a to-do list from within my list of todo-files included in org-agenda-files"
-        ;;   (interactive)
-        ;;   (let ((file
-        ;;          (ivy-completing-read "Select a journal file: " sync0-org-journal-files)))
-        ;;     (find-file file)))
-
-        ;; (defun sync0-org-agenda-find-message-file ()
-        ;;   "Find a to-do list from within my list of todo-files included in org-agenda-files"
-        ;;   (interactive)
-        ;;   (let ((file
-        ;;          (ivy-completing-read "Select a to-do file: " sync0-message-files)))
-        ;;     (find-file file)))
+    (add-to-list 'org-agenda-files sync0-journal-this-month-file)
 
         (setq org-agenda-custom-commands
               '(("d" "Deux semaines"
@@ -1336,68 +989,6 @@ implementation so far.
                                                               (org-agenda-skip-entry-if 'nottodo 'any)))
                               (org-agenda-sorting-strategy '(timestamp-up category-keep tag-up todo-state-up))
                               (org-agenda-prefix-format "  %-29(sync0-org-agenda-get-timestamp-time)  %-3i  %-20c  "))))
-                 ;; list options for block display
-                 ((org-agenda-remove-tags t)
-                  (org-agenda-view-columns-initially t)))
-
-                ("o" "Objectifs"
-                 ((tags-todo "today|urgent|PRIORITY=\"A\"|DEADLINE=\"<today>\"|SCHEDULED=\"<today>\""
-                             ((org-agenda-overriding-header "Aujourd'hui :")
-                              (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("完" "取")))
-                              (org-agenda-prefix-format " %-12t%-8s %-15c ")))
-                  (tags-todo "+this_week-urgent|DEADLINE>=\"<+1d>\"&DEADLINE<=\"<+7d>\""
-                             ((org-agenda-overriding-header "Cette semaine :")
-                              (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取"))
-                                                             (sync0-org-skip-subtree-if-priority ?A)))
-                              (org-agenda-prefix-format " %-12t%-8s %-15c ")))
-                  (tags-todo "+next_week-urgent|DEADLINE>=\"<+8d>\"&DEADLINE<=\"<+14d>\""
-                             ((org-agenda-overriding-header "Prochaine semaine :")
-                              (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取"))
-                                                             (sync0-org-skip-subtree-if-priority ?A)))
-                              (org-agenda-prefix-format " %-12t%-8s %-15c ")))
-                  (tags-todo "+this_month-next_month-urgent|DEADLINE>=\"<+15d>\"&DEADLINE<=\"<+31d>\""
-                             ((org-agenda-overriding-header "Mensuels :")
-                              (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取"))
-                                                             (sync0-org-skip-subtree-if-priority ?A)))
-                              (org-agenda-prefix-format " %-12t%-8s %-15c ")))
-                  (tags-todo "+next_month-urgent|DEADLINE>=\"<+32d>\"&DEADLINE<=\"<+62d>\""
-                             ((org-agenda-overriding-header "Prochain moi :")
-                              (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取"))
-                                                             (sync0-org-skip-subtree-if-priority ?A)))
-                              (org-agenda-prefix-format " %-12t%-8s %-15c ")))
-                  (tags-todo "+short_term-urgent"
-                             ((org-agenda-overriding-header "Court terme :")
-                              (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取"))
-                                                             (sync0-org-skip-subtree-if-priority ?A)))
-                              (org-agenda-prefix-format " %-12t%-8s %-15c ")))
-                  (tags-todo "+long_term"
-                             ((org-agenda-overriding-header "Longue terme :")
-                              (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取"))
-                                                             (sync0-org-skip-subtree-if-priority ?A)))
-                              (org-agenda-prefix-format " %-12t%-8s %-15c "))))
-                 ;; list options for block display
-                 ((org-agenda-remove-tags t)
-                  (org-agenda-view-columns-initially t)))
-
-                ("c" "Stephen Covey's"
-                 ((tags-todo "+this_month+important|+urgent+important|+this_month+PRIORITY=\"A\"|+urgent+PRIORITY=\"A\""
-                             ((org-agenda-overriding-header "Urgent & important :")
-                              (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("完" "取")))
-                              (org-agenda-prefix-format " %-12t%-8s %-15c ")))
-                  (tags-todo "+this_month-important|+urgent-important"
-                             ((org-agenda-overriding-header "Urgent & pas important :")
-                              (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取"))
-                                                             (sync0-org-skip-subtree-if-priority ?A)))
-                              (org-agenda-prefix-format " %-12t%-8s %-15c ")))
-                  (tags-todo "+important-this_month-urgent|+PRIORITY=\"A\"-this_month-urgent"
-                             ((org-agenda-overriding-header "Pas urgent & important :")
-                              (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("完" "取")))
-                              (org-agenda-prefix-format " %-12t%-8s %-15c ")))
-                  (tags-todo "-important-this_month-urgent"
-                             ((org-agenda-overriding-header "Pas urgent & pas important :")
-                              (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取"))
-                                                             (sync0-org-skip-subtree-if-priority ?A)))
-                              (org-agenda-prefix-format " %-12t%-8s %-15c "))))
                  ;; list options for block display
                  ((org-agenda-remove-tags t)
                   (org-agenda-view-columns-initially t)))
@@ -1567,8 +1158,214 @@ implementation so far.
          ("J" . sync0-org-agenda-next-header)
          ("K" . sync0-org-agenda-previous-header)
          ("N" . sync0-org-agenda-new)))
- #+END_SRC
+  #+END_SRC
 
+* org-journal
+  Although, I have been almost entirely paper-less since I started my
+  Master's degree, I have struggled to implement a planning workflow
+  (calendar, task list, etc.) that is both easy to maintain and easy to
+  use. After all, the litmus test of an efficient and consistent
+  planning workflow is daily use. The ~org-journal~ package contains a set
+  of functions to maintain a personal diary, using ~org-mode~ and Emacs.
+  For my daily planning needs, this is the package I currently use,
+  alongside the proverbial ~org-agenda~ and Google calendar.
+
+  Caveat: Unfortunately, I have been unable to coordinate my Emacs
+  workflow with my mobile phone; therefore, I sometimes require ~Todoist~
+  for things such as grocery shopping and recurring tasks. While you can
+  do all this within ~org-mode~, and I have, I am not satisfied with the
+  implementation so far. 
+
+  #+BEGIN_SRC emacs-lisp
+  (use-package org-journal 
+    :straight (org-journal :type git :host github :repo "bastibe/org-journal") 
+    :after org
+    :custom
+    ;; Set default directory to search for journal files. 
+    ;;(org-journal-dir (concat sync0-dropbox-directory "org"))
+    (org-journal-dir (concat sync0-dropbox-directory "org/journal"))
+    ;; Delete the date prefix to new journal entries.
+    (org-journal-time-format "")
+    ;; Create one journal file per month. 
+    (org-journal-file-type 'daily)
+    ;; Change the title of journal files to the format: "YYYY_MM.gpg".
+    (org-journal-file-format "%Y%m%d.org")
+    ;; Change the format of journal entries (org headlines) to "[Day], DD/MM/YYYY".
+    ;; (org-journal-date-format "%A, %Y/%m/%d")
+    (org-journal-date-format "%A")
+    ;; Encrypt journal files.
+    (org-journal-encrypt-journal nil)
+    ;; Don't encript individual entires in journal files. It's too cumbersome. 
+    (org-journal-enable-encryption nil)
+    (org-journal-carryover-items "TODO=\"無\"|TODO=\"次\"|TODO=\"中\"|TODO=\"待\"|TODO=\"阻\"")
+    (org-journal-enable-agenda-integration nil)
+    (org-journal-file-header "#+TITLE: %A, %d %B %Y\n#+CREATED: %Y/%m/%d\n#+DATE: %Y/%m/%d\n#+ROAM_TAGS: journal %Y %B\n\n")
+    :config
+    (defun sync0-org-journal-new-scheduled-entry (prefix &optional scheduled-time)
+      "Create a new entry in the future."
+      (interactive "P")
+      (let ((scheduled-time (or scheduled-time (org-read-date nil nil nil "%Y-%m-%d %a")))
+            (raw (prefix-numeric-value prefix)))
+        (org-journal-new-entry (= raw 16) (org-time-string-to-time scheduled-time))
+        (unless (= raw 16)
+          (if (not prefix)
+              (insert "")))))
+
+    :bind (("C-c j" . sync0-org-journal-new-scheduled-entry)
+           :map org-journal-mode-map
+           ("C-c C-s" . org-schedule)))
+  #+END_SRC 
+
+* org-pdftools 
+  #+BEGIN_SRC emacs-lisp
+      (use-package org-pdftools
+      :straight nil
+      :config (org-pdftools-setup-link))
+  #+END_SRC 
+
+* org-crypt
+  Allow encryption of org trees and sub trees. 
+
+  #+BEGIN_SRC emacs-lisp
+  (use-package org-crypt 
+    :straight nil
+    :after org
+    :custom
+    (org-crypt-key "carc.sync0@gmail.com")
+    :config
+    (org-crypt-use-before-save-magic))
+  #+END_SRC 
+
+* org-capture
+  #+BEGIN_SRC emacs-lisp
+          (use-package org-capture 
+           :straight nil
+            :after org 
+            :commands org-capture
+            :preface 
+            (defun org-journal-find-location ()
+              ;; Open today's journal, but specify a non-nil prefix argument in order to
+              ;; inhibit inserting the heading; org-capture will insert the heading.
+              (org-journal-new-entry t)
+              ;; Position point on the journal's top-level heading so that org-capture
+              ;; will add the new entry as a child entry.
+              (goto-char (point-min)))
+
+            :custom
+            (org-default-notes-file "~/Dropbox/etc/notes.org")
+
+            :config 
+;; The following two functions are necessary to replicate the functionality of org-roam into org-capture.
+;; https://emacs.stackexchange.com/questions/27620/orgmode-capturing-original-document-title
+(defun sync0-org-get-title (file)
+  (let (title)
+    (when file
+      (with-current-buffer
+          (get-file-buffer file)
+        (pcase (org-collect-keywords '("TITLE"))
+          (`(("TITLE" . ,val))
+           (setq title (car val)))))
+      title)))
+
+(defun sync0-org-get-abbreviated-path (file)
+(interactive)
+  (let (path)
+    (when file
+      (with-current-buffer
+          (get-file-buffer file)
+          (setq path (abbreviate-file-name file)))
+      path)))
+
+      ;; See https://emacs.stackexchange.com/questions/40749/using-user-prompted-file-name-for-org-capture-in-template
+      (defun sync0-org-capture-inbox-zettel-name ()
+    (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
+    (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
+          (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/inbox/"))
+
+      (defun sync0-org-capture-spontaneous-zettel-name ()
+    (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
+    (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
+          (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/spontaneous/"))
+
+      (defun sync0-org-capture-zettel-name ()
+    (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
+    (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
+          (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/"))
+
+      (defun sync0-org-capture-reference-name ()
+    (setq sync0-reference-filename (read-string "Nom du fichier : "))
+    (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
+    (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
+          (expand-file-name (format "%s.org" sync0-reference-filename) "~/Dropbox/org/references/"))
+
+      (defun sync0-org-capture-project-name ()
+    (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
+    (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
+    (setq sync0-project-name (read-string "Nom du projet: "))
+          (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/projects/"))
+
+      (defun sync0-org-capture-fiche-name ()
+    (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
+    (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
+    (setq sync0-fiche-name (read-string "Fiche created for: "))
+    (setq sync0-fiche-name-uppercase 
+        (let* ((author_list (split-string sync0-fiche-name "_"))
+              (last_name (nth 0 author_list))
+              (first_name (nth 1 author_list))
+              (author_string (format "%s %s" first_name last_name)))
+        (upcase-initials author_string)))
+          (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/"))
+
+            (setq org-capture-templates 
+                  '(("j" "Journal" entry (function org-journal-find-location)
+                     "* %(format-time-string org-journal-time-format)\n%?"
+                                   :jump-to-captured t :immediate-finish t)
+                   ("z" "Zettelkasten" plain 
+                   (file sync0-org-capture-zettel-name)
+                   "%(format \"#+TITLE: Zettelkasten sur \n#+CREATED: %s\n#+DATE: \n#+ROAM_TAGS: zettelkasten \n\n\" sync0-zettel-time-ordered)"
+                   :jump-to-captured t)
+                   ("f" "Fiche" plain 
+                   (file sync0-org-capture-fiche-name)
+                   "%(format \"#+TITLE: Fiche sur %s\n#+CREATED: %s\n#+DATE: \n#+ROAM_TAGS: fiches %s\" sync0-fiche-name-uppercase sync0-zettel-time-ordered sync0-fiche-name)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title (org-capture-get :original-file))]]\n\n"
+                   :jump-to-captured t)
+                   ("p" "Note de projet" plain 
+                   (file sync0-org-capture-project-name)
+                   "%(format \"#+TITLE: \n#+CREATED: %s\n#+DATE: \n#+ROAM_TAGS: projects %s %s\" sync0-zettel-time-ordered sync0-project-name sync0-current-year)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title (org-capture-get :original-file))]]\n\n"
+                   :jump-to-captured t)
+                ("e" "Pensée éphémère" plain
+                 (file sync0-org-capture-inbox-zettel-name)
+               "#+TITLE: \n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: inbox %<%Y> %<%B>\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title (org-capture-get :original-file))]]\n\n")
+                     ("t" "Liste de tâches" plain
+                     (file sync0-org-capture-project-note-name)
+                     "%(format \"#+TITLE: Tâches de %s\n#+CATEGORY: %s\" sync0-project-name sync0-project-name-upcase)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: projects todo %(format \"%s\n#+FILETAGS: :projects:todo:%s:\" sync0-project-name sync0-project-name)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title (org-capture-get :original-file))]]\n\n%?"
+                   :unnarrowed t)
+                   ("a" "Annotation" plain 
+                    (file sync0-org-capture-zettel-name)
+                     "#+TITLE: %(format \"%s\" sync0-zettelkasten-annotations-key)\n#+AUTHOR: %(format \"%s\" sync0-zettelkasten-annotations-author)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y> %(format \"%s\" sync0-current-month-downcase) %(format \"%s\" sync0-zettelkasten-annotations-key) annotations\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title (org-capture-get :original-file))]]\n\nDans la page %?"
+                   :unnarrowed t)
+                   ("l" "Note de lecture" plain 
+                    (file sync0-org-capture-reference-name)
+                   "#+TITLE: %^{Title}\n#+SUBTITLE: %^{Subtitle}\n#+AUTHOR: %^{Author}\n#+ROAM_KEY: cite:%(format \"%s\" sync0-reference-filename)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %(format \"%s\" sync0-reference-filename) references %?\n#+INTERLEAVE_PDF:\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title (org-capture-get :original-file))]]\n\n"
+                   :unnarrowed t)
+              ("w" "Site web" plain 
+                 (file sync0-org-capture-zettel-name)
+             "#+TITLE: %^{Title}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y> %<%B> annotations\n#+ROAM_KEY: \n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title (org-capture-get :original-file))]]\n\n%?"
+             :unnarrowed t)
+              ("n" "Numérotée" plain 
+                 (file sync0-org-capture-zettel-name)
+              "#+TITLE: %^{Title}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y>  %<%B>\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title (org-capture-get :original-file))]]\n\n"
+             :unnarrowed t)
+                  ("s" "Écriture spontanée" plain
+                 (file sync0-org-capture-spontaneous-zettel-name)
+                   "#+TITLE: Divertisements du %<%d> %<%B> %<%Y>\n#+ROAM_TAGS: spontaneous %<%Y> %<%B>\n\n")
+                    ("m" "Email" entry 
+                     (file+headline "~/Dropbox/org/messages.org" "Courriel")
+                     "** 無 %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n" :prepend t)))
+
+            :bind 
+            (("\C-c c" . org-capture)))
+  #+END_SRC 
+  
 * org-habits
 This package is included in ~org-mode~; it simply allows the creation of
 recurring tasks for use in ~org-agenda~. Although this introduces some
@@ -1580,7 +1377,7 @@ Beware! There is a strange inconsistency when habits are enabled. See [[https://
 
 #+BEGIN_SRC emacs-lisp
   (use-package org-habit 
-:straight nil
+    :straight nil
     :after (org org-agenda)
     ;; :commands org-bullets-mode
     :config
@@ -1595,22 +1392,11 @@ the processing of agenda commands
   org-agenda-hide-tags-regexp "contacts\\|projects\\|research\\|urgent\\|important\\|short_term\\|long_term\\|no_export\\|this_month\\|this_week\\|next_week\\|next_moth\\|Métier")
 #+END_SRC 
 
-;;(setq org-agenda-hide-tags-regexp "noexport\\|university\\|today")
-
-Stuck projects. 
-I'm trying to setup the org-stuck-projects variable so that the "stuck
-projects" agenda will list all headlines which are TODOs (any TODO keyword
-except DONE) but those which don't have SCHEDULED or DEADLINE attributes
-set. Currently I get an empty list with this setting for the variable:
-
-     ;; (setq org-stuck-projects      '("TODO={.+}/-DONE" nil nil "SCHEDULED:\\|DEADLINE:"))
-     ;; (setq org-stuck-projects      '("TODO={.+}/-DONE" nil nil "SCHEDULED:\\|DEADLINE:"))
-
 * org-clock
-#+BEGIN_SRC emacs-lisp
+  #+BEGIN_SRC emacs-lisp
   (use-package org-clock 
-:straight nil
-    :after (org org-agenda)
+    :straight nil
+    :after org
     :custom
     ;; Set default column view headings: Task Priority Effort Clock_Summary
     (org-columns-default-format "%1PRIORITY %2TODO %DEADLINE %60ITEM(Task) %5EFFORT(Effort){:} %5CLOCKSUM")
@@ -1648,8 +1434,13 @@ set. Currently I get an empty list with this setting for the variable:
     (org-clock-report-include-clocking-task t)
     ;; use pretty things for the clocktable
     (org-pretty-entities t)
-(org-clock-string-limit 8)
+    (org-clock-string-limit 8)
+
     :config
+      ;; Avoid annoying space in mode line when no clock is defined.
+      (add-hook 'org-clock-out-hook
+                '(lambda ()
+                   (setq org-mode-line-string nil)))
 
     (defun sync0-org-clock-in ()
       (interactive)
@@ -1779,18 +1570,6 @@ are exported to a filename derived from the headline text."
            (unless export-file (org-delete-property "EXPORT_FILE_NAME"))
            (set-buffer-modified-p modifiedp)))
        "-noexport" 'region-start-level))))
-
-    ;; (defun sync0-latex-and-beamer-export ()
-    ;;   "Export current org file with beamer if it has beamer as latex class."
-    ;;   (interactive)
-    ;;   (when (equal major-mode 'org-mode) 
-    ;;     (if (string-match "LATEX_CLASS: beamer" (buffer-string))
-    ;;         (progn
-    ;;           (setq org-latex-pdf-process (list "latexmk -lualatex -bibtex -f %f"))
-    ;;           (org-beamer-export-to-pdf))
-    ;;       (progn
-    ;;         (setq org-latex-pdf-process (list "latexmk -output-directory=%o -lualatex -bibtex -f %f"))
-    ;;         (org-latex-export-to-pdf)))))
 
     ;; ;; Set tags to excluce from export. 
     (add-to-list 'org-export-exclude-tags "取")
@@ -1944,41 +1723,10 @@ on my laptop when editing large ~org~ files or files with many
 
 #+BEGIN_SRC emacs-lisp
       (use-package org-bullets 
-:straight (org-bullets :type git :host github :repo "sabof/org-bullets") 
+        :straight (org-bullets :type git :host github :repo "sabof/org-bullets") 
         :custom
         ;; Hide all bullets:
-        (org-bullets-bullet-list '(" "))
-        :config
-        (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-    ;; Display the colon (i.e., ":") of org-mode tags as a space. The
-    ;; first function identifies whether the colon is a tag colon or a
-    ;; regular colon; this is necessary to avoid hiding colons that
-    ;; are not tags.
-
-  ;;         (font-lock-add-keywords 'org-mode
-  ;;                               '(("^\\*+ "
-  ;;                                ":[[:graph:]]+\\(:\\)[[:blank:]]*$" nil nil
-  ;;                                  (0 (put-text-property (match-beginning 1) (match-end 1) 'font-lock-face '(:foreground "#fdf6e3"))))))
-
-
-          (font-lock-add-keywords 'org-mode
-                                 '(("^\\*+ "
-                                  ":[[:graph:]]+\\(:\\)[[:blank:]]*$" nil nil
-                                   (0 (put-text-property (match-beginning 1) (match-end 1) 'display " ")))))
-
-  ;; The second function hides those colons that occur at the
-  ;; beginning of a word.
-          (font-lock-add-keywords 'org-mode
-                                '(("^\\*+ "
-                                 "\\(:\\)[[:graph:]]+:" nil nil
-                                   (0 (put-text-property (match-beginning 1) (match-end 1) 'display " "))))))
-
-  ;; ;; The second function hides those colons that occur at the
-  ;; ;; beginning of a word.
-  ;;         (font-lock-add-keywords 'org-mode
-  ;;                               '(("^\\*+ "
-  ;;                                "\\(:\\)[[:graph:]]+" nil nil
-  ;;                                  (0 (put-text-property (match-beginning 1) (match-end 1) 'font-lock-face '(:foreground "#fdf6e3"))))))
+        (org-bullets-bullet-list '(" ")))
 
 #+END_SRC 
 
@@ -1986,21 +1734,93 @@ on my laptop when editing large ~org~ files or files with many
   This package stores org mode links to messages.
 #+BEGIN_SRC emacs-lisp
   (use-package org-mu4e 
-:straight nil
+    :straight nil
     ;; :disabled t
-    :after (org mu4e)
+    :after org
     :custom
     ;; Store link to message if in header view, not to header query.
     (org-mu4e-link-query-in-headers-mode nil))
   #+END_SRC 
 
+* org-roam
+#+BEGIN_SRC emacs-lisp
+        (use-package org-roam
+          :straight (org-roam :type git :host github :repo "org-roam/org-roam") 
+          :hook (after-init . org-roam-mode)
+          :custom
+              (org-roam-directory "~/Dropbox/org/")
+        ;; make org-roam buffer sticky
+              (org-roam-buffer-no-delete-other-windows t)
+              (org-roam-completion-system 'default)
+              (org-roam-link-file-path-type 'absolute)
+              ;; (org-roam-dailies-directory org-journal-dir)
+              (org-roam-dailies-directory "journal/")
+              (org-roam-tag-sources '(prop last-directory))
+  ;;           (org-roam-tag-sources '(prop))
+              (org-roam-completion-everywhere t)
+              (org-roam-index-file "~/Dropbox/org/index.org")
+              (org-roam-graph-exclude-matcher '("journal" "etc" "inbox" "projects" "spontaneous"))
+        :config
+
+        (setq org-roam-capture-templates '( 
+         ("n" "Numéroté" plain (function org-roam--capture-get-point)
+          "%?"
+          :file-name "%<%Y%m%d%H%M%S>"
+          :head "#+TITLE: ${slug}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: permanent %<%Y>  %<%B>\n\nOrigin: %a\n"
+          :unnarrowed t)))
+
+      (setq org-roam-capture-ref-templates
+              '(("r" "ref" plain (function org-roam-capture--get-point)
+                 "#+ROAM_KEY: ${ref}\n\n%?"
+                 :file-name "website_${slug}_%<%Y-%m-%d>"
+                 :head "#+TITLE: ${title}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: website %<%Y>\n\n"
+                 :unnarrowed t)))
+
+        (setq org-roam-dailies-capture-templates
+              '(("d" "default" entry
+                 #'org-roam-capture--get-point
+                 "* %?"
+                 :file-name "journal/%<%Y%m%d>"
+                 :head "#+TITLE: %<%A, %d %B %Y>\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: journal %<%Y> %<%B>\n\n"))))
+
+#+END_SRC 
+
+** company-org-roam
+ #+BEGIN_SRC emacs-lisp
+    (use-package company-org-roam  :after company)
+    #+END_SRC 
+
+** 無 org-roam-bibtex
+   #+BEGIN_SRC emacs-lisp
+    (use-package org-roam-bibtex
+      :straight (org-roam-bibtex :type git :host github :repo "org-roam/org-roam-bibtex") 
+      :after (org-roam)
+      :hook (org-roam-mode . org-roam-bibtex-mode)
+      :custom
+          ;; Use this to insert org-ref citations (cite:XXX199X)
+          (orb-autokey-format "%a%y")
+          (orb-process-file-keyword t)
+          (orb-file-field-extensions '("pdf"))
+          ;; Use this to insert citation keys
+          (orb-insert-link-description 'citekey)
+          (orb-note-actions-interface 'hydra)
+      :config
+
+    (setq orb-preformat-keywords
+          '("citekey" "title" "subtitle" "url" "author-or-editor" "keywords" "file"))
+
+      (setq orb-templates
+            '(("r" "ref" plain (function org-roam-capture--get-point)
+             ""
+               :file-name "references/${citekey}"
+               :head "#+TITLE: ${title}\n#+SUBTITLE: ${subtitle}\n#+AUTHOR: ${author-or-editor}\n#+ROAM_KEY: ${ref}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: ${citekey} references ${keywords}\n#+INTERLEAVE_PDF: ${file}"
+               :unnarrowed t))))
+#+END_SRC 
+
 * org-ref 
 #+BEGIN_SRC emacs-lisp
   (use-package org-ref
-:straight (org-ref :type git :host github :repo "jkitchin/org-ref") 
-;;    :after (org org-roam)
-    ;;    :init 
-;;    :commands (sync0-hydra-research-functions/body org-ref-ivy-insert-cite-link)
+    :straight (org-ref :type git :host github :repo "jkitchin/org-ref") 
     :preface 
     (defun sync0-org-ref-open-pdf-at-point ()
       "Open the pdf for bibtex key under point if it exists."
@@ -2018,8 +1838,7 @@ on my laptop when editing large ~org~ files or files with many
     (org-ref-pdf-directory sync0-pdfs-folder)
     (org-ref-completion-library 'org-ref-ivy-cite)
     (org-ref-open-pdf-function 'sync0-org-ref-open-pdf-at-point)
-         ;; (org-ref-notes-directory maikol/bibliography-notes)
-         ;; (org-ref-notes-function 'orb-edit-notes)
+
     :config
 (require 'doi-utils)
 
@@ -2091,12 +1910,12 @@ on my laptop when editing large ~org~ files or files with many
 * org-noter
 #+BEGIN_SRC emacs-lisp
     (use-package nov
-:straight nil
+    :straight nil
     :after (org-noter evil)
     :load-path "~/.emacs.d/sync0/nov.el" 
     :custom
      (nov-text-width 60)
-      :config
+    :config
       (push '("\\.epub\\'" . nov-mode) auto-mode-alist)
 
        (evil-define-key 'normal nov-mode-map
@@ -2135,8 +1954,7 @@ on my laptop when editing large ~org~ files or files with many
        ;; 
        org-noter-default-heading-title (format-time-string "%Y%m%d%H%M%S")
        ;; Everything is relative to the main notes file
-       org-noter-notes-search-path (list sync0-notes-folder)
-       ))
+       org-noter-notes-search-path (list sync0-zettelkasten-directory)))
 #+END_SRC 
   
 * org-download
@@ -2177,10 +1995,10 @@ buffers.
     (defun sync0-org-gcal-erase-buffers ()
      (interactive)
       "Erase buffers of calendar files"
-      (let ((delete-classes (find-file-noselect "/home/sync0/Dropbox/org/etc/Classes.org"))
-            (delete-events (find-file-noselect "/home/sync0/Dropbox/org/etc/Events.org"))
-            (delete-gcal (find-file-noselect "/home/sync0/Dropbox/org/etc/Gcal.org"))
-            (delete-habits (find-file-noselect "/home/sync0/Dropbox/org/etc/Habits.org")))
+      (let ((delete-classes (find-file-noselect "~/Dropbox/org/etc/Classes.org"))
+            (delete-events (find-file-noselect "~/Dropbox/org/etc/Events.org"))
+            (delete-gcal (find-file-noselect "~/Dropbox/org/etc/Gcal.org"))
+            (delete-habits (find-file-noselect "~/Dropbox/org/etc/Habits.org")))
         (progn 
           (with-current-buffer delete-classes
             (erase-buffer))
@@ -2225,110 +2043,5 @@ This package allow org mode to interact with WordPress.
                        :track-posts ,track-posts
                        :tags-as-categories nil))))
         (setq org2blog/wp-blog-alist config)))
-
-  ;;     (defun sync0-after-save-actions ()
-  ;;       "Used in `after-save-hook'."
-  ;;   (save-excursion 
-  ;;     (goto-char (point-min))
-  ;;       (when (re-search-forward "#\\+ORG2BLOG:" (line-end-position 5) t 1)
-
-  ;; (equal this-command 'save-buffer)
-  ;;         (when (equal major-mode 'latex-mode) 
-  ;;           (sync0-latex-fast-compile))))
-
-  ;;    org2blog-buffer-post-save
-
-  ;;     :hook 
-  ;;      Set hooks to execute after files are saved. 
-  ;;     (after-save . sync0-after-save-actions))
 #+END_SRC
 
-* org-roam
-#+BEGIN_SRC emacs-lisp
-        (use-package org-roam
-:straight (org-roam :type git :host github :repo "org-roam/org-roam") 
-              :hook
-              (after-init . org-roam-mode)
-    :init
-    (require 'org-journal)
-              :custom
-              (org-roam-directory "~/Dropbox/org/")
-        ;; make org-roam buffer sticky
-              (org-roam-buffer-no-delete-other-windows t)
-              (org-roam-completion-system 'default)
-              (org-roam-link-file-path-type 'absolute)
-              ;; (org-roam-dailies-directory org-journal-dir)
-              (org-roam-dailies-directory "journal/")
-              (org-roam-tag-sources '(prop last-directory))
-  ;;           (org-roam-tag-sources '(prop))
-              (org-roam-completion-everywhere t)
-              (org-roam-index-file "~/Dropbox/org/index.org")
-              (org-roam-graph-exclude-matcher '("journal" "etc" "inbox" "projects" "spontaneous"))
-        :config
-
-        (setq org-roam-capture-templates '(
-              ("n" "Numéroté" plain (function org-roam--capture-get-point)
-             "%?"
-             :file-name "%<%Y%m%d%H%M%S>"
-             :head "#+TITLE: ${slug}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: permanent %<%Y>  %<%B>\n\nOrigin: %a\n"
-             :unnarrowed t)
-             ))
-
-      (setq org-roam-capture-ref-templates
-              '(("r" "ref" plain (function org-roam-capture--get-point)
-                 "#+ROAM_KEY: ${ref}\n\n%?"
-                 :file-name "website_${slug}_%<%Y-%m-%d>"
-                 :head "#+TITLE: ${title}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: website %<%Y>\n\n"
-                 :unnarrowed t)))
-
-        (setq org-roam-dailies-capture-templates
-              '(("d" "default" entry
-                 #'org-roam-capture--get-point
-                 "* %?"
-               ;;  :immediate-finish t
-                 ;; :file-name "%<%Y%m%d>"
-                 :file-name "journal/%<%Y%m%d>"
-                 :head "#+TITLE: %<%A, %d %B %Y>\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: journal %<%Y> %<%B>\n\n"))))
-
-#+END_SRC 
-
-** company-org-roam
- #+BEGIN_SRC emacs-lisp
-    (use-package company-org-roam
-   :after company)
-   ;;   :ensure t
-      ;; You may want to pin in case the version from stable.melpa.org is not working 
-      ; :pin melpa
-      ;; :config
-      ;; (push 'company-org-roam company-backends)
- #+END_SRC 
-
-** 無 org-roam-bibtex
-
-#+BEGIN_SRC emacs-lisp
-    (use-package org-roam-bibtex
-:straight (org-roam-bibtex :type git :host github :repo "org-roam/org-roam-bibtex") 
-      :after (org-roam)
-      :hook (org-roam-mode . org-roam-bibtex-mode)
-      :custom
-          ;; Use this to insert org-ref citations (cite:XXX199X)
-          (orb-autokey-format "%a%y")
-          (orb-process-file-keyword t)
-          (orb-file-field-extensions '("pdf"))
-          ;; Use this to insert citation keys
-           (orb-insert-link-description 'citekey)
-          ;; (orb-insert-link-description 'citation)
-          (orb-note-actions-interface 'hydra)
-      :config
-
-    (setq orb-preformat-keywords
-          '("citekey" "title" "subtitle" "url" "author-or-editor" "keywords" "file"))
-
-      (setq orb-templates
-            '(("r" "ref" plain (function org-roam-capture--get-point)
-             ""
-             ;; (file "/home/sync0/Dropbox/org/etc/template_research-notes.org")
-               :file-name "references/${citekey}"
-               :head "#+TITLE: ${title}\n#+SUBTITLE: ${subtitle}\n#+AUTHOR: ${author-or-editor}\n#+ROAM_KEY: ${ref}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: ${citekey} references ${keywords}\n#+INTERLEAVE_PDF: ${file}"
-               :unnarrowed t))))
-#+END_SRC 
