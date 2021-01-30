@@ -61,8 +61,6 @@
 #+BEGIN_SRC emacs-lisp
   (use-package counsel 
     :after evil
-    :commands (counsel-M-x counsel-find-file)
-    :diminish counsel-mode
     :config
     (evil-define-key 'normal global-map "gb" 'counsel-bookmark)
 
@@ -70,28 +68,32 @@
       "
   ^Help functions^
   ^^^------------------------
-  _f_: Describe function
-  _v_: Describe variable
-  _k_: Describe keybindings
-  _l_: Load library
-  _i_: Search symbol
-  _u_: Search Unicode char
-  [q] Quit
+  Describe _f_unction
+  Describe _v_ariable
+  Describe _k_eybindings
+  Load _l_ibrary
+  Search _s_ymbol
+  Search _u_nicode char
 
+  _q_uit
   "
       ;; Quickly work with bookmarks
       ("f" counsel-describe-function)
       ("v" counsel-describe-variable)
       ("k" describe-key)
       ("l" counsel-load-library)
-      ("i" counsel-info-lookup-symbol)
+      ("s" counsel-info-lookup-symbol)
       ("u" counsel-unicode-char)
       ("q"  nil :color blue))
+
+(evil-leader/set-key
+  "h" 'sync0-hydra-help/body)
+
     :bind
     (("M-x" . counsel-M-x)
      ("M-y" . counsel-yank-pop)
-     ("C-x C-f" . counsel-find-file)
-     ("<f1>" . sync0-hydra-help/body)))
+     ;; ("<f1>" . sync0-hydra-help/body)
+     ("C-x C-f" . counsel-find-file)))
 #+END_SRC
 
 * swiper
@@ -643,7 +645,6 @@ really ugly way that I haven't been able to fix.
     (use-package git-gutter 
 :straight (git-gutter :type git :host github :repo "emacsorphanage/git-gutter") 
       :after hydra
-      :diminish git-gutter-mode
       ;; :init
       ;; (global-git-gutter-mode +1)
       ;; :hook 
@@ -687,8 +688,9 @@ really ugly way that I haven't been able to fix.
         ("R" git-gutter:set-start-revision)
         ("q" nil :color blue)
         ("Q" (git-gutter-mode -1) :color blue))
-      :bind
-      (("C-c h g" . sync0-hydra-git-gutter/body)))
+
+(evil-leader/set-key
+  "G" 'sync0-hydra-git-gutter/body))
 #+END_SRC 
 
 ** git-time-machine

@@ -198,8 +198,8 @@
  (rear-context-string . "\"init.el\"))))))\n")
  (position . 5443))
 ("here"
- (filename . "~/Dropbox/org/projects/20210109220730.org")
- (front-context-string . " \n\n  - Un /white")
- (rear-context-string . "ter le plagiat :")
- (position . 539))
+ (filename . "~/Dropbox/org/journal/20210129.org")
+ (front-context-string)
+ (rear-context-string . " been\nforced to ")
+ (position . 2666))
 )

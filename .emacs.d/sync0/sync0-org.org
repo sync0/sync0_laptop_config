@@ -1,253 +1,414 @@
 * org 
 #+BEGIN_SRC emacs-lisp
-    (use-package org 
-      :after evil
-      :custom
-      (org-hide-leading-stars t)
-      ;; Leave one line between headlines 
-      (org-cycle-separator-lines 1)
-      ;; Don't fontify the whole damn line
-      (org-fontify-whole-block-delimiter-line t)
-      ;; Disable word wrap in org mode.
-      ;; (org-startup-truncated t)
-      ;; Initial indentation
-      (org-startup-indented nil)         
-      ;; Necessary to avoid crazy inconsistenscies using org-download and org-roam
-      (org-link-file-path-type 'absolute)
-      ;; Begin displaying entire trees.
-      (org-startup-folded nil)
-      ;; Better display of italics & bold.
-      (org-hide-emphasis-markers t)
-      ;; Define org-tags.
-      (org-tag-alist '(("projects" . ?p)
-                       ;; ("noexport" . ?n)
-                       ("readings" . ?r)
-                       ;; ("reviews" . ?r)
-                       ("exams" . ?e)
-                       ("urgent" . ?u)
-                       ("this_week" . ?t)
-                       ("this_month" . ?m)
-                       ("next_week" . ?n)
-                       ("short_term" . ?s)
-                       ("long_term" . ?l)
-                       ;; ("university" . ?u)
-                       ("important" . ?i)))
-      ;; Hide inherited tags from Org's agenda view.
-      ;; org-agenda-show-inherited-tags nil
-      ;; Define todo keywords.
-      (org-todo-keywords '((sequence "無(1)" "次(2)" "中(3)" "見(4)" "待(5)" "阻(6)" "|" "完(7)" "取(8)")))
-      ;; Set faces for org-todo-keywords
-      (org-todo-keyword-faces '(("無" . (:foreground "#dc322f" :weight semi-bold :height 0.8))
-                                ("次" . (:foreground "#d33682" :weight semi-bold :height 0.8))
-                                ("完" . (:foreground "#859900" :weight semi-bold :height 0.8))   
-                                ("待" . (:foreground "#cb4b16" :weight semi-bold :height 0.8))
-                                ("阻" . (:foreground "#268bd2" :weight semi-bold :height 0.8)) 
-                                ("取" . (:foreground "#6c71c4" :weight semi-bold :height 0.8)) 
-                                ("見" . (:foreground "#268bd2" :weight semi-bold :height 0.8)) 
-                                ("中" . (:foreground "#b58900" :weight semi-bold :height 0.8))))
-      (org-blank-before-new-entry '((heading . nil)(plain-list-item . nil)))
-      ;; Stop emacs asking for confirmation
-      (org-confirm-babel-evaluate nil)
-      (org-ellipsis "  ⌄ ") ;; folding symbol
-      ;; Do not show export buffer.
-      (org-export-show-temporary-export-buffer nil)
-      ;; Set path for org default directory (necessary for refile and agenda).
-      (org-directory (concat (getenv "HOME") "/Dropbox/org"))
-      (org-refile-use-outline-path 'file)
-      (org-refile-targets '((org-agenda-files :maxlevel . 4)))
-      (org-outline-path-complete-in-steps nil)
-      (org-startup-with-inline-images t)
-      (org-refile-use-cache nil)
-      ;; Have org-mode indent elisp sections.
-      (org-src-tab-acts-natively nil)
-      ;; Color embeded source code
-      (org-src-fontify-natively t)
-      (org-hide-emphasis-markers t)
-      (org-fontify-done-headline t) 
-      (org-fontify-whole-heading-line t)
-      (org-fontify-quote-and-verse-blocks t)
-      ;; Don't fontify sub and superscripts.
-      (org-pretty-entities-include-sub-superscripts nil)
-      ;; Limit inheritance for certain tags. 
-      (org-tags-exclude-from-inheritance (quote ("crypt" "ignore")))
+      (use-package org 
+        :after evil
+        :custom
+        (org-hide-leading-stars t)
+        ;; Leave one line between headlines 
+        (org-cycle-separator-lines 1)
+        ;; Don't fontify the whole damn line
+        (org-fontify-whole-block-delimiter-line t)
+        ;; Disable word wrap in org mode.
+        ;; (org-startup-truncated t)
+        ;; Initial indentation
+        (org-startup-indented nil)         
+        ;; Necessary to avoid crazy inconsistenscies using org-download and org-roam
+        (org-link-file-path-type 'absolute)
+        ;; Begin displaying entire trees.
+        (org-startup-folded nil)
+        ;; Better display of italics & bold.
+        (org-hide-emphasis-markers t)
+        ;; Define org-tags.
+        (org-tag-alist '(("projects" . ?p)
+                         ;; ("noexport" . ?n)
+                         ("readings" . ?r)
+                         ;; ("reviews" . ?r)
+                         ("exams" . ?e)
+                         ("urgent" . ?u)
+                         ("this_week" . ?t)
+                         ("this_month" . ?m)
+                         ("next_week" . ?n)
+                         ("short_term" . ?s)
+                         ("long_term" . ?l)
+                         ;; ("university" . ?u)
+                         ("important" . ?i)))
+        ;; Hide inherited tags from Org's agenda view.
+        ;; org-agenda-show-inherited-tags nil
+        ;; Define todo keywords.
+        (org-todo-keywords '((sequence "無(1)" "次(2)" "中(3)" "見(4)" "待(5)" "阻(6)" "|" "完(7)" "取(8)")))
+        ;; Set faces for org-todo-keywords
+        (org-todo-keyword-faces '(("無" . (:foreground "#dc322f" :weight semi-bold :height 0.8))
+                                  ("次" . (:foreground "#d33682" :weight semi-bold :height 0.8))
+                                  ("完" . (:foreground "#859900" :weight semi-bold :height 0.8))   
+                                  ("待" . (:foreground "#cb4b16" :weight semi-bold :height 0.8))
+                                  ("阻" . (:foreground "#268bd2" :weight semi-bold :height 0.8)) 
+                                  ("取" . (:foreground "#6c71c4" :weight semi-bold :height 0.8)) 
+                                  ("見" . (:foreground "#268bd2" :weight semi-bold :height 0.8)) 
+                                  ("中" . (:foreground "#b58900" :weight semi-bold :height 0.8))))
+        (org-blank-before-new-entry '((heading . nil)(plain-list-item . nil)))
+        ;; Stop emacs asking for confirmation
+        (org-confirm-babel-evaluate nil)
+        (org-ellipsis "  ⌄ ") ;; folding symbol
+        ;; Do not show export buffer.
+        (org-export-show-temporary-export-buffer nil)
+        ;; Set path for org default directory (necessary for refile and agenda).
+        (org-directory (concat (getenv "HOME") "/Dropbox/org"))
+        (org-refile-use-outline-path 'file)
+        (org-outline-path-complete-in-steps nil)
+        (org-startup-with-inline-images t)
+        (org-refile-use-cache nil)
+        ;; Have org-mode indent elisp sections.
+        (org-src-tab-acts-natively nil)
+        ;; Color embeded source code
+        (org-src-fontify-natively t)
+        (org-hide-emphasis-markers t)
+        (org-fontify-done-headline t) 
+        (org-fontify-whole-heading-line t)
+        (org-fontify-quote-and-verse-blocks t)
+        ;; Don't fontify sub and superscripts.
+        (org-pretty-entities-include-sub-superscripts nil)
+        ;; Limit inheritance for certain tags. 
+        (org-tags-exclude-from-inheritance (quote ("crypt" "ignore")))
 
-      :config 
-      (require 'org-pdftools)
-      (require 'org-journal)
-      ;; Free this keybinding for cycle-themes
-      (unbind-key "C-c C-t" org-mode-map)
-      (unbind-key "M-h" org-mode-map)
+        :config 
+        (require 'org-pdftools)
+        (require 'org-journal)
+        (require 'org-download)
+        ;; Free this keybinding for cycle-themes
+        (unbind-key "C-c C-t" org-mode-map)
+        (unbind-key "M-h" org-mode-map)
 
-  (defun sync0-overview-tree-window ()
-    "Open a clone of the current buffer to the left, resize it to 30 columns, and bind <mouse-1> to jump to the same position in the base buffer."
-    (interactive)
-    (let ((new-buffer-name (concat "<tree>" (buffer-name))))
-      ;; Create tree buffer
-      (split-window-right 30)
-      (if (get-buffer new-buffer-name)
-          (switch-to-buffer new-buffer-name)  ; Use existing tree buffer
-        ;; Make new tree buffer
-        (progn  (clone-indirect-buffer new-buffer-name nil t)
-                (switch-to-buffer new-buffer-name)
-                (read-only-mode)
-                (hide-body)
-                (toggle-truncate-lines)
+    (defun sync0-overview-tree-window ()
+      "Open a clone of the current buffer to the left, resize it to 30 columns, and bind <mouse-1> to jump to the same position in the base buffer."
+      (interactive)
+      (let ((new-buffer-name (concat "<tree>" (buffer-name))))
+        ;; Create tree buffer
+        (split-window-right 30)
+        (if (get-buffer new-buffer-name)
+            (switch-to-buffer new-buffer-name)  ; Use existing tree buffer
+          ;; Make new tree buffer
+          (progn  (clone-indirect-buffer new-buffer-name nil t)
+                  (switch-to-buffer new-buffer-name)
+                  (read-only-mode)
+                  (hide-body)
+                  (toggle-truncate-lines)
 
-                ;; Do this twice in case the point is in a hidden line
-                (dotimes (_ 2 (forward-line 0)))
+                  ;; Do this twice in case the point is in a hidden line
+                  (dotimes (_ 2 (forward-line 0)))
 
-                ;; Map keys
-                (use-local-map (copy-keymap outline-mode-map))
-                (local-set-key (kbd "q") 'delete-window)
-                (mapc (lambda (key) (local-set-key (kbd key) 'my/jump-to-point-and-show))
-                      '("<mouse-1>" "RET"))))))
+                  ;; Map keys
+                  (use-local-map (copy-keymap outline-mode-map))
+                  (local-set-key (kbd "q") 'delete-window)
+                  (mapc (lambda (key) (local-set-key (kbd key) 'my/jump-to-point-and-show))
+                        '("<mouse-1>" "RET"))))))
 
-  (defun sync0-jump-to-overview-and-show ()
-    "Switch to a cloned buffer's base buffer and move point to the cursor position in the clone."
-    (interactive)
-    (let ((buf (buffer-base-buffer)))
-      (unless buf
-        (error "You need to be in a cloned buffer!"))
-      (let ((pos (point))
-            (win (car (get-buffer-window-list buf))))
-        (if win
-            (select-window win)
-          (other-window 1)
-          (switch-to-buffer buf))
-        (goto-char pos)
-        (when (invisible-p (point))
-          (show-branches)))))
+    (defun sync0-overview-jump-to-overview ()
+      "Switch to a cloned buffer's base buffer and move point to the cursor position in the clone."
+      (interactive)
+      (let ((buf (buffer-base-buffer)))
+        (unless buf
+          (error "You need to be in a cloned buffer!"))
+        (let ((pos (point))
+              (win (car (get-buffer-window-list buf))))
+          (if win
+              (select-window win)
+            (other-window 1)
+            (switch-to-buffer buf))
+          (goto-char pos)
+          (when (invisible-p (point))
+            (show-branches)))))
 
-    (defhydra sync0-hydra-file-access (:color amaranth :hint nil :exit t)
+        (defun sync0-org-tree-to-indirect-buffer ()
+          "Open headline in the next window as a separate tree."
+          (interactive)
+          (org-tree-to-indirect-buffer)
+          (windmove-right))
+
+  (evil-leader/set-key
+     "O" 'sync0-overview-tree-window
+    ;; "o" 'sync0-overview-jump-to-overview
+    "I" 'sync0-org-tree-to-indirect-buffer)
+
+      (defhydra sync0-hydra-file-access (:color amaranth :hint nil :exit t)
+        "
+         ^Windows^                ^Buffers^             ^Search^
+      ^^^^^^---------------------------------------------------------------
+      _1_: Delete others       _w_: Write           _r_: Recent
+      _2_: Split horizontally  _a_: Write as        _f_: Find
+      _3_: Split vertically    _b_: Open           
+      ^ ^                      _k_: Kill
+      ^ ^                      
+      ^^^^^^---------------------------------------------------------------
+         ^Bookmarks^           ^Planning^ 
+      ^^^^^^---------------------------------------------------------------
+      _j_: Jump to bookmark    _h_: Today
+      _g_: Bookmark o. window  
+      _m_: Set bookmark        
+      _l_: List bookmarks      _J_: org-journal
+      ^ ^                      
+      [q] Quit                 ^ ^
       "
-       ^Windows^                ^Buffers^             ^Search^
-    ^^^^^^---------------------------------------------------------------
-    _1_: Delete others       _w_: Write           _r_: Recent
-    _2_: Split horizontally  _a_: Write as        _f_: Find
-    _3_: Split vertically    _b_: Open           
-    ^ ^                      _k_: Kill
-    ^ ^                      _M_: Move file  
-    ^^^^^^---------------------------------------------------------------
-       ^Bookmarks^           ^Planning^ 
-    ^^^^^^---------------------------------------------------------------
-    _j_: Jump to bookmark    _h_: Today
-    _g_: Bookmark o. window  _t_: Planning files
-    _m_: Set bookmark        
-    _l_: List bookmarks      _J_: org-journal
-    ^ ^                      
-    [q] Quit                 ^ ^
-    "
-      ("1" delete-other-windows)
-      ("2" sync0-split-and-follow-horizontally)
-      ("3" sync0-split-and-follow-vertically)
-      ("b" ivy-switch-buffer)
-      ;; Quickly save
-      ("w" save-buffer)
-      ("a" write-file)
-      ;; Kill current buffer and window
-      ("k" kill-buffer-and-window)
-      ;; ("o" ivy-switch-buffer-other-window)
-      ("M" sync0-move-file)
-      ("r" counsel-recentf)
-      ("f" counsel-find-file)
-      ("m" bookmark-set)
-      ("j" counsel-bookmark)
-      ("g" bookmark-jump-other-window)
-      ("l" bookmark-bmenu-list)
-      ;; ("A" org-agenda)
-      ("J" sync0-org-journal-new-scheduled-entry)
-      ("t" sync0-org-find-planning-file)
-      ("h" sync0-pop-to-org-agenda)
+        ("1" delete-other-windows)
+        ("2" sync0-split-and-follow-horizontally)
+        ("3" sync0-split-and-follow-vertically)
+        ("b" ivy-switch-buffer)
+        ;; Quickly save
+        ("w" save-buffer)
+        ("a" write-file)
+        ;; Kill current buffer and window
+        ("k" kill-buffer-and-window)
+        ;; ("o" ivy-switch-buffer-other-window)
+        ("r" counsel-recentf)
+        ("f" counsel-find-file)
+        ("m" bookmark-set)
+        ("j" counsel-bookmark)
+        ("g" bookmark-jump-other-window)
+        ("l" bookmark-bmenu-list)
+        ;; ("A" org-agenda)
+        ("J" sync0-org-journal-new-scheduled-entry)
+        ("h" sync0-pop-to-org-agenda)
+        ("q" nil :color blue))
+
+        (defun sync0-call-rebinding-org-blank-behaviour (fn)
+          (let ((org-blank-before-new-entry
+                 (copy-tree org-blank-before-new-entry)))
+            (when (org-at-heading-p)
+              (rplacd (assoc 'heading org-blank-before-new-entry) nil))
+            (call-interactively fn)))
+
+        (defun sync0-org-meta-return-dwim ()
+          "Improved version of default org-meta-return"
+          (interactive)
+          (sync0-call-rebinding-org-blank-behaviour 'org-meta-return))
+
+        (defun sync0-org-insert-todo-heading-dwim ()
+          "Improved version of org-insert-todo-heading"
+          (interactive)
+          (sync0-call-rebinding-org-blank-behaviour 'org-insert-todo-heading))
+
+        (defun sync0-clever-insert-item ()
+          "Clever insertion of org item."
+          (if (not (org-in-item-p))
+              (insert "\n")
+            (org-insert-item)))
+
+        (defun sync0-evil-org-eol-call (fun)
+          "Go to end of line and call provided function. FUN function callback"
+          (end-of-line)
+          (funcall fun)
+          (evil-append nil))
+
+        ;; redefinition evils normal mode map
+        (evil-define-key 'normal org-mode-map
+          "<" 'outline-previous-visible-heading
+          ">" 'outline-next-visible-heading
+          (kbd "C->") 'org-forward-heading-same-level
+          (kbd "C-<") 'org-backward-heading-same-level
+          (kbd "<S-tab>") 'sync0-org-tree-open-in-right-frame 
+          "H" 'org-metaleft
+          "L" 'org-metaright
+          "K" 'org-metaup
+          "J" 'org-metadown
+          "k" 'previous-line
+          "j" 'next-line
+          "o" '(lambda () (interactive) (sync0-evil-org-eol-call 'sync0-clever-insert-item))
+          "O" '(lambda () (interactive) (sync0-evil-org-eol-call 'org-insert-heading))
+          "$" 'org-end-of-line
+          "^" 'org-beginning-of-line
+          "[" 'backward-sentence
+          "]" 'forward-sentence
+          "{" 'org-backward-paragraph
+          "}" 'org-forward-paragraph
+          "-" 'org-cycle-list-bullet
+          (kbd "<tab>") 'org-cycle)
+
+        (evil-define-key 'visual org-mode-map
+          ;; "q" 'highlight-changes-remove-highlight
+          "z" 'org-emphasize)
+
+        ;; List of files considered for org-refile.
+        (setq org-refile-targets (quote ((nil :maxlevel . 4)                ;; Default value.
+                                              ;; set for all agenda files
+                                         ;; ("todo.org" :maxlevel . 2)
+                                          (org-agenda-files :maxlevel . 4))))
+
+        ;; (org-refile-targets '((org-agenda-files :maxlevel . 4)))
+
+        (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+
+        ;; (setq org-src-block-faces    '(("emacs-lisp" (:family "Fira Code"  :height 0.75))
+        ;;                                ("python" (:family "Fira Code"  :height 0.75))
+        ;;                                ("latex" (:family "Fira Code"  :height 0.75))))
+
+        :bind (("<f5>" . sync0-hydra-file-access/body)
+               ("C-x 2" . sync0-split-and-follow-horizontally)
+               ("C-x 3" . sync0-split-and-follow-vertically)
+               (:map org-mode-map
+                ("M-<return>" . sync0-org-meta-return-dwim)
+                ("M-S-<return>" . sync0-org-insert-todo-heading-dwim))))
+      #+END_SRC 
+
+* org-roam
+  #+BEGIN_SRC emacs-lisp
+        (use-package org-roam
+          :after evil-leader
+          :straight (org-roam :type git :host github :repo "org-roam/org-roam") 
+          :hook (after-init . org-roam-mode)
+          :custom
+              (org-roam-directory "~/Dropbox/org/")
+        ;; make org-roam buffer sticky
+              (org-roam-buffer-no-delete-other-windows t)
+              (org-roam-completion-system 'default)
+              (org-roam-link-file-path-type 'absolute)
+              (org-roam-dailies-directory "journal/")
+              (org-roam-tag-sources '(prop last-directory))
+              (org-roam-completion-everywhere t)
+              (org-roam-index-file "~/Dropbox/org/index.org")
+              (org-roam-graph-exclude-matcher '("journal" "etc" "inbox" "projects" "spontaneous"))
+
+        :config
+(evil-leader/set-key
+  "F" 'org-roam-find-file
+  "i" 'org-roam-insert)
+
+        (setq org-roam-capture-templates '( 
+         ("n" "Numéroté" plain (function org-roam--capture-get-point)
+          "%?"
+          :file-name "%<%Y%m%d%H%M%S>"
+          :head "#+TITLE: ${slug}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: permanent %<%Y>  %<%B>\n\nOrigin: %a\n"
+          :unnarrowed t)))
+
+      (setq org-roam-capture-ref-templates
+              '(("r" "ref" plain (function org-roam-capture--get-point)
+                 "#+ROAM_KEY: ${ref}\n\n%?"
+                 :file-name "website_${slug}_%<%Y-%m-%d>"
+                 :head "#+TITLE: ${title}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: website %<%Y>\n\n"
+                 :unnarrowed t)))
+
+        (setq org-roam-dailies-capture-templates
+              '(("d" "default" entry
+                 #'org-roam-capture--get-point
+                 "* %?"
+                 :file-name "journal/%<%Y%m%d>"
+                 :head "#+TITLE: %<%A, %d %B %Y>\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: journal %<%Y> %<%B>\n\n"))))
+
+#+END_SRC 
+
+** company-org-roam
+ #+BEGIN_SRC emacs-lisp
+    (use-package company-org-roam  :after company)
+    #+END_SRC 
+
+** 無 org-roam-bibtex
+   #+BEGIN_SRC emacs-lisp
+    (use-package org-roam-bibtex
+      :straight (org-roam-bibtex :type git :host github :repo "org-roam/org-roam-bibtex") 
+      :after (org-roam)
+      :hook (org-roam-mode . org-roam-bibtex-mode)
+      :custom
+          ;; Use this to insert org-ref citations (cite:XXX199X)
+          (orb-autokey-format "%a%y")
+          (orb-process-file-keyword t)
+          (orb-file-field-extensions '("pdf"))
+          ;; Use this to insert citation keys
+          (orb-insert-link-description 'citekey)
+          (orb-note-actions-interface 'hydra)
+      :config
+
+    (setq orb-preformat-keywords
+          '("citekey" "title" "subtitle" "url" "author-or-editor" "keywords" "file"))
+
+      (setq orb-templates
+            '(("r" "ref" plain (function org-roam-capture--get-point)
+             ""
+               :file-name "references/${citekey}"
+               :head "#+TITLE: ${title}\n#+SUBTITLE: ${subtitle}\n#+AUTHOR: ${author-or-editor}\n#+ROAM_KEY: ${ref}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: ${citekey} references ${keywords}\n#+INTERLEAVE_PDF: ${file}"
+               :unnarrowed t))))
+#+END_SRC 
+
+* org-journal
+  Although, I have been almost entirely paper-less since I started my
+  Master's degree, I have struggled to implement a planning workflow
+  (calendar, task list, etc.) that is both easy to maintain and easy to
+  use. After all, the litmus test of an efficient and consistent
+  planning workflow is daily use. The ~org-journal~ package contains a set
+  of functions to maintain a personal diary, using ~org-mode~ and Emacs.
+  For my daily planning needs, this is the package I currently use,
+  alongside the proverbial ~org-agenda~ and Google calendar.
+
+  Caveat: Unfortunately, I have been unable to coordinate my Emacs
+  workflow with my mobile phone; therefore, I sometimes require ~Todoist~
+  for things such as grocery shopping and recurring tasks. While you can
+  do all this within ~org-mode~, and I have, I am not satisfied with the
+  implementation so far. 
+
+  #+BEGIN_SRC emacs-lisp
+  (use-package org-journal 
+    :straight (org-journal :type git :host github :repo "bastibe/org-journal") 
+    :after org
+    :custom
+    ;; Set default directory to search for journal files. 
+    ;;(org-journal-dir (concat sync0-dropbox-directory "org"))
+    (org-journal-dir (concat sync0-dropbox-directory "org/journal"))
+    ;; Delete the date prefix to new journal entries.
+    (org-journal-time-format "")
+    ;; Create one journal file per month. 
+    (org-journal-file-type 'daily)
+    ;; Change the title of journal files to the format: "YYYY_MM.gpg".
+    (org-journal-file-format "%Y%m%d.org")
+    ;; Change the format of journal entries (org headlines) to "[Day], DD/MM/YYYY".
+    ;; (org-journal-date-format "%A, %Y/%m/%d")
+    (org-journal-date-format "%A")
+    ;; Encrypt journal files.
+    (org-journal-encrypt-journal nil)
+    ;; Don't encript individual entires in journal files. It's too cumbersome. 
+    (org-journal-enable-encryption nil)
+    (org-journal-carryover-items "TODO=\"無\"|TODO=\"次\"|TODO=\"中\"|TODO=\"待\"|TODO=\"阻\"")
+    (org-journal-enable-agenda-integration nil)
+    (org-journal-file-header "#+TITLE: %A, %d %B %Y\n#+CREATED: %Y/%m/%d\n#+DATE: %Y/%m/%d\n#+ROAM_TAGS: journal %Y %B\n\n")
+
+    :config
+    (defun sync0-org-journal-new-scheduled-entry (prefix &optional scheduled-time)
+      "Create a new entry in the future."
+      (interactive "P")
+      (let ((scheduled-time (or scheduled-time (org-read-date nil nil nil "%Y-%m-%d %a")))
+            (raw (prefix-numeric-value prefix)))
+        (org-journal-new-entry (= raw 16) (org-time-string-to-time scheduled-time))
+        (unless (= raw 16)
+          (if (not prefix)
+              (insert "")))))
+
+    (defhydra sync0-hydra-org-journal (:color amaranth :hint nil :exit t)
+      "
+   ^Journaling functions^
+   ^---------------
+   _t_oday's note
+   _o_ther date            
+   _p_revious note
+   _n_ext note
+                                                                     
+   _q_uit
+        "
+      ("t" sync0-org-journal-new-scheduled-entry)
+      ("p" org-roam-dailies-find-previous-note)
+      ("n" org-roam-dailies-find-next-note)
+      ("o" org-roam-dailies-find-date)
       ("q" nil :color blue))
 
-      (defun sync0-org-tree-open-in-right-frame ()
-        "Open headline in the next window as a separate tree."
-        (interactive)
-        (org-tree-to-indirect-buffer)
-        (windmove-right))
+(evil-leader/set-key
+  "J" 'sync0-hydra-org-journal/body)
 
-      (defun sync0-call-rebinding-org-blank-behaviour (fn)
-        (let ((org-blank-before-new-entry
-               (copy-tree org-blank-before-new-entry)))
-          (when (org-at-heading-p)
-            (rplacd (assoc 'heading org-blank-before-new-entry) nil))
-          (call-interactively fn)))
-
-      (defun sync0-org-meta-return-dwim ()
-        "Improved version of default org-meta-return"
-        (interactive)
-        (sync0-call-rebinding-org-blank-behaviour 'org-meta-return))
-
-      (defun sync0-org-insert-todo-heading-dwim ()
-        "Improved version of org-insert-todo-heading"
-        (interactive)
-        (sync0-call-rebinding-org-blank-behaviour 'org-insert-todo-heading))
-
-      (defun sync0-clever-insert-item ()
-        "Clever insertion of org item."
-        (if (not (org-in-item-p))
-            (insert "\n")
-          (org-insert-item)))
-
-      (defun sync0-evil-org-eol-call (fun)
-        "Go to end of line and call provided function. FUN function callback"
-        (end-of-line)
-        (funcall fun)
-        (evil-append nil))
-
-      ;; redefinition evils normal mode map
-      (evil-define-key 'normal org-mode-map
-        "<" 'outline-previous-visible-heading
-        ">" 'outline-next-visible-heading
-        (kbd "C->") 'org-forward-heading-same-level
-        (kbd "C-<") 'org-backward-heading-same-level
-        (kbd "<S-tab>") 'sync0-org-tree-open-in-right-frame 
-        "H" 'org-metaleft
-        "L" 'org-metaright
-        "K" 'org-metaup
-        "J" 'org-metadown
-        "k" 'previous-line
-        "j" 'next-line
-        "o" '(lambda () (interactive) (sync0-evil-org-eol-call 'sync0-clever-insert-item))
-        "O" '(lambda () (interactive) (sync0-evil-org-eol-call 'org-insert-heading))
-        "$" 'org-end-of-line
-        "^" 'org-beginning-of-line
-        "[" 'backward-sentence
-        "]" 'forward-sentence
-        "{" 'org-backward-paragraph
-        "}" 'org-forward-paragraph
-        "-" 'org-cycle-list-bullet
-        (kbd "<tab>") 'org-cycle)
-
-      (evil-define-key 'visual org-mode-map
-        ;; "q" 'highlight-changes-remove-highlight
-        "z" 'org-emphasize)
-
-      ;; List of files considered for org-refile.
-      ;; (setq org-refile-targets (quote ((nil :maxlevel . 9)                ;; Default value.
-      ;;                                  ;;(org-agenda-files :maxlevel . 9) ;; set for all agenda files
-      ;;                                  ("todo.org" :maxlevel . 2))))
-
-      (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-
-      ;; (setq org-src-block-faces    '(("emacs-lisp" (:family "Fira Code"  :height 0.75))
-      ;;                                ("python" (:family "Fira Code"  :height 0.75))
-      ;;                                ("latex" (:family "Fira Code"  :height 0.75))))
-
-      :bind (("<f5>" . sync0-hydra-file-access/body)
-             ("C-x 2" . sync0-split-and-follow-horizontally)
-             ("C-x 3" . sync0-split-and-follow-vertically)
-             (:map org-mode-map
-              ("M-<return>" . sync0-org-meta-return-dwim)
-              ("M-S-<return>" . sync0-org-insert-todo-heading-dwim))))
-      #+END_SRC 
+    :bind (("C-c j" . sync0-org-journal-new-scheduled-entry)
+           :map org-journal-mode-map
+           ("C-c C-s" . org-schedule)))
+  #+END_SRC 
 
 * org-agenda
   #+BEGIN_SRC emacs-lisp
       (use-package org-agenda 
         :straight nil
         :after (org all-the-icons)
-        :commands       (sync0-pop-to-org-agenda org-agenda)
+;;  :commands       (sync0-pop-to-org-agenda org-agenda)
         :custom
         (org-agenda-todo-keyword-format "%-1s ")
         (org-agenda-include-diary t)
@@ -1160,62 +1321,6 @@
          ("N" . sync0-org-agenda-new)))
   #+END_SRC
 
-* org-journal
-  Although, I have been almost entirely paper-less since I started my
-  Master's degree, I have struggled to implement a planning workflow
-  (calendar, task list, etc.) that is both easy to maintain and easy to
-  use. After all, the litmus test of an efficient and consistent
-  planning workflow is daily use. The ~org-journal~ package contains a set
-  of functions to maintain a personal diary, using ~org-mode~ and Emacs.
-  For my daily planning needs, this is the package I currently use,
-  alongside the proverbial ~org-agenda~ and Google calendar.
-
-  Caveat: Unfortunately, I have been unable to coordinate my Emacs
-  workflow with my mobile phone; therefore, I sometimes require ~Todoist~
-  for things such as grocery shopping and recurring tasks. While you can
-  do all this within ~org-mode~, and I have, I am not satisfied with the
-  implementation so far. 
-
-  #+BEGIN_SRC emacs-lisp
-  (use-package org-journal 
-    :straight (org-journal :type git :host github :repo "bastibe/org-journal") 
-    :after org
-    :custom
-    ;; Set default directory to search for journal files. 
-    ;;(org-journal-dir (concat sync0-dropbox-directory "org"))
-    (org-journal-dir (concat sync0-dropbox-directory "org/journal"))
-    ;; Delete the date prefix to new journal entries.
-    (org-journal-time-format "")
-    ;; Create one journal file per month. 
-    (org-journal-file-type 'daily)
-    ;; Change the title of journal files to the format: "YYYY_MM.gpg".
-    (org-journal-file-format "%Y%m%d.org")
-    ;; Change the format of journal entries (org headlines) to "[Day], DD/MM/YYYY".
-    ;; (org-journal-date-format "%A, %Y/%m/%d")
-    (org-journal-date-format "%A")
-    ;; Encrypt journal files.
-    (org-journal-encrypt-journal nil)
-    ;; Don't encript individual entires in journal files. It's too cumbersome. 
-    (org-journal-enable-encryption nil)
-    (org-journal-carryover-items "TODO=\"無\"|TODO=\"次\"|TODO=\"中\"|TODO=\"待\"|TODO=\"阻\"")
-    (org-journal-enable-agenda-integration nil)
-    (org-journal-file-header "#+TITLE: %A, %d %B %Y\n#+CREATED: %Y/%m/%d\n#+DATE: %Y/%m/%d\n#+ROAM_TAGS: journal %Y %B\n\n")
-    :config
-    (defun sync0-org-journal-new-scheduled-entry (prefix &optional scheduled-time)
-      "Create a new entry in the future."
-      (interactive "P")
-      (let ((scheduled-time (or scheduled-time (org-read-date nil nil nil "%Y-%m-%d %a")))
-            (raw (prefix-numeric-value prefix)))
-        (org-journal-new-entry (= raw 16) (org-time-string-to-time scheduled-time))
-        (unless (= raw 16)
-          (if (not prefix)
-              (insert "")))))
-
-    :bind (("C-c j" . sync0-org-journal-new-scheduled-entry)
-           :map org-journal-mode-map
-           ("C-c C-s" . org-schedule)))
-  #+END_SRC 
-
 * org-pdftools 
   #+BEGIN_SRC emacs-lisp
       (use-package org-pdftools
@@ -1240,8 +1345,7 @@
   #+BEGIN_SRC emacs-lisp
           (use-package org-capture 
            :straight nil
-            :after org 
-            :commands org-capture
+            :after (org evil-leader)
             :preface 
             (defun org-journal-find-location ()
               ;; Open today's journal, but specify a non-nil prefix argument in order to
@@ -1255,6 +1359,9 @@
             (org-default-notes-file "~/Dropbox/etc/notes.org")
 
             :config 
+(evil-leader/set-key
+  "c" 'org-capture)
+
 ;; The following two functions are necessary to replicate the functionality of org-roam into org-capture.
 ;; https://emacs.stackexchange.com/questions/27620/orgmode-capturing-original-document-title
 (defun sync0-org-get-title (file)
@@ -1326,7 +1433,7 @@
                    :jump-to-captured t)
                    ("f" "Fiche" plain 
                    (file sync0-org-capture-fiche-name)
-                   "%(format \"#+TITLE: Fiche sur %s\n#+CREATED: %s\n#+DATE: \n#+ROAM_TAGS: fiches %s\" sync0-fiche-name-uppercase sync0-zettel-time-ordered sync0-fiche-name)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title (org-capture-get :original-file))]]\n\n"
+                   "%(format \"#+TITLE: %s\n#+CREATED: %s\n#+DATE: \n#+ROAM_TAGS: fiches %s\" sync0-fiche-name-uppercase sync0-zettel-time-ordered sync0-fiche-name)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title (org-capture-get :original-file))]]\n\n"
                    :jump-to-captured t)
                    ("p" "Note de projet" plain 
                    (file sync0-org-capture-project-name)
@@ -1364,18 +1471,18 @@
 
             :bind 
             (("\C-c c" . org-capture)))
-  #+END_SRC 
+                                   #+END_SRC 
   
 * org-habits
-This package is included in ~org-mode~; it simply allows the creation of
-recurring tasks for use in ~org-agenda~. Although this introduces some
-interesting functionality for tracking your habits, I found that I
-didn't  use it consistently. I keep the configuration just in case I
-change my mind someday.
+  This package is included in ~org-mode~; it simply allows the creation of
+  recurring tasks for use in ~org-agenda~. Although this introduces some
+  interesting functionality for tracking your habits, I found that I
+  didn't  use it consistently. I keep the configuration just in case I
+  change my mind someday.
 
-Beware! There is a strange inconsistency when habits are enabled. See [[https://emacs.stackexchange.com/questions/26291/not-allowed-in-tags-type-agenda-using-custom-agenda]]
+  Beware! There is a strange inconsistency when habits are enabled. See [[https://emacs.stackexchange.com/questions/26291/not-allowed-in-tags-type-agenda-using-custom-agenda]]
 
-#+BEGIN_SRC emacs-lisp
+  #+BEGIN_SRC emacs-lisp
   (use-package org-habit 
     :straight nil
     :after (org org-agenda)
@@ -1385,122 +1492,126 @@ Beware! There is a strange inconsistency when habits are enabled. See [[https://
           org-habit-show-habits-only-for-today nil))
   #+END_SRC 
 
-This allow to hide certain tags in the agenda display, but include them in
-the processing of agenda commands
-#+BEGIN_SRC emacs-lisp
+  This allow to hide certain tags in the agenda display, but include them in
+  the processing of agenda commands
+  #+BEGIN_SRC emacs-lisp
   (setq
   org-agenda-hide-tags-regexp "contacts\\|projects\\|research\\|urgent\\|important\\|short_term\\|long_term\\|no_export\\|this_month\\|this_week\\|next_week\\|next_moth\\|Métier")
-#+END_SRC 
+  #+END_SRC 
 
 * org-clock
   #+BEGIN_SRC emacs-lisp
-  (use-package org-clock 
-    :straight nil
-    :after org
-    :custom
-    ;; Set default column view headings: Task Priority Effort Clock_Summary
-    (org-columns-default-format "%1PRIORITY %2TODO %DEADLINE %60ITEM(Task) %5EFFORT(Effort){:} %5CLOCKSUM")
-    (org-agenda-clockreport-parameter-plist
-     '(:link t :maxlevel 6 :fileskip0 t :compact t :narrow 60 :score 0))
-    ;; Agenda clock report parameters
-    ;; global Effort estimate values
-    ;;        1    2    3    4    5    6    7    8    9    0
-    ;; These are the hotkeys ^
-    (org-global-properties  '(("Effort_ALL" . "1:00 2:00 4:00 5:00 8:00 10:00 12:00 15:00 20:00 24:00")))
-    ;; If idle for more than 15 minutes, resolve the things by asking what to do
-    ;; with the clock time
-    (org-clock-idle-time 5)
-    ;; Show lot of clocking history so it's easy to pick items off the `C-c I` list
-    (org-clock-history-length 23)
-    ;; Save the running clock and all clock history when exiting Emacs, load it on startup
-    (org-clock-persist 'history)
-    ;; org-clock-persist t
-    ;; Resume clocking task on clock-in if the clock is open
-    (org-clock-in-resume t)
-    ;; Do not prompt to resume an active clock, just resume it
-    (org-clock-persist-query-resume nil)
-    ;; Change tasks to whatever when clocking in
-    (org-clock-in-switch-to-state "中")
-    ;; Save clock data and state changes and notes in the LOGBOOK drawer
-    (org-clock-into-drawer t)
-    ;; Sometimes I change tasks I'm clocking quickly - this removes clocked tasks
-    ;; with 0:00 duration
-    (org-clock-out-remove-zero-time-clocks t)
-    ;; Clock out when moving task to a done state
-    (org-clock-out-when-done t)
-    ;; Enable auto clock resolution for finding open clocks
-    (org-clock-auto-clock-resolution (quote when-no-clock-is-running))
-    ;; Include current clocking task in clock reports
-    (org-clock-report-include-clocking-task t)
-    ;; use pretty things for the clocktable
-    (org-pretty-entities t)
-    (org-clock-string-limit 8)
+    (use-package org-clock 
+        :straight nil
+        :after org
+        :custom
+        ;; Set default column view headings: Task Priority Effort Clock_Summary
+        (org-columns-default-format "%1PRIORITY %2TODO %DEADLINE %60ITEM(Task) %5EFFORT(Effort){:} %5CLOCKSUM")
+        (org-agenda-clockreport-parameter-plist
+         '(:link t :maxlevel 6 :fileskip0 t :compact t :narrow 60 :score 0))
+        ;; Agenda clock report parameters
+        ;; global Effort estimate values
+        ;;        1    2    3    4    5    6    7    8    9    0
+        ;; These are the hotkeys ^
+        (org-global-properties  '(("Effort_ALL" . "1:00 2:00 4:00 5:00 8:00 10:00 12:00 15:00 20:00 24:00")))
+        ;; If idle for more than 15 minutes, resolve the things by asking what to do
+        ;; with the clock time
+        (org-clock-idle-time 5)
+        ;; Show lot of clocking history so it's easy to pick items off the `C-c I` list
+        (org-clock-history-length 23)
+        ;; Save the running clock and all clock history when exiting Emacs, load it on startup
+        (org-clock-persist 'history)
+        ;; org-clock-persist t
+        ;; Resume clocking task on clock-in if the clock is open
+        (org-clock-in-resume t)
+        ;; Do not prompt to resume an active clock, just resume it
+        (org-clock-persist-query-resume nil)
+        ;; Change tasks to whatever when clocking in
+        (org-clock-in-switch-to-state "中")
+        ;; Save clock data and state changes and notes in the LOGBOOK drawer
+        (org-clock-into-drawer t)
+        ;; Sometimes I change tasks I'm clocking quickly - this removes clocked tasks
+        ;; with 0:00 duration
+        (org-clock-out-remove-zero-time-clocks t)
+        ;; Clock out when moving task to a done state
+        (org-clock-out-when-done t)
+        ;; Enable auto clock resolution for finding open clocks
+        (org-clock-auto-clock-resolution (quote when-no-clock-is-running))
+        ;; Include current clocking task in clock reports
+        (org-clock-report-include-clocking-task t)
+        ;; use pretty things for the clocktable
+        (org-pretty-entities t)
+        (org-clock-string-limit 8)
 
-    :config
-      ;; Avoid annoying space in mode line when no clock is defined.
-      (add-hook 'org-clock-out-hook
-                '(lambda ()
-                   (setq org-mode-line-string nil)))
+        :config
+          ;; Avoid annoying space in mode line when no clock is defined.
+          (add-hook 'org-clock-out-hook
+                    '(lambda ()
+                       (setq org-mode-line-string nil)))
 
-    (defun sync0-org-clock-in ()
-      (interactive)
-      (org-clock-in '(4)))
+        (defun sync0-org-clock-in ()
+          (interactive)
+          (org-clock-in '(4)))
 
-    ;; This function was taken from Sacha Chua's configuration.
-    ;; Display words typed and minutes spent in an org subtree.
-    (defun sync0-org-entry-word-count ()
-      (interactive)
-      (save-restriction
-        (save-excursion
-          (org-narrow-to-subtree)
-          (goto-char (point-min))
-          (let* ((words (count-words-region (point-min) (point-max)))
-                 (minutes (org-clock-sum-current-item))
-                 (wpm (/ words minutes)))
-            (message "WPM: %d (words: %d, minutes: %d)" wpm words minutes)
-            (kill-new (number-to-string wpm))))))
+        ;; This function was taken from Sacha Chua's configuration.
+        ;; Display words typed and minutes spent in an org subtree.
+        (defun sync0-org-entry-word-count ()
+          (interactive)
+          (save-restriction
+            (save-excursion
+              (org-narrow-to-subtree)
+              (goto-char (point-min))
+              (let* ((words (count-words-region (point-min) (point-max)))
+                     (minutes (org-clock-sum-current-item))
+                     (wpm (/ words minutes)))
+                (message "WPM: %d (words: %d, minutes: %d)" wpm words minutes)
+                (kill-new (number-to-string wpm))))))
 
-    ;; Resume clocking task when emacs is restarted
-    (org-clock-persistence-insinuate)
+        ;; Resume clocking task when emacs is restarted
+        (org-clock-persistence-insinuate)
 
- (defhydra sync0-hydra-org-clock (:color blue :hint nil)
-   "
-Clock   In/out^     ^Edit^   ^Summary     (_?_)
------------------------------------------
-        _i_n         _e_dit   _g_oto entry
-        _c_ontinue   _q_uit   _d_isplay
-        _o_ut        ^ ^      _r_eport
-        ^ ^          ^ ^      _w_ord count
-      "
-   ("i" sync0-org-clock-in)
-   ("c" org-clock-in-last)
-   ("o" org-clock-out)
-   ("e" org-clock-modify-effort-estimate)
-   ("q" org-clock-cancel)
-   ("g" org-clock-goto)
-   ("d" org-clock-display)
-   ("r" org-clock-report)
-   ("w" sync0-org-entry-word-count)
-   ("?" (org-info "Clocking commands")))
+     (defhydra sync0-hydra-org-clock (:color blue :hint nil)
+"
+^Clock functions^   
+^--------------------
+^In/out^    ^Edit^    ^Summary (_?_)
+^----------------------------------------- 
+_i_n        _e_dit    _g_oto entry 
+_c_ontinue  _Q_uit    _d_isplay 
+_o_ut       ^ ^       _r_eport 
+            ^ ^       _w_ord count
 
-    :bind 
-(:map org-mode-map
-("C-c t" . sync0-hydra-org-clock/body)))
-#+END_SRC 
+_q_uit
+"
+       ("i" sync0-org-clock-in)
+       ("c" org-clock-in-last)
+       ("o" org-clock-out)
+       ("e" org-clock-modify-effort-estimate)
+       ("Q" org-clock-cancel)
+       ("g" org-clock-goto)
+       ("d" org-clock-display)
+       ("r" org-clock-report)
+       ("w" sync0-org-entry-word-count)
+       ("?" (org-info "Clocking commands"))
+       ("q" nil :color blue))
+
+    (evil-leader/set-key
+      "t" 'sync0-hydra-org-clock/body))
+  #+END_SRC 
 
 * ox-latex
-Even though, by default, Emacs Org mode has the export keyword
-~LATEX_COMPILER:~ to choose among the different engines (pdflatex, xelatex, or
-lualatex), I had to tweek the settings to run LaTeX through ~latexmk~ for
-biber to work properly with BibLaTeX. In layman English, the following
-configuration is necessary for automatic bibliography management to work
-properly when exporting org documents to LaTeX.
+  Even though, by default, Emacs Org mode has the export keyword
+  ~LATEX_COMPILER:~ to choose among the different engines (pdflatex, xelatex, or
+  lualatex), I had to tweek the settings to run LaTeX through ~latexmk~ for
+  biber to work properly with BibLaTeX. In layman English, the following
+  configuration is necessary for automatic bibliography management to work
+  properly when exporting org documents to LaTeX.
 
-BTW, you can assign "pdf" in above variables if you prefer PDF format
-for page breaks add this to org files
-# #+ODT: <text:p text:style-name="PageBreak"/>
+  BTW, you can assign "pdf" in above variables if you prefer PDF format
+  for page breaks add this to org files
+  # #+ODT: <text:p text:style-name="PageBreak"/>
 
-#+BEGIN_SRC emacs-lisp
+  #+BEGIN_SRC emacs-lisp
   (use-package ox-latex 
 :straight nil
     :after org
@@ -1714,25 +1825,25 @@ are exported to a filename derived from the headline text."
     :bind 
     (:map org-mode-map 
           ("M-p" . sync0-latex-and-beamer-export)))
-#+END_SRC 
+  #+END_SRC 
 
 * org-bullets
-While this is an amazing package, it terribly slows down org-mode
-on my laptop when editing large ~org~ files or files with many
-~PROPERTY~ drawers .
+  While this is an amazing package, it terribly slows down org-mode
+  on my laptop when editing large ~org~ files or files with many
+  ~PROPERTY~ drawers .
 
-#+BEGIN_SRC emacs-lisp
+  #+BEGIN_SRC emacs-lisp
       (use-package org-bullets 
         :straight (org-bullets :type git :host github :repo "sabof/org-bullets") 
         :custom
         ;; Hide all bullets:
         (org-bullets-bullet-list '(" ")))
 
-#+END_SRC 
+  #+END_SRC 
 
 * org-mu4e
   This package stores org mode links to messages.
-#+BEGIN_SRC emacs-lisp
+  #+BEGIN_SRC emacs-lisp
   (use-package org-mu4e 
     :straight nil
     ;; :disabled t
@@ -1741,81 +1852,6 @@ on my laptop when editing large ~org~ files or files with many
     ;; Store link to message if in header view, not to header query.
     (org-mu4e-link-query-in-headers-mode nil))
   #+END_SRC 
-
-* org-roam
-#+BEGIN_SRC emacs-lisp
-        (use-package org-roam
-          :straight (org-roam :type git :host github :repo "org-roam/org-roam") 
-          :hook (after-init . org-roam-mode)
-          :custom
-              (org-roam-directory "~/Dropbox/org/")
-        ;; make org-roam buffer sticky
-              (org-roam-buffer-no-delete-other-windows t)
-              (org-roam-completion-system 'default)
-              (org-roam-link-file-path-type 'absolute)
-              ;; (org-roam-dailies-directory org-journal-dir)
-              (org-roam-dailies-directory "journal/")
-              (org-roam-tag-sources '(prop last-directory))
-  ;;           (org-roam-tag-sources '(prop))
-              (org-roam-completion-everywhere t)
-              (org-roam-index-file "~/Dropbox/org/index.org")
-              (org-roam-graph-exclude-matcher '("journal" "etc" "inbox" "projects" "spontaneous"))
-        :config
-
-        (setq org-roam-capture-templates '( 
-         ("n" "Numéroté" plain (function org-roam--capture-get-point)
-          "%?"
-          :file-name "%<%Y%m%d%H%M%S>"
-          :head "#+TITLE: ${slug}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: permanent %<%Y>  %<%B>\n\nOrigin: %a\n"
-          :unnarrowed t)))
-
-      (setq org-roam-capture-ref-templates
-              '(("r" "ref" plain (function org-roam-capture--get-point)
-                 "#+ROAM_KEY: ${ref}\n\n%?"
-                 :file-name "website_${slug}_%<%Y-%m-%d>"
-                 :head "#+TITLE: ${title}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: website %<%Y>\n\n"
-                 :unnarrowed t)))
-
-        (setq org-roam-dailies-capture-templates
-              '(("d" "default" entry
-                 #'org-roam-capture--get-point
-                 "* %?"
-                 :file-name "journal/%<%Y%m%d>"
-                 :head "#+TITLE: %<%A, %d %B %Y>\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: journal %<%Y> %<%B>\n\n"))))
-
-#+END_SRC 
-
-** company-org-roam
- #+BEGIN_SRC emacs-lisp
-    (use-package company-org-roam  :after company)
-    #+END_SRC 
-
-** 無 org-roam-bibtex
-   #+BEGIN_SRC emacs-lisp
-    (use-package org-roam-bibtex
-      :straight (org-roam-bibtex :type git :host github :repo "org-roam/org-roam-bibtex") 
-      :after (org-roam)
-      :hook (org-roam-mode . org-roam-bibtex-mode)
-      :custom
-          ;; Use this to insert org-ref citations (cite:XXX199X)
-          (orb-autokey-format "%a%y")
-          (orb-process-file-keyword t)
-          (orb-file-field-extensions '("pdf"))
-          ;; Use this to insert citation keys
-          (orb-insert-link-description 'citekey)
-          (orb-note-actions-interface 'hydra)
-      :config
-
-    (setq orb-preformat-keywords
-          '("citekey" "title" "subtitle" "url" "author-or-editor" "keywords" "file"))
-
-      (setq orb-templates
-            '(("r" "ref" plain (function org-roam-capture--get-point)
-             ""
-               :file-name "references/${citekey}"
-               :head "#+TITLE: ${title}\n#+SUBTITLE: ${subtitle}\n#+AUTHOR: ${author-or-editor}\n#+ROAM_KEY: ${ref}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: ${citekey} references ${keywords}\n#+INTERLEAVE_PDF: ${file}"
-               :unnarrowed t))))
-#+END_SRC 
 
 * org-ref 
 #+BEGIN_SRC emacs-lisp
@@ -1855,46 +1891,44 @@ on my laptop when editing large ~org~ files or files with many
 
     (defhydra sync0-hydra-research-functions (:color amaranth :hint nil :exit t)
       "
-   ^Research functions^   ^References^            ^Roam^           ^Roam actions^     ^Dailies^
-   ^------------------------------------------------------------------------------------------------------
-   _i_: Orb insert        _p_: Footnote           _C_: Capture     _B_: Build cache   _T_: Today note
-   _I_: Org-ref citation  _r_: LaTeX citation     _f_: Find file   _s_: Store link    _o_: Other date            
-   _a_: Orb actions       _c_: LaTeX quotation    _D_: Deft        _S_: Insert link   _k_: Previous note
-   _n_: Notes             _F_: Foreign quotation  _R_: Roam buffer _l_: File link     _j_: Next note
-   _e_: Bibtex entry      ^ ^                     _x_: Index       _L_: Headline link   
-   _b_: Bibliography      ^ ^                     _g_: Graph
-   _P_: Open PDF          ^ ^                     
+   ^Research functions^   ^References^        ^Roam^          ^Roam link actions^
+   ^------------------------------------------------------------------------------
+   Orb _i_nsert           _I_nsert footnote   Find _f_ile     Link _s_tore 
+   Orb _a_ctions          _Q_uote (Csquotes)  _R_oam buffer   _L_ast stored link
+   Entry _n_otes          _F_oreign quote     Open _d_eft     Roam _l_ink                     
+   Bibtex _e_ntry         ^ ^                 _B_uild cache   Link to _h_eadline
+   Open _b_ibliography    ^ ^                 Open inde_x_       
+   Open _p_df             ^ ^                 Show _g_raph
                                                                      
-   [q] Quit
+    _q_uit
         "
-      ("C" org-roam-capture)
+      ;; ("C" org-roam-capture)
       ("x" org-roam-jump-to-index)
       ("s" org-store-link)
       ("i" orb-insert)
       ("a" orb-note-actions)
-      ("D" deft)
-      ("T" org-roam-dailies-find-today)
-      ("k" org-roam-dailies-find-previous-note)
-      ("j" org-roam-dailies-find-next-note)
-      ("o" org-roam-dailies-find-date)
+      ("d" deft)
       ("R" org-roam)
       ("B" org-roam-db-build-cache)
       ("f" org-roam-find-file)
       ("g" org-roam-graph)
       ("l" org-roam-insert)
-      ("L" org-insert-link)
-      ("S" org-insert-last-stored-link)
-      ;; ("L" org-roam-insert-immediate)
-      ("I" org-ref-ivy-insert-cite-link)
+      ("h" org-insert-link)
+      ("L" org-insert-last-stored-link)
+   ;; ("L" org-roam-insert-immediate)
+   ;; ("I" org-ref-ivy-insert-cite-link)
       ("n" ivy-bibtex)
       ("e" org-ref-open-citation-at-point)
       ("b" sync0-visit-bibliography-in-buffer)
-      ("P" sync0-org-ref-open-pdf-at-point)
-      ("p" org-footnote-new)
-      ("r" (progn (yas-expand-snippet (yas-lookup-snippet "org_ref_citation"))))
-      ("c" (progn (yas-expand-snippet (yas-lookup-snippet "csquotes_displayquote"))))
+      ("p" sync0-org-ref-open-pdf-at-point)
+      ("I" org-footnote-new)
+      ;; ("r" (progn (yas-expand-snippet (yas-lookup-snippet "org_ref_citation"))))
+      ("Q" (progn (yas-expand-snippet (yas-lookup-snippet "csquotes_displayquote"))))
       ("F" (progn (yas-expand-snippet (yas-lookup-snippet "csquotes_foreign_displayquote"))))
       ("q" nil :color blue))
+
+(evil-leader/set-key
+  "R" 'sync0-hydra-research-functions/body)
 
     :bind 
     (:map org-mode-map
@@ -1961,16 +1995,30 @@ on my laptop when editing large ~org~ files or files with many
 #+BEGIN_SRC emacs-lisp
 (use-package org-download
 :straight (org-download :type git :host github :repo "abo-abo/org-download") 
-  :after org
+:after org
 :hook (dired-mode . org-download-enable)
-:commands (org-download-screenshot org-download-clipboard org-download-yank)
 :custom
 (org-download-image-dir "~/Pictures/org")
 (org-download-screenshot-method "xfce4-screenshooter")
-  :bind
-  (:map org-mode-map
-        (("s-Y" . org-download-screenshot)
-         ("s-y" . org-download-yank))))
+
+:config
+    (defhydra sync0-hydra-org-download-functions (:color amaranth :hint nil :exit t)
+      "
+   ^Download functions^   
+   ^--------------------
+   _c_lipboard
+   _y_ank
+   _s_creenshot
+                                                                     
+   [q] Quit
+        "
+      ("c" org-download-clipboard)
+      ("y" org-download-yank)
+      ("s" org-download-screenshot)
+      ("q" nil :color blue))
+
+(evil-leader/set-key
+  "d" 'sync0-hydra-org-download-functions/body))
 #+END_SRC 
 
 * org-gcal

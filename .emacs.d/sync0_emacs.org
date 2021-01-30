@@ -4,7 +4,6 @@
 # Necessary to export code from Emacs org mode to elisp. 
 #+PROPERTY: header-args :tangle yes
 
-
 * Introduction 
 This is my Emacs configuration file. As the sloppy code herein
 attests, I am not a proficient programmer. I use Emacs primarily
@@ -401,17 +400,21 @@ https://stackoverflow.com/questions/23207958/how-to-prevent-emacs-dired-from-spl
 
 ** Definitions
 #+BEGIN_SRC emacs-lisp
-(setq sync0-zettelkasten-directory (concat (getenv "HOME") "/Dropbox/org/"))
-(setq sync0-zettelkasten-directory-sans (concat (getenv "HOME") "/Dropbox/org"))
-(setq sync0-current-year (format-time-string "%Y"))
-(setq sync0-current-month (format-time-string "%B"))
-(setq sync0-current-month-downcase (downcase (format-time-string "%B")))
-(setq sync0-current-day (format-time-string "%d"))
-(setq sync0-pdfs-folder (concat (getenv "HOME") "/Documents/pdfs/"))
-(setq sync0-english-parts-speech '("noun" "intransitive verb" "transitive verb" "verb" "conjunction" "adjective" "adverb"))
-(setq sync0-french-parts-speech '("nom féminin" "nom masculin" "verbe intransitif" "verbe transitif" "verbe" "conjonction" "adjectif" "adverbe"))
-(setq sync0-portuguese-parts-speech '("sustantivo femenino" "sustantivo masculino" "verbo intransitivo" "verbo transitivo" "verbo" "conjunção" "adjetivo" "advérbio"))
-(setq sync0-spanish-parts-speech '("sustantivo femenino" "sustantivo masculino" "verbo intransitivo" "verbo transitivo" "verbo" "conjunción" "adjectivo" "adverbio"))
+(setq sync0-zettelkasten-directory (concat (getenv "HOME") "/Dropbox/org/")
+sync0-zettelkasten-directory-sans (concat (getenv "HOME") "/Dropbox/org")
+sync0-zettelkasten-directory-references (concat (getenv "HOME") "/Dropbox/org/references/")
+sync0-pdfs-folder (concat (getenv "HOME") "/Documents/pdfs/")
+sync0-current-year (format-time-string "%Y")
+sync0-current-month (format-time-string "%B")
+sync0-current-month-downcase (downcase (format-time-string "%B"))
+sync0-current-day (format-time-string "%d")
+sync0-english-parts-speech '("noun" "intransitive verb" "transitive verb" "verb" "conjunction" "adjective" "adverb")
+sync0-french-parts-speech '("nom féminin" "nom masculin" "verbe intransitif" "verbe transitif" "verbe" "conjonction" "adjectif" "adverbe")
+sync0-portuguese-parts-speech '("sustantivo femenino" "sustantivo masculino" "verbo intransitivo" "verbo transitivo" "verbo" "conjunção" "adjetivo" "advérbio")
+          sync0-spanish-parts-speech '("sustantivo femenino" "sustantivo masculino" "verbo intransitivo" "verbo transitivo" "verbo" "conjunción" "adjectivo" "adverbio")
+          sync0-zettelkasten-annotations-author  "John Doe"
+          sync0-zettelkasten-annotations-key  "doe"
+           sync0-zettelkasten-annotations-roam-key "cite:doe1991")
  #+END_SRC 
  
 ** Functions
@@ -454,7 +457,6 @@ https://stackoverflow.com/questions/23207958/how-to-prevent-emacs-dired-from-spl
                                 (when (and (eq major-mode 'org-mode)
                                            (or (equal default-directory (concat (getenv "HOME") "/Dropbox/org/"))
                                                (equal default-directory (concat (getenv "HOME") "/Dropbox/org/projects/"))
-                                               (equal default-directory (concat (getenv "HOME") "/Dropbox/org/annotations/"))
                                                (equal default-directory (concat (getenv "HOME") "/Dropbox/org/inbox/"))
                                                (equal default-directory (concat (getenv "HOME") "/Dropbox/org/references/"))
                                                (equal default-directory (concat (getenv "HOME") "/Dropbox/annotations/"))))
@@ -463,7 +465,7 @@ https://stackoverflow.com/questions/23207958/how-to-prevent-emacs-dired-from-spl
   (defun sync0-zettelkasten-annotations-update-author ()
     "Save current #+AUTHOR for use later on."
     (interactive)
- (when (equal default-directory sync0-zettelkasten-directory)
+ (when (equal default-directory sync0-zettelkasten-directory-references)
     (save-excursion
       (goto-char (point-min))
          (when (re-search-forward "^#\\+AUTHOR: \\([[:print:]]+\\)$" nil t 1)
@@ -472,7 +474,7 @@ https://stackoverflow.com/questions/23207958/how-to-prevent-emacs-dired-from-spl
   (defun sync0-zettelkasten-annotations-update-roam-key ()
     "Save current #+ROAM_KEY for use later on."
     (interactive)
- (when (equal default-directory sync0-zettelkasten-directory)
+ (when (equal default-directory sync0-zettelkasten-directory-references)
     (save-excursion
       (goto-char (point-min))
          (when (re-search-forward "^#\\+ROAM_KEY: cite:\\([[:print:]]+\\)$" nil t 1)
@@ -525,8 +527,8 @@ Moving around windows.
         (balance-windows)
                   (setq truncate-lines t)
                   (setq truncate-partial-width-windows t)
-        (other-window 1)
-  (sync0-restore-margins)))
+  ;; (sync0-restore-margins)
+        (other-window 1)))
 
       (defun sync0-split-and-follow-vertically ()
         (interactive)
@@ -535,8 +537,8 @@ Moving around windows.
         (balance-windows)
                   (setq truncate-lines t)
                   (setq truncate-partial-width-windows t)
-  ;;      (other-window 1)
-  (sync0-restore-margins)))
+  ;; (sync0-restore-margins)
+        (other-window 1)))
  #+END_SRC 
 
 This is a collection of functions that become problematic when
@@ -593,6 +595,21 @@ loaded after packages are declared.
     :straight (hydra :type git :host github :repo "abo-abo/hydra"))
 #+END_SRC 
 
+*** which-key
+#+BEGIN_SRC emacs-lisp
+  (use-package which-key
+  :straight (which-key :type git :host github :repo "justbur/emacs-which-key")
+    :custom
+(which-key-popup-type 'side-window)
+(which-key-side-window-location 'bottom)
+(which-key-side-window-max-width 0.33)
+(which-key-side-window-max-height 0.25)
+;; (which-key-idle-delay 10000)
+;; (which-key-idle-secondary-delay 0.05)
+    :config
+      (which-key-mode))
+#+END_SRC 
+
 *** ivy 
     #+BEGIN_SRC emacs-lisp
     (use-package ivy
@@ -603,10 +620,40 @@ loaded after packages are declared.
       (ivy-count-format "(%d/%d) "))
     #+END_SRC
 
+*** evil-leader
+  #+BEGIN_SRC emacs-lisp
+    (use-package evil-leader
+        :straight (evil-leader :type git :host github :repo "cofi/evil-leader") 
+        :hook (after-init . global-evil-leader-mode)
+
+       :config
+         (evil-leader/set-leader "<SPC>")
+
+(require 'ivy)
+(require 'counsel)
+(require 'org-capture)
+
+(evil-leader/set-key
+  "1" 'delete-other-windows
+  "2" 'sync0-split-and-follow-horizontally
+  "3" 'sync0-split-and-follow-vertically
+  "m" 'bookmark-set
+  "j" 'counsel-bookmark
+  "w" 'save-buffer
+  "b" 'ivy-switch-buffer
+  "r" 'counsel-recentf
+  "y" 'counsel-yank-pop
+  "f" 'counsel-find-file
+  "x" 'counsel-M-x
+  "p" 'previous-buffer
+  "n" 'next-buffer
+  "k" 'kill-buffer))
+  #+END_SRC 
+
 *** evil
      #+BEGIN_SRC emacs-lisp
             (use-package evil  
-              :straight (evil :type git :host github :repo "emacs-evil/evil") 
+              ;; :straight (evil :type git :host github :repo "emacs-evil/evil") 
               :hook (after-init . evil-mode)
               :custom
               ;; Make horizontal movement cross lines                                    
@@ -626,6 +673,7 @@ loaded after packages are declared.
                            ("ESC" . minibuffer-keyboard-quit)
                            :map minibuffer-local-isearch-map
                            ("ESC" . minibuffer-keyboard-quit)))
+
               :config 
               (defun sync0-insert-line-below ()
                 "Insert an empty line below the current line."
@@ -676,8 +724,12 @@ loaded after packages are declared.
                 "zl" 'transpose-lines
                 "zw" 'transpose-words
                 "zp" 'transpose-paragraphs
-                "zs" 'transpose-sentences
-                (kbd "SPC") 'sync0-insert-whitespace)
+               ;; (kbd "SPC") 'sync0-insert-whitespace
+                "zs" 'transpose-sentences)
+  
+             (evil-leader/set-key
+                 "<SPC>" 'sync0-insert-whitespace
+                 "<ESC>" 'keyboard-quit )
 
               ;; Improve EVIL behavior with visual lines (visual-line-mode).
               (define-key evil-normal-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
@@ -714,6 +766,7 @@ loaded after packages are declared.
 **** 取 evil-multiedit
   #+BEGIN_SRC emacs-lisp
     (use-package evil-multiedit 
+      :straight (evil-multiedit :type git :host github :repo "hlissner/evil-multiedit") 
       :disabled t
       :defer t
       :commands 
@@ -792,7 +845,6 @@ loaded after packages are declared.
   #+BEGIN_SRC emacs-lisp
     (use-package recentf
   :straight nil
-      :diminish recentf-mode
       :custom
       (recentf-max-saved-items 100)
       (recentf-max-menu-items 10)

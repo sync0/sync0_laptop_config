@@ -1,29 +1,30 @@
 * Scratch Message
 #+BEGIN_SRC emacs-lisp
-       (setq initial-scratch-message ";; 
-;; Man should not be ready to
-;; show that he can live like a badly-fed animal. He should decline
-;; to live like that, and should either steal or go on the rates,
-;; which is considered by many to be a form of stealing. As for
-;; begging, it is safer to beg than to take, but it is finer to take
-;; than to beg. No: a poor man who is ungrateful, unthrifty,
-;; discontented, and rebellious, is probably a real personality, and
-;; has much in him. He is at any rate a healthy protest. As for the
-;; virtuous poor, one can pity them, of course, but one cannot
-;; possibly admire them. They have made private terms with the
-;; enemy, and sold their birthright for very bad pottage. 
+         (setq initial-scratch-message ";; 
 ;;
-;; Oscar Wilde
-;; The Soul of Man under Socialism (1891)
+;;   Man should not be ready to show that he can live like a
+;;   badly-fed animal. He should decline to live like that, and
+;;   should either steal or go on the rates, which is considered by
+;;   many to be a form of stealing. As for begging, it is safer to
+;;   beg than to take, but it is finer to take than to beg. No: a
+;;   poor man who is ungrateful, unthrifty, discontented, and
+;;   rebellious, is probably a real personality, and has much in him.
+;;   He is at any rate a healthy protest. As for the virtuous poor,
+;;   one can pity them, of course, but one cannot possibly admire
+;;   them. They have made private terms with the enemy, and sold
+;;   their birthright for very bad pottage.
+;;
+;;   Oscar Wilde
+;;   The Soul of Man under Socialism (1891)
 ;; ")
 
   #+END_SRC 
 
 * Toolbars
 
-Define a function to toggle mode line. 
+  Define a function to toggle mode line. 
 
-    #+BEGIN_SRC emacs-lisp
+  #+BEGIN_SRC emacs-lisp
     (defun sync0-toggle-mode-line () 
       "toggles the modeline on and off"
       (interactive) 
@@ -31,51 +32,54 @@ Define a function to toggle mode line.
             (if (equal mode-line-format nil)
                 (default-value 'mode-line-format)) )
       (redraw-display))
-      #+END_SRC 
+  #+END_SRC 
 
-Hide tool bar, menu bar, and scroll bar at startup. 
+  Hide tool bar, menu bar, and scroll bar at startup. 
 
-    #+BEGIN_SRC emacs-lisp
+  #+BEGIN_SRC emacs-lisp
       (tool-bar-mode -1) 
       (menu-bar-mode -1)
       (scroll-bar-mode -1)
       (menu-bar-showhide-fringe-menu-customize-disable)
-      #+END_SRC 
+  #+END_SRC 
 
-In case I need those annoying toolbars back, I bind them:
+  In case I need those annoying toolbars back, I bind them:
 
-    #+BEGIN_SRC emacs-lisp
+  #+BEGIN_SRC emacs-lisp
     (defhydra sync0-hydra-menu-toggle (:color amaranth :hint nil :exit t)
       "
-^Toolbar toggle^
+^Toolbar toggle functions^
 ^^^----------------
-_l_: Mode line
-_t_: Tool bar
-_m_: Menu bar
-[q] Quit
+Hide mode _l_ine
+Toggle _t_ool bar
+Toggle _m_enu bar
+
+_q_uit
 "
       ("l" sync0-toggle-mode-line)
       ("t" tool-bar-mode)
       ("m" menu-bar-mode)
       ("q" nil :color blue))
 
-      (global-set-key (kbd "<f8>") 'sync0-hydra-menu-toggle/body)
-      #+END_SRC 
+(evil-leader/set-key
+  "T" 'sync0-hydra-menu-toggle/body)
+  #+END_SRC 
 
 * Windows
-    At startup,  maxmize Emacs' window. 
-    #+BEGIN_SRC emacs-lisp
+  At startup,  maxmize Emacs' window. 
+  #+BEGIN_SRC emacs-lisp
       (add-to-list 'default-frame-alist '(fullscreen . maximized))
- #+END_SRC
+  #+END_SRC
 
-Configure window dividers. 
-    #+BEGIN_SRC emacs-lisp
-      ;; On graphical displays, you can use window dividers in order to separate
-      ;; windows visually.
-      (setq-default window-divider-default-places t
-                    window-divider-default-bottom-width 0
-                    window-divider-default-right-width 2)
-      (add-hook 'emacs-startup-hook #'window-divider-mode)
+  Configure window dividers. 
+  #+BEGIN_SRC emacs-lisp
+          ;; On graphical displays, you can use window dividers in order to separate
+          ;; windows visually.
+          ;; (setq-default 
+          ;;               window-divider-default-bottom-width 0
+          ;;               window-divider-default-right-width 2)
+
+    ;;      (add-hook 'emacs-startup-hook #'window-divider-mode)
 #+END_SRC
 
 Remove fringes from minibuffer. This function was taken from [[https://github.com/hlissner][hlissner]]. See
@@ -189,7 +193,7 @@ Cycle between themes.
     :after doom-themes
     :commands cycle-themes
     :init
-    (require 'cl-lib)
+    (require 'cl)
     :bind (("C-c C-t" . cycle-themes))
     :config 
     ;; The order has to be set this way for the hook to work

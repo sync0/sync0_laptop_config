@@ -167,7 +167,7 @@ parenthesis.
     :after evil
     :hook 
     ((emacs-startup . smartparens-global-mode)
-     ;; (emacs-startup . show-smartparens-global-mode)
+      (emacs-startup . show-smartparens-global-mode)
      ;; Disable smartparens in evil-mode's replace state; they conflict.
      (evil-replace-state-entry-hook . turn-off-smartparens-mode)
      (evil-replace-state-exit-hook  . turn-on-smartparens-mode))
@@ -179,182 +179,65 @@ parenthesis.
     (sp-max-pair-length 3)
     :config
     (require 'smartparens-config)
+    (require 'smartparens-latex)
 
-(defun sp-latex-insert-spaces-inside-pair (_id action _context)
-  "ID, ACTION, CONTEXT."
-  (when (eq action 'insert)
-    (insert "  ")
-    (backward-char 1))
-  (when (and (eq action 'wrap)
-             (save-excursion
-               (goto-char (sp-get sp-last-wrapped-region :beg-in))
-               (not (sp--looking-back-p "[[{(]"))))
-    (save-excursion
-      (goto-char (sp-get sp-last-wrapped-region :end-in))
-      (insert " ")
-      (goto-char (sp-get sp-last-wrapped-region :beg-in))
-      (insert " "))))
 
-(defun sp-latex-skip-match-apostrophe (ms _mb me)
-  "MS, MB, ME."
-  (when (equal ms "'")
-    (save-excursion
-      (goto-char me)
-      (looking-at-p "\\sw"))))
+(defhydra sync0-hydra-smart-parens (:hint nil)
+    "
+Sexps functions (_q_uit)
+^Nav^            ^Barf/Slurp^                 ^Depth^
+^---^------------^----------^-----------------^-----^-----------------
+_f_: forward     _→_:          slurp forward   _R_: splice
+_b_: backward    _←_:          barf forward    _r_: raise
+_u_: backward ↑  _C-<right>_:  slurp backward  _↑_: raise backward
+_d_: forward ↓   _C-<left>_:   barf backward   _↓_: raise forward
+_p_: backward ↓
+_n_: forward ↑
 
-(defun sp-latex-skip-double-quote (_id action _context)
-  "ID, ACTION, CONTEXT."
-  (when (eq action 'insert)
-    (when (looking-at-p "''''")
-      (delete-char -2)
-      (delete-char 2)
-      (forward-char 2))))
+^Kill^           ^Misc^                       ^Wrap^
+^----^-----------^----^-----------------------^----^------------------
+_w_: copy        _j_: join                    _(_: wrap with ( )
+_k_: kill        _s_: split                   _{_: wrap with { }
+^^               _t_: transpose               _'_: wrap with ' '
+^^               _c_: convolute               _\"_: wrap with \" \"
+^^               _i_: indent defun"
 
-(defun sp-latex-point-after-backslash (id action _context)
-  "Return t if point follows a backslash, nil otherwise.
-      This predicate is only tested on \"insert\" action.
-      ID, ACTION, CONTEXT."
-  (when (eq action 'insert)
-    (let ((trigger (sp-get-pair id :trigger)))
-      (looking-back (concat "\\\\" (regexp-quote (if trigger trigger id))) nil))))
+    ("q" nil)
+    ;; Wrapping
+    ("(" (lambda (_) (interactive "P") (sp-wrap-with-pair "(")))
+    ("{" (lambda (_) (interactive "P") (sp-wrap-with-pair "{")))
+    ("'" (lambda (_) (interactive "P") (sp-wrap-with-pair "'")))
+    ("\"" (lambda (_) (interactive "P") (sp-wrap-with-pair "\"")))
+    ;; Navigation
+    ("f" sp-forward-sexp )
+    ("b" sp-backward-sexp)
+    ("u" sp-backward-up-sexp)
+    ("d" sp-down-sexp)
+    ("p" sp-backward-down-sexp)
+    ("n" sp-up-sexp)
+    ;; Kill/copy
+    ("w" sp-copy-sexp)
+    ("k" sp-kill-sexp)
+    ;; Misc
+    ("t" sp-transpose-sexp)
+    ("j" sp-join-sexp)
+    ("s" sp-split-sexp)
+    ("c" sp-convolute-sexp)
+    ("i" sp-indent-defun)
+    ;; Depth changing
+    ("R" sp-splice-sexp)
+    ("r" sp-splice-sexp-killing-around)
+    ("<up>" sp-splice-sexp-killing-backward)
+    ("<down>" sp-splice-sexp-killing-forward)
+    ;; Barfing/slurping
+    ("<right>" sp-forward-slurp-sexp)
+    ("<left>" sp-forward-barf-sexp)
+    ("C-<left>" sp-backward-barf-sexp)
+    ("C-<right>" sp-backward-slurp-sexp))
 
-;; Add custom pairs
-;; (require 'smartparens-latex)
+(evil-leader/set-key
+  "S" 'sync0-hydra-smart-parens/body))
 
-;; (add-to-list 'sp-navigate-skip-match
-;;              '((tex-mode plain-tex-mode latex-mode) . sp--backslash-skip-match))
-
-(sp-with-modes '(tex-mode
-                 org-mode
-                 latex-mode
-                 LaTeX-mode)
-
-  (sp-local-pair "`" "'"
-                 ;; :actions '(:rem autoskip)
-                 ;; :skip-match 'sp-latex-skip-match-apostrophe
-                 :unless '(sp-latex-point-after-backslash))
-
-  ;; math modes, yay.  The :actions are provided automatically if
-  ;; these pairs do not have global definitions.
-
-  (sp-local-pair "$" "$")
-  (sp-local-pair "\\[" "\\]"
-                 :unless '(sp-latex-point-after-backslash))
-
-  ;; disable useless pairs.
-  (sp-local-pair "\\\\(" nil :actions nil)
-  (sp-local-pair "'" nil :actions nil)
-  (sp-local-pair "\\\"" nil :actions nil)
-
-  ;; quote should insert ``'' instead of double quotes.  If we ever
-  ;; need to insert ", C-q is our friend.
-  ;; (sp-local-pair "``" "''"
-  ;;                :trigger "\""
-  ;;                :unless '(sp-latex-point-after-backslash)
-  ;;                :post-handlers '(sp-latex-skip-double-quote))
-
-  ;; add the prefix function sticking to {} pair
-  (sp-local-pair "{" nil :prefix "\\\\\\(\\sw\\|\\s_\\)*")
-
-  ;; do not add more space when slurping
-  (sp-local-pair "{" "}")
-  (sp-local-pair "(" ")")
-  (sp-local-pair "[" "]")
-
-  ;; some common wrappings
-  (sp-local-tag "\"" "``" "''" :actions '(wrap)))
-
-(defhydra hydra-learn-sp (:hint nil)
-  "
-          _B_ backward-sexp            -----
-          _F_ forward-sexp               _s_ splice-sexp
-          _L_ backward-down-sexp         _df_ splice-sexp-killing-forward
-          _H_ backward-up-sexp           _db_ splice-sexp-killing-backward
-        ^^------                         _da_ splice-sexp-killing-around
-          _k_ down-sexp                -----
-          _j_ up-sexp                    _C-s_ select-next-thing-exchange
-        -^^-----                         _C-p_ select-previous-thing
-          _n_ next-sexp                  _C-n_ select-next-thing
-          _p_ previous-sexp            -----
-          _a_ beginning-of-sexp          _C-f_ forward-symbol
-          _z_ end-of-sexp                _C-b_ backward-symbol
-        --^^-                          -----
-          _t_ transpose-sexp             _c_ convolute-sexp
-        -^^--                            _g_ absorb-sexp
-          _x_ delete-char                _q_ emit-sexp
-          _dw_ kill-word               -----
-          _dd_ kill-sexp                 _,b_ extract-before-sexp
-        -^^--                            _,a_ extract-after-sexp
-          _S_ unwrap-sexp              -----
-        -^^--                            _AP_ add-to-previous-sexp
-          _C-h_ forward-slurp-sexp       _AN_ add-to-next-sexp
-          _C-l_ forward-barf-sexp      -----
-          _C-S-h_ backward-slurp-sexp    _ join-sexp
-          _C-S-l_ backward-barf-sexp     _|_ split-sexp
-        "
-  ;; TODO: Use () and [] - + * | <space>
-  ("B" sp-backward-sexp );; similiar to VIM b
-  ("F" sp-forward-sexp );; similar to VIM f
-  ;;
-  ("L" sp-backward-down-sexp )
-  ("H" sp-backward-up-sexp )
-  ;;
-  ("k" sp-down-sexp ) ; root - towards the root
-  ("j" sp-up-sexp )
-  ;;
-  ("n" sp-next-sexp )
-  ("p" sp-previous-sexp )
-  ;; a..z
-  ("a" sp-beginning-of-sexp )
-  ("z" sp-end-of-sexp )
-  ;;
-  ("t" sp-transpose-sexp )
-  ;;
-  ("x" sp-delete-char )
-  ("dw" sp-kill-word )
-  ;;("ds" sp-kill-symbol ) ;; Prefer kill-sexp
-  ("dd" sp-kill-sexp )
-  ;;("yy" sp-copy-sexp ) ;; Don't like it. Pref visual selection
-  ;;
-  ("S" sp-unwrap-sexp ) ;; Strip!
-  ;;("wh" sp-backward-unwrap-sexp ) ;; Too similar to above
-  ;;
-  ("C-h" sp-forward-slurp-sexp )
-  ("C-l" sp-forward-barf-sexp )
-  ("C-S-h" sp-backward-slurp-sexp )
-  ("C-S-l" sp-backward-barf-sexp )
-  ;;
-  ;;("C-[" (bind (sp-wrap-with-pair "[")) ) ;;FIXME
-  ;;("C-(" (bind (sp-wrap-with-pair "(")) )
-  ;;
-  ("s" sp-splice-sexp )
-  ("df" sp-splice-sexp-killing-forward )
-  ("db" sp-splice-sexp-killing-backward )
-  ("da" sp-splice-sexp-killing-around )
-  ;;
-  ("C-s" sp-select-next-thing-exchange )
-  ("C-p" sp-select-previous-thing )
-  ("C-n" sp-select-next-thing )
-  ;;
-  ("C-f" sp-forward-symbol )
-  ("C-b" sp-backward-symbol )
-  ;;
-  ;;("C-t" sp-prefix-tag-object)
-  ;;("H-p" sp-prefix-pair-object)
-  ("c" sp-convolute-sexp )
-  ("g" sp-absorb-sexp )
-  ("q" sp-emit-sexp )
-  ;;
-  (",b" sp-extract-before-sexp )
-  (",a" sp-extract-after-sexp )
-  ;;
-  ("AP" sp-add-to-previous-sexp );; Difference to slurp?
-  ("AN" sp-add-to-next-sexp )
-  ;;
-  ("_" sp-join-sexp ) ;;Good
-  ("|" sp-split-sexp )) 
-
-    :bind (("M-g M-p" . hydra-learn-sp/body)))
 #+END_SRC 
 
 * abbrev
@@ -402,8 +285,8 @@ parenthesis.
   #+END_SRC 
   
 * company-mode
-#+BEGIN_SRC emacs-lisp
-        (use-package company
+#+BEGIN_SRC 
+(use-package company
         ;; :straight (company :type git :host github :repo "company-mode/company-mode") 
         :hook
         (after-init . global-company-mode)
@@ -603,6 +486,7 @@ parenthesis.
 * ispell 
 #+BEGIN_SRC emacs-lisp
   (use-package ispell
+     :hook (text-mode . ispell-minor-mode)
     :custom
     ;; Save a new word to personal dictionary without asking
     (ispell-silently-savep t)
@@ -619,7 +503,7 @@ parenthesis.
     (cond ((executable-find "hunspell")
            (setq ispell-program-name "hunspell")
            ;;(setq ispell-local-dictionary "en_US")
-           (setq ispell-local-dictionary-alist '(("en_US-large" "[[:alpha:]]" "[^[:alpha:]]" "['-]" t ("-d" "en_US-large" ) nil utf-8)
+           (setq ispell-local-dictionary-alist '(("en_US-large" "[[:alpha:]]" "[^[:alpha:]]" "['’-]" t ("-d" "en_US-large" ) nil utf-8)
                                                  ("de_DE" "[[:alpha:]ÄÖÜéäöüß]" "[^[:alpha:]ÄÖÜéäöüß]" "['’-]" t ("-d" "de_DE") nil utf-8)
                                                  ("es" "[[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "[^[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "['’-]" t ("-d" "es") nil utf-8)
                                                  ("pt_BR" "[[:alpha:]a-zàáâãçéêíóôõúüA-ZÀÁÂÃÇÉÊÍÓÔÕÚÜ]" "[^[:alpha:]a-zàáâãçéêíóôõúüA-ZÀÁÂÃÇÉÊÍÓÔÕÚÜ]" "['-]" t  ("-d" "pt_BR") nil utf-8)
@@ -666,7 +550,7 @@ per document.
 #+BEGIN_SRC emacs-lisp
       (use-package guess-language
         :straight (guess-language :type git :host github :repo "tmalsburg/guess-language.el") 
-        :after (ispell evil hydra company)
+        :after ispell 
         :hook (text-mode . guess-language-mode)
         :init
         (set-input-method nil)
@@ -885,18 +769,22 @@ per document.
 
         (defhydra sync0-hydra-language-functions (:color amaranth :hint nil :exit t)
           "
-        ^Language functions^
-        ^^^------------------------
-        _d_: Definition
-        _c_: Conjugation
-        _t_: Thesaurus
-        [q] Quit
+     ^Language functions^
+     ^^^------------------------
+     Show _d_efinition
+     Show _c_onjugation
+     Show in _t_hesaurus
+
+     _q_uit
         "
           ;; Quickly work with bookmarks
           ("d" sync0-lookup-word)
           ("c" sync0-lookup-conjugation)
           ("t" sync0-lookup-thesaurus)
           ("q"  nil :color blue))
+
+(evil-leader/set-key
+  "l" 'sync0-hydra-language-functions/body)
 
         (add-hook 'guess-language-after-detection-functions #'sync0-language-change)
 
