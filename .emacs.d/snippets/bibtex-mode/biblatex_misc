@@ -1,0 +1,25 @@
+# -*- mode: snippet -*-
+# name: biblatex_misc
+# key: misc
+# --
+@misc{${23:$$(unless yas-modified-p (sync0-bibtex-generate-autokey))},
+`(yas-choose-value '("author" "editor"))` = {${5:Simon, Herbert}},
+date = {${1:2001}},
+title = {${2:Artificial Intelligence}},${3:
+subtitle = {${4:The New Era}},}${6:
+organization = {${7:24}},}${8:
+type = {${9:$$(yas-choose-value '("manual" "patent" "report" "thesis"))}},}${10:
+version = {${11:24}},}
+location = {${12:Chicago, New York}},${13:
+url = {$14},
+urldate = {${15:$$(unless yas-modified-p (insert (shell-command-to-string "echo -n $(date +'%Y-%m-%d')")))}},}${16:
+doi = {${17:http://doi.library.cmu.edu/10.1184/pmc/simon/box00071/fld05501/bdl0001/doc0001}},}
+library = {${18:Personal Collection}},
+language = {${19:$$(yas-choose-value '("english" "french" "italian" "spanish" "german"))}},
+langid = {$19},
+langidopts = {${21:$$(unless yas-modified-p (save-excursion (if (search-backward "{english}" nil t 1) "variant=american" (match-string 1))))}},
+file = {:/home/sync0/Documents/pdfs/${22:$$(unless yas-modified-p (sync0-bibtex-extract-lastnames))}_$1_$2.pdf:pdf},
+note = {},
+addendum = {},
+keywords = {${24:$$(unless yas-modified-p (sync0-bibtex-extract-lastnames-lowercase))}},
+} $0

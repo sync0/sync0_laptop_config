@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: biblatex_isbn
+# key: isbn
+# --
+isbn = {${1:9780226109404}}, $0

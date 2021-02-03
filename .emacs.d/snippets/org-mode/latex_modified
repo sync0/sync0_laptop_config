@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: latex_tcolorbox_modified
+# key: modified
+# --
+
+#+BEGIN_modified
+fullcite:`(org-entry-get-with-inheritance "Custom_ID")`
+\tcblower
+Last modified: {{{property(MODIFIED)}}}
+#+END_modified
+$0

@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: org-ref_inline_citation
+# key: inlinecite
+# --
+[[parencite:${1:`(sync0-print-bibtex-key)`}][p. ${2:`(sync0-last-cited-page-two)`}]] $0

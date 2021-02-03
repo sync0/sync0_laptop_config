@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: org_italian 
+# key: italian
+# --
+#+BEGIN_italian
+$1
+#+END_italian
+
+$0

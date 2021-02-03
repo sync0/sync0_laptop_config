@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: org_german 
+# key: german
+# --
+#+BEGIN_german
+$1
+#+END_german
+
+$0

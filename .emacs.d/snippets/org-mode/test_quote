@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: test_quote
+# key: tquote
+# --
+#+ATTR_LATEX: :options [{\cite[${2:`(sync0-last-cited-page-three)`}]{${1:`(sync0-ivy-bibtex)`}}}]
+#+BEGIN_displayquote
+$3
+#+END_displayquote
+$0

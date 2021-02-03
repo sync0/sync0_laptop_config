@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: org_quote
+# key: oquote
+# --
+
+#+BEGIN_QUOTE
+${1:Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.}
+
+\RaggedLeft $2, \linebreak \footnotesize $3
+#+END_QUOTE
+$0

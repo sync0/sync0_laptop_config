@@ -1,0 +1,35 @@
+# -*- mode: snippet -*-
+# name: biblatex_inbook
+# key: inbook
+# --
+@inbook\{${48:$$(unless yas-modified-p (sync0-bibtex-generate-autokey))},
+author = \{${5:Simon, Herbert}\},
+date = \{${1:2001}\},${12:
+origdate = \{${13:1776}\},
+origtitle = \{${14:The Wealth of Nations}\},}
+title = \{${2:Artificial Intelligence}\},${3:
+subtitle = \{${4:The New Era}\},}${6:
+crossref = \{${7:$$(unless yas-modified-p (yas-choose-value bibtex-reference-keys))}\},}${8:
+booktitle = \{${9:The New Era}\},}${10:
+booksubtitle = \{${11:The New Era}\},}${15:
+series = \{${16:The Great Economists}\},}${17:
+volume = \{${18:24}\},}${19:
+chapter = \{${20:9}\},}
+pages = \{${21:45-28}\},${22:
+edition = \{${23:1}\},}${24:
+publisher = \{${25:Routledge}\},}${26:
+editor = \{${27:Johnes, Bobby}\},}${28:
+translator = \{${29:Willson, Stephen}\},}${30:
+location = \{${31:Chicago, New York}\},}${32:
+url = \{$33\},
+urldate = \{${34:$$(unless yas-modified-p (insert (shell-command-to-string "echo -n $(date +'%Y-%m-%d')")))}\},}${35:
+doi = \{${36:http://doi.library.cmu.edu/10.1184/pmc/simon/box00071/fld05501/bdl0001/doc0001}\},}${37:
+library = \{${38:Personal Collection}\},}${39:
+isbn = \{${40:???}\},}${41:
+origlanguage = \{${42:$$(yas-choose-value '("english" "french" "italian" "spanish" "german"))}\},}
+language = \{${43:$$(yas-choose-value '("english" "french" "italian" "spanish" "german"))}\},
+langid = \{$43\},${44:
+langidopts = \{${45:$$(unless yas-modified-p (save-excursion (if (search-backward "english" nil t 1) "variant=american" (match-string 1))))}\},}
+file = \{/home/sync0/Documents/pdfs/${46:$$(unless yas-modified-p (sync0-bibtex-extract-lastnames))}_$1_$2${47:_$4}.pdf\},
+keywords = \{${49:$$(unless yas-modified-p (sync0-bibtex-extract-lastnames-lowercase))}\},
+\} $0

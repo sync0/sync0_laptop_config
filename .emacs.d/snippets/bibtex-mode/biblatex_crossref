@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: biblatex_crossref
+# key: crossref 
+# --
+crossref = {${1:babbage1889_2010}}, $0

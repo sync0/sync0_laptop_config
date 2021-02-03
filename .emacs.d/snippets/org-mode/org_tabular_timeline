@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: org-tabular-timeline
+# key: timeline
+# --
+
+#+ATTR_LATEX: :booktabs :environment tabular :align @{\,}r<{\hskip 2pt} !{\timebullet} p{7cm} 
+|${1:1492}|${2:Arrivee de Chirstophe Colombus}|

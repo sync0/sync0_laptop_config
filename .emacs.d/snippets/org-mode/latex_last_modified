@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: latex_last_modified
+# key: last
+# --
+\begin{labeling}[:]{} 
+\item[Last modified] `(shell-command-to-string "echo -n $(date +'%Y/%m/%d')")`
+\end{labeling}
+$0

@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: org_table_properties
+# key: table 
+# --
+#+ATTR_LATEX: :booktabs ${1::environment tabular} ${2::width \columnwidth} ${3::align l|lp{3cm}r|l} ${4::caption \captionabove{${5:Lorem Ipsum}}} $0

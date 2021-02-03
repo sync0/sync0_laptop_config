@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: biblatex_location 
+# key: location
+# --
+location = {${1:Dordrecht, Heidelberg, New York, London}}, $0

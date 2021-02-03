@@ -1,0 +1,34 @@
+# -*- mode: snippet -*-
+# name: biblatex_simon_article
+# key: sarticle
+# --
+@article{${30:$$(unless yas-modified-p (sync0-bibtex-generate-autokey))},
+author = {Simon, Herbert$5},
+date = {${1:2001}},
+title = {${2:Artificial Intelligence}},${3:
+subtitle = {${4:The New Era}},}
+journaltitle = {${6:Journal of Experimental Psychology}},${7:
+issuetitle = {${8:The Mind and the Brain}},}${9:
+series = {${10:The Great Operation}},}${11:
+volume = {${12:24}},}${13:
+number = {${14:44}},}${15:
+issue = {${16:Spring}},}
+pages = {${17:14--20}},${18:
+url = {$19},
+urldate = {${20:$$(unless yas-modified-p (insert (shell-command-to-string "echo -n $(date +'%Y-%m-%d')")))}},}${21:
+doi = {${22:http://doi.library.cmu.edu/10.1184/pmc/simon/box00071/fld05501/bdl0001/doc0001}},}${23:
+library = {Carnegie Mellon University Libraries Digital Collections},
+arkcollection = {Herbert A. Simon},
+arkseries = {${24:$$(yas-choose-value sync0-bibtex-simon-arkseries)}},
+arktopic = {${25:publications}},
+arktype = {${26:article}},
+box = {${27:71}},
+folder = {${28:5501}},}
+language = {english},
+langid = {english},
+langidopts = {variant=american},
+keywords = {herbert-simon, memoire},
+file = {:/home/sync0/Documents/pdfs/${29:$$(unless yas-modified-p (sync0-bibtex-extract-lastnames))}_$1_$2.pdf:pdf},
+addendum = {Box: $27, folder: $28, HSCM}
+keywords = {${31:$$(unless yas-modified-p (sync0-bibtex-extract-lastnames-lowercase))}},
+} $0

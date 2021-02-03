@@ -1,0 +1,51 @@
+# -*- mode: snippet -*-
+# name: biblatex_simon_master
+# key: simon
+# --
+
+@incollection{Simon$1,
+
+@${1:$$(let ((type (yas-choose-value '("incollection" "article" "unpublished" "inproceedings" "book"))))
+
+
+{${3:$$(unless yas-modified-p (sync0-bibtex-generate-autokey))},
+
+
+#+BEGIN_${1:$$(let ((type (yas-choose-value '("SRC" "EXAMPLE" "QUOTE" "VERSE" "CENTER" "LaTeX" "HTML" "ASCII"))))
+               (if type (concat type (if (equal type "SRC")
+                                         (concat " " (yas-choose-value '("C" "C++" "emacs-lisp" "lisp" "latex" "python" "sh" "sqlite" "css" "haskell" "js" "plantuml" "ruby" "sql" "clojure")))))))}
+
+$0
+#+END_${1:$(car (split-string yas-text))}
+
+author = {Simon, Herbert},
+title = {${2:Artificial Intelligence}},
+year = {${1:2001}},
+booktitle = {${3:The Corsini Encyclopedia of Psychology and Behavioral Science}},
+pages = {${4:131-136}},
+editor = {${5:W. E. Craighead & C. B. Nemeroff}},
+city = {${6:New York}},
+publisher = {${7:Wiley}},
+doi = {${8:http://doi.library.cmu.edu/10.1184/pmc/simon/box00071/fld05501/bdl0001/doc0001}},
+library = {Carnegie Mellon University Libraries Digital Collections},
+arkcollection = {Herbert A. Simon},
+arkseries = {${9:(yas-choose-value '("Personal Pappers (1929-1979)" "Schoolwork and Early Career (1929-1943)" "Illinois Institute of Technology (1942-1949)" "RAND Corporation (1949-1973)" "Carnegie Mellon University (1948-2001)" "Consulting (1942-2000)" "Lectures and Talks (1951-2000)" "Publications (1949-2000)" "Correspondence (1940-2001)" "Dissertations (1956-1999)" "Awards (1958-1998)" "Miscellaneous (1942-2003)"))}},
+arktopic = {${10:publications}},
+arktype = {${11:article}},
+box = {${12:71}},
+folder = {${13:5501},
+language = {english},
+langid = {english},
+langidopts = {variant=american},
+keywords = {herbert-simon,memoire},
+file = {:/home/sync0/Documents/pdfs/Simon/Simon_$1_$2.pdf:pdf},
+note = {${14:Lorem ipsum}},
+addendum = {Box: $12, folder: $13, HSCM}
+}$0
+
+# --
+#+BEGIN_${1:$$(let ((type (yas-choose-value '("SRC" "EXAMPLE" "QUOTE" "VERSE" "CENTER" "LaTeX" "HTML" "ASCII"))))
+               (if type (concat type (if (equal type "SRC")
+                                         (concat " " (yas-choose-value '("C" "C++" "emacs-lisp" "lisp" "latex" "python" "sh" "sqlite" "css" "haskell" "js" "plantuml" "ruby" "sql" "clojure")))))))}
+$0
+#+END_${1:$(car (split-string yas-text))}

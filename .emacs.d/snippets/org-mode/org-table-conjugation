@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: org-table-conjugation
+# key: lt
+# --
+| Eu   | ${1:sou}   |
+| Tu   | ${2:es}    |
+| Ele  | ${3:é}     |
+| Nós  | ${4:somos} |
+| Vós  | ${5:sois}  |
+| Eles | ${6:são}   |
+
+$0

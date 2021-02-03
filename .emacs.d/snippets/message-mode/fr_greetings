@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: salutation_française
+# key: bonjour
+# --
+
+Bonjour ${1:M.},
+
+$0
+
+Bien cordialement,

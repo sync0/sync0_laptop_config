@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: org_log
+# key: log
+# --
+
+* `(sync0-log-today-timestamp)`
+
+$0

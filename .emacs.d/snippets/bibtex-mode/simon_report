@@ -1,0 +1,34 @@
+# -*- mode: snippet -*-
+# name: biblatex_simon_report
+# key: sreport
+# --
+@report{${5:$$(unless yas-modified-p (sync0-bibtex-generate-autokey))},
+author = {Simon, Herbert},
+date = {${1:2001}},
+title = {${2:Artificial Intelligence}},${3:
+subtitle = {${4:The New Era}},}
+institution = {${6:The Cowless Comission}},
+type = {${7:$$(yas-choose-value '("manual" "patent" "report" "thesis"))}},}${8:
+number = {${9:45}},}${10:
+chapter = {${11:4}},}${12:
+version = {${13:45}},}${14:
+location = {${15:45}},}${16:
+pages = {${17:15--21}},${18:
+url = {$19},
+urldate = {${20:$$(unless yas-modified-p (insert (shell-command-to-string "echo -n $(date +'%Y-%m-%d')")))}},}${21:
+doi = {${22:http://doi.library.cmu.edu/10.1184/pmc/simon/box00071/fld05501/bdl0001/doc0001}},}
+library = {Carnegie Mellon University Libraries Digital Collections},
+arkcollection = {Herbert A. Simon},
+arkseries = {${23:$$(yas-choose-value '("Personal Pappers (1929-1979)" "Schoolwork and Early Career (1929-1943)" "Illinois Institute of Technology (1942-1949)" "RAND Corporation (1949-1973)" "Carnegie Mellon University (1948-2001)" "Consulting (1942-2000)" "Lectures and Talks (1951-2000)" "Publications (1949-2000)" "Correspondence (1940-2001)" "Dissertations (1956-1999)" "Awards (1958-1998)" "Miscellaneous (1942-2003)"))}},
+arktopic = {${24:publications}},
+arktype = {${25:article}},
+box = {${26:71}},
+folder = {${27:5501}},
+language = {english},
+langid = {english},
+langidopts = {variant=american},
+keywords = {herbert-simon,memoire},
+file = {:/home/sync0/Documents/pdfs/Simon_$1_$2.pdf:pdf},
+note = {},
+addendum = {Box: $26, folder: $27, HSCM}
+}$0

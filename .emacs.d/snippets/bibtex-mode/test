@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: test 
+# key: test
+# --
+\section{${1:"Titel der Tour"}}%
+\index{$1}%
+\label{{2:"waiting for reftex-label call..."$(unless yas-modified-p (reftex-label nil 'dont-
+insert))}}%
+$0

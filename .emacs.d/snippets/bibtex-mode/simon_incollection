@@ -1,0 +1,41 @@
+# -*- mode: snippet -*-
+# name: biblatex_simon_incollection
+# key: sincollection
+# --
+@incollection{${5:$$(unless yas-modified-p (sync0-bibtex-generate-autokey))},
+author = {Simon, Herbert},
+date = {${1:2001}},
+title = {${2:Artificial Intelligence}},${3:
+subtitle = {${4:The New Era}},}
+booktitle = {${6:Artificial Intelligence}},${7:
+booksubtitle = {${8:Artificial Intelligence}},${9:
+crossref = {${10:$$(unless yas-modified-p (yas-choose-value '(bibtex-parse-keys)))}},}${11:
+series = {${12:The Great Economists}},}${13:
+volume = {${14::24}},}${15:
+chapter = {${16:9}},}
+pages = {${17:45--28}},
+edition = {${18:1}},
+publisher = {${19:Routledge}},
+editor = {${20:Johnes, Bobby}},${21:
+translator = {${22:Willson, Stephen}},}
+location = {${23:Chicago, New York}},${24:
+url = {$25},
+urldate = {${26:$$(unless yas-modified-p (insert (shell-command-to-string "echo -n $(date +'%Y-%m-%d')")))}},}${27:
+doi = {${28:http://doi.library.cmu.edu/10.1184/pmc/simon/box00071/fld05501/bdl0001/doc0001}},}
+library = {Carnegie Mellon University Libraries Digital Collections},
+isbn = {${29:???}},
+arkcollection = {Herbert A. Simon},
+arkseries = {${30:$$(yas-choose-value '("Personal Pappers (1929-1979)" "Schoolwork and Early Career (1929-1943)" "Illinois Institute of Technology (1942-1949)" "RAND Corporation (1949-1973)" "Carnegie Mellon University (1948-2001)" "Consulting (1942-2000)" "Lectures and Talks (1951-2000)" "Publications (1949-2000)" "Correspondence (1940-2001)" "Dissertations (1956-1999)" "Awards (1958-1998)" "Miscellaneous (1942-2003)"))}},
+arktopic = {${31:publications}},
+arktype = {${32:article}},
+box = {${33:73}},
+folder = {${34:573}},
+origlanguage = {english},
+language = {english},
+langid = {english},
+langidopts = {variant=american},
+keywords = {herbert-simon,memoire},
+file = {:/home/sync0/Documents/pdfs/Simon_$1_$2.pdf:pdf},
+note = {},
+addendum = {Box: $33, folder: $34, HSCM}
+}$0

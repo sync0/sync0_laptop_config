@@ -863,7 +863,7 @@ some quality voices in the AUR repositories.
      (bibtex-mode . yas-minor-mode)))
   #+END_SRC
 
-* 取 focus-mode
+* focus-mode
   Focus provides focus-mode that dims the text of surrounding sections.
   This mode is perfect for proofreading. Thus, don't abuse it when
   writing drafts.  

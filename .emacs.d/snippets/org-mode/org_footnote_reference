@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: org_footnote_reference
+# key: reference
+# --
+[[footcite:${1:`(org-entry-get-with-inheritance "Custom_ID")`}][p. ${2:43}, par. ${3:2}]] $0

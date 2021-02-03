@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: koma_comment
+# key: kcomment
+# --
+\begin{labeling}[:]{} 
+\item[Comment] $1 
+\end{labeling}
+$0

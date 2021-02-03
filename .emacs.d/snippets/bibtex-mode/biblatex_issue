@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: biblatex_issue 
+# key: issue 
+# --
+issue = {${1:Spring}}, $0

@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: org_log_properties
+# key: logp 
+# --
+
+*  `(sync0-log-today-timestamp)`
+:PROPERTIES:
+:CREATED: `(format-time-string "<%Y-%m-%d>")` 
+:LAST_MODIFIED: `(format-time-string "<%Y-%m-%d>")` 
+:END:
+
+$0

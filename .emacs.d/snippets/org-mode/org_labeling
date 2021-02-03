@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: org_labeling
+# key: labeling
+# --
+#+ATTR_LATEX: :options [:]{} 
+#+BEGIN_labeling
+\item[${1:Category_1}] $2 ${3:
+\item[${4:Category_2}] $5}
+#+END_labeling
+$0

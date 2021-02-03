@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: org_spanish 
+# key: spanish
+# --
+#+BEGIN_spanish
+$1
+#+END_spanish
+
+$0

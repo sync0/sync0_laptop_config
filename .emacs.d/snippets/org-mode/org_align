@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: org_align_environment
+# key: align
+# --
+#+BEGIN_align*
+$1 &= $2 \\\
+$3 &= $4
+#+END_align* $0

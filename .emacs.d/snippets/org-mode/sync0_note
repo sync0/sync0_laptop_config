@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: sync0_note
+# key: note
+# --
+#+ATTR_LATEX: :options {`(insert (shell-command-to-string "echo -n $(date +'%Y/%m/%d')"))`}
+#+BEGIN_note
+$1
+#+END_note
+
+$0

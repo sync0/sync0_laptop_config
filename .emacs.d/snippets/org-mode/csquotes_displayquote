@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: csquotes_displayquote
+# key: quote 
+# --
+#+ATTR_LATEX: :options [{\cite[${2:`(sync0-last-cited-page)`}]{${1:`(sync0-print-bibtex-key)`}}}]
+#+BEGIN_displayquote
+$3
+#+END_displayquote
+$0

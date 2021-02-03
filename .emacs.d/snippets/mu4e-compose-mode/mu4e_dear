@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: mu4e_dear
+# key: dear
+# --
+
+Dear Professor $1
+
+$0
+
+Sincerely

@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: sync0_definition
+# key: def
+# --
+#+ATTR_LATEX: :options {${1:title}} {${2:$$(unless yas-modified-p (sync0-guess-language-set-parts-of-speech))}}
+#+BEGIN_definition
+${3:Definition}
+\tcblower
+${4:Example}
+#+END_definition
+$0

@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: org-latex-dialogue-environment
+# key: dialogue 
+# --
+
+#+BEGIN_dialogue
+\speak\{${1:Vladimir}\} ${2:Whare are all these corpses from?}
+\speak\{${3:Estragon}\} ${4:These skeletons.}
+${5:\direct\{
+Estragon has exited offstage to right and left and come panting back
+and fallen into Vladimir’s arms\}}
+$0
+#+END_dialogue

@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: org_inaudible
+# key: inaudible 
+# --
+#+BEGIN_center
+[inaudible]
+#+END_center
+$0

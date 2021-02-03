@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: tex_inaudible
+# key: tinaudible 
+# --
+\begin{center}
+[inaudible]
+\end{center}
+$0

@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: csquotes_foreignblockquote
+# key: fquote 
+# --
+#+ATTR_LATEX: :options {`(yas-choose-value '("english" "french"))`}[{\cite[${2:`(sync0-last-cited-page)`}]{${1:`(sync0-print-bibtex-key)`}}}]
+#+BEGIN_foreigndisplayquote
+$3
+#+END_foreigndisplayquote
+$0

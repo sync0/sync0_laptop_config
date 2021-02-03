@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: org_equation_environment
+# key: equation
+# --
+#+BEGIN_equation*
+$1 = $2
+#+END_equation* $0

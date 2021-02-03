@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: salutation_amicale
+# key: salut
+# --
+Salut ${1:Ami},
+
+$0
+
+Au plaisir de te revoir,
+
+Amitiés,

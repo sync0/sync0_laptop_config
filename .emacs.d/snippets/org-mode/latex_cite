@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: latex_cite
+# key: cite
+# --
+`(yas-choose-value '("\\paren" "\\text" "\\auto" "\\foot"))`cite${1:[${2:prenote}]}${3:[${4:postnote}]}{${5:key}} $0

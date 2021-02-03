@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: org-roam-notetaking-headline
+# key: re
+# --
+** `(format-time-string "%Y%m%d%H%M%S")`
+$0

@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: biblatex_publisher
+# key: publisher
+# --
+publisher = {${1:Springer}}, $0

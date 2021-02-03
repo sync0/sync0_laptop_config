@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: org_description
+# key: description
+# --
+#+ATTR_LATEX: :options [leftmargin=12em, style=multiline, noitemsep]
+#+BEGIN_description
+\item[${1:Category_1}] $2 ${3:
+\item[${4:Category_2}] $5}
+#+END_description
+$0

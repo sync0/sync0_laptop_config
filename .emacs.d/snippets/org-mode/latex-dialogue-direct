@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: latex-dialogue-direct 
+# key: direct
+# --
+\direct\{${1:Estragon has exited offstage and fallen into Vladimir’s arms.}\} $0

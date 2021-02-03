@@ -1,0 +1,28 @@
+# -*- mode: snippet -*-
+# name: biblatex_report
+# key: report
+# --
+@report\{${33:$$(unless yas-modified-p (sync0-bibtex-generate-autokey))},
+author = \{${5:Simon, Herbert}\},
+date = \{${1:2001}\},
+title = \{${2:Artificial Intelligence}\},${3:
+subtitle = \{${4:The New Era}\},}
+institution = \{${6:The Cowless Comission}\},
+type = \{${7:$$(yas-choose-value '("manual" "patent" "report" "thesis"))}\},${8:
+number = \{${9:45}\},}${10:
+chapter = \{${11:4}\},}${12:
+version = \{${13:45}\},}${14:
+location = \{${15:45}\},}${16:
+pages = \{${17:15--21}\},}${18:
+url = \{$19\},
+urldate = \{${20:$$(unless yas-modified-p (insert (shell-command-to-string "echo -n $(date +'%Y-%m-%d')")))}\},}${21:
+doi = \{${22:http://doi.library.cmu.edu/10.1184/pmc/simon/box00071/fld05501/bdl0001/doc0001}\},}
+library = \{${23:Personal Collection}\},${24:
+isbn = \{${25:???}\},}${26:
+origlanguage = \{${27:$$(yas-choose-value '("english" "french" "italian" "spanish" "german"))}\},}
+language = \{${28:$$(yas-choose-value '("english" "french" "italian" "spanish" "german"))}\},
+langid = \{$28\},${29:
+langidopts = \{${30:$$(unless yas-modified-p (save-excursion (if (search-backward "{english}" nil t 1) "variant=american" (match-string 1))))}\},}
+file = \{:/home/sync0/Documents/pdfs/${31:$$(unless yas-modified-p (sync0-bibtex-extract-lastnames))}_$1_$2${32:_$4}.pdf\},
+keywords = \{${34:$$(unless yas-modified-p (sync0-bibtex-extract-lastnames-lowercase))}\},
+\} $0

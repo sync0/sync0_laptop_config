@@ -1,0 +1,28 @@
+# -*- mode: snippet -*-
+# name: biblatex_simon
+# key: simon
+# --
+@${1:article}{Simon$2,
+author = {Simon, Herbert},
+title = {${3:Robots: Who Wants Them And Why?}},
+year = {${2:1984}},${4:
+journal = {${5:Carnegie-Mellon Magazine}},
+volume = {${6:Winter}},
+pages = {${7:12-19}},}
+library = {Carnegie Mellon University Libraries Digital Collections},
+collection = {Herbert A. Simon},
+archive = {${8:Series VIII: Publications -- (1938) 1949-2000}},
+topic = {${9:publications}},
+type = {${10:article}},
+doi = {${11:http://doi.library.cmu.edu/10.1184/pmc/simon/box00073/fld05822/bdl0001/doc0001}},
+box = {${12:73}},
+folder = {${13:5822}},
+language = {english},
+langid = {english},
+langidopts = {variant=american},
+keywords = {herbert-simon,memoire},
+file = {:/home/sync0/Documents/pdfs/Simon/Simon_$2_$3.pdf:pdf},
+note = {Title: Article -- Winter 1984 (Publications -- Article -- "Robots: Who Wants Them and Why" -- Cichowicz -- CARNEGIE MELLON MAGAZINE -- Winter 1984)
+Period Created: Winter 1984},
+addendum = {Box: $12, folder: $13, HSCM}
+}$0

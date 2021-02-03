@@ -1,0 +1,31 @@
+# -*- mode: snippet -*-
+# name: biblatex_collection
+# key: collection
+# --
+@collection\{${33:$$(unless yas-modified-p (sync0-bibtex-generate-autokey))},
+editor = \{${5:Johnes, Bobby}\},${6:
+editora = \{${7:Johnes, Bobby}\},}
+date = \{${1:2001}\},
+title = \{${2:Artificial Intelligence}\},
+booktitle = \{$2\},${3:
+subtitle = \{${4:The New Era}\},
+booksubtitle = \{$4\},}${8:
+series = \{${9:The Great Economists}\},}${10:
+volume = \{${11:24}\},}${12:
+number = \{${13:24}\},}
+edition = \{${14:1}\},
+publisher = \{${15:Routledge}\},${16:
+translator = \{${17:Willson, Stephen}\},}
+location = \{${18:Chicago, New York}\},${19:
+url = \{$20\},
+urldate = \{${21:$$(unless yas-modified-p (insert (shell-command-to-string "echo -n $(date +'%Y-%m-%d')")))}\},}${22:
+doi = \{${23:http://doi.library.cmu.edu/10.1184/pmc/simon/box00071/fld05501/bdl0001/doc0001}\},}
+library = \{${24:Personal Collection}\},
+isbn = \{${25:???}\},${26:
+origlanguage = \{${27:$$(yas-choose-value '("english" "french" "italian" "spanish" "german"))}\},}
+language = \{${28:$$(yas-choose-value '("english" "french" "italian" "spanish" "german"))}\},
+langid = \{$28\},${29:
+langidopts = \{${30:$$(unless yas-modified-p (save-excursion (if (search-backward "english" nil t 1) "variant=american" (match-string 1))))}\},}
+file = \{/home/sync0/Documents/pdfs/${31:$$(unless yas-modified-p (sync0-bibtex-extract-editors))}_$1_$2${32:_$4}.pdf\},
+keywords = \{${34:$$(unless yas-modified-p (sync0-bibtex-extract-editors-lowercase))}\},
+\} $0

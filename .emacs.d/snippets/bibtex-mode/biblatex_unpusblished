@@ -1,0 +1,27 @@
+# -*- mode: snippet -*-
+# name: biblatex_unpublished
+# key: unpublished
+# --
+@unpublished\{${30:$$(unless yas-modified-p (sync0-bibtex-generate-autokey))},
+author = \{${5:Simon, Herbert}\},
+date = \{${1:2001-12-01}\},
+title = \{${2:Artificial Intelligence}\},${3:
+subtitle = \{${4:The New Era}\},}${6:
+type = \{${7:$$(yas-choose-value '("manual" "patent" "report" "thesis"))}\},}${8:
+eventdate = \{${9:11-12-2001}\},
+eventtitle = \{${10:The Great Conferenc}\},}${11:
+venue = \{${12:Seoul Arena}\},}${13:
+location = \{${14:Chicago, New York}\},}${15:
+url = \{$16\},
+urldate = \{${17:$$(unless yas-modified-p (insert (shell-command-to-string "echo -n $(date +'%Y-%m-%d')")))}\},}${18:
+doi = \{${19:http://doi.library.cmu.edu/10.1184/pmc/simon/box00071/fld05501/bdl0001/doc0001}\},}
+library = \{${20:Personal Collection}\},${21:
+isbn = \{${22:???}\},}${23:
+origlanguage = \{${24:$$(yas-choose-value '("english" "french" "italian" "spanish" "german"))}\},}
+language = \{${25:$$(yas-choose-value '("english" "french" "italian" "spanish" "german"))}\},
+langid = \{$25\},${26:
+langidopts = \{${27:$$(unless yas-modified-p (save-excursion (if (search-backward "english" nil t 1) "variant=american" (match-string 1))))}\},}
+file = \{/home/sync0/Documents/pdfs/${28:$$(unless yas-modified-p (sync0-bibtex-extract-lastnames))}_$1_$2${29:_$4}.pdf\},
+addendum = {},
+keywords = \{${31:$$(unless yas-modified-p (sync0-bibtex-extract-lastnames-lowercase))}\},
+\}$0

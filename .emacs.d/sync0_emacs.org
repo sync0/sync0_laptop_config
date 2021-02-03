@@ -4,6 +4,7 @@
 # Necessary to export code from Emacs org mode to elisp. 
 #+PROPERTY: header-args :tangle yes
 
+
 * Introduction 
 This is my Emacs configuration file. As the sloppy code herein
 attests, I am not a proficient programmer. I use Emacs primarily
@@ -259,6 +260,9 @@ Configure autosave.
     (custom-theme-set-faces 'user
                             `(org-default ((t (:family "Minion Pro" :weight normal :height 1.0))))
                             `(org-link ((t (:inherit org-default :underline t))))
+                             `(org-block-begin-line ((t (:inherit org-default :family "Fira Code" :height 0.75 :background nil))))
+                             `(org-block-end-line ((t (:inherit org-default :family "Fira Code" :height 0.75 :background nil))))
+                             `(org-block ((t (:inherit org-default :family "Fira Code" :height 0.75 :background nil))))
                             `(org-ref-cite-face ((t (:inherit org-link)))) 
                             `(org-footnote ((t (:family "Minion Pro" :height 0.7 :weight normal))))
                             `(org-document-info ((t (:family "Myriad Pro" :height 1.0))))
@@ -291,8 +295,9 @@ Configure autosave.
                             `(org-table ((t (:family "Fira Code" :inherit fixed-pitch))))
                             ;; `(org-block-begin-line ((t (:inherit org-meta-line))))
                             ;; `(org-block-end-line ((t (:inherit org-meta-line))))
-                            ;; `(org-column ((t (:family "Fira Code"))))
                             ;; `(org-block ((t ( :height 1.0 :slant italic))))
+                            ;; `(org-column ((t (:family "Fira Code"))))
+                            ;; `(org-block ((t (:height 1.0 :slant italic))))
                             ;; `(org-code ((t (:family "Fira Code" :height 0.75  :inherit fixed-pitch))))
                             `(org-tag ((t (:family "Fira Code" :height 0.75))))))
      
@@ -459,6 +464,7 @@ sync0-portuguese-parts-speech '("sustantivo femenino" "sustantivo masculino" "ve
                                                (equal default-directory (concat (getenv "HOME") "/Dropbox/org/projects/"))
                                                (equal default-directory (concat (getenv "HOME") "/Dropbox/org/inbox/"))
                                                (equal default-directory (concat (getenv "HOME") "/Dropbox/org/references/"))
+                                               (equal default-directory (concat (getenv "HOME") "/Dropbox/org/messages/"))
                                                (equal default-directory (concat (getenv "HOME") "/Dropbox/annotations/"))))
                                   (sync0-update-timestamp))))
 

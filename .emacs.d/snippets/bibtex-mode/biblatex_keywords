@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: biblatex_keywords
+# key: keywords
+# --
+keywords = {${1:memoire, introduction}}, $0

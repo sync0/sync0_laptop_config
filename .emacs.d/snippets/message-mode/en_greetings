@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: english_greetings
+# key: dear
+# --
+
+Dear ${1:Prof.},
+
+$0
+
+Sincerely,

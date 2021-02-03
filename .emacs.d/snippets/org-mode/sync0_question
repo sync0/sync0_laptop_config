@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: sync0_question
+# key: question
+# --
+#+ATTR_LATEX: :options {`(insert (shell-command-to-string "echo -n $(date +'%Y/%m/%d')"))`}
+#+BEGIN_question
+$1
+#+END_question
+
+$0

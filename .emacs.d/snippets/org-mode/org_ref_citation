@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: org_ref_citation
+# key: ref
+# --
+[[${1:$$(yas-choose-value '("auto" "paren" "text" "foot"))}cite:${2:`(sync0-print-bibtex-key)`}][${3:`(sync0-last-cited-page)`}]] $0

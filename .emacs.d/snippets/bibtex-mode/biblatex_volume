@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: biblatex_volume 
+# key: volume 
+# --
+volume = {${1:5}}, $0

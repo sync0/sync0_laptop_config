@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: biblatex_english
+# key: bibenglish
+# --
+language = {english},
+langid = {english},
+langidopts = {variant=american}, $0

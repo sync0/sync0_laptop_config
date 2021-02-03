@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: biblatex_editor
+# key: editor
+# --
+editor = {${1:Ceccarelli, Marco}}, $0
